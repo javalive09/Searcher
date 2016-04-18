@@ -1,0 +1,38 @@
+[
+    {
+        "merged": "/Users/peter/git/Searcher/app/build/intermediates/res/merged/baidu/debug/drawable-xxhdpi-v4/icon.png",
+        "source": "/Users/peter/git/Searcher/app/src/main/res/drawable-xxhdpi/icon.png"
+    },
+    {
+        "merged": "/Users/peter/git/Searcher/app/build/intermediates/res/merged/baidu/debug/drawable-xxhdpi-v4/search_small.png",
+        "source": "/Users/peter/git/Searcher/app/src/main/res/drawable-xxhdpi/search_small.png"
+    },
+    {
+        "merged": "/Users/peter/git/Searcher/app/build/intermediates/res/merged/baidu/debug/drawable-xxhdpi-v4/loading.png",
+        "source": "/Users/peter/git/Searcher/app/src/main/res/drawable-xxhdpi/loading.png"
+    },
+    {
+        "merged": "/Users/peter/git/Searcher/app/build/intermediates/res/merged/baidu/debug/drawable-xxhdpi-v4/back.png",
+        "source": "/Users/peter/git/Searcher/app/src/main/res/drawable-xxhdpi/back.png"
+    },
+    {
+        "merged": "/Users/peter/git/Searcher/app/build/intermediates/res/merged/baidu/debug/drawable-xxhdpi-v4/clear.png",
+        "source": "/Users/peter/git/Searcher/app/src/main/res/drawable-xxhdpi/clear.png"
+    },
+    {
+        "merged": "/Users/peter/git/Searcher/app/build/intermediates/res/merged/baidu/debug/drawable-xxhdpi-v4/search_clear.png",
+        "source": "/Users/peter/git/Searcher/app/src/main/res/drawable-xxhdpi/search_clear.png"
+    },
+    {
+        "merged": "/Users/peter/git/Searcher/app/build/intermediates/res/merged/baidu/debug/drawable-xxhdpi-v4/hint_exit_icon.png",
+        "source": "/Users/peter/git/Searcher/app/src/main/res/drawable-xxhdpi/hint_exit_icon.png"
+    },
+    {
+        "merged": "/Users/peter/git/Searcher/app/build/intermediates/res/merged/baidu/debug/drawable-xxhdpi-v4/search.png",
+        "source": "/Users/peter/git/Searcher/app/src/main/res/drawable-xxhdpi/search.png"
+    },
+    {
+        "merged": "/Users/peter/git/Searcher/app/build/intermediates/res/merged/baidu/debug/drawable-xxhdpi-v4/setting.png",
+        "source": "/Users/peter/git/Searcher/app/src/main/res/drawable-xxhdpi/setting.png"
+    }
+]

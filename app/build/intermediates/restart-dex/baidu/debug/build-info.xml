@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<instant-run
+    abi="arm64-v8a,armeabi-v7a,armeabi"
+    api-level="23"
+    density="xxxhdpi"
+    format="7"
+    timestamp="157964028859265"
+    verifier="COMPATIBLE" >
+
+    <task
+        name="javac"
+        duration="349" />
+    <task
+        name="instant-run-dex"
+        duration="952" />
+    <task
+        name="instant-run-transform"
+        duration="38" />
+    <task
+        name="verifier"
+        duration="2" />
+
+    <artifact
+        location="/Users/peter/git/Searcher/app/build/intermediates/reload-dex/baidu/debug/classes.dex"
+        type="RELOAD_DEX" />
+
+    <build timestamp="157797489735416" >
+        <artifact
+            location="/Users/peter/git/Searcher/app/build/outputs/apk/app-baidu-debug.apk"
+            type="MAIN" />
+    </build>
+    <build
+        timestamp="157907656687463"
+        verifier="COMPATIBLE" >
+        <artifact
+            location="/Users/peter/git/Searcher/app/build/intermediates/builds/baidu/debug/157907656687463/classes.dex"
+            type="RELOAD_DEX" />
+    </build>
+    <build
+        timestamp="157964028859265"
+        verifier="COMPATIBLE" >
+        <artifact
+            location="/Users/peter/git/Searcher/app/build/intermediates/reload-dex/baidu/debug/classes.dex"
+            type="RELOAD_DEX" />
+    </build>
+
+</instant-run>

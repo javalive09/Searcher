@@ -1,0 +1,42 @@
+<resources>
+    <string name="search">搜索</string>
+    <string name="app_name">速搜</string>
+    <string name="clear_history"> 清除历史记录</string>
+    <string name="exit_hint_title">&#60;快速退出&#62;</string>
+    <string name="exit_hint_msg">从屏幕右侧边缘向左滑动</string>
+    <string name="web_hint_url">http://unionsug.baidu.com/su/?wd=%s</string>
+    <string name="engine_title">搜索引擎</string>
+    <integer name="default_engine">0</integer>
+    <string name="ok">知道了</string>
+    <string name="setting_title">设置</string>
+    <string name="setting_back">返回</string>
+    <string name="setting_feedback">反馈建议</string>
+    <string name="setting_feedback_body">您的反馈和建议</string>
+    <string name="setting_feedback_address">mailto:javalive09@163.com</string>
+    <string name="setting_update_lasted">已经是最新版本</string>
+    <string name="setting_about">速搜 : 简单畅快的搜索体验</string>
+    <string name="setting_clear">缓存和cookies已经清理</string>
+
+    <string-array name="engine_web_names">
+        <item>百度</item>
+        <item>搜狗</item>
+        <item>360</item>
+        <item>金山</item>
+    </string-array>
+
+    <string-array name="engine_web_urls">
+        <item>http://m.baidu.com/s?word=%s</item>
+        <item>http://wap.sogou.com/web/sl?keyword=%s</item>
+        <item>http://m.haosou.com/s?q=%s</item>
+        <item>http://www.iciba.com/%s</item>
+    </string-array>
+
+    <string-array name="settings_name">
+        <item>@string/engine_title</item>
+        <item>清理缓存</item>
+        <item>@string/setting_feedback</item>
+        <item>版本更新</item>
+        <item>关于速搜</item>
+    </string-array>
+
+</resources>

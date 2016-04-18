@@ -1,0 +1,10 @@
+[
+    {
+        "merged": "/Users/peter/git/Searcher/app/build/intermediates/res/merged/baidu/debug/drawable/item_selector.xml",
+        "source": "/Users/peter/git/Searcher/app/src/main/res/drawable/item_selector.xml"
+    },
+    {
+        "merged": "/Users/peter/git/Searcher/app/build/intermediates/res/merged/baidu/debug/drawable/operate.xml",
+        "source": "/Users/peter/git/Searcher/app/src/main/res/drawable/operate.xml"
+    }
+]

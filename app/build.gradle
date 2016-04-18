@@ -1,0 +1,45 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.2"
+    signingConfigs {
+        release {
+            keyAlias 'peter'
+            keyPassword '53374080'
+            storeFile file('/Users/peter/signature/peter')
+            storePassword '53374080'
+        }
+    }
+    defaultConfig {
+        applicationId "peter.util.fastlook"
+        minSdkVersion 14
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            //指定签名为release
+            signingConfig signingConfigs.release
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    productFlavors {
+        xiaomi {}
+        qihu360 {}
+        baidu {}
+        wandoujia {}
+        tencent {}
+    }
+    productFlavors.all {
+        flavor -> flavor.manifestPlaceholders = [UMENG_CHANNEL_VALUE: name]
+    }
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile 'com.umeng.analytics:analytics:latest.integration'
+}

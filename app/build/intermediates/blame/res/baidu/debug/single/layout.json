@@ -1,0 +1,22 @@
+[
+    {
+        "merged": "/Users/peter/git/Searcher/app/build/intermediates/res/merged/baidu/debug/layout/hint_exit_dialog.xml",
+        "source": "/Users/peter/git/Searcher/app/src/main/res/layout/hint_exit_dialog.xml"
+    },
+    {
+        "merged": "/Users/peter/git/Searcher/app/build/intermediates/res/merged/baidu/debug/layout/setting_layout.xml",
+        "source": "/Users/peter/git/Searcher/app/src/main/res/layout/setting_layout.xml"
+    },
+    {
+        "merged": "/Users/peter/git/Searcher/app/build/intermediates/res/merged/baidu/debug/layout/content_main.xml",
+        "source": "/Users/peter/git/Searcher/app/src/main/res/layout/content_main.xml"
+    },
+    {
+        "merged": "/Users/peter/git/Searcher/app/build/intermediates/res/merged/baidu/debug/layout/history_item.xml",
+        "source": "/Users/peter/git/Searcher/app/src/main/res/layout/history_item.xml"
+    },
+    {
+        "merged": "/Users/peter/git/Searcher/app/build/intermediates/res/merged/baidu/debug/layout/setting_item.xml",
+        "source": "/Users/peter/git/Searcher/app/src/main/res/layout/setting_item.xml"
+    }
+]

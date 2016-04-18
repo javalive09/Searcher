@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger version="3"><dataSet config="main"><source path="/Users/peter/git/Searcher/app/src/main/jniLibs"/></dataSet><dataSet config="baidu"><source path="/Users/peter/git/Searcher/app/src/baidu/jniLibs"/></dataSet><dataSet config="debug"><source path="/Users/peter/git/Searcher/app/src/debug/jniLibs"/></dataSet><dataSet config="baiduDebug"><source path="/Users/peter/git/Searcher/app/src/baiduDebug/jniLibs"/></dataSet></merger>
