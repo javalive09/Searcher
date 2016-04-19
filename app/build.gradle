@@ -28,6 +28,7 @@ android {
         }
     }
     productFlavors {
+        _200code {}
         xiaomi {}
         qihu360 {}
         baidu {}
