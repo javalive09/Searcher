@@ -119,12 +119,16 @@ public class MainActivity extends Activity implements View.OnClickListener {
             @Override
             public void onImeBack(EditTextBackEvent ctrl, String text) {
                 dismissHint();
-                search.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        finish();
+                if(webview != null) {
+                    if(TextUtils.isEmpty(webview.getUrl())) {
+                        search.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                finish();
+                            }
+                        }, 300);
                     }
-                }, 300);
+                }
 
             }
         });
