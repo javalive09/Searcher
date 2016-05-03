@@ -2,7 +2,7 @@
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/setting_item"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/cell_w"
-    android:background="@drawable/item_selector"
+    android:layout_height="@dimen/item_cell"
+    android:background="@drawable/list_item_selector"
     android:textSize="15sp"
     android:gravity="center"/>

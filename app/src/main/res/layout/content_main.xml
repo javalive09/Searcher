@@ -12,35 +12,48 @@
         <RelativeLayout
             android:id="@+id/title"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/white">
-
+            android:background="@color/title_bg"
+            android:layout_height="@dimen/title_h">
             <ImageView
-                android:id="@+id/operate"
-                android:layout_width="@dimen/cell_w"
-                android:layout_height="@dimen/cell_h"
+                android:id="@+id/menu"
+                android:layout_width="@dimen/menu_w"
+                android:layout_height="@dimen/menu_h"
                 android:layout_alignParentRight="true"
-                android:background="@drawable/item_selector"
-                android:contentDescription="@string/search"
-                android:src="@drawable/operate" />
-
-            <EditText
+                android:layout_centerVertical="true"
+                android:background="@drawable/menu_selector"
+                android:src="@drawable/menu" />
+            <peter.util.searcher.EditTextBackEvent
                 android:id="@+id/search"
-                android:drawableLeft="@drawable/search"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/cell_h"
-                android:layout_toLeftOf="@+id/operate"
-                android:gravity="center_vertical"
-                android:hint="@string/search"
+                android:layout_height="match_parent"
+                android:drawableLeft="@drawable/status"
                 android:drawablePadding="@dimen/search_padding"
+                android:background="@drawable/search_bg_"
+                android:gravity="center_vertical"
+                android:layout_toLeftOf="@id/menu"
+                android:textCursorDrawable="@android:color/black"
+                android:hint="@string/search"
                 android:imeOptions="actionSearch"
                 android:singleLine="true" />
+
+            <ImageView
+                android:id="@+id/clear_all"
+                android:layout_width="@dimen/operate_cell"
+                android:layout_height="@dimen/operate_cell"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/menu"
+                android:layout_marginRight="@dimen/search_padding"
+                android:visibility="invisible"
+                android:background="@drawable/clear_selector"
+                android:contentDescription="@string/search"
+                android:src="@drawable/clear" />
         </RelativeLayout>
 
         <WebView
             android:id="@+id/wv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@android:color/darker_gray"
             android:layout_below="@+id/title" />
 
     </RelativeLayout>

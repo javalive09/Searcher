@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="item_press">#f7f7f9</color>
+    <color name="title_bg">#f7f7f9</color>
+    <color name="item_press">#dddddd</color>
+    <color name="menu_press">#dddddd</color>
+    <color name="menu_normal">@color/title_bg</color>
     <color name="item_normal">#ffffff</color>
+    <color name="item_press_">#7fcde9</color>
 
 </resources>

@@ -79,7 +79,7 @@ public class PullView extends ViewGroup {
                     manager.getDefaultDisplay().getMetrics(dm);
                     int bottom = dm.heightPixels;
                     int left = right - mTouchSlop;
-                    int top = getResources().getDimensionPixelSize(R.dimen.cell_h);
+                    int top = getResources().getDimensionPixelSize(R.dimen.item_cell);
                     validRct = new Rect(left, top, right, bottom);
                 }
                 break;

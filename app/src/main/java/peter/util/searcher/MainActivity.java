@@ -1,11 +1,8 @@
 package peter.util.searcher;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LevelListDrawable;
@@ -19,8 +16,10 @@ import android.os.MessageQueue;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
@@ -31,17 +30,17 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.BaseAdapter;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListPopupWindow;
+import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.umeng.analytics.MobclickAgent;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.InvocationTargetException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -56,17 +55,16 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     private int currentWebEngine;
 
-    //0-searcher; 1-operate_bg; 2-loading;
-    private static final int SETTING = 0;
-    private static final int CLEAR = 1;
-    private static final int LOADING = 2;
+    private static final int STATUS_SEARCH = 0;
+    private static final int STATUS_LOADING = 1;
 
     private static final int HINT_ACTIVITY = 1;
     private static final int SETTING_ACTIVITY = 2;
 
     private WebView webview;
-    private EditText search;
-    private ImageView operate;
+    private EditTextBackEvent search;
+    private ImageView clearAll;
+    private ImageView menu;
     private HintAdapter adapter;
 
     private ListPopupWindow hintList;
@@ -94,12 +92,19 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 .getInt("engine", getResources().getInteger(R.integer.default_engine));
         webview = (WebView) findViewById(R.id.wv);
         frame = (PullView) findViewById(R.id.frame);
+        menu = (ImageView) findViewById(R.id.menu);
         if (Build.VERSION.SDK_INT < 21) {
             webview.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         }
-        search = (EditText) findViewById(R.id.search);
+        search = (EditTextBackEvent) findViewById(R.id.search);
         search.setOnClickListener(this);
-        operate = ((ImageView) findViewById(R.id.operate));
+        clearAll = ((ImageView) findViewById(R.id.clear_all));
+        String content = search.getText().toString();
+        if(TextUtils.isEmpty(content)) {
+            clearAll.setVisibility(View.INVISIBLE);
+        }else {
+            clearAll.setVisibility(View.VISIBLE);
+        }
         search.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -110,7 +115,32 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 return false;
             }
         });
+        search.setOnEditTextImeBackListener(new EditTextBackEvent.EditTextImeBackListener() {
+            @Override
+            public void onImeBack(EditTextBackEvent ctrl, String text) {
+                dismissHint();
+                search.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        finish();
+                    }
+                }, 300);
 
+            }
+        });
+        search.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                Log.i("peter", "" + v + " ;hasFocus=" +hasFocus);
+                if(hasFocus) {
+                    if(!isFinishing()) {
+                        showHintList();
+                    }
+                }else {
+                    dismissHint();
+                }
+            }
+        });
         search.addTextChangedListener(new TextWatcher() {
             String temp;
 
@@ -127,10 +157,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
             public void afterTextChanged(Editable s) {
                 String content = s.toString();
                 if (TextUtils.isEmpty(content)) {
-                    setOperateLevel(SETTING);
+                    clearAll.setVisibility(View.INVISIBLE);
                     getDataFromDB();
                 } else if (!content.equals(temp)) {
-                    setOperateLevel(CLEAR);
+                    clearAll.setVisibility(View.VISIBLE);
                     if (showHint) {
                         String path = String.format(webHintUrl, getEncodeString(content));
                         getDataFromWeb(path);
@@ -140,7 +170,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 }
             }
         });
-        operate.setOnClickListener(this);
+        clearAll.setOnClickListener(this);
+        menu.setOnClickListener(this);
         webview.getSettings().setJavaScriptEnabled(true);
         webview.getSettings().setDomStorageEnabled(true);
         webview.setWebChromeClient(new WebChromeClient() {
@@ -155,12 +186,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                setOperateLevel(LOADING);
+                setStatusLevel(STATUS_LOADING);
             }
 
             @Override
             public void onPageFinished(WebView view, String url) {
-                setOperateLevel(CLEAR);
+                setStatusLevel(STATUS_SEARCH);
                 showExitHint();
             }
 
@@ -195,31 +226,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }
     }
 
-    public void onPause() {
-        super.onPause();
-        MobclickAgent.onPause(this);
-        if(webview != null) {
-            webview.onPause();
-        }
-    }
-
-    private void showEngineDialog() {
-        new AlertDialog.Builder(MainActivity.this)
-                .setTitle(R.string.engine_title)
-                .setSingleChoiceItems(R.array.engine_web_names, currentWebEngine, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        if(whichButton != currentWebEngine) {
-                            currentWebEngine = whichButton;
-                            getSharedPreferences("setting", MODE_PRIVATE).edit().putInt("engine", currentWebEngine).commit();
-                            Intent intent = new Intent();
-                            intent.putExtra("currentWebEngine", currentWebEngine);
-                            setResult(RESULT_OK, intent);
-                        }
-                        dialog.dismiss();
-                    }
-                }).create().show();
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -248,9 +254,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if ((keyCode == KeyEvent.KEYCODE_BACK)) {
-            if(hintList!= null && hintList.isShowing()) {
-                hintList.dismiss();
-            }
+            dismissHint();
             if (webview != null && webview.canGoBack()) {
                 webview.goBack();
                 return true;
@@ -266,11 +270,15 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        if (hintList != null && hintList.isShowing()) {
+    private void dismissHint() {
+        if(hintList!= null && hintList.isShowing()) {
             hintList.dismiss();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        Log.i("peter", "onDestroy");
         ViewGroup root = (ViewGroup) findViewById(R.id.root);
         root.removeView(webview);
         webview.removeAllViews();
@@ -451,15 +459,15 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }
     }
 
-    private void setOperateLevel(int level) {
-        LevelListDrawable drawable = (LevelListDrawable) operate.getDrawable();
+    private void setStatusLevel(int level) {
+        LevelListDrawable drawable = (LevelListDrawable) search.getCompoundDrawables()[0];
         drawable.setLevel(level);
     }
 
     private void doSearch() {
         String word = search.getText().toString().trim();
         if (!TextUtils.isEmpty(word)) {
-            setOperateLevel(LOADING);
+            setStatusLevel(STATUS_LOADING);
             String url = getEngineUrl(word);
             if (!TextUtils.isEmpty(url)) {
                 webview.loadUrl(url);
@@ -478,6 +486,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
     }
 
     private String getEngineUrl(String word) {
+        if(word.startsWith("http:")
+                || word.startsWith("https:")) {
+            return word;
+        }
         return String.format(webEngineUrls[currentWebEngine], getEncodeString(word));
     }
 
@@ -498,24 +510,11 @@ public class MainActivity extends Activity implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.operate:
-                LevelListDrawable drawable = (LevelListDrawable) operate.getDrawable();
-                switch (drawable.getLevel()) {
-                    case SETTING:
-                        closeBoard();
-                        Intent intent = new Intent(MainActivity.this, SettingActivity.class);
-                        intent.putExtra("currentWebEngine", currentWebEngine);
-                        startActivityForResult(intent, SETTING_ACTIVITY);
-                        break;
-                    case CLEAR:
-                        search.setText("");
-                        setOperateLevel(SETTING);
-                        search.requestFocus();
-                        openBoard();
-                        break;
-                    case LOADING:
-                        break;
-                }
+            case R.id.clear_all:
+                 search.setText("");
+                 setStatusLevel(STATUS_SEARCH);
+                 search.requestFocus();
+                 openBoard();
                 break;
             case R.id.hint_item:
                 Search s = (Search) v.getTag();
@@ -532,8 +531,59 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 }
                 break;
             case R.id.search:
+                showHintList();
+                break;
+            case R.id.menu:
+                popupMenu(v);
                 break;
         }
+    }
+
+    private void popupMenu(View menu) {
+        PopupMenu popup = new PopupMenu(this, menu);
+        popup.getMenuInflater().inflate(R.menu.main, popup.getMenu());
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.action_share:
+                        if(webview != null) {
+                            String url = webview.getUrl();
+                            if(!TextUtils.isEmpty(url)) {
+                                Intent sendIntent = new Intent();
+                                sendIntent.setAction(Intent.ACTION_SEND);
+                                sendIntent.putExtra(Intent.EXTRA_TEXT, url);
+                                sendIntent.setType("text/plain");
+                                startActivity(Intent.createChooser(sendIntent, "分享链接"));
+                            }else {
+                                Toast.makeText(MainActivity.this, "当前url为空", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                        break;
+                    case R.id.action_setting:
+                        closeBoard();
+                        Intent intent = new Intent(MainActivity.this, SettingActivity.class);
+                        intent.putExtra("currentWebEngine", currentWebEngine);
+                        startActivityForResult(intent, SETTING_ACTIVITY);
+                        break;
+                    case R.id.action_browser:
+                        if(webview != null) {
+                            String url = webview.getUrl();
+                            if(!TextUtils.isEmpty(url)) {
+                                Uri uri = Uri.parse(url);
+                                Intent browserIntent = new Intent(Intent.ACTION_VIEW,uri);
+                                startActivity(browserIntent);
+                            }else {
+                                Toast.makeText(MainActivity.this, "当前url为空", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        break;
+                }
+
+                return true;
+            }
+        });
+        popup.show();
     }
 
     private void clearHistory() {
@@ -548,6 +598,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
             protected void onPostExecute(Void aVoid) {
                 super.onPostExecute(aVoid);
                 hintList.dismiss();
+                adapter.updateData(new ArrayList<Search>(1));
             }
         }.execute();
     }
