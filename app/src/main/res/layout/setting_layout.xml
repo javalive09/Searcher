@@ -22,13 +22,14 @@
         <TextView
             android:id="@+id/back"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_centerVertical="true"
             android:drawableLeft="@drawable/back"
             android:textColor="@android:color/white"
             android:paddingLeft="@dimen/search_padding"
             android:textSize="15sp"
             android:drawablePadding="@dimen/search_padding"
+            android:background="@drawable/back_selector"
             android:gravity="center"
             android:text="@string/setting_back" />
     </RelativeLayout>
