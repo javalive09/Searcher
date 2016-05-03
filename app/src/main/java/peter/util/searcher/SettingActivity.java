@@ -74,7 +74,7 @@ public class SettingActivity extends Activity {
                         sendMailByIntent();
                         break;
                     case 3://update
-                        checkVersion("http://7xoxmg.com1.z0.glb.clouddn.com/searcher_update_info");
+                        checkVersion("https://github.com/javalive09/Searcher/raw/master/searcher_update_info");
                         break;
                     case 4://about
                         Toast.makeText(SettingActivity.this, R.string.setting_about, Toast.LENGTH_LONG).show();
