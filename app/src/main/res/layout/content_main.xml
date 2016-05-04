@@ -34,7 +34,7 @@
                 android:drawablePadding="@dimen/search_padding"
                 android:gravity="center_vertical"
                 android:hint="@string/search"
-                android:textCursorDrawable="@drawable/text_cursor_holo_light"
+                android:textCursorDrawable="@drawable/cursor"
                 android:imeOptions="actionSearch"
                 android:singleLine="true" />
 
