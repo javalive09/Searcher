@@ -1,7 +1,10 @@
 package peter.util.searcher;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
@@ -50,14 +53,11 @@ import java.util.List;
 public class MainActivity extends Activity implements View.OnClickListener {
 
     private String webHintUrl;
-
     private String[] webEngineUrls;
-
     private int currentWebEngine;
 
     private static final int STATUS_SEARCH = 0;
     private static final int STATUS_LOADING = 1;
-
     private static final int HINT_ACTIVITY = 1;
     private static final int SETTING_ACTIVITY = 2;
 
@@ -80,10 +80,47 @@ public class MainActivity extends Activity implements View.OnClickListener {
             @Override
             public boolean queueIdle() {
                 init();
+                UpdateController.instance(getApplicationContext()).autoCheckVersion(dialogProvider);
                 return false;
             }
         });
     }
+
+    private DialogProvider dialogProvider = new DialogProvider() {
+        @Override
+        public ProgressDialog initProgress() {
+            ProgressDialog mUpdateProgressDialog = new ProgressDialog(MainActivity.this);
+            mUpdateProgressDialog.setIconAttribute(android.R.attr.alertDialogIcon);
+            mUpdateProgressDialog.setTitle(R.string.update_dialog_title);
+            mUpdateProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+            mUpdateProgressDialog.setMax(UpdateController.MAX_PROGRESS);
+            mUpdateProgressDialog.setButton(DialogInterface.BUTTON_NEGATIVE,
+                    getText(R.string.update_dialog_cancel), new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+
+                        }
+                    });
+            return mUpdateProgressDialog;
+        }
+
+        @Override
+        public AlertDialog initAlert(final String url) {
+            AlertDialog updateDialog = new AlertDialog.Builder(MainActivity.this)
+                    .setIconAttribute(android.R.attr.alertDialogIcon)
+                    .setTitle(R.string.update_dialog_title_one)
+                    .setPositiveButton(R.string.update_dialog_ok, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            UpdateController.instance(getApplicationContext()).doDownloadApk(url, dialogProvider);
+                        }
+                    })
+                    .setNegativeButton(R.string.update_dialog_cancel, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+
+                        }
+                    }).create();
+            return updateDialog;
+        }
+    };
 
     private void init() {
         webEngineUrls = getResources().getStringArray(R.array.engine_web_urls);
@@ -100,9 +137,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
         search.setOnClickListener(this);
         clearAll = ((ImageView) findViewById(R.id.clear_all));
         String content = search.getText().toString();
-        if(TextUtils.isEmpty(content)) {
+        if (TextUtils.isEmpty(content)) {
             clearAll.setVisibility(View.INVISIBLE);
-        }else {
+        } else {
             clearAll.setVisibility(View.VISIBLE);
         }
         search.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -119,8 +156,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
             @Override
             public void onImeBack(EditTextBackEvent ctrl, String text) {
                 dismissHint();
-                if(webview != null) {
-                    if(TextUtils.isEmpty(webview.getUrl())) {
+                if (webview != null) {
+                    if (TextUtils.isEmpty(webview.getUrl())) {
                         search.postDelayed(new Runnable() {
                             @Override
                             public void run() {
@@ -135,12 +172,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
         search.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                Log.i("peter", "" + v + " ;hasFocus=" +hasFocus);
-                if(hasFocus) {
-                    if(!isFinishing()) {
+                Log.i("peter", "" + v + " ;hasFocus=" + hasFocus);
+                if (hasFocus) {
+                    if (!isFinishing()) {
                         showHintList();
                     }
-                }else {
+                } else {
                     dismissHint();
                 }
             }
@@ -225,7 +262,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     public void onResume() {
         super.onResume();
         MobclickAgent.onResume(this);
-        if(webview != null) {
+        if (webview != null) {
             webview.onResume();
         }
     }
@@ -235,12 +272,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case HINT_ACTIVITY:
-                if(resultCode == RESULT_OK) {
+                if (resultCode == RESULT_OK) {
                     frame.resetPlayExit();
                 }
                 break;
             case SETTING_ACTIVITY:
-                if(resultCode == RESULT_OK) {
+                if (resultCode == RESULT_OK) {
                     currentWebEngine = data.getIntExtra("currentWebEngine", 0);
                 }
                 break;
@@ -275,7 +312,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     }
 
     private void dismissHint() {
-        if(hintList!= null && hintList.isShowing()) {
+        if (hintList != null && hintList.isShowing()) {
             hintList.dismiss();
         }
     }
@@ -283,6 +320,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     @Override
     protected void onDestroy() {
         Log.i("peter", "onDestroy");
+        dialogProvider.end();
         ViewGroup root = (ViewGroup) findViewById(R.id.root);
         root.removeView(webview);
         webview.removeAllViews();
@@ -315,7 +353,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                         searches.add(delete);
                         adapter.updateData(searches);
                         showHintList();
-                    } else if(hintList != null){
+                    } else if (hintList != null) {
                         if (hintList.isShowing()) {
                             hintList.dismiss();
                         }
@@ -438,10 +476,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
         public View getView(int position, View convertView, ViewGroup parent) {
             TextView view;
 
-            if(convertView == null) {
+            if (convertView == null) {
                 view = (TextView) factory.inflate(R.layout.history_item, parent, false);
-            }else {
-                view = (TextView)convertView;
+            } else {
+                view = (TextView) convertView;
             }
 
             Search search = getItem(position);
@@ -450,7 +488,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 Drawable drawable = getResources().getDrawable(R.drawable.search_clear);
                 drawable.setBounds(0, 0, drawable.getMinimumWidth(), drawable.getMinimumHeight());
                 view.setCompoundDrawables(drawable, null, null, null);
-            }else {
+            } else {
                 Drawable drawable = getResources().getDrawable(R.drawable.search_small);
                 drawable.setBounds(0, 0, drawable.getMinimumWidth(), drawable.getMinimumHeight());
                 view.setCompoundDrawables(drawable, null, null, null);
@@ -461,6 +499,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
             view.setTag(search);
             return view;
         }
+
     }
 
     private void setStatusLevel(int level) {
@@ -490,7 +529,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     }
 
     private String getEngineUrl(String word) {
-        if(word.startsWith("http:")
+        if (word.startsWith("http:")
                 || word.startsWith("https:")) {
             return word;
         }
@@ -515,10 +554,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.clear_all:
-                 search.setText("");
-                 setStatusLevel(STATUS_SEARCH);
-                 search.requestFocus();
-                 openBoard();
+                search.setText("");
+                setStatusLevel(STATUS_SEARCH);
+                search.requestFocus();
+                openBoard();
                 break;
             case R.id.hint_item:
                 Search s = (Search) v.getTag();
@@ -550,15 +589,15 @@ public class MainActivity extends Activity implements View.OnClickListener {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.action_share:
-                        if(webview != null) {
+                        if (webview != null) {
                             String url = webview.getUrl();
-                            if(!TextUtils.isEmpty(url)) {
+                            if (!TextUtils.isEmpty(url)) {
                                 Intent sendIntent = new Intent();
                                 sendIntent.setAction(Intent.ACTION_SEND);
                                 sendIntent.putExtra(Intent.EXTRA_TEXT, url);
                                 sendIntent.setType("text/plain");
                                 startActivity(Intent.createChooser(sendIntent, "分享链接"));
-                            }else {
+                            } else {
                                 Toast.makeText(MainActivity.this, "当前url为空", Toast.LENGTH_SHORT).show();
                             }
                         }
@@ -570,13 +609,13 @@ public class MainActivity extends Activity implements View.OnClickListener {
                         startActivityForResult(intent, SETTING_ACTIVITY);
                         break;
                     case R.id.action_browser:
-                        if(webview != null) {
+                        if (webview != null) {
                             String url = webview.getUrl();
-                            if(!TextUtils.isEmpty(url)) {
+                            if (!TextUtils.isEmpty(url)) {
                                 Uri uri = Uri.parse(url);
-                                Intent browserIntent = new Intent(Intent.ACTION_VIEW,uri);
+                                Intent browserIntent = new Intent(Intent.ACTION_VIEW, uri);
                                 startActivity(browserIntent);
-                            }else {
+                            } else {
                                 Toast.makeText(MainActivity.this, "当前url为空", Toast.LENGTH_SHORT).show();
                             }
                         }
