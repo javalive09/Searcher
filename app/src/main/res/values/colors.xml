@@ -2,6 +2,7 @@
 <resources>
     <color name="title_bg">#f7f7f9</color>
     <color name="item_press">#dddddd</color>
+    <color name="back_press">#51b0e4</color>
     <color name="menu_press">#dddddd</color>
     <color name="menu_normal">@color/title_bg</color>
     <color name="item_normal">#ffffff</color>

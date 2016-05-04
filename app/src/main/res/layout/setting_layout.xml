@@ -29,6 +29,7 @@
             android:paddingLeft="@dimen/search_padding"
             android:textSize="15sp"
             android:drawablePadding="@dimen/search_padding"
+            android:paddingRight="@dimen/search_padding"
             android:background="@drawable/back_selector"
             android:gravity="center"
             android:text="@string/setting_back" />
