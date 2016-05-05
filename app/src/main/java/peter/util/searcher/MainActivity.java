@@ -257,7 +257,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     private void showExitHint() {
         if (!frame.played) {
-            startActivityForResult(new Intent(MainActivity.this, HintActivity.class), HINT_ACTIVITY);
+            startActivityForResult(new Intent(MainActivity.this, GuideActivity.class), HINT_ACTIVITY);
             frame.startPlayExit();
         }
     }

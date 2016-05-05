@@ -34,7 +34,7 @@
         <activity
             android:autoRemoveFromRecents="true"
             android:screenOrientation="portrait"
-            android:name=".HintActivity"/>
+            android:name=".GuideActivity"/>
         <activity
             android:autoRemoveFromRecents="true"
             android:screenOrientation="portrait"

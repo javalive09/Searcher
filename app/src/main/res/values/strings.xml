@@ -7,7 +7,7 @@
     <string name="web_hint_url">http://unionsug.baidu.com/su/?wd=%s</string>
     <string name="engine_title">搜索引擎</string>
     <integer name="default_engine">0</integer>
-    <string name="ok">确定>>>>></string>
+    <string name="ok"><u>确定</u></string>
     <string name="setting_title">设置</string>
     <string name="setting_back">返回</string>
     <string name="setting_feedback">反馈建议</string>

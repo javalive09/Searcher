@@ -9,14 +9,14 @@ import android.view.View;
 
 import com.umeng.analytics.MobclickAgent;
 
-public class HintActivity extends Activity {
+public class GuideActivity extends Activity {
 
     private ObjectAnimator handAnimator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.hint_exit_dialog);
+        setContentView(R.layout.guide_dialog);
 
         setResult(RESULT_OK);
         View hand = findViewById(R.id.hand);
