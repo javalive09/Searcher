@@ -2,21 +2,18 @@ package peter.util.searcher;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 import android.widget.AdapterView;
@@ -27,21 +24,13 @@ import android.widget.Toast;
 
 import com.umeng.analytics.MobclickAgent;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.Date;
 
 public class SettingActivity extends Activity {
 
     int currentWebEngine;
+    AsynWindowHandler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +44,7 @@ public class SettingActivity extends Activity {
         });
         TextView version = (TextView) findViewById(R.id.version);
         version.setText(getVersionName());
+        handler = new AsynWindowHandler(this);
         ListView settings = (ListView) findViewById(R.id.setting_list);
         settings.setAdapter(new ArrayAdapter<>(this, R.layout.setting_item, getResources().getStringArray(R.array.settings_name)));
         settings.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -73,7 +63,7 @@ public class SettingActivity extends Activity {
                         sendMailByIntent();
                         break;
                     case 3://update
-                        UpdateController.instance(getApplicationContext()).checkVersion(dialogProvider, true);
+                        UpdateController.instance(getApplicationContext()).checkVersion(handler, true);
                         break;
                     case 4://about
                         Toast.makeText(SettingActivity.this, R.string.setting_about, Toast.LENGTH_LONG).show();
@@ -87,43 +77,6 @@ public class SettingActivity extends Activity {
         }
     }
 
-
-    private DialogProvider dialogProvider = new DialogProvider() {
-        @Override
-        public ProgressDialog initProgress() {
-            ProgressDialog mUpdateProgressDialog = new ProgressDialog(SettingActivity.this);
-            mUpdateProgressDialog.setIconAttribute(android.R.attr.alertDialogIcon);
-            mUpdateProgressDialog.setTitle(R.string.update_dialog_title);
-            mUpdateProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-            mUpdateProgressDialog.setMax(UpdateController.MAX_PROGRESS);
-            mUpdateProgressDialog.setButton(DialogInterface.BUTTON_NEGATIVE,
-                    getText(R.string.update_dialog_cancel), new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-
-                        }
-                    });
-            return mUpdateProgressDialog;
-        }
-
-        @Override
-        public AlertDialog initAlert(final String url) {
-            AlertDialog updateDialog = new AlertDialog.Builder(SettingActivity.this)
-                    .setIconAttribute(android.R.attr.alertDialogIcon)
-                    .setTitle(R.string.update_dialog_title_one)
-                    .setPositiveButton(R.string.update_dialog_ok, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                            UpdateController.instance(getApplicationContext()).doDownloadApk(url, dialogProvider);
-                        }
-                    })
-                    .setNegativeButton(R.string.update_dialog_cancel, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-
-                        }
-                    }).create();
-            return updateDialog;
-        }
-    };
-
     public void onResume() {
         super.onResume();
         MobclickAgent.onResume(this);
@@ -136,9 +89,9 @@ public class SettingActivity extends Activity {
 
     @Override
     protected void onDestroy() {
+        handler.sendEmptyMessage(AsynWindowHandler.DESTROY);
         super.onDestroy();
         Log.i("peter", "onDestroy");
-        dialogProvider.end();
     }
 
     private void showEngineDialog() {

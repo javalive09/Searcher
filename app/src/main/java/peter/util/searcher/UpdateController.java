@@ -1,13 +1,12 @@
 package peter.util.searcher;
 
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Message;
 import android.text.TextUtils;
 import android.widget.Toast;
 
@@ -54,11 +53,7 @@ public class UpdateController {
         }
     }
 
-    protected synchronized void checkVersion(final DialogProvider provider, final Boolean showToast) {
-        if(provider.isEnd()) {
-           return;
-        }
-
+    protected synchronized void checkVersion(final AsynWindowHandler handler, final Boolean showToast) {
         if (isChecking) {
             return;
         }
@@ -81,9 +76,6 @@ public class UpdateController {
             @Override
             protected void onPostExecute(String result) {
                 super.onPostExecute(result);
-                if(provider.isEnd()) {
-                    return;
-                }
                 isChecking = false;
                 if (!TextUtils.isEmpty(result) && result.contains(";")) {
                     String[] results = result.split(";");
@@ -92,10 +84,10 @@ public class UpdateController {
                     if (currentVersion < version) {
                         String url = results[1].trim();
                         if (!TextUtils.isEmpty(url)) {
-                            AlertDialog dialog = provider.getAlertDialog(url);
-                            if(dialog != null) {
-                                dialog.show();
-                            }
+                            Message msg = Message.obtain();
+                            msg.what = AsynWindowHandler.SHOW_NEW_UPDATE_DIALOG;
+                            msg.obj = url;
+                            handler.sendMessage(msg);
                         }
                     } else {
                         if (showToast) {
@@ -107,13 +99,9 @@ public class UpdateController {
         }.execute();
     }
 
-    public void doDownloadApk(final String apkUrl, final DialogProvider provider) {
+    public void doDownloadApk(final String apkUrl, final AsynWindowHandler handler) {
 
-        if(provider.isEnd()) {
-            return;
-        }
-        provider.getProgressDialog().show();
-
+        handler.sendEmptyMessage(AsynWindowHandler.SHOW_UPDATE_PROGRESS);
         new AsyncTask<Void, Integer, String>() {
 
             int count;
@@ -132,7 +120,7 @@ public class UpdateController {
                     byte[] buffer = new byte[1024];
                     int len;
                     while (!finished) {
-                        while ((len = is.read(buffer)) > 0 && !provider.isEnd()) {
+                        while ((len = is.read(buffer)) > 0) {
                             current += len;
                             os.write(buffer, 0, len);
                             progress = current * 100 / count;
@@ -154,22 +142,22 @@ public class UpdateController {
             @Override
             protected void onProgressUpdate(Integer... values) {
                 super.onProgressUpdate(values);
-                ProgressDialog progressDialog = provider.getProgressDialog();
-                if(progressDialog!= null && progressDialog.isShowing()) {
-                    progressDialog.setProgress(values[0]);
-                }else {
-                    cancel(true);
-                }
+
+                Message msg = Message.obtain();
+                msg.what = AsynWindowHandler.INCREASE_UPDATE_PROGRESS;
+                msg.arg1 = values[0];
+                handler.sendMessage(msg);
             }
 
             @Override
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
                 if (progress >= MAX_PROGRESS) {
-                    provider.getProgressDialog().dismiss();
+                    Message msg = Message.obtain();
+                    msg.what = AsynWindowHandler.DISMISS_UPDATE_PROGRESS;
+                    handler.sendMessage(msg);
                     installApk(new File(mContext.getExternalFilesDir(null), APK_NAME).getAbsolutePath());
                 }
-
             }
         }.execute();
 
@@ -238,7 +226,7 @@ public class UpdateController {
         }
     }
 
-    protected void autoCheckVersion(final DialogProvider dialogProvider) {
+    protected void autoCheckVersion(final AsynWindowHandler handler) {
         if (isAutoChecking) {
             return;
         }
@@ -247,23 +235,20 @@ public class UpdateController {
 
             @Override
             protected Void doInBackground(Void... params) {
-                if(dialogProvider.isEnd()) {
-                    return null;
-                }
-                isTimeToCheckUpdate(dialogProvider);
+                isTimeToCheckUpdate(handler);
                 return null;
             }
         }.execute();
     }
 
-    private void isTimeToCheckUpdate(DialogProvider dialogProvider) {
+    private void isTimeToCheckUpdate(AsynWindowHandler handler) {
         long time = getUpdateTime();
         if (time == 0) {
-            checkVersion(dialogProvider, false);
+            checkVersion(handler, false);
         } else {
             long delta = System.currentTimeMillis() - time;
             if (delta > 1000 * 60 * 60 * 24) {//24h
-                checkVersion(dialogProvider, false);
+                checkVersion(handler, false);
             }
         }
     }

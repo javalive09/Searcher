@@ -1,13 +1,9 @@
 package peter.util.searcher;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LevelListDrawable;
 import android.net.Uri;
 import android.net.http.SslError;
@@ -15,13 +11,13 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
+import android.os.Message;
 import android.os.MessageQueue;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,9 +28,7 @@ import android.webkit.SslErrorHandler;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.ListPopupWindow;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -65,11 +59,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private EditTextBackEvent search;
     private ImageView clearAll;
     private ImageView menu;
-    private HintAdapter adapter;
 
-    private ListPopupWindow hintList;
     private boolean showHint = true;
     private PullView frame;
+    private AsynWindowHandler windowHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,49 +73,14 @@ public class MainActivity extends Activity implements View.OnClickListener {
             @Override
             public boolean queueIdle() {
                 init();
-                UpdateController.instance(getApplicationContext()).autoCheckVersion(dialogProvider);
+                UpdateController.instance(getApplicationContext()).autoCheckVersion(windowHandler);
                 return false;
             }
         });
     }
 
-    private DialogProvider dialogProvider = new DialogProvider() {
-        @Override
-        public ProgressDialog initProgress() {
-            ProgressDialog mUpdateProgressDialog = new ProgressDialog(MainActivity.this);
-            mUpdateProgressDialog.setIconAttribute(android.R.attr.alertDialogIcon);
-            mUpdateProgressDialog.setTitle(R.string.update_dialog_title);
-            mUpdateProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-            mUpdateProgressDialog.setMax(UpdateController.MAX_PROGRESS);
-            mUpdateProgressDialog.setButton(DialogInterface.BUTTON_NEGATIVE,
-                    getText(R.string.update_dialog_cancel), new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-
-                        }
-                    });
-            return mUpdateProgressDialog;
-        }
-
-        @Override
-        public AlertDialog initAlert(final String url) {
-            AlertDialog updateDialog = new AlertDialog.Builder(MainActivity.this)
-                    .setIconAttribute(android.R.attr.alertDialogIcon)
-                    .setTitle(R.string.update_dialog_title_one)
-                    .setPositiveButton(R.string.update_dialog_ok, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                            UpdateController.instance(getApplicationContext()).doDownloadApk(url, dialogProvider);
-                        }
-                    })
-                    .setNegativeButton(R.string.update_dialog_cancel, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-
-                        }
-                    }).create();
-            return updateDialog;
-        }
-    };
-
     private void init() {
+        windowHandler = new AsynWindowHandler(this);
         webEngineUrls = getResources().getStringArray(R.array.engine_web_urls);
         webHintUrl = getString(R.string.web_hint_url);
         currentWebEngine = getSharedPreferences("setting", MODE_PRIVATE)
@@ -249,13 +207,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
             }
         });
 
-        adapter = new HintAdapter(new ArrayList<Search>(1));
-        hintList = new ListPopupWindow(this);
-        hintList.setAdapter(adapter);
-        hintList.setAnchorView(search);
-        hintList.setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
-        hintList.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
-        hintList.setModal(false);
         getDataFromDB();
     }
 
@@ -311,16 +262,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }
     }
 
-    private void dismissHint() {
-        if (hintList != null && hintList.isShowing()) {
-            hintList.dismiss();
-        }
-    }
-
     @Override
     protected void onDestroy() {
         Log.i("peter", "onDestroy");
-        dialogProvider.end();
+        windowHandler.sendEmptyMessage(AsynWindowHandler.DESTROY);
         ViewGroup root = (ViewGroup) findViewById(R.id.root);
         root.removeView(webview);
         webview.removeAllViews();
@@ -351,12 +296,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
                         Search delete = new Search();
                         delete.name = getString(R.string.clear_history);
                         searches.add(delete);
-                        adapter.updateData(searches);
-                        showHintList();
-                    } else if (hintList != null) {
-                        if (hintList.isShowing()) {
-                            hintList.dismiss();
-                        }
+                        updateHintList(searches);
+                    } else {
+                        dismissHint();
                     }
                 }
 
@@ -364,10 +306,25 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }.execute();
     }
 
+    private void updateHintList(List<Search> searches) {
+        showHintList();
+        Message msg = Message.obtain();
+        msg.what = AsynWindowHandler.UPDATE_HINT_LIST_DATA;
+        msg.obj = searches;
+        windowHandler.sendMessage(msg);
+    }
+
     private void showHintList() {
-        if (hintList != null && !hintList.isShowing()) {
-            hintList.show();
-        }
+        Message msg = Message.obtain();
+        msg.what = AsynWindowHandler.SHOW_HINT_LIST;
+        msg.obj =search;
+        windowHandler.sendMessage(msg);
+    }
+
+    private void dismissHint() {
+        Message msg = Message.obtain();
+        msg.what = AsynWindowHandler.DISMISS_HINT_LIST;
+        windowHandler.sendMessage(msg);
     }
 
     private byte[] readStream(InputStream inStream) throws Exception {
@@ -429,77 +386,14 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 super.onPostExecute(searches);
                 if (searches != null) {
                     if (searches.size() > 0) {
-                        adapter.updateData(searches);
-                        showHintList();
+                        updateHintList(searches);
                     } else {
-                        if (hintList.isShowing()) {
-                            hintList.dismiss();
-                        }
+                        dismissHint();
                     }
                 }
 
             }
         }.execute();
-    }
-
-    private class HintAdapter extends BaseAdapter {
-
-        private final LayoutInflater factory;
-        private List<Search> list;
-
-        public HintAdapter(List<Search> objects) {
-            factory = LayoutInflater.from(MainActivity.this);
-            list = objects;
-        }
-
-        @Override
-        public int getCount() {
-            return list.size();
-        }
-
-        @Override
-        public Search getItem(int position) {
-            return list.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        public void updateData(List<Search> objects) {
-            list = objects;
-            notifyDataSetChanged();
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            TextView view;
-
-            if (convertView == null) {
-                view = (TextView) factory.inflate(R.layout.history_item, parent, false);
-            } else {
-                view = (TextView) convertView;
-            }
-
-            Search search = getItem(position);
-
-            if (search.name.equals(getString(R.string.clear_history))) {
-                Drawable drawable = getResources().getDrawable(R.drawable.search_clear);
-                drawable.setBounds(0, 0, drawable.getMinimumWidth(), drawable.getMinimumHeight());
-                view.setCompoundDrawables(drawable, null, null, null);
-            } else {
-                Drawable drawable = getResources().getDrawable(R.drawable.search_small);
-                drawable.setBounds(0, 0, drawable.getMinimumWidth(), drawable.getMinimumHeight());
-                view.setCompoundDrawables(drawable, null, null, null);
-            }
-
-            view.setText(search.name);
-            view.setOnClickListener(MainActivity.this);
-            view.setTag(search);
-            return view;
-        }
-
     }
 
     private void setStatusLevel(int level) {
@@ -520,9 +414,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 inputMethodManager.hideSoftInputFromWindow(search.getWindowToken(), 0);
 
                 //hide hintList
-                if (hintList.isShowing()) {
-                    hintList.dismiss();
-                }
+                dismissHint();
                 saveData(word);
             }
         }
@@ -640,8 +532,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
             @Override
             protected void onPostExecute(Void aVoid) {
                 super.onPostExecute(aVoid);
-                hintList.dismiss();
-                adapter.updateData(new ArrayList<Search>(1));
+                updateHintList(new ArrayList<Search>(1));
+                dismissHint();
             }
         }.execute();
     }
