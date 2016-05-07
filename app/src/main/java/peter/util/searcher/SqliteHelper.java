@@ -13,7 +13,7 @@ public class SqliteHelper extends SQLiteOpenHelper {
     private static final String DB_NAME = "search.db";
     private static final int version = 1;
     private static SqliteHelper helper;
-    private static final int LIMIT = 5;
+    private static final int LIMIT = 6;
 
     private SqliteHelper(Context context) {
         super(context, DB_NAME, null, version);
@@ -39,10 +39,13 @@ public class SqliteHelper extends SQLiteOpenHelper {
     public synchronized void insert(Search search) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put("time", search.time);
-        values.put("name", search.name);
-        values.put("show", 1);
-        db.insert("search", null, values);
+        Cursor cursor = db.rawQuery("select * from search where name=?", new String[] { search.name });
+        if(cursor == null || (cursor != null && cursor.getCount() == 0)) {
+            values.put("time", search.time);
+            values.put("name", search.name);
+            values.put("show", 1);
+            db.insert("search", null, values);
+        }
     }
 
     public synchronized void trimData() {

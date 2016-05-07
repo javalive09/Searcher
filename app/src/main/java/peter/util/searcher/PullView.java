@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
@@ -38,7 +39,7 @@ public class PullView extends ViewGroup {
 
     private void init() {
         mScroller = new Scroller(getContext(), new BakedBezierInterpolator());
-        mTouchSlop = ViewConfiguration.get(getContext()).getScaledTouchSlop();
+        mTouchSlop = getResources().getDimensionPixelOffset(R.dimen.menu_w);
         initHintExitPlay();
     }
 
@@ -85,9 +86,13 @@ public class PullView extends ViewGroup {
                 break;
             case MotionEvent.ACTION_MOVE:
                 if (validRct.contains(mStartX, mStartY)) {
-                    boolean valid = Math.abs(currentY - mStartY) < mTouchSlop;
-                    if(valid) {
-                        mTouchState = STATE_DRAGGING;
+                    final int deltaX = Math.abs(currentX - mStartX);
+                    if(deltaX > mTouchSlop) {
+                        final int deltaY = Math.abs(currentY - mStartY);
+                        if(deltaX > deltaY) {
+                            mStartX = currentX;
+                            mTouchState = STATE_DRAGGING;
+                        }
                     }
                 }
 
@@ -113,7 +118,12 @@ public class PullView extends ViewGroup {
                 } else {
                     setAlpha(1.0f);
                 }
-                scrollTo(mDeltaX, 0);
+
+                Log.i("peter", "deltaX = " + mDeltaX);
+
+                if(mDeltaX > 0) {
+                    scrollTo(mDeltaX, 0);
+                }
                 break;
             case MotionEvent.ACTION_UP:
                 mTouchState = STATE_IDLE;
@@ -148,7 +158,7 @@ public class PullView extends ViewGroup {
         if (!played) {
             played = true;
             getContext().getSharedPreferences("hint_exit_played", Context.MODE_PRIVATE).edit().putBoolean("played", true).commit();
-            startBounceAnim(0, 0, mTouchSlop * 3, 0, 3000);
+            startBounceAnim(0, 0, mTouchSlop , 0, 3000);
         }
     }
 
