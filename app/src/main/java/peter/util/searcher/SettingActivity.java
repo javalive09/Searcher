@@ -52,7 +52,11 @@ public class SettingActivity extends Activity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 switch (position) {
                     case 0://engine
-                        showEngineDialog();
+                        Intent sendIntent = new Intent();
+                        sendIntent.setAction(Intent.ACTION_SEND);
+                        sendIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.app_url));
+                        sendIntent.setType("text/plain");
+                        startActivity(Intent.createChooser(sendIntent, "分享链接"));
                         break;
                     case 1://clear
                         clearCacheFolder(getCacheDir(), 0);
@@ -71,10 +75,6 @@ public class SettingActivity extends Activity {
                 }
             }
         });
-        Intent intent = getIntent();
-        if (intent != null) {
-            currentWebEngine = intent.getIntExtra("currentWebEngine", 0);
-        }
     }
 
     public void onResume() {

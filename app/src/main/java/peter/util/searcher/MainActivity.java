@@ -18,6 +18,7 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,7 +29,9 @@ import android.webkit.SslErrorHandler;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.ListPopupWindow;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -51,18 +54,33 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private int currentWebEngine;
 
     private static final int STATUS_SEARCH = 0;
-    private static final int STATUS_LOADING = 1;
+    private static final int STATUS_CLEAR = 1;
+    private static final int STATUS_LOADING = 2;
+
+    private static final int STATUS_SETTING = 0;
+    private static final int STATUS_MENU = 1;
+
     private static final int HINT_ACTIVITY = 1;
-    private static final int SETTING_ACTIVITY = 2;
 
     private WebView webview;
     private EditTextBackEvent search;
-    private ImageView clearAll;
-    private ImageView menu;
+    private ImageView operate;
+    private ImageView menus;
+    private ImageView engine;
+    private ListPopupWindow engineList;
+    private EngineAdapter engineAdapter;
 
     private boolean showHint = true;
     private PullView frame;
     private AsynWindowHandler windowHandler;
+    private int[] engineIcon = new int[]{
+            R.drawable.baidu_,
+            R.drawable.sougo_,
+            R.drawable.haosou_,
+            R.drawable.bing_,
+            R.drawable.shenma_,
+            R.drawable.ciba_
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,19 +105,15 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 .getInt("engine", getResources().getInteger(R.integer.default_engine));
         webview = (WebView) findViewById(R.id.wv);
         frame = (PullView) findViewById(R.id.frame);
-        menu = (ImageView) findViewById(R.id.menu);
+        menus = (ImageView) findViewById(R.id.menus);
+        engine = (ImageView) findViewById(R.id.engine);
+        refreshEngineIcon();
         if (Build.VERSION.SDK_INT < 21) {
             webview.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         }
         search = (EditTextBackEvent) findViewById(R.id.search);
         search.setOnClickListener(this);
-        clearAll = ((ImageView) findViewById(R.id.clear_all));
-        String content = search.getText().toString();
-        if (TextUtils.isEmpty(content)) {
-            clearAll.setVisibility(View.INVISIBLE);
-        } else {
-            clearAll.setVisibility(View.VISIBLE);
-        }
+        operate = ((ImageView) findViewById(R.id.operate));
         search.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -156,10 +170,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
             public void afterTextChanged(Editable s) {
                 String content = s.toString();
                 if (TextUtils.isEmpty(content)) {
-                    clearAll.setVisibility(View.INVISIBLE);
+                    setOptLevel(STATUS_SEARCH);
                     getDataFromDB();
                 } else if (!content.equals(temp)) {
-                    clearAll.setVisibility(View.VISIBLE);
+                    setOptLevel(STATUS_CLEAR);
                     if (showHint) {
                         String path = String.format(webHintUrl, getEncodeString(content));
                         getDataFromWeb(path);
@@ -169,8 +183,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 }
             }
         });
-        clearAll.setOnClickListener(this);
-        menu.setOnClickListener(this);
+        operate.setOnClickListener(this);
+        menus.setOnClickListener(this);
+        engine.setOnClickListener(this);
         webview.getSettings().setJavaScriptEnabled(true);
         webview.getSettings().setDomStorageEnabled(true);
         webview.setWebChromeClient(new WebChromeClient() {
@@ -185,12 +200,13 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                setStatusLevel(STATUS_LOADING);
+                setOptLevel(STATUS_LOADING);
+                setMenusLevel(STATUS_MENU);
             }
 
             @Override
             public void onPageFinished(WebView view, String url) {
-                setStatusLevel(STATUS_SEARCH);
+                setOptLevel(STATUS_CLEAR);
                 showExitHint();
             }
 
@@ -210,6 +226,33 @@ public class MainActivity extends Activity implements View.OnClickListener {
         getDataFromDB();
     }
 
+    private void setOptLevel(int level) {
+        LevelListDrawable d = (LevelListDrawable) operate.getDrawable();
+        if (d.getLevel() != level) {
+            d.setLevel(level);
+        }
+    }
+
+    private void setMenusLevel(int level) {
+        LevelListDrawable d = (LevelListDrawable) menus.getDrawable();
+        if (d.getLevel() != level) {
+            d.setLevel(level);
+        }
+    }
+
+    private void showEngine() {
+        engineList = new ListPopupWindow(this);
+        engineAdapter = new EngineAdapter(engineIcon, MainActivity.this);
+        engineList.setAdapter(engineAdapter);
+        engineList.setAnchorView(findViewById(R.id.engine_anchor));
+        engineList.setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
+        engineList.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
+        engineList.setModal(false);
+        if (!engineList.isShowing()) {
+            engineList.show();
+        }
+    }
+
     public void onResume() {
         super.onResume();
         MobclickAgent.onResume(this);
@@ -225,11 +268,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
             case HINT_ACTIVITY:
                 if (resultCode == RESULT_OK) {
                     frame.resetPlayExit();
-                }
-                break;
-            case SETTING_ACTIVITY:
-                if (resultCode == RESULT_OK) {
-                    currentWebEngine = data.getIntExtra("currentWebEngine", 0);
                 }
                 break;
         }
@@ -317,7 +355,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private void showHintList() {
         Message msg = Message.obtain();
         msg.what = AsynWindowHandler.SHOW_HINT_LIST;
-        msg.obj =search;
+        msg.obj = search;
         windowHandler.sendMessage(msg);
     }
 
@@ -396,15 +434,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }.execute();
     }
 
-    private void setStatusLevel(int level) {
-        LevelListDrawable drawable = (LevelListDrawable) search.getCompoundDrawables()[0];
-        drawable.setLevel(level);
-    }
-
     private void doSearch() {
         String word = search.getText().toString().trim();
         if (!TextUtils.isEmpty(word)) {
-            setStatusLevel(STATUS_LOADING);
             String url = getEngineUrl(word);
             if (!TextUtils.isEmpty(url)) {
                 webview.loadUrl(url);
@@ -445,9 +477,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.clear_all:
+            case R.id.operate:
                 search.setText("");
-                setStatusLevel(STATUS_SEARCH);
+                setOptLevel(STATUS_SEARCH);
                 search.requestFocus();
                 openBoard();
                 break;
@@ -468,10 +500,39 @@ public class MainActivity extends Activity implements View.OnClickListener {
             case R.id.search:
                 showHintList();
                 break;
-            case R.id.menu:
-                popupMenu(v);
+            case R.id.menus:
+                LevelListDrawable d = (LevelListDrawable) menus.getDrawable();
+                switch (d.getLevel()) {
+                    case STATUS_SETTING:
+                        closeBoard();
+                        Intent intent = new Intent(MainActivity.this, SettingActivity.class);
+                        startActivity(intent);
+                        break;
+                    case STATUS_MENU:
+                        popupMenu(v);
+                        break;
+                }
+
+                break;
+            case R.id.engine:
+                showEngine();
+                break;
+            case R.id.engine_item:
+                int position = (int) v.getTag();
+                currentWebEngine = position;
+                getSharedPreferences("setting", MODE_PRIVATE).edit().putInt("engine", currentWebEngine).commit();
+                if (engineList != null && engineList.isShowing()) {
+                    engineList.dismiss();
+                }
+                refreshEngineIcon();
+                doSearch();
                 break;
         }
+    }
+
+    private void refreshEngineIcon() {
+        LevelListDrawable drawable = (LevelListDrawable) engine.getDrawable();
+        drawable.setLevel(currentWebEngine);
     }
 
     private void popupMenu(View menu) {
@@ -483,35 +544,17 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     case R.id.action_share:
                         if (webview != null) {
                             String url = webview.getUrl();
-                            if (!TextUtils.isEmpty(url)) {
-                                Intent sendIntent = new Intent();
-                                sendIntent.setAction(Intent.ACTION_SEND);
-                                sendIntent.putExtra(Intent.EXTRA_TEXT, url);
-                                sendIntent.setType("text/plain");
-                                startActivity(Intent.createChooser(sendIntent, "分享链接"));
-                            } else {
-                                Toast.makeText(MainActivity.this, "当前url为空", Toast.LENGTH_SHORT).show();
-                            }
+                            Intent sendIntent = new Intent();
+                            sendIntent.setAction(Intent.ACTION_SEND);
+                            sendIntent.putExtra(Intent.EXTRA_TEXT, url);
+                            sendIntent.setType("text/plain");
+                            startActivity(Intent.createChooser(sendIntent, getString(R.string.share_title)));
                         }
                         break;
                     case R.id.action_setting:
                         closeBoard();
                         Intent intent = new Intent(MainActivity.this, SettingActivity.class);
-                        intent.putExtra("currentWebEngine", currentWebEngine);
-                        startActivityForResult(intent, SETTING_ACTIVITY);
-                        break;
-                    case R.id.action_browser:
-                        if (webview != null) {
-                            String url = webview.getUrl();
-                            if (!TextUtils.isEmpty(url)) {
-                                Uri uri = Uri.parse(url);
-                                Intent browserIntent = new Intent(Intent.ACTION_VIEW, uri);
-                                startActivity(browserIntent);
-                            } else {
-                                Toast.makeText(MainActivity.this, "当前url为空", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-
+                        startActivity(intent);
                         break;
                 }
 
@@ -547,5 +590,52 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private void openBoard() {
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.showSoftInput(search, InputMethodManager.SHOW_FORCED);
+    }
+
+    private static class EngineAdapter extends BaseAdapter {
+
+        private final LayoutInflater factory;
+        MainActivity act;
+        private int[] drawableRes;
+
+        public EngineAdapter(int[] drawableRes, MainActivity act) {
+            this.act = act;
+            factory = LayoutInflater.from(act);
+            this.drawableRes = drawableRes;
+        }
+
+        @Override
+        public int getCount() {
+            return drawableRes.length;
+        }
+
+        @Override
+        public Integer getItem(int position) {
+            return drawableRes[position];
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+
+            if (convertView == null) {
+                convertView = factory.inflate(R.layout.engine_item, parent, false);
+            }
+            int resId = getItem(position);
+            convertView.findViewById(R.id.icon).setBackgroundResource(resId);
+
+            String name = act.getResources().getStringArray(R.array.engine_web_names)[position];
+            TextView tv = (TextView) convertView.findViewById(R.id.name);
+            tv.setText(name);
+            convertView.setOnClickListener(act);
+            convertView.setTag(position);
+            return convertView;
+        }
+
     }
 }

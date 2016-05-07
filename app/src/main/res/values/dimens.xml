@@ -2,7 +2,7 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="title_h">52dp</dimen>
     <dimen name="menu_h">47dp</dimen>
-    <dimen name="menu_w">35dp</dimen>
+    <dimen name="menu_w">47dp</dimen>
     <dimen name="item_cell">47dp</dimen>
     <dimen name="operate_cell">33dp</dimen>
     <dimen name="search_padding">7dp</dimen>

@@ -29,23 +29,38 @@
     <string name="update_toast_nonew">已经是最新版本</string>
     <string name="update_dialog_title_one">发现新版本</string>
     <string name="update_dialog_ok">更新</string>
+    <string name="app_url">http://7xoxmg.com1.z0.glb.clouddn.com/searcher_10.apk</string>
+    <string name="share_title">分享应用给小伙伴</string>
+
+    <integer-array name="engine_icon">
+        <item>@drawable/baidu</item>
+        <item>@drawable/sougo</item>
+        <item>@drawable/haosou</item>
+        <item>@drawable/bing</item>
+        <item>@drawable/shenma</item>
+        <item>@drawable/ciba</item>
+    </integer-array>
 
     <string-array name="engine_web_names">
         <item>百度</item>
         <item>搜狗</item>
         <item>360</item>
-        <item>金山</item>
+        <item>必应</item>
+        <item>神马</item>
+        <item>词霸</item>
     </string-array>
 
     <string-array name="engine_web_urls">
         <item>http://m.baidu.com/s?word=%s</item>
         <item>http://wap.sogou.com/web/sl?keyword=%s</item>
         <item>http://m.haosou.com/s?q=%s</item>
+        <item>http://cn.bing.com/search?q=%s</item>
+        <item>http://m.yz2.sm.cn/s?q=%s</item>
         <item>http://www.iciba.com/%s</item>
     </string-array>
 
     <string-array name="settings_name">
-        <item>@string/engine_title</item>
+        <item>分享APP</item>
         <item>清理缓存</item>
         <item>@string/setting_feedback</item>
         <item>版本更新</item>

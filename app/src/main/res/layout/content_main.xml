@@ -15,23 +15,26 @@
             android:layout_height="@dimen/title_h"
             android:background="@color/title_bg">
 
+            <View android:id="@+id/engine_anchor"
+                android:layout_width="100dp"
+                android:layout_height="match_parent"/>
+
             <ImageView
-                android:id="@+id/menu"
+                android:id="@+id/menus"
                 android:layout_width="@dimen/menu_w"
                 android:layout_height="@dimen/menu_h"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:background="@drawable/menu_selector"
-                android:src="@drawable/menu" />
+                android:src="@drawable/menus" />
 
             <peter.util.searcher.EditTextBackEvent
                 android:id="@+id/search"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_toLeftOf="@id/menu"
+                android:layout_toLeftOf="@id/menus"
                 android:background="@drawable/search_bg_"
-                android:drawableLeft="@drawable/status"
-                android:drawablePadding="@dimen/search_padding"
+                android:paddingLeft="50dp"
                 android:gravity="center_vertical"
                 android:hint="@string/search"
                 android:textCursorDrawable="@drawable/cursor"
@@ -39,16 +42,24 @@
                 android:singleLine="true" />
 
             <ImageView
-                android:id="@+id/clear_all"
+                android:id="@+id/engine"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:src="@drawable/engine"
+                android:layout_centerVertical="true"
+                android:background="@drawable/clear_selector"
+                android:layout_marginLeft="@dimen/search_padding"
+                />
+
+            <ImageView
+                android:id="@+id/operate"
                 android:layout_width="@dimen/operate_cell"
                 android:layout_height="@dimen/operate_cell"
                 android:layout_centerVertical="true"
                 android:layout_marginRight="@dimen/search_padding"
-                android:layout_toLeftOf="@+id/menu"
-                android:background="@drawable/clear_selector"
+                android:layout_toLeftOf="@+id/menus"
                 android:contentDescription="@string/search"
-                android:src="@drawable/clear"
-                android:visibility="invisible" />
+                android:src="@drawable/operate"/>
         </RelativeLayout>
 
         <WebView
