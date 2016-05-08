@@ -52,11 +52,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private String[] webEngineUrls;
     private int currentWebEngine;
 
-    private static final int STATUS_SEARCH = 0;
+
+    private static final int STATUS_HIDE = 0;
     private static final int STATUS_CLEAR = 1;
     private static final int STATUS_LOADING = 2;
 
-    private static final int STATUS_SETTING = 0;
+    private static final int STATUS_SEARCH = 0;
     private static final int STATUS_MENU = 1;
 
     private static final int HINT_ACTIVITY = 1;
@@ -165,10 +166,11 @@ public class MainActivity extends Activity implements View.OnClickListener {
             public void afterTextChanged(Editable s) {
                 String content = s.toString();
                 if (TextUtils.isEmpty(content)) {
-                    setOptLevel(STATUS_SEARCH);
+                    setOptLevel(STATUS_HIDE);
                     getDataFromDB();
                 } else if (!content.equals(temp)) {
                     setOptLevel(STATUS_CLEAR);
+                    setMenusLevel(STATUS_SEARCH);
                     if (showHint) {
                         String path = String.format(webHintUrl, getEncodeString(content));
                         getDataFromWeb(path);
@@ -195,13 +197,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                setOptLevel(STATUS_LOADING);
-                setMenusLevel(STATUS_MENU);
+                setMenusLevel(STATUS_LOADING);
             }
 
             @Override
             public void onPageFinished(WebView view, String url) {
-                setOptLevel(STATUS_CLEAR);
+                setMenusLevel(STATUS_MENU);
                 showExitHint();
             }
 
@@ -511,7 +512,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
         switch (v.getId()) {
             case R.id.operate:
                 search.setText("");
-                setOptLevel(STATUS_SEARCH);
+                setOptLevel(STATUS_HIDE);
+                setMenusLevel(STATUS_SEARCH);
                 search.requestFocus();
                 openBoard();
                 break;
@@ -535,10 +537,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
             case R.id.menus:
                 LevelListDrawable d = (LevelListDrawable) menus.getDrawable();
                 switch (d.getLevel()) {
-                    case STATUS_SETTING:
-                        closeBoard();
-                        Intent intent = new Intent(MainActivity.this, SettingActivity.class);
-                        startActivity(intent);
+                    case STATUS_SEARCH:
+                        doSearch();
                         break;
                     case STATUS_MENU:
                         popupMenu(v);
