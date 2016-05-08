@@ -116,7 +116,7 @@ public class UpdateController {
                     URLConnection conn = url.openConnection();
                     count = conn.getContentLength();
                     InputStream is = conn.getInputStream();
-                    OutputStream os = new FileOutputStream(new File(mContext.getExternalFilesDir(null), APK_NAME));
+                    OutputStream os = new FileOutputStream(new File(mContext.getExternalCacheDir(), APK_NAME));
                     byte[] buffer = new byte[1024];
                     int len;
                     while (!finished) {
@@ -156,7 +156,7 @@ public class UpdateController {
                     Message msg = Message.obtain();
                     msg.what = AsynWindowHandler.DISMISS_UPDATE_PROGRESS;
                     handler.sendMessage(msg);
-                    installApk(new File(mContext.getExternalFilesDir(null), APK_NAME).getAbsolutePath());
+                    installApk(new File(mContext.getExternalCacheDir(), APK_NAME).getAbsolutePath());
                 }
             }
         }.execute();

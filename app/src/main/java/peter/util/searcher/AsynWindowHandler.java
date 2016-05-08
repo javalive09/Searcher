@@ -87,6 +87,7 @@ public class AsynWindowHandler extends Handler {
 
                                 }
                             });
+                    progress.show();
                     break;
                 case INCREASE_UPDATE_PROGRESS:
                     if(progress != null && progress.isShowing()) {
