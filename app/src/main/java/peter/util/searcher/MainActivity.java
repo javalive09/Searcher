@@ -34,7 +34,6 @@ import android.widget.ImageView;
 import android.widget.ListPopupWindow;
 import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.umeng.analytics.MobclickAgent;
 
@@ -127,15 +126,11 @@ public class MainActivity extends Activity implements View.OnClickListener {
         search.setOnEditTextImeBackListener(new EditTextBackEvent.EditTextImeBackListener() {
             @Override
             public void onImeBack(EditTextBackEvent ctrl, String text) {
-                dismissHint();
                 if (webview != null) {
                     if (TextUtils.isEmpty(webview.getUrl())) {
-                        search.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                finish();
-                            }
-                        }, 300);
+                        finish();
+                    } else {
+                        dismissHint();
                     }
                 }
 
@@ -226,6 +221,28 @@ public class MainActivity extends Activity implements View.OnClickListener {
         getDataFromDB();
     }
 
+    boolean isFinishing;
+
+    public void finish() {
+        if (!isFinishing) {
+            isFinishing = true;
+            if (dismissHint() | dismissEngineList()) {
+                search.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        doFinish();
+                    }
+                }, 300);
+            } else {
+                doFinish();
+            }
+        }
+    }
+
+    private void doFinish() {
+        super.finish();
+    }
+
     private void setOptLevel(int level) {
         LevelListDrawable d = (LevelListDrawable) operate.getDrawable();
         if (d.getLevel() != level) {
@@ -240,17 +257,27 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }
     }
 
-    private void showEngine() {
-        engineList = new ListPopupWindow(this);
-        engineAdapter = new EngineAdapter(engineIcon, MainActivity.this);
-        engineList.setAdapter(engineAdapter);
-        engineList.setAnchorView(findViewById(R.id.engine_anchor));
-        engineList.setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
-        engineList.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
-        engineList.setModal(false);
+    private void showEngineList() {
+        if (engineList == null) {
+            engineList = new ListPopupWindow(this);
+            engineAdapter = new EngineAdapter(engineIcon, MainActivity.this);
+            engineList.setAdapter(engineAdapter);
+            engineList.setAnchorView(findViewById(R.id.engine_anchor));
+            engineList.setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
+            engineList.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
+            engineList.setModal(false);
+        }
         if (!engineList.isShowing()) {
             engineList.show();
         }
+    }
+
+    private boolean dismissEngineList() {
+        if(engineList!=null && engineList.isShowing()) {
+            engineList.dismiss();
+            return true;
+        }
+        return false;
     }
 
     public void onResume() {
@@ -273,6 +300,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }
     }
 
+
+
     private String getEncodeString(String content) {
         try {
             content = URLEncoder.encode(content, "utf-8");
@@ -284,8 +313,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if ((keyCode == KeyEvent.KEYCODE_BACK)) {
-            dismissHint();
             if (webview != null && webview.canGoBack()) {
+                dismissHint();
                 webview.goBack();
                 return true;
             }
@@ -304,6 +333,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     protected void onDestroy() {
         Log.i("peter", "onDestroy");
         windowHandler.sendEmptyMessage(AsynWindowHandler.DESTROY);
+        dismissEngineList();
         ViewGroup root = (ViewGroup) findViewById(R.id.root);
         root.removeView(webview);
         webview.removeAllViews();
@@ -359,10 +389,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
         windowHandler.sendMessage(msg);
     }
 
-    private void dismissHint() {
+    private boolean dismissHint() {
+        boolean suc = windowHandler.isHintListShowing();
         Message msg = Message.obtain();
         msg.what = AsynWindowHandler.DISMISS_HINT_LIST;
         windowHandler.sendMessage(msg);
+        return suc;
     }
 
     private byte[] readStream(InputStream inStream) throws Exception {
@@ -515,15 +547,13 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
                 break;
             case R.id.engine:
-                showEngine();
+                showEngineList();
                 break;
             case R.id.engine_item:
                 int position = (int) v.getTag();
                 currentWebEngine = position;
                 getSharedPreferences("setting", MODE_PRIVATE).edit().putInt("engine", currentWebEngine).commit();
-                if (engineList != null && engineList.isShowing()) {
-                    engineList.dismiss();
-                }
+                dismissEngineList();
                 refreshEngineIcon();
                 doSearch();
                 break;

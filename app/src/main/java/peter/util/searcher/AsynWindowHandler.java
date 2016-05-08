@@ -152,4 +152,11 @@ public class AsynWindowHandler extends Handler {
         }
     }
 
+    public boolean isHintListShowing() {
+        if(hintList != null && hintList.isShowing()) {
+            return true;
+        }
+        return false;
+    }
+
 }

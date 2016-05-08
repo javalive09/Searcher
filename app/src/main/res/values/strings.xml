@@ -13,14 +13,12 @@
     <string name="setting_feedback">反馈建议</string>
     <string name="setting_feedback_body">您的反馈和建议</string>
     <string name="setting_feedback_address">mailto:javalive09@163.com</string>
-    <string name="setting_update_lasted">已经是最新版本</string>
     <string name="setting_about">速搜 : 简单畅快的搜索体验</string>
     <string name="setting_clear">缓存和cookies已经清理</string>
 
     <string name="action_share">分享</string>
     <string name="action_browser">在浏览器中打开</string>
     <string name="action_collection">收藏</string>
-    <string name="action_history">历史</string>
     <string name="action_setting">设置</string>
 
     <string name="update_dialog_title">正在下载更新包</string>
@@ -31,15 +29,6 @@
     <string name="update_dialog_ok">更新</string>
     <string name="app_url">http://7xoxmg.com1.z0.glb.clouddn.com/searcher_10.apk</string>
     <string name="share_title">分享应用给小伙伴</string>
-
-    <integer-array name="engine_icon">
-        <item>@drawable/baidu</item>
-        <item>@drawable/sougo</item>
-        <item>@drawable/haosou</item>
-        <item>@drawable/bing</item>
-        <item>@drawable/shenma</item>
-        <item>@drawable/ciba</item>
-    </integer-array>
 
     <string-array name="engine_web_names">
         <item>百度</item>

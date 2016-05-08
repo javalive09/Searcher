@@ -39,7 +39,7 @@ public class PullView extends ViewGroup {
 
     private void init() {
         mScroller = new Scroller(getContext(), new BakedBezierInterpolator());
-        mTouchSlop = getResources().getDimensionPixelOffset(R.dimen.menu_w);
+        mTouchSlop = ViewConfiguration.get(getContext()).getScaledTouchSlop();
         initHintExitPlay();
     }
 
@@ -79,8 +79,8 @@ public class PullView extends ViewGroup {
                             .getSystemService(Context.WINDOW_SERVICE);
                     manager.getDefaultDisplay().getMetrics(dm);
                     int bottom = dm.heightPixels;
-                    int left = right - mTouchSlop;
-                    int top = getResources().getDimensionPixelSize(R.dimen.item_cell);
+                    int left = right - getResources().getDimensionPixelOffset(R.dimen.menu_w);
+                    int top = getResources().getDimensionPixelSize(R.dimen.menu_h);
                     validRct = new Rect(left, top, right, bottom);
                 }
                 break;
@@ -89,7 +89,7 @@ public class PullView extends ViewGroup {
                     final int deltaX = Math.abs(currentX - mStartX);
                     if(deltaX > mTouchSlop) {
                         final int deltaY = Math.abs(currentY - mStartY);
-                        if(deltaX > deltaY) {
+                        if(deltaY < mTouchSlop && deltaX > deltaY) {
                             mStartX = currentX;
                             mTouchState = STATE_DRAGGING;
                         }
@@ -158,7 +158,7 @@ public class PullView extends ViewGroup {
         if (!played) {
             played = true;
             getContext().getSharedPreferences("hint_exit_played", Context.MODE_PRIVATE).edit().putBoolean("played", true).commit();
-            startBounceAnim(0, 0, mTouchSlop , 0, 3000);
+            startBounceAnim(0, 0, mTouchSlop * 4, 0, 3000);
         }
     }
 

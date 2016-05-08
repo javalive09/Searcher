@@ -20,7 +20,7 @@ public class GuideActivity extends Activity {
 
         setResult(RESULT_OK);
         View hand = findViewById(R.id.hand);
-        handAnimator = ObjectAnimator.ofFloat(hand, "translationX", 0, -PullView.mTouchSlop);
+        handAnimator = ObjectAnimator.ofFloat(hand, "translationX", 0, -PullView.mTouchSlop * 4);
         handAnimator.setDuration(1000);
         handAnimator.start();
         handAnimator.addListener(new AnimatorListenerAdapter() {
