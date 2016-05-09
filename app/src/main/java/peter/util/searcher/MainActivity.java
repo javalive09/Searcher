@@ -100,11 +100,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             String url = intent.getStringExtra("url");
             String name = intent.getStringExtra("name");
             if(!TextUtils.isEmpty(url)) {
-                webview.loadUrl(url);
-                if(!TextUtils.isEmpty(name)) {
-                    search.setText(name);
-                    search.setSelection(name.length());
-                }
+                doSearch(name, false);
             }
         }
     }
@@ -130,7 +126,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                    doSearch();
+                    doSearch(search.getText().toString().trim(), false);
                     return true;
                 }
                 return false;
@@ -473,8 +469,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }.execute();
     }
 
-    private void doSearch() {
-        String word = search.getText().toString().trim();
+    private void doSearch(String word, boolean needShowHint) {
+        showHint = needShowHint;
+        search.setText(word);
+        search.setSelection(word.length());
         if (!TextUtils.isEmpty(word)) {
             String url = getEngineUrl(word);
             if (!TextUtils.isEmpty(url)) {
@@ -529,10 +527,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     if (getString(R.string.clear_history).equals(s.name)) {
                         clearHistory();
                     } else {
-                        showHint = false;
-                        search.setText(s.name);
-                        search.setSelection(s.name.length());
-                        doSearch();
+                        doSearch(s.name ,false);
                     }
                 }
                 break;
@@ -551,7 +546,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 getSharedPreferences("setting", MODE_PRIVATE).edit().putInt("engine", currentWebEngine).commit();
                 dismissEngineList();
                 refreshEngineIcon();
-                doSearch();
+                doSearch(search.getText().toString().trim(),false);
                 break;
         }
     }
