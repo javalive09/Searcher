@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/title_h"
+        android:text="@string/action_history"
+        android:textSize="15sp"
+        android:textColor="@android:color/white"
+        android:background="@color/title_bg"
+        android:gravity="center" />
+
+
+    <TextView
+        android:id="@+id/back"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/title_h"
+        android:drawableLeft="@drawable/back"
+        android:textColor="@android:color/white"
+        android:paddingLeft="@dimen/back_padding"
+        android:textSize="15sp"
+        android:drawablePadding="@dimen/back_padding"
+        android:paddingRight="@dimen/back_padding"
+        android:background="@drawable/back_selector"
+        android:gravity="center"
+        android:text="@string/setting_back" />
+
+    <ListView
+        android:id="@+id/history"
+        android:layout_below="@+id/back"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</RelativeLayout>

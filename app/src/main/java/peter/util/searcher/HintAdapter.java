@@ -13,9 +13,9 @@ public class HintAdapter extends BaseAdapter {
 
         private final LayoutInflater factory;
         MainActivity act;
-        private List<Search> list;
+        private List<Bean> list;
 
-        public HintAdapter(List<Search> objects, MainActivity act) {
+        public HintAdapter(List<Bean> objects, MainActivity act) {
             this.act = act;
             factory = LayoutInflater.from(act);
             list = objects;
@@ -27,7 +27,7 @@ public class HintAdapter extends BaseAdapter {
         }
 
         @Override
-        public Search getItem(int position) {
+        public Bean getItem(int position) {
             return list.get(position);
         }
 
@@ -36,7 +36,7 @@ public class HintAdapter extends BaseAdapter {
             return position;
         }
 
-        public void updateData(List<Search> objects) {
+        public void updateData(List<Bean> objects) {
             list = objects;
             notifyDataSetChanged();
         }
@@ -51,7 +51,7 @@ public class HintAdapter extends BaseAdapter {
                 view = (TextView) convertView;
             }
 
-            Search search = getItem(position);
+            Bean search = getItem(position);
 
             if (search.name.equals(act.getString(R.string.clear_history))) {
                 Drawable drawable = act.getResources().getDrawable(R.drawable.search_clear);

@@ -20,19 +20,19 @@
                 android:layout_height="match_parent"/>
 
             <ImageView
-                android:id="@+id/menus"
+                android:id="@+id/menu"
                 android:layout_width="@dimen/menu_w"
                 android:layout_height="@dimen/menu_h"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:background="@drawable/menu_selector"
-                android:src="@drawable/menus" />
+                android:src="@drawable/menu_w" />
 
             <peter.util.searcher.EditTextBackEvent
                 android:id="@+id/search"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_toLeftOf="@id/menus"
+                android:layout_toLeftOf="@id/menu"
                 android:background="@drawable/search_bg_"
                 android:paddingLeft="50dp"
                 android:gravity="center_vertical"
@@ -57,7 +57,7 @@
                 android:layout_height="@dimen/operate_cell"
                 android:layout_centerVertical="true"
                 android:layout_marginRight="@dimen/search_padding"
-                android:layout_toLeftOf="@+id/menus"
+                android:layout_toLeftOf="@+id/menu"
                 android:contentDescription="@string/search"
                 android:src="@drawable/operate"/>
         </RelativeLayout>

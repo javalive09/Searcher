@@ -36,7 +36,7 @@ public class AsynWindowHandler extends Handler {
     private ProgressDialog progress;
     private ListPopupWindow hintList;
     private HintAdapter hintAdapter;
-    private boolean destroy;
+    private boolean destroyedWindow;
 
     private WeakReference<Activity> mAct;
 
@@ -46,7 +46,7 @@ public class AsynWindowHandler extends Handler {
 
     @Override
     public void handleMessage(Message msg) {
-        if(destroy) {
+        if(destroyedWindow) {
             return;
         }
         final Activity act = mAct.get();
@@ -107,7 +107,7 @@ public class AsynWindowHandler extends Handler {
                             View search = (View) msg.obj;
                             MainActivity mainActivity = (MainActivity) act;
                             hintList = new ListPopupWindow(act);
-                            hintAdapter = new HintAdapter(new ArrayList<Search>(1), mainActivity);
+                            hintAdapter = new HintAdapter(new ArrayList<Bean>(1), mainActivity);
                             hintList.setAdapter(hintAdapter);
                             hintList.setAnchorView(search);
                             hintList.setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -121,7 +121,7 @@ public class AsynWindowHandler extends Handler {
                     break;
                 case UPDATE_HINT_LIST_DATA:
                     if(hintList != null && hintAdapter != null) {
-                        List<Search> objects = (List<Search>) msg.obj;
+                        List<Bean> objects = (List<Bean>) msg.obj;
                         hintAdapter.updateData(objects);
                         if (!hintList.isShowing()) {
                             hintList.show();
@@ -134,7 +134,7 @@ public class AsynWindowHandler extends Handler {
                     }
                     break;
                 case DESTROY:
-                    destroy = true;
+                    destroyedWindow = true;
                     if(dialog != null && dialog.isShowing()) {
                         dialog.dismiss();
                     }

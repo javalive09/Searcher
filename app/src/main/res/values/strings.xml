@@ -1,7 +1,7 @@
 <resources>
     <string name="search">搜索</string>
     <string name="app_name">速搜</string>
-    <string name="clear_history"> 清除历史记录</string>
+    <string name="clear_history"> 清空最近记录</string>
     <string name="exit_hint_title">&#60;快速退出&#62;</string>
     <string name="exit_hint_msg">从屏幕右侧边缘向左滑动</string>
     <string name="web_hint_url">http://unionsug.baidu.com/su/?wd=%s</string>
@@ -16,9 +16,12 @@
     <string name="setting_about">速搜 : 简单畅快的搜索体验</string>
     <string name="setting_clear">缓存和cookies已经清理</string>
 
-    <string name="action_share">分享</string>
+    <string name="action_share">分享链接</string>
+    <string name="favorite_txt">已经添加到收藏夹</string>
     <string name="action_browser">在浏览器中打开</string>
-    <string name="action_collection">收藏</string>
+    <string name="action_collect">收藏链接</string>
+    <string name="action_collection">收藏夹</string>
+    <string name="action_history">历史记录</string>
     <string name="action_setting">设置</string>
 
     <string name="update_dialog_title">正在下载更新包</string>

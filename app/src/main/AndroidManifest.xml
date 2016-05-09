@@ -28,6 +28,7 @@
 
         <activity android:name=".MainActivity"
             android:excludeFromRecents="true"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -43,6 +44,14 @@
             android:excludeFromRecents="true"
             android:screenOrientation="portrait"
             android:name=".SettingActivity"/>
+        <activity
+            android:excludeFromRecents="true"
+            android:screenOrientation="portrait"
+            android:name=".FavoriteActivity"/>
+        <activity
+            android:excludeFromRecents="true"
+            android:screenOrientation="portrait"
+            android:name=".HistoryActivity"/>
     </application>
 
 </manifest>

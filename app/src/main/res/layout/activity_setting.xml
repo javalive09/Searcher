@@ -2,13 +2,13 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/title_bg">
+    android:background="@color/setting_bg">
 
     <RelativeLayout
         android:id="@+id/title"
         android:layout_width="match_parent"
         android:layout_height="@dimen/item_cell"
-        android:background="#51b0d3">
+        android:background="@color/title_bg">
 
         <TextView
             android:layout_width="wrap_content"
@@ -26,10 +26,10 @@
             android:layout_centerVertical="true"
             android:drawableLeft="@drawable/back"
             android:textColor="@android:color/white"
-            android:paddingLeft="@dimen/search_padding"
+            android:paddingLeft="@dimen/back_padding"
             android:textSize="15sp"
-            android:drawablePadding="@dimen/search_padding"
-            android:paddingRight="@dimen/search_padding"
+            android:drawablePadding="@dimen/back_padding"
+            android:paddingRight="@dimen/back_padding"
             android:background="@drawable/back_selector"
             android:gravity="center"
             android:text="@string/setting_back" />

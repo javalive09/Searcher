@@ -1,6 +1,5 @@
 package peter.util.searcher;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -34,6 +33,7 @@ import android.widget.ImageView;
 import android.widget.ListPopupWindow;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.umeng.analytics.MobclickAgent;
 
@@ -46,7 +46,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends Activity implements View.OnClickListener {
+public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private String webHintUrl;
     private String[] webEngineUrls;
@@ -56,15 +56,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private static final int STATUS_CLEAR = 1;
     private static final int STATUS_LOADING = 2;
 
-    private static final int STATUS_SETTING = 0;
-    private static final int STATUS_MENU = 1;
-
     private static final int HINT_ACTIVITY = 1;
 
     private WebView webview;
     private EditTextBackEvent search;
     private ImageView operate;
-    private ImageView menus;
+    private ImageView menu;
     private ImageView engine;
     private ListPopupWindow engineList;
     private EngineAdapter engineAdapter;
@@ -84,7 +81,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.content_main);
+        setContentView(R.layout.activity_main);
         Looper.myQueue().addIdleHandler(new MessageQueue.IdleHandler() {
 
             @Override
@@ -96,6 +93,22 @@ public class MainActivity extends Activity implements View.OnClickListener {
         });
     }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if(intent != null) {
+            String url = intent.getStringExtra("url");
+            String name = intent.getStringExtra("name");
+            if(!TextUtils.isEmpty(url)) {
+                webview.loadUrl(url);
+                if(!TextUtils.isEmpty(name)) {
+                    search.setText(name);
+                    search.setSelection(name.length());
+                }
+            }
+        }
+    }
+
     private void init() {
         windowHandler = new AsynWindowHandler(this);
         webEngineUrls = getResources().getStringArray(R.array.engine_web_urls);
@@ -104,7 +117,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 .getInt("engine", getResources().getInteger(R.integer.default_engine));
         webview = (WebView) findViewById(R.id.wv);
         frame = (PullView) findViewById(R.id.frame);
-        menus = (ImageView) findViewById(R.id.menus);
+        menu = (ImageView) findViewById(R.id.menu);
         engine = (ImageView) findViewById(R.id.engine);
         refreshEngineIcon();
         if (Build.VERSION.SDK_INT < 21) {
@@ -179,7 +192,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
             }
         });
         operate.setOnClickListener(this);
-        menus.setOnClickListener(this);
+        menu.setOnClickListener(this);
         engine.setOnClickListener(this);
         webview.getSettings().setJavaScriptEnabled(true);
         webview.getSettings().setDomStorageEnabled(true);
@@ -196,7 +209,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 setOptLevel(STATUS_LOADING);
-                setMenusLevel(STATUS_MENU);
             }
 
             @Override
@@ -250,13 +262,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }
     }
 
-    private void setMenusLevel(int level) {
-        LevelListDrawable d = (LevelListDrawable) menus.getDrawable();
-        if (d.getLevel() != level) {
-            d.setLevel(level);
-        }
-    }
-
     private void showEngineList() {
         if (engineList == null) {
             engineList = new ListPopupWindow(this);
@@ -299,8 +304,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 break;
         }
     }
-
-
 
     private String getEncodeString(String content) {
         try {
@@ -349,24 +352,26 @@ public class MainActivity extends Activity implements View.OnClickListener {
     }
 
     private void getDataFromDB() {
-        new AsyncTask<Void, Void, List<Search>>() {
+        new AsyncTask<Void, Void, List<Bean>>() {
 
             @Override
-            protected List<Search> doInBackground(Void... params) {
-                return SqliteHelper.instance(MainActivity.this).queryData();
+            protected List<Bean> doInBackground(Void... params) {
+                return SqliteHelper.instance(MainActivity.this).queryRecentHistory();
             }
 
             @Override
-            protected void onPostExecute(List<Search> searches) {
+            protected void onPostExecute(List<Bean> searches) {
                 super.onPostExecute(searches);
                 if (searches != null) {
-                    if (searches.size() > 0) {
-                        Search delete = new Search();
-                        delete.name = getString(R.string.clear_history);
-                        searches.add(delete);
-                        updateHintList(searches);
-                    } else {
-                        dismissHint();
+                    if(!isActivityDestroyed()) {
+                        if (searches.size() > 0) {
+                            Bean delete = new Bean();
+                            delete.name = getString(R.string.clear_history);
+                            searches.add(delete);
+                            updateHintList(searches);
+                        } else {
+                            dismissHint();
+                        }
                     }
                 }
 
@@ -374,7 +379,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }.execute();
     }
 
-    private void updateHintList(List<Search> searches) {
+    private void updateHintList(List<Bean> searches) {
         showHintList();
         Message msg = Message.obtain();
         msg.what = AsynWindowHandler.UPDATE_HINT_LIST_DATA;
@@ -408,7 +413,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         return outStream.toByteArray();
     }
 
-    private List<Search> requestByGet(String path) throws Exception {
+    private List<Bean> requestByGet(String path) throws Exception {
         URL url = new URL(path);
         HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
         urlConn.setConnectTimeout(5 * 1000);
@@ -422,10 +427,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
             result = result.substring(start, end);
             String[] strs = result.split(",");
             int size = strs.length > 5 ? 5 : strs.length;
-            List<Search> searches = new ArrayList<>();
+            List<Bean> searches = new ArrayList<>();
             for (int i = 0; i < size; i++) {
                 if (!TextUtils.isEmpty(strs[i])) {
-                    Search search = new Search();
+                    Bean search = new Bean();
                     search.name = strs[i].replaceAll("\"", "");
                     searches.add(search);
                 }
@@ -437,12 +442,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
     }
 
     private void getDataFromWeb(final String path) {
-        new AsyncTask<Void, Void, List<Search>>() {
+        new AsyncTask<Void, Void, List<Bean>>() {
 
 
             @Override
-            protected List<Search> doInBackground(Void... params) {
-                List<Search> searches = null;
+            protected List<Bean> doInBackground(Void... params) {
+                List<Bean> searches = null;
                 try {
                     searches = requestByGet(path);
                 } catch (Exception e) {
@@ -452,13 +457,15 @@ public class MainActivity extends Activity implements View.OnClickListener {
             }
 
             @Override
-            protected void onPostExecute(List<Search> searches) {
+            protected void onPostExecute(List<Bean> searches) {
                 super.onPostExecute(searches);
                 if (searches != null) {
-                    if (searches.size() > 0) {
-                        updateHintList(searches);
-                    } else {
-                        dismissHint();
+                    if(!isActivityDestroyed()) {
+                        if (searches.size() > 0) {
+                            updateHintList(searches);
+                        } else {
+                            dismissHint();
+                        }
                     }
                 }
 
@@ -479,7 +486,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
                 //hide hintList
                 dismissHint();
-                saveData(word);
+                saveData(word, url);
             }
         }
     }
@@ -492,15 +499,15 @@ public class MainActivity extends Activity implements View.OnClickListener {
         return String.format(webEngineUrls[currentWebEngine], getEncodeString(word));
     }
 
-    private void saveData(final String word) {
+    private void saveData(final String word, final String url) {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
-                Search search = new Search();
+                Bean search = new Bean();
                 search.name = word;
                 search.time = System.currentTimeMillis();
-                SqliteHelper.instance(MainActivity.this).insert(search);
-                SqliteHelper.instance(MainActivity.this).trimData();
+                search.url = url;
+                SqliteHelper.instance(MainActivity.this).insertHistory(search);
                 return null;
             }
         }.execute();
@@ -516,7 +523,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 openBoard();
                 break;
             case R.id.hint_item:
-                Search s = (Search) v.getTag();
+                Bean s = (Bean) v.getTag();
 
                 if (s != null) {
                     if (getString(R.string.clear_history).equals(s.name)) {
@@ -532,19 +539,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
             case R.id.search:
                 showHintList();
                 break;
-            case R.id.menus:
-                LevelListDrawable d = (LevelListDrawable) menus.getDrawable();
-                switch (d.getLevel()) {
-                    case STATUS_SETTING:
-                        closeBoard();
-                        Intent intent = new Intent(MainActivity.this, SettingActivity.class);
-                        startActivity(intent);
-                        break;
-                    case STATUS_MENU:
-                        popupMenu(v);
-                        break;
-                }
-
+            case R.id.menu:
+                popupMenu(v);
                 break;
             case R.id.engine:
                 showEngineList();
@@ -567,7 +563,11 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     private void popupMenu(View menu) {
         PopupMenu popup = new PopupMenu(this, menu);
-        popup.getMenuInflater().inflate(R.menu.main, popup.getMenu());
+        if(TextUtils.isEmpty(webview.getUrl())) {
+            popup.getMenuInflater().inflate(R.menu.main, popup.getMenu());
+        }else {
+            popup.getMenuInflater().inflate(R.menu.web, popup.getMenu());
+        }
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
@@ -586,6 +586,22 @@ public class MainActivity extends Activity implements View.OnClickListener {
                         Intent intent = new Intent(MainActivity.this, SettingActivity.class);
                         startActivity(intent);
                         break;
+                    case R.id.action_collect:
+                        Bean bean = new Bean();
+                        bean.name = webview.getTitle();
+                        bean.url = webview.getUrl();
+                        bean.time = System.currentTimeMillis();
+                        SqliteHelper.instance(MainActivity.this).insertFav(bean);
+                        Toast.makeText(MainActivity.this, R.string.favorite_txt, Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.id.action_collection:
+                        closeBoard();
+                        startActivity(new Intent(MainActivity.this, FavoriteActivity.class));
+                        break;
+                    case R.id.action_history:
+                        closeBoard();
+                        startActivity(new Intent(MainActivity.this, HistoryActivity.class));
+                        break;
                 }
 
                 return true;
@@ -598,15 +614,17 @@ public class MainActivity extends Activity implements View.OnClickListener {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
-                SqliteHelper.instance(MainActivity.this).deleteAll();
+                SqliteHelper.instance(MainActivity.this).clearRecentHistory();
                 return null;
             }
 
             @Override
             protected void onPostExecute(Void aVoid) {
                 super.onPostExecute(aVoid);
-                updateHintList(new ArrayList<Search>(1));
-                dismissHint();
+                if(!isActivityDestroyed()) {
+                    updateHintList(new ArrayList<Bean>(1));
+                    dismissHint();
+                }
             }
         }.execute();
     }

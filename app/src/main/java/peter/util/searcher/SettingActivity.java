@@ -1,9 +1,6 @@
 package peter.util.searcher;
 
-import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -27,15 +24,12 @@ import com.umeng.analytics.MobclickAgent;
 import java.io.File;
 import java.util.Date;
 
-public class SettingActivity extends Activity {
-
-    int currentWebEngine;
-    AsynWindowHandler handler;
+public class SettingActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.setting_layout);
+        setContentView(R.layout.activity_setting);
         findViewById(R.id.back).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -44,7 +38,7 @@ public class SettingActivity extends Activity {
         });
         TextView version = (TextView) findViewById(R.id.version);
         version.setText(getVersionName());
-        handler = new AsynWindowHandler(this);
+        windowHandler = new AsynWindowHandler(this);
         ListView settings = (ListView) findViewById(R.id.setting_list);
         settings.setAdapter(new ArrayAdapter<>(this, R.layout.setting_item, getResources().getStringArray(R.array.settings_name)));
         settings.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -67,7 +61,7 @@ public class SettingActivity extends Activity {
                         sendMailByIntent();
                         break;
                     case 3://update
-                        UpdateController.instance(getApplicationContext()).checkVersion(handler, true);
+                        UpdateController.instance(getApplicationContext()).checkVersion(windowHandler, true);
                         break;
                     case 4://about
                         Toast.makeText(SettingActivity.this, R.string.setting_about, Toast.LENGTH_LONG).show();
@@ -85,30 +79,6 @@ public class SettingActivity extends Activity {
     public void onPause() {
         super.onPause();
         MobclickAgent.onPause(this);
-    }
-
-    @Override
-    protected void onDestroy() {
-        handler.sendEmptyMessage(AsynWindowHandler.DESTROY);
-        super.onDestroy();
-        Log.i("peter", "onDestroy");
-    }
-
-    private void showEngineDialog() {
-        new AlertDialog.Builder(SettingActivity.this)
-                .setTitle(R.string.engine_title)
-                .setSingleChoiceItems(R.array.engine_web_names, currentWebEngine, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        if(whichButton != currentWebEngine) {
-                            currentWebEngine = whichButton;
-                            getSharedPreferences("setting", MODE_PRIVATE).edit().putInt("engine", currentWebEngine).commit();
-                            Intent intent = new Intent();
-                            intent.putExtra("currentWebEngine", currentWebEngine);
-                            setResult(RESULT_OK, intent);
-                        }
-                        dialog.dismiss();
-                    }
-                }).create().show();
     }
 
     private String getVersionName() {

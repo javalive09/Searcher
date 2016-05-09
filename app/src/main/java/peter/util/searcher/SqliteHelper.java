@@ -11,6 +11,8 @@ import java.util.List;
 
 public class SqliteHelper extends SQLiteOpenHelper {
     private static final String DB_NAME = "search.db";
+    private static final String TABLE_HISTORY = "history";
+    private static final String TABLE_FAVORITE = "favorite";
     private static final int version = 1;
     private static SqliteHelper helper;
     private static final int LIMIT = 5;
@@ -30,65 +32,134 @@ public class SqliteHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("create table if not exists search (searchId integer primary key autoincrement, time integer, name varchar(20), show integer)");
+        db.execSQL("create table if not exists " + TABLE_HISTORY + " (historyId integer primary key autoincrement, time integer, name varchar(20), show integer, url varchar(100))");
+        db.execSQL("create table if not exists " + TABLE_FAVORITE +" (favId integer primary key autoincrement, time integer, name varchar(20), url varchar(100))");
     }
 
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+
     }
 
-    public synchronized void insert(Search search) {
+    public synchronized void insertHistory(Bean bean) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
-        Cursor cursor = db.rawQuery("select * from search where name=?", new String[] { search.name });
+        Cursor cursor = db.rawQuery("select * from "+ TABLE_HISTORY +" where name=?", new String[] { bean.name });
 
         if(cursor != null) {
             if(cursor.getCount() == 0) {//没有记录
-                values.put("time", search.time);
-                values.put("name", search.name);
+                values.put("time", bean.time);
+                values.put("name", bean.name);
+                values.put("url", bean.url);
                 values.put("show", 1);
-                db.insert("search", null, values);
+                db.insert("history", null, values);
+            }else {
+                values.put("show", 1);
+                db.update(TABLE_HISTORY, values, "name=?", new String[]{bean.name});
             }
             cursor.close();
         }
-
     }
 
-    public synchronized void trimData() {
+    public synchronized void clearRecentHistory() {
         SQLiteDatabase db = getWritableDatabase();
-        Cursor cursor = db.query("search", null, null, null, null, null, "searchId DESC", LIMIT + "");
-        int count = cursor.getCount();
-        if (count == LIMIT) {
-            cursor.moveToLast();
-            int searchIdColumnIndex = cursor.getColumnIndex("searchId");
-            int id = cursor.getInt(searchIdColumnIndex);
-            db.execSQL("delete from search where searchId < " + id);
+        Cursor cursor = db.query(TABLE_HISTORY, null, null, null, null, null, "historyId DESC", LIMIT + "");
+        if (cursor != null && cursor.moveToFirst()) {
+            int nameColumnIndex = cursor.getColumnIndex("name");
+            do {
+                String name = cursor.getString(nameColumnIndex);
+                ContentValues values = new ContentValues();
+                values.put("show", 0);
+                db.update(TABLE_HISTORY, values, "name=?", new String[]{name});
+            }while (cursor.moveToNext());
+            cursor.close();
         }
-        cursor.close();
     }
 
-    public synchronized void deleteAll() {
-        SQLiteDatabase db = getWritableDatabase();
-        db.execSQL("delete from search where searchId != 0");
-    }
-
-    public List<Search> queryData() {
-        List<Search> list = new ArrayList<>(LIMIT);
+    public List<Bean> queryRecentHistory() {
+        List<Bean> list = new ArrayList<>(LIMIT);
         SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.query("search", null, null, null, null, null, "searchId DESC", LIMIT + "");
+        Cursor cursor = db.query(TABLE_HISTORY, null, null, null, null, null, "historyId DESC", LIMIT + "");
 
         if (cursor != null && cursor.moveToFirst()) {
             int timeColumnIndex = cursor.getColumnIndex("time");
             int nameColumnIndex = cursor.getColumnIndex("name");
+            int showColumnIndex = cursor.getColumnIndex("show");
             do {
                 long time = cursor.getLong(timeColumnIndex);
                 String name = cursor.getString(nameColumnIndex);
-                Search search = new Search();
-                search.name = name;
-                search.time = time;
-                list.add(search);
+                int show = cursor.getInt(showColumnIndex);
+                if(show == 1) {
+                    Bean bean = new Bean();
+                    bean.name = name;
+                    bean.time = time;
+                    list.add(bean);
+                }
             } while (cursor.moveToNext());
             cursor.close();
         }
         return list;
     }
+
+    public List<Bean> queryAllHistory() {
+        List<Bean> list = new ArrayList<>();
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery("select * from " + TABLE_HISTORY, null);
+        if(cursor != null && cursor.moveToFirst()) {
+            int timeColumnIndex = cursor.getColumnIndex("time");
+            int nameColumnIndex = cursor.getColumnIndex("name");
+            int urlColumnIndex = cursor.getColumnIndex("url");
+            do {
+                long time = cursor.getLong(timeColumnIndex);
+                String name = cursor.getString(nameColumnIndex);
+                String url = cursor.getString(urlColumnIndex);
+                Bean bean = new Bean();
+                bean.name = name;
+                bean.time = time;
+                bean.url = url;
+                list.add(bean);
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+        return list;
+    }
+
+    public synchronized void insertFav(Bean bean) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        Cursor cursor = db.rawQuery("select * from "+ TABLE_FAVORITE + " where url=?", new String[] { bean.url });
+
+        if(cursor != null) {
+            if(cursor.getCount() == 0) {//没有记录
+                values.put("time", bean.time);
+                values.put("name", bean.name);
+                values.put("url", bean.url);
+                db.insert(TABLE_FAVORITE, null, values);
+            }
+            cursor.close();
+        }
+    }
+
+    public List<Bean> queryAllFavorite() {
+        List<Bean> list = new ArrayList<>();
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery("select * from " + TABLE_FAVORITE, null);
+        if(cursor != null && cursor.moveToFirst()) {
+            int timeColumnIndex = cursor.getColumnIndex("time");
+            int nameColumnIndex = cursor.getColumnIndex("name");
+            int urlColumnIndex = cursor.getColumnIndex("url");
+            do {
+                long time = cursor.getLong(timeColumnIndex);
+                String name = cursor.getString(nameColumnIndex);
+                String url = cursor.getString(urlColumnIndex);
+                Bean bean = new Bean();
+                bean.name = name;
+                bean.time = time;
+                bean.url = url;
+                list.add(bean);
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+        return list;
+    }
+
 }
