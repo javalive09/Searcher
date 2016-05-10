@@ -7,6 +7,7 @@ import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.VelocityTracker;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -21,11 +22,13 @@ public class PullView extends ViewGroup {
     private static final int STATE_SETTLING = 2;//还原状态
     private int mTouchState = STATE_IDLE;
     private static final int mAnimTime = 600;
+    private static final int VELOCITY_BORDER = -2000;
     private boolean mFinish;
     private int mStartX;
     private int mStartY;
     private int mDeltaX;
     private Rect validRct;
+    private VelocityTracker mVelocityTracker;
 
     public PullView(Context context) {
         super(context);
@@ -109,6 +112,10 @@ public class PullView extends ViewGroup {
 
         final int action = event.getAction();
         final int currentX = (int) event.getX();
+        if (mVelocityTracker == null) {
+            mVelocityTracker = VelocityTracker.obtain();
+        }
+        mVelocityTracker.addMovement(event);
 
         switch (action) {
             case MotionEvent.ACTION_MOVE:
@@ -127,11 +134,21 @@ public class PullView extends ViewGroup {
                 break;
             case MotionEvent.ACTION_UP:
                 mTouchState = STATE_IDLE;
-                if (mDeltaX > getWidth() / 4) {
+                final VelocityTracker velocityTracker = mVelocityTracker;
+                velocityTracker.computeCurrentVelocity(1000);
+                int velocityX = (int) velocityTracker.getXVelocity();
+                Log.i("peter", "velocityX = " + velocityX);
+
+                if (velocityX < VELOCITY_BORDER || mDeltaX > getWidth() / 4) {
                     mFinish = true;
                     startBounceAnim(getScrollX(), getScrollY(), (getWidth() - getScrollX()), 0, mAnimTime);
                 } else {
                     startBounceAnim(getScrollX(), getScrollY(), -getScrollX(), 0, mAnimTime);
+                }
+
+                if (mVelocityTracker != null) {
+                    mVelocityTracker.recycle();
+                    mVelocityTracker = null;
                 }
                 break;
         }
