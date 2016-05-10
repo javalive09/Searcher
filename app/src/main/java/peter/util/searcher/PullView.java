@@ -21,7 +21,7 @@ public class PullView extends ViewGroup {
     private static final int STATE_DRAGGING = 1;//拖拽状态
     private static final int STATE_SETTLING = 2;//还原状态
     private int mTouchState = STATE_IDLE;
-    private static final int mAnimTime = 600;
+    private static final int mAnimTime = 300;
     private static final int VELOCITY_BORDER = -2000;
     private boolean mFinish;
     private int mStartX;
@@ -83,7 +83,7 @@ public class PullView extends ViewGroup {
                     manager.getDefaultDisplay().getMetrics(dm);
                     int bottom = dm.heightPixels;
                     int left = right - getResources().getDimensionPixelOffset(R.dimen.menu_w);
-                    int top = getResources().getDimensionPixelSize(R.dimen.menu_h);
+                    int top = getResources().getDimensionPixelSize(R.dimen.title_h);
                     validRct = new Rect(left, top, right, bottom);
                 }
                 break;
@@ -110,6 +110,7 @@ public class PullView extends ViewGroup {
 
     public boolean onTouchEvent(MotionEvent event) {
 
+        Log.i("peter", "mTouchState =" + mTouchState);
         final int action = event.getAction();
         final int currentX = (int) event.getX();
         if (mVelocityTracker == null) {
@@ -152,6 +153,7 @@ public class PullView extends ViewGroup {
                 }
                 break;
         }
+
         return false;
     }
 
@@ -175,7 +177,7 @@ public class PullView extends ViewGroup {
         if (!played) {
             played = true;
             getContext().getSharedPreferences("hint_exit_played", Context.MODE_PRIVATE).edit().putBoolean("played", true).commit();
-            startBounceAnim(0, 0, mTouchSlop * 4, 0, 3000);
+            startBounceAnim(0, 0, mTouchSlop * 4, 0, 300);
         }
     }
 

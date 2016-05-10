@@ -16,7 +16,7 @@
             android:background="@color/title_bg">
 
             <View android:id="@+id/engine_anchor"
-                android:layout_width="100dp"
+                android:layout_width="@dimen/engine_anchor_w"
                 android:layout_height="match_parent"/>
 
             <ImageView
@@ -26,15 +26,27 @@
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:background="@drawable/menu_selector"
-                android:src="@drawable/menu_w" />
+                android:scaleType="center"
+                android:src="@drawable/abc_ic_menu_moreoverflow_mtrl_alpha" />
+
+            <ImageView
+                android:id="@+id/search"
+                android:layout_width="@dimen/search_w"
+                android:layout_height="@dimen/search_h"
+                android:layout_toLeftOf="@+id/menu"
+                android:layout_centerVertical="true"
+                android:background="@drawable/menu_selector"
+                android:scaleType="center"
+                android:src="@drawable/abc_ic_search_api_mtrl_alpha" />
 
             <peter.util.searcher.EditTextBackEvent
-                android:id="@+id/search"
+                android:id="@+id/input"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_toLeftOf="@id/menu"
+                android:layout_toLeftOf="@id/search"
                 android:background="@drawable/search_bg_"
-                android:paddingLeft="50dp"
+                android:paddingLeft="@dimen/input_padding_left"
+                android:paddingRight="@dimen/input_padding_right"
                 android:gravity="center_vertical"
                 android:hint="@string/search"
                 android:textCursorDrawable="@drawable/cursor"
@@ -43,12 +55,12 @@
 
             <ImageView
                 android:id="@+id/engine"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
+                android:layout_width="@dimen/engine_w"
+                android:layout_height="@dimen/engine_h"
                 android:src="@drawable/engine"
                 android:layout_centerVertical="true"
                 android:background="@drawable/clear_selector"
-                android:layout_marginLeft="@dimen/search_padding"
+                android:layout_marginLeft="@dimen/engine_margin_left"
                 />
 
             <ImageView
@@ -57,7 +69,7 @@
                 android:layout_height="@dimen/operate_cell"
                 android:layout_centerVertical="true"
                 android:layout_marginRight="@dimen/search_padding"
-                android:layout_toLeftOf="@+id/menu"
+                android:layout_toLeftOf="@+id/search"
                 android:contentDescription="@string/search"
                 android:src="@drawable/operate"/>
         </RelativeLayout>
@@ -66,8 +78,7 @@
             android:id="@+id/wv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/title"
-            android:background="@android:color/darker_gray" />
+            android:layout_below="@+id/title"/>
 
     </RelativeLayout>
 

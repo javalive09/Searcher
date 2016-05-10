@@ -1,5 +1,6 @@
 package peter.util.searcher;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -19,6 +20,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
@@ -59,7 +61,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private static final int HINT_ACTIVITY = 1;
 
     private WebView webview;
-    private EditTextBackEvent search;
+    private EditTextBackEvent input;
     private ImageView operate;
     private ImageView menu;
     private ImageView engine;
@@ -112,6 +114,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         currentWebEngine = getSharedPreferences("setting", MODE_PRIVATE)
                 .getInt("engine", getResources().getInteger(R.integer.default_engine));
         webview = (WebView) findViewById(R.id.wv);
+        webview.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return true;
+            }
+        });
         frame = (PullView) findViewById(R.id.frame);
         menu = (ImageView) findViewById(R.id.menu);
         engine = (ImageView) findViewById(R.id.engine);
@@ -119,20 +127,21 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         if (Build.VERSION.SDK_INT < 21) {
             webview.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         }
-        search = (EditTextBackEvent) findViewById(R.id.search);
-        search.setOnClickListener(this);
+        input = (EditTextBackEvent) findViewById(R.id.input);
+        input.setOnClickListener(this);
+        input.requestFocus();
         operate = ((ImageView) findViewById(R.id.operate));
-        search.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        input.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                    doSearch(search.getText().toString().trim(), false);
+                    doSearch(input.getText().toString().trim(), false);
                     return true;
                 }
                 return false;
             }
         });
-        search.setOnEditTextImeBackListener(new EditTextBackEvent.EditTextImeBackListener() {
+        input.setOnEditTextImeBackListener(new EditTextBackEvent.EditTextImeBackListener() {
             @Override
             public void onImeBack(EditTextBackEvent ctrl, String text) {
                 if (webview != null) {
@@ -145,7 +154,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
             }
         });
-        search.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        input.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 Log.i("peter", "" + v + " ;hasFocus=" + hasFocus);
@@ -158,7 +167,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 }
             }
         });
-        search.addTextChangedListener(new TextWatcher() {
+        input.addTextChangedListener(new TextWatcher() {
             String temp;
 
             @Override
@@ -189,6 +198,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         });
         operate.setOnClickListener(this);
         menu.setOnClickListener(this);
+        findViewById(R.id.search).setOnClickListener(this);
         engine.setOnClickListener(this);
         webview.getSettings().setJavaScriptEnabled(true);
         webview.getSettings().setDomStorageEnabled(true);
@@ -235,7 +245,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         if (!isFinishing) {
             isFinishing = true;
             if (dismissHint() | dismissEngineList()) {
-                search.postDelayed(new Runnable() {
+                input.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         doFinish();
@@ -386,7 +396,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private void showHintList() {
         Message msg = Message.obtain();
         msg.what = AsynWindowHandler.SHOW_HINT_LIST;
-        msg.obj = search;
+        msg.obj = input;
         windowHandler.sendMessage(msg);
     }
 
@@ -471,16 +481,17 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private void doSearch(String word, boolean needShowHint) {
         showHint = needShowHint;
-        search.setText(word);
-        search.setSelection(word.length());
+        input.setText(word);
+        input.setSelection(word.length());
         if (!TextUtils.isEmpty(word)) {
             String url = getEngineUrl(word);
             if (!TextUtils.isEmpty(url)) {
+                webview.setOnTouchListener(null);
                 webview.loadUrl(url);
                 //hide input
                 InputMethodManager inputMethodManager =
                         (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                inputMethodManager.hideSoftInputFromWindow(search.getWindowToken(), 0);
+                inputMethodManager.hideSoftInputFromWindow(input.getWindowToken(), 0);
 
                 //hide hintList
                 dismissHint();
@@ -515,9 +526,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.operate:
-                search.setText("");
+                input.setText("");
                 setOptLevel(STATUS_SEARCH);
-                search.requestFocus();
+                input.requestFocus();
                 openBoard();
                 break;
             case R.id.hint_item:
@@ -531,8 +542,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     }
                 }
                 break;
-            case R.id.search:
+            case R.id.input:
                 showHintList();
+                break;
+            case R.id.search:
+                doSearch(input.getText().toString().trim(), false);
                 break;
             case R.id.menu:
                 popupMenu(v);
@@ -546,7 +560,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 getSharedPreferences("setting", MODE_PRIVATE).edit().putInt("engine", currentWebEngine).commit();
                 dismissEngineList();
                 refreshEngineIcon();
-                doSearch(search.getText().toString().trim(),false);
+                doSearch(input.getText().toString().trim(),false);
                 break;
         }
     }
@@ -597,8 +611,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         closeBoard();
                         startActivity(new Intent(MainActivity.this, HistoryActivity.class));
                         break;
+//                    case R.id.action_feedback:
+//                        sendMailByIntent();
+//                        break;
+//                    case R.id.action_about:
+//                        showAlertDialog(getString(R.string.action_about), getString(R.string.setting_about));
+//                        break;
                 }
-
                 return true;
             }
         });
@@ -627,12 +646,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     public void closeBoard() {
         InputMethodManager imm = (InputMethodManager)
                 getSystemService(INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(search.getWindowToken(), 0);
+        imm.hideSoftInputFromWindow(input.getWindowToken(), 0);
     }
 
     private void openBoard() {
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.showSoftInput(search, InputMethodManager.SHOW_FORCED);
+        imm.showSoftInput(input, InputMethodManager.SHOW_FORCED);
     }
 
     private static class EngineAdapter extends BaseAdapter {

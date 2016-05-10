@@ -13,16 +13,19 @@
     <string name="setting_feedback">反馈建议</string>
     <string name="setting_feedback_body">您的反馈和建议</string>
     <string name="setting_feedback_address">mailto:javalive09@163.com</string>
-    <string name="setting_about">速搜 : 简单畅快的搜索体验</string>
+    <string name="setting_about">提供简单畅快的搜索体验。搜索一步完成，退出一步完成。功能强大，干净省电。
+    </string>
     <string name="setting_clear">缓存和cookies已经清理</string>
 
-    <string name="action_share">分享链接</string>
+    <string name="action_share">分享</string>
     <string name="favorite_txt">已经添加到收藏夹</string>
     <string name="action_browser">在浏览器中打开</string>
-    <string name="action_collect">收藏链接</string>
+    <string name="action_collect">收藏</string>
     <string name="action_collection">收藏夹</string>
     <string name="action_history">历史记录</string>
     <string name="action_setting">设置</string>
+    <string name="action_feedback">反馈</string>
+    <string name="action_about">关于</string>
 
     <string name="update_dialog_title">正在下载更新包</string>
     <string name="update_dialog_cancel">取消</string>
@@ -32,6 +35,13 @@
     <string name="update_dialog_ok">更新</string>
     <string name="app_url">http://7xoxmg.com1.z0.glb.clouddn.com/searcher_10.apk</string>
     <string name="share_title">分享应用给小伙伴</string>
+
+    <string name="baidu">百度</string>
+    <string name="sougo">搜狗</string>
+    <string name="haosou">360</string>
+    <string name="bing">必应</string>
+    <string name="shenma">神马</string>
+    <string name="ciba">词霸</string>
 
     <string-array name="engine_web_names">
         <item>百度</item>
@@ -52,11 +62,15 @@
     </string-array>
 
     <string-array name="settings_name">
+        <!--<item>收藏夹</item>-->
+        <!--<item>历史记录</item>-->
         <item>分享APP</item>
         <item>清理缓存</item>
-        <item>@string/setting_feedback</item>
+        <item>反馈意见</item>
         <item>版本更新</item>
-        <item>关于速搜</item>
+        <item>关于</item>
+
+
     </string-array>
 
 </resources>

@@ -1,5 +1,6 @@
 package peter.util.searcher;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -45,7 +46,13 @@ public class SettingActivity extends BaseActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 switch (position) {
-                    case 0://engine
+//                    case 0://favorite
+//                        startActivity(new Intent(SettingActivity.this, FavoriteActivity.class));
+//                        break;
+//                    case 1://history
+//                        startActivity(new Intent(SettingActivity.this, HistoryActivity.class));
+//                        break;
+                    case 0://share
                         Intent sendIntent = new Intent();
                         sendIntent.setAction(Intent.ACTION_SEND);
                         sendIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.app_url));
@@ -64,7 +71,7 @@ public class SettingActivity extends BaseActivity {
                         UpdateController.instance(getApplicationContext()).checkVersion(windowHandler, true);
                         break;
                     case 4://about
-                        Toast.makeText(SettingActivity.this, R.string.setting_about, Toast.LENGTH_LONG).show();
+                        showAlertDialog(getString(R.string.action_about), getString(R.string.setting_about));
                         break;
                 }
             }
@@ -140,12 +147,13 @@ public class SettingActivity extends BaseActivity {
         }
     }
 
-    public void sendMailByIntent() {
-        Intent data=new Intent(Intent.ACTION_SENDTO);
-        data.setData(Uri.parse(getString(R.string.setting_feedback_address)));
-        data.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.setting_feedback));
-        data.putExtra(Intent.EXTRA_TEXT, getString(R.string.setting_feedback_body));
-        startActivity(data);
+    public AlertDialog showAlertDialog(String title, String content) {
+        AlertDialog dialog = new AlertDialog.Builder(SettingActivity.this).create();
+        dialog.setCanceledOnTouchOutside(true);
+        dialog.setTitle(title);
+        dialog.setMessage(content);
+        dialog.show();
+        return dialog;
     }
 
 }

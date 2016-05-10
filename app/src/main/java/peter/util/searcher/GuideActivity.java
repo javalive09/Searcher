@@ -21,7 +21,7 @@ public class GuideActivity extends Activity {
         setResult(RESULT_OK);
         View hand = findViewById(R.id.hand);
         handAnimator = ObjectAnimator.ofFloat(hand, "translationX", 0, -PullView.mTouchSlop * 4);
-        handAnimator.setDuration(1000);
+        handAnimator.setDuration(300);
         handAnimator.start();
         handAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
@@ -29,7 +29,7 @@ public class GuideActivity extends Activity {
                 super.onAnimationEnd(animation);
                 View title = findViewById(R.id.title);
                 title.setVisibility(View.VISIBLE);
-                ObjectAnimator titleAnim = ObjectAnimator.ofFloat(title, "alpha", 0, 1).setDuration(500);
+                ObjectAnimator titleAnim = ObjectAnimator.ofFloat(title, "alpha", 0, 1).setDuration(300);
                 titleAnim.start();
                 titleAnim.addListener(new AnimatorListenerAdapter() {
                     @Override
@@ -37,7 +37,7 @@ public class GuideActivity extends Activity {
                         super.onAnimationEnd(animation);
                         View subTitle = findViewById(R.id.sub_title);
                         subTitle.setVisibility(View.VISIBLE);
-                        ObjectAnimator subTitleAnim = ObjectAnimator.ofFloat(subTitle, "alpha", 0, 1).setDuration(500);
+                        ObjectAnimator subTitleAnim = ObjectAnimator.ofFloat(subTitle, "alpha", 0, 1).setDuration(300);
                         subTitleAnim.start();
                         subTitleAnim.addListener(new AnimatorListenerAdapter() {
                             @Override

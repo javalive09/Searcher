@@ -15,7 +15,6 @@
         android:id="@+id/action_history"
         android:orderInCategory="3"
         android:title="@string/action_history"/>
-
     <item
         android:id="@+id/action_share"
         android:orderInCategory="4"
@@ -25,7 +24,5 @@
         android:id="@+id/action_collect"
         android:orderInCategory="5"
         android:title="@string/action_collect"/>
-
-
 
 </menu>
