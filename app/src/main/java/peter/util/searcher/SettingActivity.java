@@ -28,7 +28,7 @@ import java.util.Date;
 public class SettingActivity extends BaseActivity {
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
         findViewById(R.id.back).setOnClickListener(new View.OnClickListener() {
@@ -46,12 +46,6 @@ public class SettingActivity extends BaseActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 switch (position) {
-//                    case 0://favorite
-//                        startActivity(new Intent(SettingActivity.this, FavoriteActivity.class));
-//                        break;
-//                    case 1://history
-//                        startActivity(new Intent(SettingActivity.this, HistoryActivity.class));
-//                        break;
                     case 0://share
                         Intent sendIntent = new Intent();
                         sendIntent.setAction(Intent.ACTION_SEND);
@@ -155,5 +149,14 @@ public class SettingActivity extends BaseActivity {
         dialog.show();
         return dialog;
     }
+
+    public void sendMailByIntent() {
+        Intent data=new Intent(Intent.ACTION_SENDTO);
+        data.setData(Uri.parse(getString(R.string.setting_feedback_address)));
+        data.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.setting_feedback));
+        data.putExtra(Intent.EXTRA_TEXT, getString(R.string.setting_feedback_body));
+        startActivity(data);
+    }
+
 
 }

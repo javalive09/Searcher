@@ -14,7 +14,7 @@ import java.util.List;
 public class HistoryActivity extends BaseActivity implements View.OnClickListener{
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);
         findViewById(R.id.back).setOnClickListener(this);

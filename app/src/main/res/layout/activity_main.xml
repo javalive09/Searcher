@@ -1,85 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<peter.util.searcher.PullView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/frame"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <RelativeLayout
-        android:id="@+id/root"
+        android:id="@+id/title"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="@dimen/title_h"
+        android:background="@color/title_bg">
 
-        <RelativeLayout
-            android:id="@+id/title"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/title_h"
-            android:background="@color/title_bg">
-
-            <View android:id="@+id/engine_anchor"
-                android:layout_width="@dimen/engine_anchor_w"
-                android:layout_height="match_parent"/>
-
-            <ImageView
-                android:id="@+id/menu"
-                android:layout_width="@dimen/menu_w"
-                android:layout_height="@dimen/menu_h"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:background="@drawable/menu_selector"
-                android:scaleType="center"
-                android:src="@drawable/abc_ic_menu_moreoverflow_mtrl_alpha" />
-
-            <ImageView
-                android:id="@+id/search"
-                android:layout_width="@dimen/search_w"
-                android:layout_height="@dimen/search_h"
-                android:layout_toLeftOf="@+id/menu"
-                android:layout_centerVertical="true"
-                android:background="@drawable/menu_selector"
-                android:scaleType="center"
-                android:src="@drawable/abc_ic_search_api_mtrl_alpha" />
-
-            <peter.util.searcher.EditTextBackEvent
-                android:id="@+id/input"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_toLeftOf="@id/search"
-                android:background="@drawable/search_bg_"
-                android:paddingLeft="@dimen/input_padding_left"
-                android:paddingRight="@dimen/input_padding_right"
-                android:gravity="center_vertical"
-                android:hint="@string/search"
-                android:textCursorDrawable="@drawable/cursor"
-                android:imeOptions="actionSearch"
-                android:singleLine="true" />
-
-            <ImageView
-                android:id="@+id/engine"
-                android:layout_width="@dimen/engine_w"
-                android:layout_height="@dimen/engine_h"
-                android:src="@drawable/engine"
-                android:layout_centerVertical="true"
-                android:background="@drawable/clear_selector"
-                android:layout_marginLeft="@dimen/engine_margin_left"
-                />
-
-            <ImageView
-                android:id="@+id/operate"
-                android:layout_width="@dimen/operate_cell"
-                android:layout_height="@dimen/operate_cell"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="@dimen/search_padding"
-                android:layout_toLeftOf="@+id/search"
-                android:contentDescription="@string/search"
-                android:src="@drawable/operate"/>
-        </RelativeLayout>
-
-        <WebView
-            android:id="@+id/wv"
+        <peter.util.searcher.EditTextBackEvent
+            android:id="@+id/input"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/title"/>
+            android:background="@drawable/search_bg_"
+            android:gravity="center_vertical"
+            android:hint="@string/search"
+            android:imeOptions="actionSearch"
+            android:paddingRight="@dimen/input_padding_right"
+            android:singleLine="true"
+            android:textCursorDrawable="@drawable/cursor" />
 
+        <ImageView
+            android:id="@+id/operate"
+            android:layout_width="@dimen/operate_cell"
+            android:layout_height="@dimen/operate_cell"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/search_padding"
+            android:contentDescription="@string/search"
+            android:src="@drawable/operate" />
     </RelativeLayout>
 
-</peter.util.searcher.PullView>
+    <WebView
+        android:id="@+id/wv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/title" />
+
+</RelativeLayout>

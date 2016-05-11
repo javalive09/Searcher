@@ -1,6 +1,5 @@
 package peter.util.searcher;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -15,7 +14,7 @@ import java.util.List;
 public class FavoriteActivity extends BaseActivity implements View.OnClickListener{
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_favorite);
         findViewById(R.id.back).setOnClickListener(this);

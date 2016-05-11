@@ -21,7 +21,7 @@
     <dimen name="input_padding_left">50dp</dimen>
     <dimen name="input_padding_right">33dp</dimen>
 
-    <dimen name="shadow_width">5dp</dimen>
+    <dimen name="shadow_width">15dp</dimen>
     <dimen name="slidingmenu_offset">60dp</dimen>
     <dimen name="list_padding">10dp</dimen>
 </resources>

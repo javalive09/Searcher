@@ -62,15 +62,20 @@
     </string-array>
 
     <string-array name="settings_name">
-        <!--<item>收藏夹</item>-->
-        <!--<item>历史记录</item>-->
         <item>分享APP</item>
         <item>清理缓存</item>
         <item>反馈意见</item>
         <item>版本更新</item>
         <item>关于</item>
+    </string-array>
 
-
+    <string-array name="menus_name">
+        <item>设置</item>
+        <item>收藏夹</item>
+        <item>历史记录</item>
+        <item>分享</item>
+        <item>收藏</item>
+        <item>退出</item>
     </string-array>
 
 </resources>
