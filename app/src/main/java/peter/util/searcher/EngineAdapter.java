@@ -44,8 +44,8 @@ public class EngineAdapter extends BaseAdapter {
             convertView.findViewById(R.id.icon).setBackgroundResource(resId);
 
             String name = act.getResources().getStringArray(R.array.engine_web_names)[position];
-            TextView tv = (TextView) convertView.findViewById(R.id.name);
-            tv.setText(name);
+//            TextView tv = (TextView) convertView.findViewById(R.id.name);
+//            tv.setText(name);
             convertView.setOnClickListener(act);
             convertView.setTag(position);
             return convertView;

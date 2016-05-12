@@ -40,15 +40,21 @@ public class BaseActivity extends SlidingFragmentActivity {
 
         SlidingMenu sm = getSlidingMenu();
         sm.setShadowWidthRes(R.dimen.shadow_width);
-        sm.setMode(SlidingMenu.RIGHT);
+        sm.setMode(SlidingMenu.LEFT_RIGHT);
         sm.setShadowDrawable(R.drawable.shadow);
         sm.setBehindOffsetRes(R.dimen.slidingmenu_offset);
-        sm.setFadeDegree(0.1f);
+        sm.setFadeDegree(0.35f);
         sm.setMenu(R.layout.menu_frame);
+        sm.setSecondaryMenu(R.layout.menu_frame_two);
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.menu_frame, new MenuFragment())
                 .commit();
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.menu_frame_two, new MenuFragment())
+                .commit();
+
     }
 
     public MainFragment getMainFragment() {

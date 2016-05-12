@@ -3,6 +3,7 @@ package peter.util.searcher;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.net.http.SslError;
 import android.os.AsyncTask;
@@ -24,7 +25,13 @@ import android.webkit.SslErrorHandler;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.GridView;
+import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -39,6 +46,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     private WebView webview;
     private EditTextBackEvent input;
     private ViewGroup root;
+    private String[] webEngineUrls;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -49,6 +57,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     }
 
     private void initView() {
+        webEngineUrls = getResources().getStringArray(R.array.engine_web_urls);
         webview = (WebView) root.findViewById(R.id.wv);
         if (Build.VERSION.SDK_INT < 21) {
             webview.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
@@ -60,7 +69,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                    doSearch(input.getText().toString().trim(), false);
+                    doSearch(input.getText().toString().trim(), 1);
                     return true;
                 }
                 return false;
@@ -132,7 +141,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
             }
         });
 
-        getDataFromDB();
+//        getDataFromDB();
     }
 
     public String getCurrentUrl() {
@@ -186,33 +195,33 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         super.onDestroy();
     }
 
-    private void getDataFromDB() {
-        new AsyncTask<Void, Void, List<Bean>>() {
-
-            @Override
-            protected List<Bean> doInBackground(Void... params) {
-                return SqliteHelper.instance(getActivity().getApplicationContext()).queryRecentHistory();
-            }
-
-            @Override
-            protected void onPostExecute(List<Bean> searches) {
-                super.onPostExecute(searches);
-                if (searches != null) {
-                    if(!isDetached()) {
-                        if (searches.size() > 0) {
-                            Bean delete = new Bean();
-                            delete.name = getString(R.string.clear_history);
-                            searches.add(delete);
-//                            updateHintList(searches);
-                        } else {
-//                            dismissHint();
-                        }
-                    }
-                }
-
-            }
-        }.execute();
-    }
+//    private void getDataFromDB() {
+//        new AsyncTask<Void, Void, List<Bean>>() {
+//
+//            @Override
+//            protected List<Bean> doInBackground(Void... params) {
+//                return SqliteHelper.instance(getActivity().getApplicationContext()).queryRecentHistory();
+//            }
+//
+//            @Override
+//            protected void onPostExecute(List<Bean> searches) {
+//                super.onPostExecute(searches);
+//                if (searches != null) {
+//                    if(!isDetached()) {
+//                        if (searches.size() > 0) {
+//                            Bean delete = new Bean();
+//                            delete.name = getString(R.string.clear_history);
+//                            searches.add(delete);
+////                            updateHintList(searches);
+//                        } else {
+////                            dismissHint();
+//                        }
+//                    }
+//                }
+//
+//            }
+//        }.execute();
+//    }
 
     private byte[] readStream(InputStream inStream) throws Exception {
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -253,34 +262,31 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         return null;
     }
 
-    private void doSearch(String word, boolean needShowHint) {
-//        showHint = needShowHint;
-//        input.setText(word);
-//        input.setSelection(word.length());
-//        if (!TextUtils.isEmpty(word)) {
-//            String url = getEngineUrl(word);
-//            if (!TextUtils.isEmpty(url)) {
-//                webview.setOnTouchListener(null);
-//                webview.loadUrl(url);
-//                //hide input
-//                InputMethodManager inputMethodManager =
-//                        (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-//                inputMethodManager.hideSoftInputFromWindow(input.getWindowToken(), 0);
-//
-//                //hide hintList
-//                dismissHint();
+    private void doSearch(String word, int currentWebEngine) {
+        input.setText(word);
+        input.setSelection(word.length());
+        if (!TextUtils.isEmpty(word)) {
+            String url = getEngineUrl(word, currentWebEngine);
+            if (!TextUtils.isEmpty(url)) {
+                webview.setOnTouchListener(null);
+                webview.loadUrl(url);
+                //hide input
+                InputMethodManager inputMethodManager =
+                        (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputMethodManager.hideSoftInputFromWindow(input.getWindowToken(), 0);
+
 //                saveData(word, url);
-//            }
-//        }
+            }
+        }
     }
 
-//    private String getEngineUrl(String word) {
-//        if (word.startsWith("http:")
-//                || word.startsWith("https:")) {
-//            return word;
-//        }
-//        return String.format(webEngineUrls[currentWebEngine], getEncodeString(word));
-//    }
+    private String getEngineUrl(String word, int currentWebEngine) {
+        if (word.startsWith("http:")
+                || word.startsWith("https:")) {
+            return word;
+        }
+        return String.format(webEngineUrls[currentWebEngine], getEncodeString(word));
+    }
 
     private void saveData(final String word, final String url) {
         new AsyncTask<Void, Void, Void>() {
@@ -311,11 +317,12 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                     if (getString(R.string.clear_history).equals(s.name)) {
 //                        clearHistory();
                     } else {
-                        doSearch(s.name ,false);
+                        doSearch(s.name , 1);
                     }
                 }
                 break;
             case R.id.input:
+                popupEngine(v);
                 break;
 //            case R.id.search:
 //                doSearch(input.getText().toString().trim(), false);
@@ -325,13 +332,13 @@ public class MainFragment extends Fragment implements View.OnClickListener {
 //                break;
 //            case R.id.engine:
 //                break;
-            case R.id.engine_item:
-                int position = (int) v.getTag();
+//            case R.id.engine_item:
+//                int position = (int) v.getTag();
 //                currentWebEngine = position;
 //                getSharedPreferences("setting", MODE_PRIVATE).edit().putInt("engine", currentWebEngine).commit();
 //                dismissEngineList();
-                doSearch(input.getText().toString().trim(),false);
-                break;
+//                doSearch(input.getText().toString().trim(),false);
+//                break;
         }
     }
 
@@ -344,6 +351,30 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     private void openBoard() {
         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.showSoftInput(input, InputMethodManager.SHOW_FORCED);
+    }
+
+    private PopupWindow popupEngine(View anchor) {
+        View popupView = getActivity().getLayoutInflater().inflate(R.layout.layout_engine, null);
+        final PopupWindow mPopupWindow = new PopupWindow(popupView,
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
+                R.layout.engine_item, getResources().getStringArray(R.array.engine_web_names));
+        GridView gridView = (GridView) popupView.findViewById(R.id.engine);
+        gridView.setAdapter(adapter);
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View v,
+                                    int position, long id) {
+                Toast.makeText(getActivity().getApplicationContext(),
+                        ((TextView) v).getText(), Toast.LENGTH_SHORT).show();
+                doSearch(input.getText().toString().trim(), position);
+                mPopupWindow.dismiss();
+
+            }
+        });
+        mPopupWindow.setFocusable(false);
+        mPopupWindow.setOutsideTouchable(true);
+        mPopupWindow.showAsDropDown(anchor);
+        return mPopupWindow;
     }
 
 }
