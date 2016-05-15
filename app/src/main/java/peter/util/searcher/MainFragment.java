@@ -85,7 +85,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                    doSearch(input.getText().toString().trim(), 0);
+                    doSearch(input.getText().toString().trim(), 1);
                     return true;
                 }
                 return false;
