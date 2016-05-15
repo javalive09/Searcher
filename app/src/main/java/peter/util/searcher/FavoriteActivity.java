@@ -21,6 +21,7 @@ public class FavoriteActivity extends BaseActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_favorite);
+        ((TextView)findViewById(R.id.title_txt)).setText(R.string.action_collection);
         findViewById(R.id.back).setOnClickListener(this);
         new MyAsyncTask(FavoriteActivity.this).execute();
     }

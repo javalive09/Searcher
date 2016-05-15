@@ -4,36 +4,7 @@
     android:layout_height="match_parent"
     android:background="@color/setting_bg">
 
-    <RelativeLayout
-        android:id="@+id/title"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/title_h"
-        android:background="@color/title_bg">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:gravity="center"
-            android:textColor="@android:color/white"
-            android:textSize="@dimen/title_txt_size"
-            android:text="@string/setting_title" />
-
-        <TextView
-            android:id="@+id/back"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_centerVertical="true"
-            android:drawableLeft="@drawable/back"
-            android:textColor="@android:color/white"
-            android:paddingLeft="@dimen/back_padding"
-            android:textSize="15sp"
-            android:drawablePadding="@dimen/back_padding"
-            android:paddingRight="@dimen/back_padding"
-            android:background="@drawable/back_selector"
-            android:gravity="center"
-            android:text="@string/setting_back" />
-    </RelativeLayout>
+    <include layout="@layout/activity_title"/>
 
     <TextView
         android:id="@+id/version"

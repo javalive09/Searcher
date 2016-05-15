@@ -15,7 +15,6 @@ public class SqliteHelper extends SQLiteOpenHelper {
     private static final String TABLE_FAVORITE = "favorite";
     private static final int version = 1;
     private static SqliteHelper helper;
-    private static final int LIMIT = 5;
 
     private SqliteHelper(Context context) {
         super(context, DB_NAME, null, version);
@@ -60,50 +59,10 @@ public class SqliteHelper extends SQLiteOpenHelper {
         }
     }
 
-    public synchronized void clearRecentHistory() {
-        SQLiteDatabase db = getWritableDatabase();
-        Cursor cursor = db.query(TABLE_HISTORY, null, null, null, null, null, "historyId DESC", LIMIT + "");
-        if (cursor != null && cursor.moveToFirst()) {
-            int nameColumnIndex = cursor.getColumnIndex("name");
-            do {
-                String name = cursor.getString(nameColumnIndex);
-                ContentValues values = new ContentValues();
-                values.put("show", 0);
-                db.update(TABLE_HISTORY, values, "name=?", new String[]{name});
-            }while (cursor.moveToNext());
-            cursor.close();
-        }
-    }
-
-    public List<Bean> queryRecentHistory() {
-        List<Bean> list = new ArrayList<>(LIMIT);
-        SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.query(TABLE_HISTORY, null, null, null, null, null, "historyId DESC", LIMIT + "");
-
-        if (cursor != null && cursor.moveToFirst()) {
-            int timeColumnIndex = cursor.getColumnIndex("time");
-            int nameColumnIndex = cursor.getColumnIndex("name");
-            int showColumnIndex = cursor.getColumnIndex("show");
-            do {
-                long time = cursor.getLong(timeColumnIndex);
-                String name = cursor.getString(nameColumnIndex);
-                int show = cursor.getInt(showColumnIndex);
-                if(show == 1) {
-                    Bean bean = new Bean();
-                    bean.name = name;
-                    bean.time = time;
-                    list.add(bean);
-                }
-            } while (cursor.moveToNext());
-            cursor.close();
-        }
-        return list;
-    }
-
     public List<Bean> queryAllHistory() {
         List<Bean> list = new ArrayList<>();
         SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.rawQuery("select * from " + TABLE_HISTORY, null);
+        Cursor cursor = db.query(TABLE_HISTORY, null, null, null, null, null, "historyId DESC", null);
         if(cursor != null && cursor.moveToFirst()) {
             int timeColumnIndex = cursor.getColumnIndex("time");
             int nameColumnIndex = cursor.getColumnIndex("name");
@@ -142,7 +101,7 @@ public class SqliteHelper extends SQLiteOpenHelper {
     public List<Bean> queryAllFavorite() {
         List<Bean> list = new ArrayList<>();
         SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.rawQuery("select * from " + TABLE_FAVORITE, null);
+        Cursor cursor = db.query(TABLE_FAVORITE, null, null, null, null, null, "favId DESC", null);
         if(cursor != null && cursor.moveToFirst()) {
             int timeColumnIndex = cursor.getColumnIndex("time");
             int nameColumnIndex = cursor.getColumnIndex("name");

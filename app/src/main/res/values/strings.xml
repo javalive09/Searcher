@@ -25,7 +25,7 @@
     <string name="action_history">历史记录</string>
     <string name="action_setting">设置</string>
     <string name="action_feedback">反馈</string>
-    <string name="action_about">关于</string>
+    <string name="action_about">关于速搜</string>
 
     <string name="update_dialog_title">正在下载更新包</string>
     <string name="update_dialog_cancel">取消</string>
@@ -36,16 +36,9 @@
     <string name="app_url">http://7xoxmg.com1.z0.glb.clouddn.com/searcher_10.apk</string>
     <string name="share_title">分享应用给小伙伴</string>
 
-    <string name="baidu">百度</string>
-    <string name="sougo">搜狗</string>
-    <string name="haosou">360</string>
-    <string name="bing">必应</string>
-    <string name="shenma">神马</string>
-    <string name="ciba">词霸</string>
-
     <string-array name="engine_web_names">
 
-        <item>链接 :</item>
+        <item>搜索 :</item>
         <item>百度</item>
         <item>搜狗</item>
         <item>360</item>
@@ -73,8 +66,8 @@
         <item>爱奇艺</item>
         <!--<item>微博</item>-->
 
-        <item>应用 :</item>
-        <item>腾讯</item>
+        <item>APP :</item>
+        <item>应用宝</item>
         <item>360</item>
         <item>百度</item>
         <item>小米</item>
@@ -128,11 +121,11 @@
     </string-array>
 
     <string-array name="menus_name">
-        <item>设置</item>
-        <item>收藏夹</item>
-        <item>历史记录</item>
-        <item>分享</item>
-        <item>收藏</item>
+        <item>@string/action_setting</item>
+        <item>@string/action_collection</item>
+        <item>@string/action_history</item>
+        <item>@string/action_share</item>
+        <item>@string/action_collect</item>
         <item>退出</item>
     </string-array>
 

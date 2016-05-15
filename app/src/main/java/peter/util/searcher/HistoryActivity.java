@@ -22,6 +22,7 @@ public class HistoryActivity extends BaseActivity implements View.OnClickListene
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);
         findViewById(R.id.back).setOnClickListener(this);
+        ((TextView)findViewById(R.id.title_txt)).setText(R.string.action_history);
         new MyAsyncTask(HistoryActivity.this).execute();
     }
 

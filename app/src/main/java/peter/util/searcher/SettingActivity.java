@@ -34,6 +34,7 @@ public class SettingActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
+        ((TextView)findViewById(R.id.title_txt)).setText(R.string.setting_title);
         findViewById(R.id.back).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
