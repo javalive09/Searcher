@@ -25,7 +25,7 @@
             android:name="UMENG_CHANNEL"
             android:value="${UMENG_CHANNEL_VALUE}" />
 
-        <activity android:name=".BaseActivity"
+        <activity android:name=".MainActivity"
             android:excludeFromRecents="true"
             android:launchMode="singleTask"
             android:windowSoftInputMode="stateAlwaysHidden"

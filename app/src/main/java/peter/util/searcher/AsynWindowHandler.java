@@ -22,10 +22,6 @@ public class AsynWindowHandler extends Handler {
     public static final int SHOW_NEW_UPDATE_DIALOG = 1;
     public static final int DISMISS_UPDATE_DIALOG = 2;
 
-    public static final int SHOW_HINT_LIST = 3;
-    public static final int UPDATE_HINT_LIST_DATA = 4;
-    public static final int DISMISS_HINT_LIST = 5;
-
     public static final int SHOW_UPDATE_PROGRESS = 6;
     public static final int INCREASE_UPDATE_PROGRESS = 7;
     public static final int DISMISS_UPDATE_PROGRESS = 8;
@@ -34,9 +30,6 @@ public class AsynWindowHandler extends Handler {
 
     private AlertDialog dialog;
     private ProgressDialog progress;
-    private ListPopupWindow hintList;
-    private HintAdapter hintAdapter;
-    private boolean destroyedWindow;
 
     private WeakReference<Activity> mAct;
 
@@ -44,11 +37,13 @@ public class AsynWindowHandler extends Handler {
         mAct = new WeakReference<>(act);
     }
 
+    public boolean isActDestory() {
+        return mAct.get() == null;
+    }
+
     @Override
     public void handleMessage(Message msg) {
-        if(destroyedWindow) {
-            return;
-        }
+
         final Activity act = mAct.get();
         if(act != null) {
             switch (msg.what) {
@@ -101,40 +96,7 @@ public class AsynWindowHandler extends Handler {
                         progress.dismiss();
                     }
                     break;
-                case SHOW_HINT_LIST:
-                    if(act instanceof MainActivity) {
-                        if(hintList == null) {
-                            View search = (View) msg.obj;
-                            MainActivity mainActivity = (MainActivity) act;
-                            hintList = new ListPopupWindow(act);
-                            hintAdapter = new HintAdapter(new ArrayList<Bean>(1), mainActivity);
-                            hintList.setAdapter(hintAdapter);
-                            hintList.setAnchorView(search);
-                            hintList.setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
-                            hintList.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
-                            hintList.setModal(false);
-                        }
-                        if (!hintList.isShowing()) {
-                            hintList.show();
-                        }
-                    }
-                    break;
-                case UPDATE_HINT_LIST_DATA:
-                    if(hintList != null && hintAdapter != null) {
-                        List<Bean> objects = (List<Bean>) msg.obj;
-                        hintAdapter.updateData(objects);
-                        if (!hintList.isShowing()) {
-                            hintList.show();
-                        }
-                    }
-                    break;
-                case DISMISS_HINT_LIST:
-                    if(hintList != null && hintList.isShowing()) {
-                        hintList.dismiss();
-                    }
-                    break;
                 case DESTROY:
-                    destroyedWindow = true;
                     if(dialog != null && dialog.isShowing()) {
                         dialog.dismiss();
                     }
@@ -143,21 +105,10 @@ public class AsynWindowHandler extends Handler {
                         progress.dismiss();
                     }
 
-                    if(hintList != null && hintList.isShowing()) {
-                        hintList.dismiss();
-                    }
-
                     break;
 
             }
         }
-    }
-
-    public boolean isHintListShowing() {
-        if(hintList != null && hintList.isShowing()) {
-            return true;
-        }
-        return false;
     }
 
 }

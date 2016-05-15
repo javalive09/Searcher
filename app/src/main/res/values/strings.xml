@@ -44,21 +44,79 @@
     <string name="ciba">词霸</string>
 
     <string-array name="engine_web_names">
+
+        <item>链接 :</item>
         <item>百度</item>
         <item>搜狗</item>
         <item>360</item>
         <item>必应</item>
-        <item>神马</item>
+        <!--<item>神马</item>-->
+
+        <item>词汇 :</item>
+        <item>维基</item>
         <item>词霸</item>
+        <item>有道</item>
+        <item>牛津</item>
+        <!--<item>新华</item>-->
+
+        <item>购物 :</item>
+        <item>京东</item>
+        <item>天猫</item>
+        <item>淘宝</item>
+        <!--<item>当当</item>-->
+        <item>亚马逊</item>
+
+        <item>视频 :</item>
+        <item>腾讯</item>
+        <item>优酷</item>
+        <item>搜狐</item>
+        <item>爱奇艺</item>
+        <!--<item>微博</item>-->
+
+        <item>应用 :</item>
+        <item>腾讯</item>
+        <item>360</item>
+        <item>百度</item>
+        <item>小米</item>
+        <!--<item>安智</item>-->
+
     </string-array>
 
     <string-array name="engine_web_urls">
+        <item></item>
         <item>http://m.baidu.com/s?word=%s</item>
         <item>http://wap.sogou.com/web/sl?keyword=%s</item>
         <item>http://m.haosou.com/s?q=%s</item>
         <item>http://cn.bing.com/search?q=%s</item>
-        <item>http://m.yz2.sm.cn/s?q=%s</item>
+        <!--<item>http://m.yz2.sm.cn/s?q=%s</item>-->
+
+        <item></item>
+        <item>https://wuu.m.wikipedia.org/w/index.php?search=%s</item>
         <item>http://www.iciba.com/%s</item>
+        <item>http://m.youdao.com/dict?le=eng&amp;q=%s</item>
+        <item>http://www.oxforddictionaries.com/definition/english/%s</item>
+        <!--<item>http://xh.5156edu.com/html3/%s.html</item>-->
+
+        <item></item>
+        <item>http://so.m.jd.com/ware/search.action?keyword=%s</item>
+        <item>https://list.tmall.com/search_product.htm?q=%s</item>
+        <item>https://ai.m.taobao.com/search.html?q=%s</item>
+        <!--<item>http://search.dangdang.com/?key=%s</item>-->
+        <item>https://www.amazon.cn/s/field-keywords=%s</item>
+
+        <item></item>
+        <item>http://m.v.qq.com/search.html?keyWord=%s</item>
+        <item>http://www.soku.com/search_video/q_%s</item>
+        <item>http://tv.sohu.com/upload/h5/m/mso.html?key=%s</item>
+        <item>http://m.iqiyi.com/search.html?key=%s</item>
+        <!--<item>http://s.weibo.com/weibo/%s</item>-->
+
+        <item></item>
+        <item>http://app.qq.com/#id=search&amp;key=%s</item>
+        <item>http://m.app.haosou.com/search/index?q=%s</item>
+        <item>http://mobile.baidu.com/search?w=%s</item>
+        <item>http://app.mi.com/search?keywords=%s</item>
+        <!--<item>http://www.anzhi.com/search.php?keyword=%s</item>-->
     </string-array>
 
     <string-array name="settings_name">

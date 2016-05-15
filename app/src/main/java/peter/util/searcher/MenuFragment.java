@@ -3,6 +3,7 @@ package peter.util.searcher;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,28 +32,36 @@ public class MenuFragment extends ListFragment {
         switch (position) {
             case 0://设置
                 startActivity(new Intent(getActivity(), SettingActivity.class));
+                ((MainActivity)getActivity()).getSlidingMenu().toggle(false);
                 break;
             case 1://收藏
                 startActivity(new Intent(getActivity(), FavoriteActivity.class));
+                ((MainActivity)getActivity()).getSlidingMenu().toggle(false);
                 break;
             case 2://历史记录
                 startActivity(new Intent(getActivity(), HistoryActivity.class));
+                ((MainActivity)getActivity()).getSlidingMenu().toggle(false);
                 break;
             case 3://分享
-                String url = ((BaseActivity)getActivity()).getMainFragment().getCurrentUrl();
+                String url = ((MainActivity)getActivity()).getMainFragment().getCurrentUrl();
                 Intent sendIntent = new Intent();
                 sendIntent.setAction(Intent.ACTION_SEND);
                 sendIntent.putExtra(Intent.EXTRA_TEXT, url);
                 sendIntent.setType("text/plain");
                 startActivity(Intent.createChooser(sendIntent, getString(R.string.share_title)));
+                ((MainActivity)getActivity()).getSlidingMenu().toggle(false);
                 break;
             case 4://收藏
-                Bean bean = new Bean();
-                bean.name = ((BaseActivity)getActivity()).getMainFragment().getCurrentTitle();
-                bean.url = ((BaseActivity)getActivity()).getMainFragment().getCurrentUrl();
-                bean.time = System.currentTimeMillis();
-                SqliteHelper.instance(getActivity().getApplicationContext()).insertFav(bean);
-                Toast.makeText(getActivity(), R.string.favorite_txt, Toast.LENGTH_SHORT).show();
+                String currentUrl = ((MainActivity)getActivity()).getMainFragment().getCurrentUrl();
+                if(!TextUtils.isEmpty(currentUrl)) {
+                    Bean bean = new Bean();
+                    bean.name = ((MainActivity) getActivity()).getMainFragment().getCurrentTitle();
+                    bean.url = currentUrl;
+                    bean.time = System.currentTimeMillis();
+                    SqliteHelper.instance(getActivity().getApplicationContext()).insertFav(bean);
+                    Toast.makeText(getActivity(), R.string.favorite_txt, Toast.LENGTH_SHORT).show();
+                    ((MainActivity)getActivity()).getSlidingMenu().toggle(false);
+                }
                 break;
             case 5:
                 getActivity().finish();

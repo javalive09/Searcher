@@ -4,15 +4,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.TextView;
 
 public class EngineAdapter extends BaseAdapter {
 
         private final LayoutInflater factory;
-        MainActivity act;
+        MainActivity_ act;
         private int[] drawableRes;
 
-        public EngineAdapter(int[] drawableRes, MainActivity act) {
+        public EngineAdapter(int[] drawableRes, MainActivity_ act) {
             this.act = act;
             factory = LayoutInflater.from(act);
             this.drawableRes = drawableRes;
@@ -41,7 +40,7 @@ public class EngineAdapter extends BaseAdapter {
                 convertView = factory.inflate(R.layout.engine_item, parent, false);
             }
             int resId = getItem(position);
-            convertView.findViewById(R.id.icon).setBackgroundResource(resId);
+//            convertView.findViewById(R.id.icon).setBackgroundResource(resId);
 
             String name = act.getResources().getStringArray(R.array.engine_web_names)[position];
 //            TextView tv = (TextView) convertView.findViewById(R.id.name);

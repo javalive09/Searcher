@@ -1,5 +1,6 @@
 package peter.util.searcher;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -25,7 +26,9 @@ import com.umeng.analytics.MobclickAgent;
 import java.io.File;
 import java.util.Date;
 
-public class SettingActivity extends BaseActivity {
+public class SettingActivity extends Activity {
+
+    AsynWindowHandler windowHandler;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -158,5 +161,12 @@ public class SettingActivity extends BaseActivity {
         startActivity(data);
     }
 
+    @Override
+    protected void onDestroy() {
+        if(windowHandler != null) {
+            windowHandler.sendEmptyMessage(AsynWindowHandler.DESTROY);
+        }
+        super.onDestroy();
+    }
 
 }

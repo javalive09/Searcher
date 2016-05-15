@@ -32,8 +32,6 @@ public class UpdateController {
 
     boolean isChecking = false;
 
-    boolean isAutoChecking = false;
-
     Context mContext;
 
     public static int MAX_PROGRESS = 100;
@@ -58,6 +56,10 @@ public class UpdateController {
             return;
         }
         isChecking = true;
+
+        if(handler.isActDestory()) {
+            return;
+        }
         new AsyncTask<Void, Void, String>() {
 
             @Override
@@ -227,21 +229,6 @@ public class UpdateController {
     }
 
     protected void autoCheckVersion(final AsynWindowHandler handler) {
-        if (isAutoChecking) {
-            return;
-        }
-        isAutoChecking = true;
-        new AsyncTask<Void, Void, Void>() {
-
-            @Override
-            protected Void doInBackground(Void... params) {
-                isTimeToCheckUpdate(handler);
-                return null;
-            }
-        }.execute();
-    }
-
-    private void isTimeToCheckUpdate(AsynWindowHandler handler) {
         long time = getUpdateTime();
         if (time == 0) {
             checkVersion(handler, false);

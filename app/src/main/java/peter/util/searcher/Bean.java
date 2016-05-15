@@ -7,4 +7,5 @@ public class Bean {
     long time;
     String name;
     String url;
+    int engine;
 }

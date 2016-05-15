@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="title_bg">#3F51B5</color>
+    <color name="title_bg">#43a4e8</color>
 
     <color name="setting_bg">#f7f7f9</color>
 
     <color name="item_normal">#ffffff</color>
     <color name="item_press">#88cccccc</color>
+
+
+    <color name="engine_item_normal">#cccccc</color>
+    <color name="engine_item_press">#888888</color>
 
     <color name="menu_press">#cccccc</color>
     <color name="menu_normal">@color/title_bg</color>
