@@ -2,11 +2,9 @@ package peter.util.searcher;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.LevelListDrawable;
 import android.net.Uri;
 import android.net.http.SslError;
@@ -22,6 +20,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.DownloadListener;
@@ -29,25 +28,14 @@ import android.webkit.SslErrorHandler;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Adapter;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.PopupWindow;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.List;
 
 public class MainFragment extends Fragment implements View.OnClickListener {
 
@@ -58,6 +46,8 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     private ImageView operate;
     private GridView engine;
     private int mCurrentWebEngine;
+    private View mVideoCustomView;
+    private WebChromeClient mWebchromeclient;
 
     private static final int STATUS_SEARCH = 0;
     private static final int STATUS_CLEAR = 1;
@@ -118,10 +108,45 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                 }
             }
         });
+        webview.getSettings().setLoadWithOverviewMode(true);
         webview.getSettings().setJavaScriptEnabled(true);
         webview.getSettings().setDomStorageEnabled(true);
-        webview.setWebChromeClient(new WebChromeClient() {
-        });
+
+        final FrameLayout video_fullView = (FrameLayout) root.findViewById(R.id.video_fullView);
+        mWebchromeclient = new WebChromeClient() {
+            CustomViewCallback xCustomViewCallback;
+            @Override
+            public void onShowCustomView(View view, CustomViewCallback callback) {
+                getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                webview.setVisibility(View.INVISIBLE);
+                // 如果一个视图已经存在，那么立刻终止并新建一个
+                if (mVideoCustomView != null) {
+                    callback.onCustomViewHidden();
+                    return;
+                }
+                video_fullView.addView(view);
+                mVideoCustomView = view;
+                xCustomViewCallback = callback;
+                video_fullView.setVisibility(View.VISIBLE);
+            }
+
+            // 视频播放退出全屏会被调用的
+            @Override
+            public void onHideCustomView() {
+                if (mVideoCustomView == null)// 不是全屏播放状态
+                    return;
+                getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                mVideoCustomView.setVisibility(View.GONE);
+                video_fullView.removeView(mVideoCustomView);
+                mVideoCustomView = null;
+                video_fullView.setVisibility(View.GONE);
+                xCustomViewCallback.onCustomViewHidden();
+                webview.setVisibility(View.VISIBLE);
+            }
+
+
+        };
+        webview.setWebChromeClient(mWebchromeclient);
         webview.setWebViewClient(new WebViewClient() {
 
             @Override
@@ -133,6 +158,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 setOptLevel(STATUS_LOADING);
+                Log.i("peter", "url=" + url);
             }
 
             @Override
@@ -154,6 +180,12 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         });
 
     }
+
+    public void hideCustomView() {
+        mWebchromeclient.onHideCustomView();
+        getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+    }
+
 
     private void dismissEngine() {
         if(engine != null && engine.getVisibility() == View.VISIBLE) {
@@ -179,7 +211,11 @@ public class MainFragment extends Fragment implements View.OnClickListener {
 
     public boolean onKeyDown() {
         if(webview != null && webview.canGoBack()) {
-            webview.goBack();
+            if(mVideoCustomView != null) {//在全屏播放视频
+                hideCustomView();
+            }else {
+                webview.goBack();
+            }
             return true;
         }
         return false;
@@ -387,6 +423,36 @@ public class MainFragment extends Fragment implements View.OnClickListener {
 
     public void onConfigurationChanged(Configuration newConfig) {
 
+        switch (newConfig.orientation) {
+            case Configuration.ORIENTATION_LANDSCAPE:
+                Log.i("peter", "onConfigurationChanged ORIENTATION_LANDSCAPE");
+                View title = root.findViewById(R.id.title);
+                if(title.getVisibility() == View.VISIBLE) {
+                    title.setVisibility(View.GONE);
+                    toggleFullscreen(true);
+                }
+                break;
+            case Configuration.ORIENTATION_PORTRAIT:
+                Log.i("peter", "onConfigurationChanged ORIENTATION_PORTRAIT");
+                title = root.findViewById(R.id.title);
+                if(title.getVisibility() != View.VISIBLE) {
+                    title.setVisibility(View.VISIBLE);
+                    toggleFullscreen(false);
+                }
+                break;
+        }
+
     }
+
+    private void toggleFullscreen(boolean fullscreen) {
+        WindowManager.LayoutParams attrs = getActivity().getWindow().getAttributes();
+        if (fullscreen) {
+            attrs.flags |= WindowManager.LayoutParams.FLAG_FULLSCREEN;
+        } else {
+            attrs.flags &= ~WindowManager.LayoutParams.FLAG_FULLSCREEN;
+        }
+        getActivity().getWindow().setAttributes(attrs);
+    }
+
 
 }

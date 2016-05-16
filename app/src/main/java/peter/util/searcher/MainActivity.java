@@ -95,6 +95,7 @@ public class MainActivity extends SlidingFragmentActivity {
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
         if(mContent != null) {
             mContent.onConfigurationChanged(newConfig);
         }

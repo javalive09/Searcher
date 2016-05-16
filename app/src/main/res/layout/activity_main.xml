@@ -14,19 +14,19 @@
             android:id="@+id/menu"
             android:layout_width="@dimen/menu_w"
             android:layout_height="@dimen/menu_h"
-            android:src="@drawable/menu_"
+            android:background="@drawable/menu_selector"
             android:scaleType="center"
-            android:background="@drawable/menu_selector"/>
+            android:src="@drawable/menu_" />
 
         <EditText
             android:id="@+id/input"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_toRightOf="@+id/menu"
             android:background="@drawable/search_bg_"
+            android:drawableLeft="@drawable/search_icon"
             android:gravity="center_vertical"
             android:hint="@string/search"
-            android:layout_toRightOf="@+id/menu"
-            android:drawableLeft="@drawable/search_icon"
             android:imeOptions="actionSearch"
             android:paddingRight="@dimen/input_padding_right"
             android:singleLine="true"
@@ -42,6 +42,14 @@
             android:contentDescription="@string/search"
             android:src="@drawable/operate" />
     </RelativeLayout>
+
+    <FrameLayout
+        android:id="@+id/video_fullView"
+        android:layout_below="@+id/title"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:visibility="gone" >
+    </FrameLayout>
 
     <WebView
         android:id="@+id/wv"
