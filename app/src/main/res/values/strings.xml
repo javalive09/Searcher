@@ -36,8 +36,17 @@
     <string name="app_url">http://7xoxmg.com1.z0.glb.clouddn.com/searcher_10.apk</string>
     <string name="share_title">分享应用给小伙伴</string>
     <string name="share_link_title">分享链接</string>
-    <string name="url_title_mark_yd">有道词典</string>
+    <string name="url_title_mark_yd">有道</string>
     <string name="url_title_mark_cb">词霸</string>
+    <string name="url_title_mark_jd">京东</string>
+    <string name="url_title_mark_tb">淘宝</string>
+    <string name="url_title_mark_tx">腾讯</string>
+    <string name="url_title_mark_sh">搜狐</string>
+    <string name="url_title_mark_aqy">爱奇艺</string>
+    <string name="url_title_mark_yyb">应用宝</string>
+    <string name="url_title_mark_360zs">360助手</string>
+    <string name="url_title_mark_bdzs">百度助手</string>
+    <string name="url_title_mark_xm">小米</string>
 
     <string-array name="engine_web_names">
 
@@ -71,8 +80,8 @@
 
         <item>APP :</item>
         <item>应用宝</item>
-        <item>360</item>
-        <item>百度</item>
+        <item>360助手</item>
+        <item>百度助手</item>
         <item>小米</item>
         <!--<item>安智</item>-->
 

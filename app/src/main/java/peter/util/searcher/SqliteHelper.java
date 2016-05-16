@@ -82,20 +82,22 @@ public class SqliteHelper extends SQLiteOpenHelper {
         return list;
     }
 
-    public synchronized void insertFav(Bean bean) {
+    public synchronized boolean insertFav(Bean bean) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
         Cursor cursor = db.rawQuery("select * from "+ TABLE_FAVORITE + " where url=?", new String[] { bean.url });
-
+        boolean result = false;
         if(cursor != null) {
             if(cursor.getCount() == 0) {//没有记录
                 values.put("time", bean.time);
                 values.put("name", bean.name);
                 values.put("url", bean.url);
                 db.insert(TABLE_FAVORITE, null, values);
+                result = true;
             }
             cursor.close();
         }
+        return result;
     }
 
     public List<Bean> queryAllFavorite() {

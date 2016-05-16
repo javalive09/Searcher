@@ -2,6 +2,7 @@ package peter.util.searcher;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
@@ -56,6 +57,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     private String[] webEngineUrls;
     private ImageView operate;
     private GridView engine;
+    private int mCurrentWebEngine;
 
     private static final int STATUS_SEARCH = 0;
     private static final int STATUS_CLEAR = 1;
@@ -85,7 +87,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                    doSearch(input.getText().toString().trim(), 1);
+                    doSearch(getInputStr(), 1);
                     return true;
                 }
                 return false;
@@ -166,19 +168,6 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         return "";
     }
 
-    public String getCurrentTitle() {
-        String title = "";
-        if(webview != null) {
-            title = webview.getTitle();
-            if(getString(R.string.url_title_mark_yd).equals(title)) {
-                title = input.getText().toString() + "-" + title;
-            }else if(getString(R.string.url_title_mark_cb).equals(title)) {
-                title += input.getText().toString() + "-" + title;
-            }
-        }
-        return title;
-    }
-
     private String getEncodeString(String content) {
         try {
             content = URLEncoder.encode(content, "utf-8");
@@ -215,8 +204,10 @@ public class MainFragment extends Fragment implements View.OnClickListener {
 
     private void doSearch(String word, int currentWebEngine) {
         if (!TextUtils.isEmpty(word)) {
+            mCurrentWebEngine = currentWebEngine;
             String url = getEngineUrl(word, currentWebEngine);
-            loadUrl(word, url);
+            String name = getHistoryName(word);
+            loadUrl(name, url);
         }
     }
 
@@ -227,6 +218,50 @@ public class MainFragment extends Fragment implements View.OnClickListener {
             dismissEngine();
             saveData(word, url);
         }
+    }
+
+    public String getInputStr() {
+        return input.getText().toString().trim();
+    }
+
+    public String getHistoryName(String word) {
+        return word +  "  " + getEngineName();
+    }
+
+    private String getEngineName() {
+        return getResources().getStringArray(R.array.engine_web_names)[mCurrentWebEngine];
+    }
+
+    public String getFavName() {
+        String title = webview.getTitle();
+        String engineName = getEngineName();
+        Log.i("peter", "title = " + title);
+        Log.i("peter", "engineName = " + engineName);
+        if(getString(R.string.url_title_mark_cb).equals(engineName)) {//词霸
+            title = getInputStr() + " - " + engineName;
+        }else if(getString(R.string.url_title_mark_yd).equals(engineName)) {//有道
+            title = getInputStr() + " - " + title;
+        }else if(getString(R.string.url_title_mark_jd).equals(engineName)) {//京东
+            title = getInputStr() + " - " + engineName;
+        }else if(getString(R.string.url_title_mark_tb).equals(engineName)) {//淘宝
+            title = getInputStr() + " - " + engineName;
+        }else if(getString(R.string.url_title_mark_tx).equals(engineName)) {//腾讯视频
+            title = getInputStr() + " - " + engineName + " - " + title;
+        }else if(getString(R.string.url_title_mark_sh).equals(engineName)) {//搜狐视频
+            title = getInputStr() + " - " + engineName + " - " + title;
+        }else if(getString(R.string.url_title_mark_aqy).equals(engineName)) {//爱奇艺
+            title = getInputStr() + " - " + engineName + " - " + title;
+        }else if(getString(R.string.url_title_mark_yyb).equals(engineName)) {//应用宝
+            title = getInputStr() + " - " + engineName;
+        }else if(getString(R.string.url_title_mark_360zs).equals(engineName)) {//360助手
+            title = getInputStr() + " - " + engineName + " - " + title;
+        }else if(getString(R.string.url_title_mark_bdzs).equals(engineName)) {//百度助手
+            title = getInputStr() + " - " + engineName + " - " + title;
+        }else if(getString(R.string.url_title_mark_xm).equals(engineName)) {//小米
+            title = getInputStr() + " - " + engineName + " - " + title;
+        }
+        Log.i("peter", "title = " + title);
+        return title;
     }
 
     private String getEngineUrl(String word, int currentWebEngine) {
@@ -272,7 +307,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                 break;
             case R.id.engine_item:
                 int position = (int) v.getTag();
-                doSearch(input.getText().toString().trim(), position);
+                doSearch(getInputStr(), position);
                 break;
             case R.id.menu:
                 ((MainActivity)getActivity()).getSlidingMenu().toggle();
@@ -348,6 +383,10 @@ public class MainFragment extends Fragment implements View.OnClickListener {
 
             return convertView;
         }
+    }
+
+    public void onConfigurationChanged(Configuration newConfig) {
+
     }
 
 }

@@ -1,6 +1,7 @@
 package peter.util.searcher;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
@@ -42,7 +43,7 @@ public class MainActivity extends SlidingFragmentActivity {
         sm.setOnOpenListener(new SlidingMenu.OnOpenListener() {
             @Override
             public void onOpen() {
-                if(mContent != null) {
+                if (mContent != null) {
                     mContent.closeBoard();
                 }
             }
@@ -64,14 +65,14 @@ public class MainActivity extends SlidingFragmentActivity {
 
     }
 
-        @Override
+    @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        if(intent != null) {
+        if (intent != null) {
             String url = intent.getStringExtra("url");
             String name = intent.getStringExtra("name");
-            if(!TextUtils.isEmpty(url)) {
-                if(mContent != null) {
+            if (!TextUtils.isEmpty(url)) {
+                if (mContent != null) {
                     mContent.loadUrl(name, url);
                 }
             }
@@ -90,6 +91,13 @@ public class MainActivity extends SlidingFragmentActivity {
             }
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        if(mContent != null) {
+            mContent.onConfigurationChanged(newConfig);
+        }
     }
 
 }

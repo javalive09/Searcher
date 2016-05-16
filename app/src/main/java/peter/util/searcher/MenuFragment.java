@@ -55,12 +55,14 @@ public class MenuFragment extends ListFragment {
                 String currentUrl = ((MainActivity)getActivity()).getMainFragment().getCurrentUrl();
                 if(!TextUtils.isEmpty(currentUrl)) {
                     Bean bean = new Bean();
-                    bean.name = ((MainActivity) getActivity()).getMainFragment().getCurrentTitle();
+                    bean.name = ((MainActivity) getActivity()).getMainFragment().getFavName();
                     bean.url = currentUrl;
                     bean.time = System.currentTimeMillis();
-                    SqliteHelper.instance(getActivity().getApplicationContext()).insertFav(bean);
-                    Toast.makeText(getActivity(), R.string.favorite_txt, Toast.LENGTH_SHORT).show();
-                    ((MainActivity)getActivity()).getSlidingMenu().toggle(false);
+                    boolean result = SqliteHelper.instance(getActivity().getApplicationContext()).insertFav(bean);
+                    if(result) {
+                        Toast.makeText(getActivity(), R.string.favorite_txt, Toast.LENGTH_SHORT).show();
+                        ((MainActivity) getActivity()).getSlidingMenu().toggle(false);
+                    }
                 }
                 break;
             case 5:
