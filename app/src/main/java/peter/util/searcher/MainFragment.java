@@ -167,10 +167,16 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     }
 
     public String getCurrentTitle() {
+        String title = "";
         if(webview != null) {
-            return webview.getTitle();
+            title = webview.getTitle();
+            if(getString(R.string.url_title_mark_yd).equals(title)) {
+                title = input.getText().toString() + "-" + title;
+            }else if(getString(R.string.url_title_mark_cb).equals(title)) {
+                title += input.getText().toString() + "-" + title;
+            }
         }
-        return "";
+        return title;
     }
 
     private String getEncodeString(String content) {
@@ -207,7 +213,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         super.onDestroy();
     }
 
-     private void doSearch(String word, int currentWebEngine) {
+    private void doSearch(String word, int currentWebEngine) {
         if (!TextUtils.isEmpty(word)) {
             String url = getEngineUrl(word, currentWebEngine);
             loadUrl(word, url);
@@ -215,10 +221,6 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     }
 
     void loadUrl(String word, String url) {
-        if(!input.getText().equals(word)) {
-            input.setText(word);
-        }
-        input.setSelection(word.length());
         if (!TextUtils.isEmpty(url)) {
             webview.loadUrl(url);
             closeBoard();
