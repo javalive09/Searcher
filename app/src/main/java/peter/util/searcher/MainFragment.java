@@ -26,6 +26,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.webkit.DownloadListener;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.BaseAdapter;
@@ -109,7 +110,9 @@ public class MainFragment extends Fragment implements View.OnClickListener {
             }
         });
         webview.getSettings().setLoadWithOverviewMode(true);
+        webview.getSettings().setUseWideViewPort(true);
         webview.getSettings().setJavaScriptEnabled(true);
+        webview.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
         webview.getSettings().setDomStorageEnabled(true);
 
         final FrameLayout video_fullView = (FrameLayout) root.findViewById(R.id.video_fullView);
@@ -117,6 +120,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
             CustomViewCallback xCustomViewCallback;
             @Override
             public void onShowCustomView(View view, CustomViewCallback callback) {
+                Log.i("peter", "onShowCustomView");
                 getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
                 webview.setVisibility(View.INVISIBLE);
                 // 如果一个视图已经存在，那么立刻终止并新建一个
@@ -133,9 +137,12 @@ public class MainFragment extends Fragment implements View.OnClickListener {
             // 视频播放退出全屏会被调用的
             @Override
             public void onHideCustomView() {
-                if (mVideoCustomView == null)// 不是全屏播放状态
+                Log.i("peter", "onHideCustomView");
+                if (mVideoCustomView == null) {// 不是全屏播放状态
                     return;
+                }
                 getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
                 mVideoCustomView.setVisibility(View.GONE);
                 video_fullView.removeView(mVideoCustomView);
                 mVideoCustomView = null;
@@ -183,7 +190,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
 
     public void hideCustomView() {
         mWebchromeclient.onHideCustomView();
-        getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
     }
 
 
