@@ -44,15 +44,11 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     private EditText input;
     private ViewGroup root;
     private String[] webEngineUrls;
-    private ImageView operate;
     private GridView engine;
     private int mCurrentWebEngine;
     private View mVideoCustomView;
     private WebChromeClient mWebchromeclient;
-
-    private static final int STATUS_SEARCH = 0;
-    private static final int STATUS_CLEAR = 1;
-    private static final int STATUS_LOADING = 2;
+    private View status;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -63,10 +59,9 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     }
 
     private void initView() {
+        status = root.findViewById(R.id.status);
         webEngineUrls = getResources().getStringArray(R.array.engine_web_urls);
         webview = (WebView) root.findViewById(R.id.wv);
-        operate = (ImageView) root.findViewById(R.id.operate);
-        operate.setOnClickListener(this);
         root.findViewById(R.id.menu).setOnClickListener(this);
         if (Build.VERSION.SDK_INT < 21) {
             webview.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
@@ -101,10 +96,8 @@ public class MainFragment extends Fragment implements View.OnClickListener {
             public void afterTextChanged(Editable s) {
                 String content = s.toString();
                 if (TextUtils.isEmpty(content)) {
-                    setOptLevel(STATUS_SEARCH);
                     dismissEngine();
                 } else if (!content.equals(temp)) {
-                    setOptLevel(STATUS_CLEAR);
                     popupEngine();
                 }
             }
@@ -164,13 +157,13 @@ public class MainFragment extends Fragment implements View.OnClickListener {
 
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                setOptLevel(STATUS_LOADING);
+                setStatusLevel(1);
                 Log.i("peter", "url=" + url);
             }
 
             @Override
             public void onPageFinished(WebView view, String url) {
-                setOptLevel(STATUS_CLEAR);
+                setStatusLevel(0);
             }
 
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
@@ -247,6 +240,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
 
     private void doSearch(String word, int currentWebEngine) {
         if (!TextUtils.isEmpty(word)) {
+            webview.requestFocus();
             mCurrentWebEngine = currentWebEngine;
             String url = getEngineUrl(word, currentWebEngine);
             String name = getHistoryName(word);
@@ -329,8 +323,8 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         }.execute();
     }
 
-    private void setOptLevel(int level) {
-        LevelListDrawable d = (LevelListDrawable) operate.getDrawable();
+    private void setStatusLevel(int level) {
+        LevelListDrawable d = (LevelListDrawable)status.getBackground();
         if (d.getLevel() != level) {
             d.setLevel(level);
         }
@@ -339,12 +333,6 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.operate:
-                setOptLevel(STATUS_SEARCH);
-                input.setText("");
-                input.requestFocus();
-                openBoard();
-                break;
             case R.id.input:
                 popupEngine();
                 break;

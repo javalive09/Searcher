@@ -138,6 +138,9 @@ public class MainFrameView extends FrameLayout {
         View webView = getChildAt(1);
         webView.layout(left, titleH, width, getMeasuredHeight());
 
+        View status = getChildAt(2);
+        status.layout(left, titleH, width, titleH + status.getMeasuredHeight());
+
     }
 
     @Override
