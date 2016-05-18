@@ -280,10 +280,8 @@ public class MainActivity extends Activity implements View.OnClickListener{
             case Configuration.ORIENTATION_LANDSCAPE:
                 Log.i("peter", "onConfigurationChanged ORIENTATION_LANDSCAPE");
 
-                if(!frame.isHideBar()) {
-                    frame.hideBar();
-                    toggleFullscreen(true);
-                }
+                frame.hideBar();
+                toggleFullscreen(true);
 
 //                View title = findViewById(R.id.title);
 //                if(title.getVisibility() == View.VISIBLE) {
@@ -299,10 +297,8 @@ public class MainActivity extends Activity implements View.OnClickListener{
 //                    toggleFullscreen(false);
 //                }
 
-                if(frame.isHideBar()) {
-                    frame.showBar();
-                    toggleFullscreen(false);
-                }
+                frame.showBar();
+                toggleFullscreen(false);
                 break;
         }
     }

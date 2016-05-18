@@ -28,7 +28,7 @@ public class MainFrameView extends FrameLayout {
     }
 
     private void init() {
-        mTouchSlop =  ViewConfiguration.get(getContext()).getScaledTouchSlop() + 5;
+        mTouchSlop = ViewConfiguration.get(getContext()).getScaledTouchSlop() + 5;
         mScroller = new Scroller(getContext());
     }
 
@@ -40,7 +40,7 @@ public class MainFrameView extends FrameLayout {
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
 
-        if(lockBar) {
+        if (lockBar) {
             return super.dispatchTouchEvent(ev);
         }
 
@@ -63,28 +63,28 @@ public class MainFrameView extends FrameLayout {
                     Log.i("peter", "scrollY = " + scrollY);
 
 
-                    if(deltaY > 0) {//finger up
+                    if (deltaY > 0) {//finger up
 
                         int realDelatY = deltaY - mTouchSlop;
-                        if(realDelatY > titleH) {
+                        if (realDelatY > titleH) {
                             realDelatY = titleH;
                         }
 
-                        if(getScrollY() == titleH) {
+                        if (getScrollY() == titleH) {
                             return super.dispatchTouchEvent(ev);
                         }
 
                         scrollTo(0, realDelatY);
                         return super.dispatchTouchEvent(ev);
-                    }else if(deltaY < 0) {//finger down
+                    } else if (deltaY < 0) {//finger down
 
                         int realDeltaY = titleH + deltaY + mTouchSlop;
 
-                        if(realDeltaY < 0) {
+                        if (realDeltaY < 0) {
                             realDeltaY = 0;
                         }
 
-                        if(getScrollY() == 0) {
+                        if (getScrollY() == 0) {
                             return super.dispatchTouchEvent(ev);
                         }
 
@@ -98,13 +98,13 @@ public class MainFrameView extends FrameLayout {
             case MotionEvent.ACTION_UP:
 
                 int scrollY = getScrollY();
-                if(scrollY < 0) {
+                if (scrollY < 0) {
                     scrollTo(0, 0);
                     break;
-                }else if(scrollY > titleH) {
+                } else if (scrollY > titleH) {
                     scrollTo(0, titleH);
                     break;
-                }else if(scrollY != 0 && scrollY != titleH){
+                } else if (scrollY != 0 && scrollY != titleH) {
                     if (deltaY > titleH / 2) {
                         startBounceAnim(getScrollY(), titleH - getScrollY(), 150);
                     } else {
@@ -131,10 +131,6 @@ public class MainFrameView extends FrameLayout {
     public void showBar() {
         scrollTo(0, 0);
         lockBar = false;
-    }
-
-    public boolean isHideBar() {
-        return getScrollY() == titleH;
     }
 
     public void hideBar() {
@@ -177,6 +173,5 @@ public class MainFrameView extends FrameLayout {
         //webView
         getChildAt(1).measure(widthMeasureSpec, heightMeasureSpec);
     }
-
 
 }
