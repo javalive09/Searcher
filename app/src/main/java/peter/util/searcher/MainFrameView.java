@@ -35,11 +35,16 @@ public class MainFrameView extends FrameLayout {
     float startY;
     float currentY;
     int deltaY;
+    private boolean lockBar = false;
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
 
-        float y = ev.getY();
+        if(lockBar) {
+            return super.dispatchTouchEvent(ev);
+        }
+
+        final float y = ev.getY();
         switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 startY = y;
@@ -59,28 +64,31 @@ public class MainFrameView extends FrameLayout {
 
 
                     if(deltaY > 0) {//finger up
+
+                        int realDelatY = deltaY - mTouchSlop;
+                        if(realDelatY > titleH) {
+                            realDelatY = titleH;
+                        }
+
                         if(getScrollY() == titleH) {
                             return super.dispatchTouchEvent(ev);
                         }
 
-                        if(getScrollY() > titleH) {
-                            scrollTo(0, titleH);
-                            return super.dispatchTouchEvent(ev);
-                        }
-
-                        scrollTo(0, deltaY - mTouchSlop);
+                        scrollTo(0, realDelatY);
                         return super.dispatchTouchEvent(ev);
                     }else if(deltaY < 0) {//finger down
+
+                        int realDeltaY = titleH + deltaY + mTouchSlop;
+
+                        if(realDeltaY < 0) {
+                            realDeltaY = 0;
+                        }
+
                         if(getScrollY() == 0) {
                             return super.dispatchTouchEvent(ev);
                         }
 
-                        if(getScrollY() < 0) {
-                            scrollTo(0, 0);
-                            return super.dispatchTouchEvent(ev);
-                        }
-
-                        scrollTo(0, titleH + deltaY + mTouchSlop);
+                        scrollTo(0, realDeltaY);
                         return super.dispatchTouchEvent(ev);
                     }
 
@@ -112,13 +120,26 @@ public class MainFrameView extends FrameLayout {
 
     @Override
     public void computeScroll() {
-
         if (mScroller.computeScrollOffset()) {
             int mScrollerY = mScroller.getCurrY();
             scrollTo(0, mScrollerY);
             Log.i("~peter", "mScrollerY=" + mScrollerY);
             invalidate();
         }
+    }
+
+    public void showBar() {
+        scrollTo(0, 0);
+        lockBar = false;
+    }
+
+    public boolean isHideBar() {
+        return getScrollY() == titleH;
+    }
+
+    public void hideBar() {
+        scrollTo(0, titleH);
+        lockBar = true;
     }
 
     public void startBounceAnim(int startY, int dy, int duration) {
