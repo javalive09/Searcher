@@ -76,3 +76,5 @@ public static final int *;
     public static **[] values();
     public static ** valueOf(java.lang.String);
 }
+
+-keep class org.jsoup.**
