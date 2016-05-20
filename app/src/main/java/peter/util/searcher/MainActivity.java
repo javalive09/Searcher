@@ -183,7 +183,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
                 startActivity(intent);
             }
         });
-
+        checkIntentData(getIntent());
     }
 
     private void setStatusLevel(int level) {
@@ -196,11 +196,20 @@ public class MainActivity extends Activity implements View.OnClickListener{
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
+        checkIntentData(intent);
+    }
+
+    private void checkIntentData(Intent intent) {
         if (intent != null) {
             String url = intent.getStringExtra("url");
             String name = intent.getStringExtra("name");
             if (!TextUtils.isEmpty(url)) {
                 loadUrl(name, url);
+            }else {
+                String word = intent.getStringExtra("keyWord");
+                if(!TextUtils.isEmpty(word)) {
+                    doSearch(word, 1);
+                }
             }
         }
     }
@@ -385,6 +394,9 @@ public class MainActivity extends Activity implements View.OnClickListener{
 
     private void doSearch(String word, int currentWebEngine) {
         if (!TextUtils.isEmpty(word)) {
+            if(!word.equals(input.getText())) {
+                input.setText(word);
+            }
             webview.requestFocus();
             mCurrentWebEngine = currentWebEngine;
             String url = getEngineUrl(word, currentWebEngine);

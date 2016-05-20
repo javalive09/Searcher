@@ -4,6 +4,8 @@
 
     <color name="setting_bg">#f7f7f9</color>
 
+    <color name="enter_bg">#f7f7f9</color>
+
     <color name="item_normal">#ffffff</color>
     <color name="item_press">#88cccccc</color>
 
