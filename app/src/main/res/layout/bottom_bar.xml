@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/bottom_bar"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/bottom_h"
+    android:background="@color/title_bg"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:id="@+id/back"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/bottom_h"
+        android:layout_weight="1"
+        android:background="@drawable/menu_selector"
+        android:onClick="onClick"
+        android:src="@drawable/bar_back" />
+
+    <ImageView
+        android:id="@+id/go"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/bottom_h"
+        android:layout_weight="1"
+        android:onClick="onClick"
+        android:background="@drawable/menu_selector"
+        android:src="@drawable/bar_forward" />
+
+    <ImageView
+        android:id="@+id/home"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/bottom_h"
+        android:layout_weight="1"
+        android:onClick="onClick"
+        android:background="@drawable/menu_selector"
+        android:src="@drawable/bar_home" />
+
+    <ImageView
+        android:id="@+id/favorite"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/bottom_h"
+        android:layout_weight="1"
+        android:onClick="onClick"
+        android:background="@drawable/menu_selector"
+        android:src="@drawable/bar_bookmark" />
+
+    <ImageView
+        android:id="@+id/exit"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/bottom_h"
+        android:layout_weight="1"
+        android:onClick="onClick"
+        android:background="@drawable/menu_selector"
+        android:src="@drawable/bar_poweoff" />
+
+</LinearLayout>

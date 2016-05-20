@@ -21,16 +21,16 @@
                 android:layout_height="@dimen/menu_h"
                 android:layout_alignParentRight="true"
                 android:background="@drawable/menu_selector"
-                android:text="@string/menu_txt"
                 android:gravity="center"
-                android:textColor="@android:color/white"
-                android:src="@drawable/menu_" />
+                android:src="@drawable/menu_"
+                android:text="@string/menu_txt"
+                android:onClick="onClick"
+                android:textColor="@android:color/white" />
 
             <EditText
                 android:id="@+id/input"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:selectAllOnFocus="true"
                 android:layout_toLeftOf="@+id/menu"
                 android:background="@drawable/search_bg_"
                 android:drawableLeft="@drawable/search_icon"
@@ -38,8 +38,10 @@
                 android:hint="@string/search"
                 android:imeOptions="actionSearch"
                 android:paddingRight="@dimen/input_padding_right"
+                android:selectAllOnFocus="true"
                 android:singleLine="true"
-                android:textCursorDrawable="@drawable/cursor" />
+                android:textCursorDrawable="@drawable/cursor"
+                android:onClick="onClick"/>
 
         </RelativeLayout>
 
@@ -52,7 +54,7 @@
             android:id="@+id/status"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@drawable/status"/>
+            android:background="@drawable/status" />
     </peter.util.searcher.MainFrameView>
 
 
@@ -76,5 +78,11 @@
         android:visibility="invisible">
 
     </GridView>
+
+    <include
+        layout="@layout/bottom_bar"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true" />
 
 </peter.util.searcher.RootContainer>

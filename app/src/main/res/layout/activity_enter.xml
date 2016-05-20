@@ -11,6 +11,7 @@
         android:layout_height="@dimen/setting_h"
         android:src="@drawable/setting"
         android:layout_alignParentRight="true"
+        android:onClick="onClick"
         android:background="@drawable/setting_selector"/>
 
     <ImageView
@@ -32,6 +33,7 @@
         android:textColor="@android:color/darker_gray"
         android:text="@string/search"
         android:layout_below="@+id/logo"
+        android:onClick="onClick"
         android:gravity="center_vertical"
         android:textSize="@dimen/enter_icon_text_size" />
 

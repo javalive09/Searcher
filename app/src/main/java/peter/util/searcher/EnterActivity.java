@@ -1,6 +1,5 @@
 package peter.util.searcher;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -19,19 +18,28 @@ import java.util.ArrayList;
 /**
  * Created by peter on 16/5/19.
  */
-public class EnterActivity extends Activity {
+public class EnterActivity extends BaseActivity {
+
+    private static final String URL = "http://top.baidu.com/buzz.php?p=top10";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_enter);
-        findViewById(R.id.enter).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startSearch(null);
-            }
-        });
         new Thread(new HotRunnable(this)).start();
+    }
+
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.enter:
+                startSearch(null);
+                break;
+            case R.id.setting:
+                Intent intent = new Intent(EnterActivity.this, SettingActivity.class);
+                startActivity(intent);
+                break;
+        }
+
     }
 
     private void showHots(ArrayList<String> hots) {
@@ -58,11 +66,11 @@ public class EnterActivity extends Activity {
         @Override
         public void run() {
             try {
-                Document doc = Jsoup.connect("http://top.baidu.com/buzz.php?p=top10").get();
+                Document doc = Jsoup.connect(URL).get();
                 Elements es = doc.getElementsByClass("list-title");
                 final ArrayList<String> hots = new ArrayList<>(LIMIT);
                 for(Element e : es) {
-                    if(hots.size() < LIMIT + 1) {
+                    if(hots.size() < LIMIT) {
                         hots.add(e.text());
                     }else{
                         break;

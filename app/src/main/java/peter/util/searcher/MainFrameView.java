@@ -160,6 +160,21 @@ public class MainFrameView extends FrameLayout {
 
     }
 
+    OnFrameScrollListener listener;
+
+    public void setOnFrameScrollListener(OnFrameScrollListener listener) {
+        this.listener = listener;
+    }
+
+    protected void onScrollChanged(int l, int t, int oldl, int oldt) {
+        super.onScrollChanged(l, t, oldl, oldt);
+        if(listener != null) {
+            listener.onScrollChanged(l, t, oldl, oldt);
+        }
+
+        Log.i("peter", "l = " + l + "; t=" + t + "; oldl =" + oldl + "; oldt =" + oldt);
+    }
+
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
@@ -172,6 +187,10 @@ public class MainFrameView extends FrameLayout {
 
         //webView
         getChildAt(1).measure(widthMeasureSpec, heightMeasureSpec);
+    }
+
+    public interface OnFrameScrollListener {
+        void onScrollChanged(int l, int t, int oldl, int oldt);
     }
 
 }

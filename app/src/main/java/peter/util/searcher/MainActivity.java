@@ -42,7 +42,7 @@ import java.net.URLEncoder;
 /**
  * Created by peter on 16/5/9.
  */
-public class MainActivity extends Activity implements View.OnClickListener{
+public class MainActivity extends BaseActivity implements View.OnClickListener{
 
     private WebView webview;
     private EditText input;
@@ -53,6 +53,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
     private WebChromeClient mWebchromeclient;
     private MainFrameView frame;
     private View status;
+    private View bottomBar;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -64,16 +65,22 @@ public class MainActivity extends Activity implements View.OnClickListener{
     }
 
     private void init() {
+        bottomBar = findViewById(R.id.bottom_bar);
         frame = (MainFrameView) findViewById(R.id.frame);
+        frame.setOnFrameScrollListener(new MainFrameView.OnFrameScrollListener() {
+
+            @Override
+            public void onScrollChanged(int l, int t, int oldl, int oldt) {
+                bottomBar.setTranslationY(t);
+            }
+        });
         status = findViewById(R.id.status);
         webEngineUrls = getResources().getStringArray(R.array.engine_web_urls);
         webview = (WebView)findViewById(R.id.wv);
-        findViewById(R.id.menu).setOnClickListener(this);
         if (Build.VERSION.SDK_INT < 21) {
             webview.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         }
         input = (EditText) findViewById(R.id.input);
-        input.setOnClickListener(this);
         input.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -418,6 +425,32 @@ public class MainActivity extends Activity implements View.OnClickListener{
             case R.id.menu:
                 popupMenu(v);
                 break;
+            case R.id.back:
+                if(webview.canGoBack()) {
+                    webview.goBack();
+                }
+                break;
+            case R.id.go:
+                if(webview.canGoForward()) {
+                    webview.goForward();
+                }
+                break;
+            case R.id.home:
+                finish();
+                break;
+            case R.id.favorite:
+                if(webview.getUrl() != null) {
+                    Bean bean = new Bean();
+                    bean.name = webview.getTitle();
+                    bean.url = webview.getUrl();
+                    bean.time = System.currentTimeMillis();
+                    SqliteHelper.instance(MainActivity.this).insertFav(bean);
+                    Toast.makeText(MainActivity.this, R.string.favorite_txt, Toast.LENGTH_SHORT).show();
+                }
+                break;
+            case R.id.exit:
+                exit();
+                break;
         }
     }
 
@@ -441,19 +474,19 @@ public class MainActivity extends Activity implements View.OnClickListener{
                             startActivity(Intent.createChooser(sendIntent, getString(R.string.share_title)));
                         }
                         break;
-                    case R.id.action_setting:
-                        closeBoard();
-                        Intent intent = new Intent(MainActivity.this, SettingActivity.class);
-                        startActivity(intent);
-                        break;
-                    case R.id.action_collect:
-                        Bean bean = new Bean();
-                        bean.name = webview.getTitle();
-                        bean.url = webview.getUrl();
-                        bean.time = System.currentTimeMillis();
-                        SqliteHelper.instance(MainActivity.this).insertFav(bean);
-                        Toast.makeText(MainActivity.this, R.string.favorite_txt, Toast.LENGTH_SHORT).show();
-                        break;
+//                    case R.id.action_setting:
+//                        closeBoard();
+//                        Intent intent = new Intent(MainActivity.this, SettingActivity.class);
+//                        startActivity(intent);
+//                        break;
+//                    case R.id.action_collect:
+//                        Bean bean = new Bean();
+//                        bean.name = webview.getTitle();
+//                        bean.url = webview.getUrl();
+//                        bean.time = System.currentTimeMillis();
+//                        SqliteHelper.instance(MainActivity.this).insertFav(bean);
+//                        Toast.makeText(MainActivity.this, R.string.favorite_txt, Toast.LENGTH_SHORT).show();
+//                        break;
                     case R.id.action_collection:
                         closeBoard();
                         startActivity(new Intent(MainActivity.this, FavoriteActivity.class));
@@ -462,9 +495,9 @@ public class MainActivity extends Activity implements View.OnClickListener{
                         closeBoard();
                         startActivity(new Intent(MainActivity.this, HistoryActivity.class));
                         break;
-                    case R.id.action_exit:
-                        finish();
-                        break;
+//                    case R.id.action_exit:
+//                        finish();
+//                        break;
 //                    case R.id.action_feedback:
 //                        sendMailByIntent();
 //                        break;
