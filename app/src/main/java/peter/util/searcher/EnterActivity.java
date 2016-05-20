@@ -1,6 +1,7 @@
 package peter.util.searcher;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -26,7 +27,7 @@ public class EnterActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_enter);
-        new Thread(new HotRunnable(this)).start();
+        new HotTask(EnterActivity.this).execute();
     }
 
     public void onClick(View v) {
@@ -39,7 +40,20 @@ public class EnterActivity extends BaseActivity {
                 startActivity(intent);
                 break;
         }
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Board board = (Board) findViewById(R.id.hots);
+        board.startAnimation();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Board board = (Board) findViewById(R.id.hots);
+        board.stopAnimation();
     }
 
     private void showHots(ArrayList<String> hots) {
@@ -55,20 +69,22 @@ public class EnterActivity extends BaseActivity {
         startActivity(intent);
     }
 
-    static class HotRunnable implements Runnable {
-        private int LIMIT = 5;
+    static class HotTask extends AsyncTask<Void, Void, ArrayList<String>> {
+
+        private int LIMIT = 10;
         WeakReference<EnterActivity> act;
 
-        public HotRunnable(EnterActivity a) {
+        public HotTask(EnterActivity a) {
             act = new WeakReference<>(a);
         }
 
         @Override
-        public void run() {
+        protected ArrayList<String> doInBackground(Void... params) {
+            ArrayList<String> hots = new ArrayList<>(LIMIT);
             try {
                 Document doc = Jsoup.connect(URL).get();
                 Elements es = doc.getElementsByClass("list-title");
-                final ArrayList<String> hots = new ArrayList<>(LIMIT);
+
                 for(Element e : es) {
                     if(hots.size() < LIMIT) {
                         hots.add(e.text());
@@ -83,6 +99,15 @@ public class EnterActivity extends BaseActivity {
                 }
             } catch (IOException e) {
                 e.printStackTrace();
+            }
+            return hots;
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<String> list) {
+            EnterActivity activity = act.get();
+            if(activity != null) {
+                activity.showHots(list);
             }
         }
     }

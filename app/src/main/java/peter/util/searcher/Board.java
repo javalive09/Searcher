@@ -121,8 +121,8 @@ public class Board extends RelativeLayout {
 			a = randfrange(-10, 10);
 //			va = randfrange(-10, 10);
 
-			vx = randfrange(-20, 20) * z;
-			vy = randfrange(-20, 20) * z;
+			vx = randfrange(-30, 30) * z;
+			vy = randfrange(-30, 30) * z;
 			final float boardh = boardHeight;
 			final float boardw = boardWidth;
 
@@ -237,7 +237,7 @@ public class Board extends RelativeLayout {
 			nv.setGravity(Gravity.CENTER);
 			nv.setTextColor(Color.WHITE);
 			nv.setText(hot);
-			setBackGroundDra(nv, i);
+			setBackGroundDra(nv, i % 4);
 			nv.boardWidth = getMeasuredWidth();
 			nv.boardHeight = getMeasuredHeight();
 			nv.reset(true, 500);
@@ -313,10 +313,20 @@ public class Board extends RelativeLayout {
 		}
 	}
 
+	public void startAnimation() {
+		if(mAnim != null) {
+			post(new Runnable() {
+				@Override
+				public void run() {
+					mAnim.start();
+				}
+			});
+		}
+	}
+
 	public void stopAnimation() {
 		if (mAnim != null) {
 			mAnim.cancel();
-			mAnim = null;
 		}
 	}
 
