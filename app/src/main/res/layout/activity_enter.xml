@@ -3,7 +3,7 @@
     android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/enter_bg">
+    android:background="@android:color/white">
 
     <ImageView
         android:id="@+id/setting"
@@ -33,7 +33,6 @@
         android:textColor="@android:color/darker_gray"
         android:text="@string/search"
         android:layout_below="@+id/logo"
-        android:onClick="onClick"
         android:gravity="center_vertical"
         android:textSize="@dimen/enter_icon_text_size" />
 

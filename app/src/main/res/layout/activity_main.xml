@@ -38,6 +38,8 @@
                 android:hint="@string/search"
                 android:imeOptions="actionSearch"
                 android:paddingRight="@dimen/input_padding_right"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
                 android:selectAllOnFocus="true"
                 android:singleLine="true"
                 android:textCursorDrawable="@drawable/cursor"

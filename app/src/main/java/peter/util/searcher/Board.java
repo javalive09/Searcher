@@ -118,11 +118,11 @@ public class Board extends RelativeLayout {
 
 		private void reset(boolean anim, long delayMillis) {
 			setVisibility(View.INVISIBLE);
-			a = randfrange(-10, 10);
+			a = randfrange(-20, 20);
 //			va = randfrange(-10, 10);
 
-			vx = randfrange(-30, 30) * z;
-			vy = randfrange(-30, 30) * z;
+			vx = randfrange(-100, 100) * z;
+			vy = randfrange(-100, 100) * z;
 			final float boardh = boardHeight;
 			final float boardw = boardWidth;
 
@@ -153,13 +153,14 @@ public class Board extends RelativeLayout {
 			}
 		}
 
-
+		boolean outSide = false;
 
 		@Override
 		public boolean onTouchEvent(MotionEvent e) {
 			switch (e.getAction()) {
 			case MotionEvent.ACTION_DOWN:
 				grabbed = true;
+				outSide = false;
 				grabx_offset = e.getRawX() - x;
 				graby_offset = e.getRawY() - y;
 				startDragX = e.getRawX() - grabx_offset;
@@ -167,11 +168,15 @@ public class Board extends RelativeLayout {
 			case MotionEvent.ACTION_MOVE:
 				grabx = e.getRawX() - grabx_offset;
 				graby = e.getRawY() - graby_offset;
+				if(Math.abs(startDragX - grabx) > mTouchSlop
+						&& Math.abs(startDragY - graby) > mTouchSlop) {
+					outSide = true;
+				}
 				break;
 			case MotionEvent.ACTION_CANCEL:
 			case MotionEvent.ACTION_UP:
 				grabbed = false;
-				if(Math.abs(startDragX - grabx) < mTouchSlop
+				if(!outSide && Math.abs(startDragX - grabx) < mTouchSlop
 						&& Math.abs(startDragY - graby) < mTouchSlop) {
 					//explosion
 					ExplosionField explosionField = new ExplosionField(getContext(), new ExplodeParticleFactory());

@@ -7,9 +7,9 @@
     <dimen name="menu_w">45dp</dimen>
     <dimen name="setting_w">45dp</dimen>
     <dimen name="setting_h">45dp</dimen>
-    <dimen name="enter_icon_h">60dp</dimen>
-    <dimen name="enter_logo_w">90dp</dimen>
-    <dimen name="enter_logo_h">90dp</dimen>
+    <dimen name="enter_icon_h">50dp</dimen>
+    <dimen name="enter_logo_w">80dp</dimen>
+    <dimen name="enter_logo_h">80dp</dimen>
     <dimen name="enter_logo_margin_top">0dp</dimen>
     <dimen name="enter_icon_text_size">19sp</dimen>
     <dimen name="enter_icon_margin">15dp</dimen>

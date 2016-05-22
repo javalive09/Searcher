@@ -27,6 +27,7 @@ public class EnterActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_enter);
+        findViewById(R.id.enter).setOnClickListener(this);
         new HotTask(EnterActivity.this).execute();
     }
 

@@ -1,6 +1,5 @@
 package peter.util.searcher;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -216,6 +215,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
                 String word = intent.getStringExtra("keyWord");
                 if(!TextUtils.isEmpty(word)) {
                     doSearch(word, 1);
+                }else {
+                    popupEngine();
+//                    openBoard();
+
                 }
             }
         }
@@ -280,6 +283,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
         super.onResume();
         webview.onResume();
         webview.resumeTimers();
+    }
+
+    private void openBoard() {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.showSoftInput(input, InputMethodManager.SHOW_IMPLICIT);
     }
 
     @Override
