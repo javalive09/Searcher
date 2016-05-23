@@ -1,56 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/root"
+<ListView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/enter_list"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white">
-
-    <ImageView
-        android:id="@+id/setting"
-        android:layout_width="@dimen/setting_w"
-        android:layout_height="@dimen/setting_h"
-        android:src="@drawable/setting"
-        android:layout_alignParentRight="true"
-        android:onClick="onClick"
-        android:background="@drawable/setting_selector"/>
-
-    <ImageView
-        android:id="@+id/logo"
-        android:layout_width="@dimen/enter_logo_w"
-        android:layout_height="@dimen/enter_logo_h"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@+id/setting"
-        android:layout_marginTop="@dimen/enter_logo_margin_top"
-        android:background="@drawable/icon"/>
-
-    <TextView
-        android:id="@+id/enter"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/enter_icon_h"
-        android:layout_margin="@dimen/enter_icon_margin"
-        android:background="@drawable/search_bg_"
-        android:drawableLeft="@drawable/search_icon"
-        android:textColor="@android:color/darker_gray"
-        android:text="@string/search"
-        android:layout_below="@+id/logo"
-        android:gravity="center_vertical"
-        android:textSize="@dimen/enter_icon_text_size" />
-
-    <TextView
-        android:id="@+id/hot_title"
-        android:layout_width="match_parent"
-        android:layout_below="@+id/enter"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/hot_title_margin"
-        android:textSize="@dimen/hot_title_size"
-        android:gravity="center"
-        android:text="@string/hot_title" />
-
-
-    <peter.util.searcher.Board
-        android:id="@+id/hots"
-        android:layout_below="@+id/hot_title"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        />
-</RelativeLayout>
+    android:divider="@null"
+    android:scrollbars="none"
+    android:background="@color/enter_bg"
+    android:listSelector="#00000000" />

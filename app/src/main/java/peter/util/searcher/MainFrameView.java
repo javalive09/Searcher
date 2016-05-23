@@ -50,6 +50,7 @@ public class MainFrameView extends FrameLayout {
             case MotionEvent.ACTION_DOWN:
                 startY = y;
                 currentY = y;
+                autoScroll = false;
                 break;
 
             case MotionEvent.ACTION_MOVE:
@@ -100,16 +101,19 @@ public class MainFrameView extends FrameLayout {
 
                 int scrollY = getScrollY();
                 if (scrollY < 0) {
+                    autoScroll = true;
                     scrollTo(0, 0);
                     break;
                 } else if (scrollY > titleH) {
+                    autoScroll = true;
                     scrollTo(0, titleH);
                     break;
                 } else if (scrollY != 0 && scrollY != titleH) {
+                    autoScroll = true;
                     if (deltaY > titleH / 2) {
-                        startBounceAnim(getScrollY(), titleH - getScrollY(), 150);
+                        startBounceAnim(getScrollY(), titleH - getScrollY(), 500);
                     } else {
-                        startBounceAnim(getScrollY(), -getScrollY(), 150);
+                        startBounceAnim(getScrollY(), -getScrollY(), 500);
                     }
                 }
 
@@ -118,6 +122,8 @@ public class MainFrameView extends FrameLayout {
 
         return super.dispatchTouchEvent(ev);
     }
+
+    boolean autoScroll = false;
 
     @Override
     public void computeScroll() {
@@ -171,6 +177,12 @@ public class MainFrameView extends FrameLayout {
         super.onScrollChanged(l, t, oldl, oldt);
         if(listener != null) {
             listener.onScrollChanged(l, t, oldl, oldt);
+        }
+
+        if(autoScroll) {
+            View webView = getChildAt(1);
+            webView.scrollBy(0, oldt - t);
+            Log.i("peter", "autoScroll===" + (oldt - t));
         }
 
         Log.i("peter", "l = " + l + "; t=" + t + "; oldl =" + oldl + "; oldt =" + oldt);

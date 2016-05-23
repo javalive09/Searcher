@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ListView;
 
@@ -33,6 +34,14 @@ public class BaseActivity extends Activity implements View.OnClickListener{
         for(Activity act: LIST) {
             act.finish();
         }
+    }
+
+    public void startSearch(String word) {
+        Intent intent = new Intent(BaseActivity.this, MainActivity.class);
+        if(!TextUtils.isEmpty(word)) {
+            intent.putExtra("keyWord", word);
+        }
+        startActivity(intent);
     }
 
     @Override

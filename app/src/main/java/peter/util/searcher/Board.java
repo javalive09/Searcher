@@ -178,6 +178,7 @@ public class Board extends RelativeLayout {
 				grabbed = false;
 				if(!outSide && Math.abs(startDragX - grabx) < mTouchSlop
 						&& Math.abs(startDragY - graby) < mTouchSlop) {
+					mAnim.cancel();
 					//explosion
 					ExplosionField explosionField = new ExplosionField(getContext(), new ExplodeParticleFactory());
 					explosionField.explode(this, new AnimatorListenerAdapter() {
@@ -185,7 +186,7 @@ public class Board extends RelativeLayout {
 						public void onAnimationEnd(Animator animation) {
 							super.onAnimationEnd(animation);
 							Board.this.removeView(Head.this);
-							EnterActivity act = (EnterActivity) getContext();
+							BaseActivity act = (BaseActivity) getContext();
 							String word = (String) getTag();
 							act.startSearch(word);
 						}

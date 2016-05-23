@@ -35,13 +35,14 @@ import android.widget.GridView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 /**
  * Created by peter on 16/5/9.
  */
-public class MainActivity extends BaseActivity implements View.OnClickListener{
+public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private WebView webview;
     private EditText input;
@@ -75,7 +76,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
         });
         status = findViewById(R.id.status);
         webEngineUrls = getResources().getStringArray(R.array.engine_web_urls);
-        webview = (WebView)findViewById(R.id.wv);
+        webview = (WebView) findViewById(R.id.wv);
         if (Build.VERSION.SDK_INT < 21) {
             webview.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         }
@@ -122,6 +123,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
         final FrameLayout video_fullView = (FrameLayout) findViewById(R.id.video_fullView);
         mWebchromeclient = new WebChromeClient() {
             CustomViewCallback xCustomViewCallback;
+
             @Override
             public void onShowCustomView(View view, CustomViewCallback callback) {
                 Log.i("peter", "onShowCustomView");
@@ -193,7 +195,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
     }
 
     private void setStatusLevel(int level) {
-        LevelListDrawable d = (LevelListDrawable)status.getBackground();
+        LevelListDrawable d = (LevelListDrawable) status.getBackground();
         if (d.getLevel() != level) {
             d.setLevel(level);
         }
@@ -209,17 +211,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
         if (intent != null) {
             String url = intent.getStringExtra("url");
             String name = intent.getStringExtra("name");
+
             if (!TextUtils.isEmpty(url)) {
                 loadUrl(name, url);
-            }else {
+            } else {
                 String word = intent.getStringExtra("keyWord");
-                if(!TextUtils.isEmpty(word)) {
+                if (!TextUtils.isEmpty(word)) {
                     doSearch(word, 1);
-                }else {
-                    popupEngine();
-//                    openBoard();
-
                 }
+
             }
         }
     }
@@ -229,12 +229,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
             webview.loadUrl(url);
             closeBoard();
             dismissEngine();
-            saveData(word, url);
+            if (!TextUtils.isEmpty(word)) {
+                saveData(word, url);
+            }
         }
     }
 
     private void dismissEngine() {
-        if(engine != null && engine.getVisibility() == View.VISIBLE) {
+        if (engine != null && engine.getVisibility() == View.VISIBLE) {
             engine.setVisibility(View.INVISIBLE);
         }
     }
@@ -254,9 +256,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
     }
 
     public void closeBoard() {
+        webview.requestFocus();
         InputMethodManager imm = (InputMethodManager)
                 getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(input.getWindowToken(), 0);
+        Log.i("peter", "closeBoard");
     }
 
     public void hideCustomView() {
@@ -267,10 +271,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if ((keyCode == KeyEvent.KEYCODE_BACK)) {
-            if(webview != null && webview.canGoBack()) {
-                if(mVideoCustomView != null) {//在全屏播放视频
+            if (webview != null && webview.canGoBack()) {
+                if (mVideoCustomView != null) {//在全屏播放视频
                     hideCustomView();
-                }else {
+                } else {
                     webview.goBack();
                 }
                 return true;
@@ -285,10 +289,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
         webview.resumeTimers();
     }
 
-    private void openBoard() {
-        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.showSoftInput(input, InputMethodManager.SHOW_IMPLICIT);
-    }
+//    private void openBoard() {
+//        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+//        imm.showSoftInput(input, InputMethodManager.SHOW_IMPLICIT);
+//    }
 
     @Override
     protected void onPause() {
@@ -338,7 +342,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
     }
 
     private void popupEngine() {
-        if(engine == null) {
+        if (engine == null) {
             engine = (GridView) findViewById(R.id.engine);
             String[] str = getResources().getStringArray(R.array.engine_web_names);
             engine.setAdapter(new MyAdapter(this, str));
@@ -355,7 +359,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
     }
 
     public String getHistoryName(String word) {
-        return word +  "  " + getEngineName();
+        return word + "  " + getEngineName();
     }
 
     private String getEngineName() {
@@ -380,27 +384,27 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
         String engineName = getEngineName();
         Log.i("peter", "title = " + title);
         Log.i("peter", "engineName = " + engineName);
-        if(getString(R.string.url_title_mark_cb).equals(engineName)) {//词霸
+        if (getString(R.string.url_title_mark_cb).equals(engineName)) {//词霸
             title = getInputStr() + " - " + engineName;
-        }else if(getString(R.string.url_title_mark_yd).equals(engineName)) {//有道
+        } else if (getString(R.string.url_title_mark_yd).equals(engineName)) {//有道
             title = getInputStr() + " - " + title;
-        }else if(getString(R.string.url_title_mark_jd).equals(engineName)) {//京东
+        } else if (getString(R.string.url_title_mark_jd).equals(engineName)) {//京东
             title = getInputStr() + " - " + engineName;
-        }else if(getString(R.string.url_title_mark_tb).equals(engineName)) {//淘宝
+        } else if (getString(R.string.url_title_mark_tb).equals(engineName)) {//淘宝
             title = getInputStr() + " - " + engineName;
-        }else if(getString(R.string.url_title_mark_tx).equals(engineName)) {//腾讯视频
+        } else if (getString(R.string.url_title_mark_tx).equals(engineName)) {//腾讯视频
             title = getInputStr() + " - " + engineName + " - " + title;
-        }else if(getString(R.string.url_title_mark_sh).equals(engineName)) {//搜狐视频
+        } else if (getString(R.string.url_title_mark_sh).equals(engineName)) {//搜狐视频
             title = getInputStr() + " - " + engineName + " - " + title;
-        }else if(getString(R.string.url_title_mark_aqy).equals(engineName)) {//爱奇艺
+        } else if (getString(R.string.url_title_mark_aqy).equals(engineName)) {//爱奇艺
             title = getInputStr() + " - " + engineName + " - " + title;
-        }else if(getString(R.string.url_title_mark_yyb).equals(engineName)) {//应用宝
+        } else if (getString(R.string.url_title_mark_yyb).equals(engineName)) {//应用宝
             title = getInputStr() + " - " + engineName;
-        }else if(getString(R.string.url_title_mark_360zs).equals(engineName)) {//360助手
+        } else if (getString(R.string.url_title_mark_360zs).equals(engineName)) {//360助手
             title = getInputStr() + " - " + engineName + " - " + title;
-        }else if(getString(R.string.url_title_mark_bdzs).equals(engineName)) {//百度助手
+        } else if (getString(R.string.url_title_mark_bdzs).equals(engineName)) {//百度助手
             title = getInputStr() + " - " + engineName + " - " + title;
-        }else if(getString(R.string.url_title_mark_xm).equals(engineName)) {//小米
+        } else if (getString(R.string.url_title_mark_xm).equals(engineName)) {//小米
             title = getInputStr() + " - " + engineName + " - " + title;
         }
         Log.i("peter", "title = " + title);
@@ -409,7 +413,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
 
     private void doSearch(String word, int currentWebEngine) {
         if (!TextUtils.isEmpty(word)) {
-            if(!word.equals(input.getText())) {
+            if (!word.equals(input.getText())) {
                 input.setText(word);
             }
             webview.requestFocus();
@@ -434,12 +438,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
                 popupMenu(v);
                 break;
             case R.id.back:
-                if(webview.canGoBack()) {
+                if (webview.canGoBack()) {
                     webview.goBack();
                 }
                 break;
             case R.id.go:
-                if(webview.canGoForward()) {
+                if (webview.canGoForward()) {
                     webview.goForward();
                 }
                 break;
@@ -447,7 +451,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
                 finish();
                 break;
             case R.id.favorite:
-                if(webview.getUrl() != null) {
+                if (webview.getUrl() != null) {
                     Bean bean = new Bean();
                     bean.name = webview.getTitle();
                     bean.url = webview.getUrl();
@@ -464,9 +468,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
 
     private void popupMenu(View menu) {
         PopupMenu popup = new PopupMenu(this, menu);
-        if(TextUtils.isEmpty(webview.getUrl())) {
+        if (TextUtils.isEmpty(webview.getUrl())) {
             popup.getMenuInflater().inflate(R.menu.main, popup.getMenu());
-        }else {
+        } else {
             popup.getMenuInflater().inflate(R.menu.web, popup.getMenu());
         }
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
@@ -549,17 +553,17 @@ public class MainActivity extends BaseActivity implements View.OnClickListener{
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            if(convertView == null) {
+            if (convertView == null) {
                 convertView = factory.inflate(R.layout.engine_item, parent, false);
             }
-            TextView tv = (TextView)convertView;
+            TextView tv = (TextView) convertView;
             String txt = getItem(position);
-            if(!TextUtils.isEmpty(txt)) {
+            if (!TextUtils.isEmpty(txt)) {
                 tv.setText(txt);
                 convertView.setTag(position);
-                if(txt.contains(":")) {
+                if (txt.contains(":")) {
                     convertView.setEnabled(false);
-                }else {
+                } else {
                     convertView.setOnClickListener(a);
                 }
             }
