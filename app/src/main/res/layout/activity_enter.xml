@@ -3,6 +3,7 @@
     android:id="@+id/enter_list"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingTop="@dimen/enter_padding_top"
     android:divider="@null"
     android:scrollbars="none"
     android:background="@color/enter_bg"

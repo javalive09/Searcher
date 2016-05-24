@@ -1,7 +1,7 @@
 <resources>
     <string name="search">搜索</string>
     <string name="app_name">速搜</string>
-    <string name="menu_txt">退出</string>
+    <string name="menu_txt">更多</string>
     <string name="hot_title">实时搜索Top10</string>
     <string name="favorite_url_title">常用网站</string>
     <string name="history_today_title">历史上的今天</string>
@@ -27,11 +27,12 @@
 
     <string name="action_share">分享</string>
     <string name="action_exit">退出</string>
+    <string name="action_refresh">刷新</string>
     <string name="favorite_txt">已经添加到收藏夹</string>
     <string name="action_browser">在浏览器中打开</string>
     <string name="action_collect">收藏</string>
-    <string name="action_collection">我的收藏夹</string>
-    <string name="action_history">历史搜索记录</string>
+    <string name="action_collection">收藏夹</string>
+    <string name="action_history">历史</string>
     <string name="action_setting">设置</string>
     <string name="action_feedback">反馈</string>
     <string name="action_about">关于速搜</string>
@@ -152,7 +153,7 @@
         <item>清理缓存</item>
         <item>反馈意见</item>
         <item>版本更新</item>
-        <item>关于</item>
+        <item>关于速搜</item>
     </string-array>
 
     <string-array name="menus_name">

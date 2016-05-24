@@ -3,7 +3,7 @@
     android:color="@color/back_press">
     <item>
         <shape>
-            <solid android:color="@android:color/white" />
+            <solid android:color="@color/title_bg" />
             <corners
                 android:bottomLeftRadius="@dimen/enter_item_radius"
                 android:bottomRightRadius="@dimen/enter_item_radius" />

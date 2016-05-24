@@ -1,13 +1,14 @@
 <resources>
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="title_h">40dp</dimen>
+    <dimen name="enter_padding_top">20dp</dimen>
     <dimen name="bottom_h">@dimen/title_h</dimen>
     <dimen name="hot_oval_d">80dp</dimen>
     <dimen name="menu_h">@dimen/title_h</dimen>
     <dimen name="menu_w">@dimen/title_h</dimen>
     <dimen name="setting_w">45dp</dimen>
     <dimen name="setting_h">45dp</dimen>
-    <dimen name="enter_icon_h">45dp</dimen>
+    <dimen name="enter_icon_h">42dp</dimen>
     <dimen name="enter_item_h">40dp</dimen>
     <dimen name="enter_logo_w">80dp</dimen>
     <dimen name="enter_logo_h">80dp</dimen>
@@ -24,7 +25,7 @@
     <dimen name="menu_text_size">15sp</dimen>
     <dimen name="search_text_size">17sp</dimen>
     <dimen name="back_drawable_padding">5dp</dimen>
-    <dimen name="setting_version_margin">20dp</dimen>
+    <dimen name="setting_version_margin">25dp</dimen>
     <dimen name="setting_version_drawable_padding">10dp</dimen>
     <dimen name="setting_item_txt_size">15sp</dimen>
     <dimen name="setting_item_h">47dp</dimen>

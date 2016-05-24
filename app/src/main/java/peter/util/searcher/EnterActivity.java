@@ -29,6 +29,7 @@ import java.util.HashMap;
  */
 public class EnterActivity extends BaseActivity {
 
+    static final int ACTION = 0;
     static final int LOGO = 1;
     static final int SEARCH = 2;
     static final int HOT_LIST = 3;
@@ -36,7 +37,7 @@ public class EnterActivity extends BaseActivity {
     static final int HOT_LIST_END = 5;
     static final String WEATHER_URL = "http://e.weather.com.cn/d/index/101010100.shtml";
     static final String HISTORY_TODAY_URL = "http://wap.lssdjt.com/";
-    AsynWindowHandler windowHandler;
+//    AsynWindowHandler windowHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,12 +45,13 @@ public class EnterActivity extends BaseActivity {
         setContentView(R.layout.activity_enter);
         ListView listView = (ListView) findViewById(R.id.enter_list);
         listView.setAdapter(new EnterAdapter(EnterActivity.this, getData()));
-        windowHandler = new AsynWindowHandler(this);
+//        windowHandler = new AsynWindowHandler(this);
         UpdateController.instance(getApplicationContext()).autoCheckVersion(new AsynWindowHandler(this));
     }
 
     private ArrayList<TypeBean> getData() {
         ArrayList<TypeBean> list = new ArrayList();
+        list.add(new TypeBean(ACTION));
         list.add(new TypeBean(LOGO));
         list.add(new TypeBean(SEARCH));
 
@@ -57,14 +59,14 @@ public class EnterActivity extends BaseActivity {
         list.add(new TypeBean(HOT_LIST, R.id.hot_list_history_today, getString(R.string.history_today_title), HISTORY_TODAY_URL));
         list.add(new TypeBean(HOT_LIST_END, R.id.hot_list_id_week_weather, getString(R.string.weeks_weather), WEATHER_URL));
 
-        list.add(new TypeBean(HOT_LIST_START, R.id.hot_list_history, getString(R.string.action_history)));
-        list.add(new TypeBean(HOT_LIST_END, R.id.hot_list_favorite, getString(R.string.action_collection)));
-
-        list.add(new TypeBean(HOT_LIST_START, R.id.hot_list_share_app, getString(R.string.setting_share_app)));
-        list.add(new TypeBean(HOT_LIST, R.id.hot_list_clear_cache, getString(R.string.setting_clear_cache)));
-        list.add(new TypeBean(HOT_LIST, R.id.hot_list_feedback, getString(R.string.setting_feedback)));
-        list.add(new TypeBean(HOT_LIST, R.id.hot_list_update, getString(R.string.setting_update)));
-        list.add(new TypeBean(HOT_LIST_END, R.id.hot_list_about, getString(R.string.action_about)));
+//        list.add(new TypeBean(HOT_LIST_START, R.id.hot_list_history, getString(R.string.action_history)));
+//        list.add(new TypeBean(HOT_LIST_END, R.id.hot_list_favorite, getString(R.string.action_collection)));
+//
+//        list.add(new TypeBean(HOT_LIST_START, R.id.hot_list_share_app, getString(R.string.setting_share_app)));
+//        list.add(new TypeBean(HOT_LIST, R.id.hot_list_clear_cache, getString(R.string.setting_clear_cache)));
+//        list.add(new TypeBean(HOT_LIST, R.id.hot_list_feedback, getString(R.string.setting_feedback)));
+//        list.add(new TypeBean(HOT_LIST, R.id.hot_list_update, getString(R.string.setting_update)));
+//        list.add(new TypeBean(HOT_LIST_END, R.id.hot_list_about, getString(R.string.action_about)));
 
         return list;
     }
@@ -74,11 +76,18 @@ public class EnterActivity extends BaseActivity {
             case R.id.enter:
                 startSearch(null);
                 break;
+            case R.id.feedback:
+                sendMailByIntent();
+                break;
+            case R.id.setting:
+                Intent intent = new Intent(EnterActivity.this, SettingActivity.class);
+                startActivity(intent);
+                break;
             case R.id.hot_list:
                 TypeBean bean = (TypeBean) v.getTag(R.id.hot_list_id);
                 switch (bean.id) {
                     case R.id.hot_list_top:
-                        Intent intent = new Intent(EnterActivity.this, HotTopActivity.class);
+                        intent = new Intent(EnterActivity.this, HotTopActivity.class);
                         startActivity(intent);
                         break;
                     case R.id.hot_list_history_today:
@@ -113,7 +122,7 @@ public class EnterActivity extends BaseActivity {
                         sendMailByIntent();
                         break;
                     case R.id.hot_list_update:
-                        UpdateController.instance(getApplicationContext()).checkVersion(windowHandler, true);
+//                        UpdateController.instance(getApplicationContext()).checkVersion(windowHandler, true);
                         break;
                     case R.id.hot_list_about:
                         showAlertDialog(getString(R.string.action_about), getString(R.string.setting_about));
@@ -166,6 +175,8 @@ public class EnterActivity extends BaseActivity {
                 holder.search = convertView.findViewById(R.id.enter);
                 holder.hotList = (TextView)convertView.findViewById(R.id.hot_list);
                 holder.favoriteUrl = convertView.findViewById(R.id.favorite_url);
+                holder.setting = convertView.findViewById(R.id.setting);
+                holder.feedback = convertView.findViewById(R.id.feedback);
                 convertView.setTag(holder);
             }else {
                 holder = (Holder) convertView.getTag();
@@ -174,12 +185,20 @@ public class EnterActivity extends BaseActivity {
             holder.version.setVisibility(View.GONE);
             holder.search.setVisibility(View.GONE);
             holder.hotList.setVisibility(View.GONE);
+            holder.setting.setVisibility(View.GONE);
+            holder.feedback.setVisibility(View.GONE);
 
             holder.version.setOnClickListener(act);
             holder.search.setOnClickListener(act);
             holder.hotList.setOnClickListener(act);
+            holder.setting.setOnClickListener(act);
+            holder.feedback.setOnClickListener(act);
 
             switch(getItemViewType(position)) {
+                case ACTION:
+                    holder.setting.setVisibility(View.VISIBLE);
+                    holder.feedback.setVisibility(View.VISIBLE);
+                    break;
                 case LOGO:
                     holder.version.setVisibility(View.VISIBLE);
                     holder.version.setText(act.getVersionName());
@@ -221,6 +240,8 @@ public class EnterActivity extends BaseActivity {
         View search;
         TextView hotList;
         View favoriteUrl;
+        View feedback;
+        View setting;
     }
 
     static class TypeBean{

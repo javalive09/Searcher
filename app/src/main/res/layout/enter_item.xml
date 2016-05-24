@@ -3,17 +3,43 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+    <RelativeLayout
+        android:id="@+id/title_action"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/feedback"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:background="@drawable/menu_selector"
+            android:src="@drawable/feedback"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/setting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/menu_selector"
+            android:src="@drawable/setting_w"
+            android:visibility="gone" />
+
+    </RelativeLayout>
+
     <TextView
         android:id="@+id/version"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:gravity="center"
-        android:drawableTop="@drawable/icon"
         android:layout_margin="@dimen/setting_version_margin"
         android:drawablePadding="@dimen/setting_version_drawable_padding"
+        android:drawableTop="@drawable/icon"
+        android:gravity="center"
         android:textColor="@android:color/white"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/enter"
@@ -21,9 +47,9 @@
         android:layout_height="@dimen/enter_icon_h"
         android:layout_below="@+id/version"
         android:layout_gravity="center"
+        android:layout_marginBottom="@dimen/enter_item_margin"
         android:layout_marginLeft="@dimen/enter_item_margin"
         android:layout_marginRight="@dimen/enter_item_margin"
-        android:layout_marginBottom="@dimen/enter_item_margin"
         android:background="@drawable/search_bg_"
         android:gravity="center"
         android:text="@string/search"
@@ -42,6 +68,7 @@
         android:background="@drawable/enter_item_selector"
         android:gravity="center"
         android:text="@string/history_today_title"
+        android:textColor="@android:color/white"
         android:visibility="gone" />
 
     <TextView

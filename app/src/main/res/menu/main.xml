@@ -18,10 +18,15 @@
         <!--android:orderInCategory="4"-->
         <!--android:title="@string/action_setting"/>-->
 
-    <!--<item-->
-        <!--android:id="@+id/action_exit"-->
-        <!--android:orderInCategory="5"-->
-        <!--android:title="@string/action_exit"/>-->
+    <item
+        android:id="@+id/action_refresh"
+        android:orderInCategory="5"
+        android:title="@string/action_refresh"/>
+
+    <item
+        android:id="@+id/action_exit"
+        android:orderInCategory="6"
+        android:title="@string/action_exit"/>
 
 
 </menu>
