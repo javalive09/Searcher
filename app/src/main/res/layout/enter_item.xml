@@ -3,23 +3,26 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <ImageView
-        android:id="@+id/logo"
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/version"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_margin="@dimen/enter_logo_margin"
-        android:clickable="false"
-        android:src="@drawable/icon"
-        android:visibility="gone" />
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:drawableTop="@drawable/icon"
+        android:layout_margin="@dimen/setting_version_margin"
+        android:drawablePadding="@dimen/setting_version_drawable_padding"
+        android:visibility="gone"/>
 
     <TextView
         android:id="@+id/enter"
         android:layout_width="match_parent"
         android:layout_height="@dimen/enter_icon_h"
-        android:layout_below="@+id/logo"
+        android:layout_below="@+id/version"
         android:layout_gravity="center"
-        android:layout_margin="@dimen/enter_item_margin"
+        android:layout_marginLeft="@dimen/enter_item_margin"
+        android:layout_marginRight="@dimen/enter_item_margin"
+        android:layout_marginBottom="@dimen/enter_item_margin"
         android:background="@drawable/search_bg_"
         android:gravity="center"
         android:text="@string/search"
@@ -33,7 +36,8 @@
         android:layout_height="@dimen/enter_item_h"
         android:layout_below="@+id/enter"
         android:layout_gravity="center"
-        android:layout_margin="@dimen/enter_item_margin"
+        android:layout_marginLeft="@dimen/enter_item_margin"
+        android:layout_marginRight="@dimen/enter_item_margin"
         android:background="@drawable/enter_item_selector"
         android:gravity="center"
         android:text="@string/history_today_title"

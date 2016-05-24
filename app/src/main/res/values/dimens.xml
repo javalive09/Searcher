@@ -7,13 +7,13 @@
     <dimen name="menu_w">45dp</dimen>
     <dimen name="setting_w">45dp</dimen>
     <dimen name="setting_h">45dp</dimen>
-    <dimen name="enter_icon_h">60dp</dimen>
+    <dimen name="enter_icon_h">50dp</dimen>
     <dimen name="enter_item_h">40dp</dimen>
     <dimen name="enter_logo_w">80dp</dimen>
     <dimen name="enter_logo_h">80dp</dimen>
     <dimen name="enter_logo_margin">20dp</dimen>
     <dimen name="enter_icon_text_size">19sp</dimen>
-    <dimen name="enter_item_margin">7dp</dimen>
+    <dimen name="enter_item_margin">17dp</dimen>
     <dimen name="hot_title_margin">10dp</dimen>
     <dimen name="hot_title_size">18sp</dimen>
     <dimen name="search_h">45dp</dimen>
@@ -21,8 +21,10 @@
     <dimen name="operate_cell">33dp</dimen>
     <dimen name="search_padding">7dp</dimen>
     <dimen name="back_padding">15dp</dimen>
+    <dimen name="menu_text_size">15sp</dimen>
     <dimen name="back_drawable_padding">5dp</dimen>
-    <dimen name="setting_version_margin">30dp</dimen>
+    <dimen name="setting_version_margin">20dp</dimen>
+    <dimen name="setting_version_drawable_padding">10dp</dimen>
     <dimen name="setting_item_txt_size">15sp</dimen>
     <dimen name="setting_item_h">47dp</dimen>
     <dimen name="title_txt_size">18sp</dimen>

@@ -3,6 +3,9 @@
     <item android:state_pressed="true">
         <shape>
             <solid android:color="@color/item_press"/>
+            <corners
+                android:bottomLeftRadius="@dimen/enter_item_radius"
+                android:bottomRightRadius="@dimen/enter_item_radius"/>
         </shape>
     </item>
     <item android:drawable="@android:color/transparent"/>

@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<peter.util.searcher.Board xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/hot_top"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"/>
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:orientation="vertical">
+
+    <include layout="@layout/activity_title" />
+
+    <peter.util.searcher.Board
+        android:id="@+id/hot_top"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/title" />
+
+</RelativeLayout>

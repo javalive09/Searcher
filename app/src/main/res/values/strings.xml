@@ -1,8 +1,8 @@
 <resources>
     <string name="search">搜索</string>
     <string name="app_name">速搜</string>
-    <string name="menu_txt">更多</string>
-    <string name="hot_title">搜索排行Top10</string>
+    <string name="menu_txt">退出</string>
+    <string name="hot_title">实时搜索Top10</string>
     <string name="favorite_url_title">常用网站</string>
     <string name="history_today_title">历史上的今天</string>
     <string name="weeks_weather">一周天气预报</string>
@@ -16,6 +16,9 @@
     <string name="setting_title">设置</string>
     <string name="setting_back">返回</string>
     <string name="setting_feedback">反馈建议</string>
+    <string name="setting_clear_cache">清理缓存</string>
+    <string name="setting_share_app">分享APP</string>
+    <string name="setting_update">版本更新</string>
     <string name="setting_feedback_body">您的反馈和建议</string>
     <string name="setting_feedback_address">mailto:javalive09@163.com</string>
     <string name="setting_about">提供简单畅快的搜索体验。搜索一步完成，退出一步完成。功能强大，干净省电。
@@ -27,8 +30,8 @@
     <string name="favorite_txt">已经添加到收藏夹</string>
     <string name="action_browser">在浏览器中打开</string>
     <string name="action_collect">收藏</string>
-    <string name="action_collection">收藏夹</string>
-    <string name="action_history">历史记录</string>
+    <string name="action_collection">我的收藏夹</string>
+    <string name="action_history">历史搜索记录</string>
     <string name="action_setting">设置</string>
     <string name="action_feedback">反馈</string>
     <string name="action_about">关于速搜</string>
@@ -141,6 +144,8 @@
         <item>http://app.mi.com/search?keywords=%s</item>
         <!--<item>http://www.anzhi.com/search.php?keyword=%s</item>-->
     </string-array>
+
+
 
     <string-array name="settings_name">
         <item>分享APP</item>

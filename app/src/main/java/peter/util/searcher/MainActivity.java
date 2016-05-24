@@ -58,8 +58,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        UpdateController.instance(getApplicationContext()).autoCheckVersion(new AsynWindowHandler(this));
-
         setContentView(R.layout.activity_main);
         init();
     }
@@ -435,7 +433,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 doSearch(getInputStr(), position);
                 break;
             case R.id.menu:
-                popupMenu(v);
+                exit();
                 break;
             case R.id.back:
                 if (webview.canGoBack()) {
@@ -447,80 +445,30 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     webview.goForward();
                 }
                 break;
-            case R.id.home:
+            case R.id.close:
                 finish();
                 break;
             case R.id.favorite:
                 if (webview.getUrl() != null) {
                     Bean bean = new Bean();
-                    bean.name = webview.getTitle();
+                    bean.name = getFavName();
                     bean.url = webview.getUrl();
                     bean.time = System.currentTimeMillis();
                     SqliteHelper.instance(MainActivity.this).insertFav(bean);
                     Toast.makeText(MainActivity.this, R.string.favorite_txt, Toast.LENGTH_SHORT).show();
                 }
                 break;
-            case R.id.exit:
-                exit();
+            case R.id.share:
+                if (webview.getUrl() != null) {
+                    String url = webview.getUrl();
+                    Intent sendIntent = new Intent();
+                    sendIntent.setAction(Intent.ACTION_SEND);
+                    sendIntent.putExtra(Intent.EXTRA_TEXT, url);
+                    sendIntent.setType("text/plain");
+                    startActivity(Intent.createChooser(sendIntent, getString(R.string.share_title)));
+                }
                 break;
         }
-    }
-
-    private void popupMenu(View menu) {
-        PopupMenu popup = new PopupMenu(this, menu);
-        if (TextUtils.isEmpty(webview.getUrl())) {
-            popup.getMenuInflater().inflate(R.menu.main, popup.getMenu());
-        } else {
-            popup.getMenuInflater().inflate(R.menu.web, popup.getMenu());
-        }
-        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.action_share:
-                        if (webview != null) {
-                            String url = webview.getUrl();
-                            Intent sendIntent = new Intent();
-                            sendIntent.setAction(Intent.ACTION_SEND);
-                            sendIntent.putExtra(Intent.EXTRA_TEXT, url);
-                            sendIntent.setType("text/plain");
-                            startActivity(Intent.createChooser(sendIntent, getString(R.string.share_title)));
-                        }
-                        break;
-//                    case R.id.action_setting:
-//                        closeBoard();
-//                        Intent intent = new Intent(MainActivity.this, SettingActivity.class);
-//                        startActivity(intent);
-//                        break;
-//                    case R.id.action_collect:
-//                        Bean bean = new Bean();
-//                        bean.name = webview.getTitle();
-//                        bean.url = webview.getUrl();
-//                        bean.time = System.currentTimeMillis();
-//                        SqliteHelper.instance(MainActivity.this).insertFav(bean);
-//                        Toast.makeText(MainActivity.this, R.string.favorite_txt, Toast.LENGTH_SHORT).show();
-//                        break;
-                    case R.id.action_collection:
-                        closeBoard();
-                        startActivity(new Intent(MainActivity.this, FavoriteActivity.class));
-                        break;
-                    case R.id.action_history:
-                        closeBoard();
-                        startActivity(new Intent(MainActivity.this, HistoryActivity.class));
-                        break;
-//                    case R.id.action_exit:
-//                        finish();
-//                        break;
-//                    case R.id.action_feedback:
-//                        sendMailByIntent();
-//                        break;
-//                    case R.id.action_about:
-//                        showAlertDialog(getString(R.string.action_about), getString(R.string.setting_about));
-//                        break;
-                }
-                return true;
-            }
-        });
-        popup.show();
     }
 
     private static class MyAdapter extends BaseAdapter {
