@@ -74,8 +74,9 @@ public class FavoriteActivity extends BaseActivity {
             if (beans != null) {
                 BaseActivity act = wr.get();
                 if(act != null) {
-                    ListView history = (ListView) act.findViewById(R.id.history);
-                    history.setAdapter(new FavoriteAdapter(beans, act));
+                    act.findViewById(R.id.loading).setVisibility(View.GONE);
+                    ListView favorite = (ListView) act.findViewById(R.id.history);
+                    favorite.setAdapter(new FavoriteAdapter(beans, act));
                 }
             }
 

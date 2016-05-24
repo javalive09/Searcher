@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="title_bg">#43a4e8</color>
+    <color name="title_bg">#0d3c6e</color>
 
     <color name="setting_bg">#f7f7f9</color>
 
-    <color name="enter_bg">#fff6f6f6</color>
+    <color name="enter_bg">@color/title_bg</color>
 
     <color name="item_normal">#ffffff</color>
     <color name="item_press">#88cccccc</color>

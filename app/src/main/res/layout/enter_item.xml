@@ -12,6 +12,7 @@
         android:drawableTop="@drawable/icon"
         android:layout_margin="@dimen/setting_version_margin"
         android:drawablePadding="@dimen/setting_version_drawable_padding"
+        android:textColor="@android:color/white"
         android:visibility="gone"/>
 
     <TextView

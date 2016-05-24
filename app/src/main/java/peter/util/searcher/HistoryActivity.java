@@ -74,6 +74,7 @@ public class HistoryActivity extends BaseActivity implements View.OnClickListene
             if (beans != null) {
                 BaseActivity act = wr.get();
                 if(act != null) {
+                    act.findViewById(R.id.loading).setVisibility(View.GONE);
                     ListView history = (ListView) act.findViewById(R.id.history);
                     history.setAdapter(new HistoryAdapter(beans, act));
                 }

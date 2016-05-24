@@ -56,6 +56,9 @@ public class HotTopActivity extends BaseActivity {
     }
 
     private void showHots(ArrayList<String> hots) {
+        View loading = findViewById(R.id.loading);
+        loading.setVisibility(View.GONE);
+
         Board board = (Board) findViewById(R.id.hot_top);
         board.startAnimation(hots);
     }
@@ -84,10 +87,6 @@ public class HotTopActivity extends BaseActivity {
                     }
                 }
                 Log.i("peter", "title = " + hots.toString());
-                HotTopActivity activity = act.get();
-                if(activity != null) {
-                    activity.showHots(hots);
-                }
             } catch (IOException e) {
                 e.printStackTrace();
             }

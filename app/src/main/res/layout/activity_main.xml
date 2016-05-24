@@ -38,7 +38,7 @@
                 android:gravity="center_vertical"
                 android:hint="@string/search"
                 android:imeOptions="actionSearch"
-                android:paddingRight="@dimen/input_padding_right"
+                android:textSize="@dimen/search_text_size"
                 android:focusable="true"
                 android:focusableInTouchMode="true"
                 android:selectAllOnFocus="true"
@@ -56,7 +56,7 @@
         <View
             android:id="@+id/status"
             android:layout_width="match_parent"
-            android:layout_height="1dp"
+            android:layout_height="2dp"
             android:background="@drawable/status" />
     </peter.util.searcher.MainFrameView>
 

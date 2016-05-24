@@ -6,4 +6,9 @@
         <item name="android:statusBarColor">@color/title_bg</item>
     </style>
 
+    <style name="MyProgressBar" parent="Base.Widget.AppCompat.ProgressBar">
+        <item name="android:indeterminateTint">@color/title_bg</item>
+        <item name="android:indeterminateTintMode">src_atop</item>
+    </style>
+
 </resources>
