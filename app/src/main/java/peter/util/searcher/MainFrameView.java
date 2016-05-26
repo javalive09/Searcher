@@ -33,11 +33,10 @@ public class MainFrameView extends FrameLayout {
         mScroller = new Scroller(getContext());
     }
 
-    float startY;
-    float currentY;
     int deltaY;
+    float startX, startY;
     private boolean lockBar = false;
-
+    boolean autoScroll = false;
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
 
@@ -45,11 +44,12 @@ public class MainFrameView extends FrameLayout {
             return super.dispatchTouchEvent(ev);
         }
 
+        final float x = ev.getX();
         final float y = ev.getY();
         switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
+                startX = x;
                 startY = y;
-                currentY = y;
                 autoScroll = false;
                 break;
 
@@ -65,21 +65,9 @@ public class MainFrameView extends FrameLayout {
                     Log.i("peter", "scrollY = " + scrollY);
 
 
-                    if (deltaY > 0) {//finger up
+                    if (deltaY < 0) {//finger down
 
-                        int realDelatY = deltaY - mTouchSlop;
-                        if (realDelatY > titleH) {
-                            realDelatY = titleH;
-                        }
-
-                        if (getScrollY() == titleH) {
-                            return super.dispatchTouchEvent(ev);
-                        }
-
-                        scrollTo(0, realDelatY);
-                        return super.dispatchTouchEvent(ev);
-                    } else if (deltaY < 0) {//finger down
-
+                        autoScroll = false;
                         int realDeltaY = titleH + deltaY + mTouchSlop;
 
                         if (realDeltaY < 0) {
@@ -95,25 +83,20 @@ public class MainFrameView extends FrameLayout {
                     }
 
                 }
-
                 break;
             case MotionEvent.ACTION_UP:
-
-                int scrollY = getScrollY();
-                if (scrollY < 0) {
-                    autoScroll = true;
-                    scrollTo(0, 0);
-                    break;
-                } else if (scrollY > titleH) {
-                    autoScroll = true;
-                    scrollTo(0, titleH);
-                    break;
-                } else if (scrollY != 0 && scrollY != titleH) {
-                    autoScroll = true;
-                    if (deltaY > titleH / 2) {
-                        startBounceAnim(getScrollY(), titleH - getScrollY(), 500);
-                    } else {
-                        startBounceAnim(getScrollY(), -getScrollY(), 500);
+                final int scrollY = getScrollY();
+                int deltaX = (int) (startX - x);
+                int deltaY = (int) (startY - y);
+                autoScroll = true;
+                if(scrollY == 0  && (deltaY > titleH / 2) && (deltaY > Math.abs(deltaX))) {//finger up
+                    startBounceAnim(getScrollY(), titleH, 600);
+                }else {
+                    if (scrollY < 0) {
+                        scrollTo(0, 0);
+                        break;
+                    } else if (scrollY != 0 && scrollY != titleH) {
+                        startBounceAnim(getScrollY(), -getScrollY(), 600);
                     }
                 }
 
@@ -122,8 +105,6 @@ public class MainFrameView extends FrameLayout {
 
         return super.dispatchTouchEvent(ev);
     }
-
-    boolean autoScroll = false;
 
     @Override
     public void computeScroll() {
@@ -175,7 +156,7 @@ public class MainFrameView extends FrameLayout {
 
     protected void onScrollChanged(int l, int t, int oldl, int oldt) {
         super.onScrollChanged(l, t, oldl, oldt);
-        if(listener != null) {
+        if (listener != null) {
             listener.onScrollChanged(l, t, oldl, oldt);
         }
 
@@ -183,9 +164,9 @@ public class MainFrameView extends FrameLayout {
             View webView = getChildAt(1);
             webView.scrollBy(0, oldt - t);
             Log.i("peter", "autoScroll===" + (oldt - t));
-        }
 
-        Log.i("peter", "l = " + l + "; t=" + t + "; oldl =" + oldl + "; oldt =" + oldt);
+            Log.i("peter", "l = " + l + "; t=" + t + "; oldl =" + oldl + "; oldt =" + oldt);
+        }
     }
 
     @Override

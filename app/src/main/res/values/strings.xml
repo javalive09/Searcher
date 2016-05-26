@@ -94,6 +94,12 @@
         <item>美团</item>
         <item>58同城</item>
 
+        <item>小说 :</item>
+        <item>起点</item>
+        <item>纵横</item>
+        <item>17k</item>
+        <item>潇湘</item>
+
         <item>APP :</item>
         <item>应用宝</item>
         <item>360助手</item>
@@ -137,6 +143,12 @@
         <item>https://www.nuomi.com/search?k=%s</item>
         <item>http://bj.meituan.com/s/?w=%s</item>
         <item>http://bj.58.com/sou/?key=%s</item>
+
+        <item></item>
+        <item>http://m.qidian.com/search.aspx?searchkey=%s</item>
+        <item>http://m.zongheng.com/h5/search?keywords=%s</item>
+        <item>http://h5.17k.com/search.html?key=%s</item>
+        <item>http://m.xxsy.net/Page/Search?key=%s</item>
 
         <item></item>
         <item>http://app.qq.com/#id=search&amp;key=%s</item>
