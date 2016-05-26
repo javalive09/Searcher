@@ -16,6 +16,7 @@ import android.widget.Scroller;
 public class MainFrameView extends FrameLayout {
 
     private Scroller mScroller;
+    private WebView webView;
     int mTouchSlop;
 
     public MainFrameView(Context context) {
@@ -33,10 +34,9 @@ public class MainFrameView extends FrameLayout {
         mScroller = new Scroller(getContext());
     }
 
-    int deltaY;
     float startX, startY;
     private boolean lockBar = false;
-    boolean autoScroll = false;
+    boolean lockScroll = false;
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
 
@@ -50,53 +50,22 @@ public class MainFrameView extends FrameLayout {
             case MotionEvent.ACTION_DOWN:
                 startX = x;
                 startY = y;
-                autoScroll = false;
                 break;
 
-            case MotionEvent.ACTION_MOVE:
-                deltaY = (int) (startY - y);
-
-                Log.i("peter", "deltaY = " + deltaY);
-                Log.i("peter", "titleH = " + titleH);
-                Log.i("peter", "mTouchSlop = " + mTouchSlop);
-
-                if (Math.abs(deltaY) > mTouchSlop) {//开始滑动
-                    int scrollY = getScrollY();
-                    Log.i("peter", "scrollY = " + scrollY);
-
-
-                    if (deltaY < 0) {//finger down
-
-                        autoScroll = false;
-                        int realDeltaY = titleH + deltaY + mTouchSlop;
-
-                        if (realDeltaY < 0) {
-                            realDeltaY = 0;
-                        }
-
-                        if (getScrollY() == 0) {
-                            return super.dispatchTouchEvent(ev);
-                        }
-
-                        scrollTo(0, realDeltaY);
-                        return super.dispatchTouchEvent(ev);
-                    }
-
-                }
-                break;
             case MotionEvent.ACTION_UP:
+                lockScroll = false;
                 final int scrollY = getScrollY();
                 int deltaX = (int) (startX - x);
                 int deltaY = (int) (startY - y);
-                autoScroll = true;
-                if(scrollY == 0  && (deltaY > titleH / 2) && (deltaY > Math.abs(deltaX))) {//finger up
+                if (scrollY == 0 && (deltaY > titleH / 2) && (deltaY > Math.abs(deltaX))) {//finger up
                     startBounceAnim(getScrollY(), titleH, 600);
-                }else {
-                    if (scrollY < 0) {
-                        scrollTo(0, 0);
-                        break;
-                    } else if (scrollY != 0 && scrollY != titleH) {
-                        startBounceAnim(getScrollY(), -getScrollY(), 600);
+                    if((int)(webView.getContentHeight()*webView.getScale()) == (webView.getHeight() + webView.getScrollY())) {
+                        lockScroll = true;
+                    }
+                } else if (scrollY == titleH && (deltaY < -titleH / 2) && (Math.abs(deltaY) > Math.abs(deltaX))) {//finger down
+                    startBounceAnim(getScrollY(), -getScrollY(), 600);
+                    if(webView.getScrollY() == 0){
+                        lockScroll = true;
                     }
                 }
 
@@ -140,7 +109,7 @@ public class MainFrameView extends FrameLayout {
         titleH = title.getMeasuredHeight();
         title.layout(left, top, width, titleH);
 
-        View webView = getChildAt(1);
+        webView = (WebView) getChildAt(1);
         webView.layout(left, titleH, width, getMeasuredHeight());
 
         View status = getChildAt(2);
@@ -160,13 +129,13 @@ public class MainFrameView extends FrameLayout {
             listener.onScrollChanged(l, t, oldl, oldt);
         }
 
-        if(autoScroll) {
-            View webView = getChildAt(1);
+        if(!lockScroll) {
             webView.scrollBy(0, oldt - t);
-            Log.i("peter", "autoScroll===" + (oldt - t));
-
-            Log.i("peter", "l = " + l + "; t=" + t + "; oldl =" + oldl + "; oldt =" + oldt);
+            webView.setPadding(0, t, 0, 0);
         }
+
+        Log.i("peter", "autoScroll===" + (oldt - t));
+        Log.i("peter", "l = " + l + "; t=" + t + "; oldl =" + oldl + "; oldt =" + oldt);
     }
 
     @Override
