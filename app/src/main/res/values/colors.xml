@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="title_bg">#0d3c6e</color>
+    <color name="colorPrimary">#0d3c6e</color>
+    <color name="drawer_layout_bg">#393a3f</color>
 
     <color name="setting_bg">#f7f7f9</color>
 

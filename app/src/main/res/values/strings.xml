@@ -24,6 +24,9 @@
     <string name="setting_about">提供简单畅快的搜索体验。搜索一步完成，退出一步完成。功能强大，干净省电。
     </string>
     <string name="setting_clear">缓存和cookies已经清理</string>
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+
 
     <string name="action_share">分享</string>
     <string name="action_exit">退出</string>

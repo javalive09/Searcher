@@ -3,7 +3,7 @@
     android:color="@color/back_press">
     <item>
         <shape>
-            <solid android:color="@color/title_bg"/>
+            <solid android:color="@color/drawer_layout_bg"/>
         </shape>
     </item>
 </ripple>

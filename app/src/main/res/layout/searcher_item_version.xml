@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/version"
+    android:layout_width="match_parent"
+    android:layout_height="120dp"
+    android:padding="10dp"
+    android:gravity="center"
+    android:textSize="16sp"
+    android:textStyle="italic"
+    android:text="Simple and Fast"
+    android:background="@color/title_bg"
+    android:layout_gravity="center"
+    android:textColor="@android:color/white">
+
+ </TextView>
+

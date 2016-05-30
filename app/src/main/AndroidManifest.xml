@@ -25,7 +25,7 @@
             android:name="UMENG_CHANNEL"
             android:value="${UMENG_CHANNEL_VALUE}" />
 
-        <activity android:name=".EnterActivity">
+        <activity android:name=".SearchActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
