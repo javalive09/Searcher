@@ -73,7 +73,7 @@ public class SearchActivity extends AppCompatActivity implements DrawerLayoutAda
     }
 
     private void setFragment() {
-        Fragment fragment = new RecentSearchFragment();
+        Fragment fragment = new EngineViewPagerFragment();
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction ft = fragmentManager.beginTransaction();
         ft.replace(R.id.content_frame, fragment);

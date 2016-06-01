@@ -73,7 +73,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             }
         });
         status = findViewById(R.id.status);
-        webEngineUrls = getResources().getStringArray(R.array.engine_web_urls);
+//        webEngineUrls = getResources().getStringArray(R.array.engine_web_urls);
         webview = (WebView) findViewById(R.id.wv);
         if (Build.VERSION.SDK_INT < 21) {
             webview.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
@@ -340,12 +340,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     private void popupEngine() {
-        if (engine == null) {
-            engine = (GridView) findViewById(R.id.engine);
-            String[] str = getResources().getStringArray(R.array.engine_web_names);
-            engine.setAdapter(new MyAdapter(this, str));
-        }
-        engine.setVisibility(View.VISIBLE);
+//        if (engine == null) {
+//            engine = (GridView) findViewById(R.id.engine);
+//            String[] str = getResources().getStringArray(R.array.engine_web_names);
+//            engine.setAdapter(new MyAdapter(this, str));
+//        }
+//        engine.setVisibility(View.VISIBLE);
     }
 
     private String getEngineUrl(String word, int currentWebEngine) {
@@ -356,13 +356,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         return String.format(webEngineUrls[currentWebEngine], getEncodeString(word));
     }
 
-    public String getHistoryName(String word) {
-        return word + "  " + getEngineName();
-    }
+//    public String getHistoryName(String word) {
+//        return word + "  " + getEngineName();
+//    }
 
-    private String getEngineName() {
-        return getResources().getStringArray(R.array.engine_web_names)[mCurrentWebEngine];
-    }
+//    private String getEngineName() {
+//        return getResources().getStringArray(R.array.engine_web_names)[mCurrentWebEngine];
+//    }
 
     private String getEncodeString(String content) {
         try {
@@ -379,32 +379,32 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     public String getFavName() {
         String title = webview.getTitle();
-        String engineName = getEngineName();
+//        String engineName = getEngineName();
         Log.i("peter", "title = " + title);
-        Log.i("peter", "engineName = " + engineName);
-        if (getString(R.string.url_title_mark_cb).equals(engineName)) {//词霸
-            title = getInputStr() + " - " + engineName;
-        } else if (getString(R.string.url_title_mark_yd).equals(engineName)) {//有道
-            title = getInputStr() + " - " + title;
-        } else if (getString(R.string.url_title_mark_jd).equals(engineName)) {//京东
-            title = getInputStr() + " - " + engineName;
-        } else if (getString(R.string.url_title_mark_tb).equals(engineName)) {//淘宝
-            title = getInputStr() + " - " + engineName;
-        } else if (getString(R.string.url_title_mark_tx).equals(engineName)) {//腾讯视频
-            title = getInputStr() + " - " + engineName + " - " + title;
-        } else if (getString(R.string.url_title_mark_sh).equals(engineName)) {//搜狐视频
-            title = getInputStr() + " - " + engineName + " - " + title;
-        } else if (getString(R.string.url_title_mark_aqy).equals(engineName)) {//爱奇艺
-            title = getInputStr() + " - " + engineName + " - " + title;
-        } else if (getString(R.string.url_title_mark_yyb).equals(engineName)) {//应用宝
-            title = getInputStr() + " - " + engineName;
-        } else if (getString(R.string.url_title_mark_360zs).equals(engineName)) {//360助手
-            title = getInputStr() + " - " + engineName + " - " + title;
-        } else if (getString(R.string.url_title_mark_bdzs).equals(engineName)) {//百度助手
-            title = getInputStr() + " - " + engineName + " - " + title;
-        } else if (getString(R.string.url_title_mark_xm).equals(engineName)) {//小米
-            title = getInputStr() + " - " + engineName + " - " + title;
-        }
+//        Log.i("peter", "engineName = " + engineName);
+//        if (getString(R.string.url_title_mark_cb).equals(engineName)) {//词霸
+//            title = getInputStr() + " - " + engineName;
+//        } else if (getString(R.string.url_title_mark_yd).equals(engineName)) {//有道
+//            title = getInputStr() + " - " + title;
+//        } else if (getString(R.string.url_title_mark_jd).equals(engineName)) {//京东
+//            title = getInputStr() + " - " + engineName;
+//        } else if (getString(R.string.url_title_mark_tb).equals(engineName)) {//淘宝
+//            title = getInputStr() + " - " + engineName;
+//        } else if (getString(R.string.url_title_mark_tx).equals(engineName)) {//腾讯视频
+//            title = getInputStr() + " - " + engineName + " - " + title;
+//        } else if (getString(R.string.url_title_mark_sh).equals(engineName)) {//搜狐视频
+//            title = getInputStr() + " - " + engineName + " - " + title;
+//        } else if (getString(R.string.url_title_mark_aqy).equals(engineName)) {//爱奇艺
+//            title = getInputStr() + " - " + engineName + " - " + title;
+//        } else if (getString(R.string.url_title_mark_yyb).equals(engineName)) {//应用宝
+//            title = getInputStr() + " - " + engineName;
+//        } else if (getString(R.string.url_title_mark_360zs).equals(engineName)) {//360助手
+//            title = getInputStr() + " - " + engineName + " - " + title;
+//        } else if (getString(R.string.url_title_mark_bdzs).equals(engineName)) {//百度助手
+//            title = getInputStr() + " - " + engineName + " - " + title;
+//        } else if (getString(R.string.url_title_mark_xm).equals(engineName)) {//小米
+//            title = getInputStr() + " - " + engineName + " - " + title;
+//        }
         Log.i("peter", "title = " + title);
         return title;
     }
@@ -416,9 +416,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             }
             webview.requestFocus();
             mCurrentWebEngine = currentWebEngine;
-            String url = getEngineUrl(word, currentWebEngine);
-            String name = getHistoryName(word);
-            loadUrl(name, url);
+//            String url = getEngineUrl(word, currentWebEngine);
+//            String name = getHistoryName(word);
+//            loadUrl(name, url);
         }
     }
 

@@ -1,0 +1,14 @@
+<resources>
+    <string name="url_title_mark_yd">有道</string>
+    <string name="url_title_mark_cb">词霸</string>
+    <string name="url_title_mark_jd">京东</string>
+    <string name="url_title_mark_tb">淘宝</string>
+    <string name="url_title_mark_tx">腾讯</string>
+    <string name="url_title_mark_sh">搜狐</string>
+    <string name="url_title_mark_aqy">爱奇艺</string>
+    <string name="url_title_mark_yyb">应用宝</string>
+    <string name="url_title_mark_360zs">360助手</string>
+    <string name="url_title_mark_bdzs">百度助手</string>
+    <string name="url_title_mark_xm">小米</string>
+
+</resources>
