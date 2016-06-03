@@ -13,4 +13,5 @@
     <item name="hot_list_feedback" type="id"/>
     <item name="hot_list_update" type="id"/>
     <item name="hot_list_about" type="id"/>
+    <item name="grid_view_item" type="id"/>
 </resources>

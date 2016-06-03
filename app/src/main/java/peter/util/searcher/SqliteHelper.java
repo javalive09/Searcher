@@ -127,17 +127,20 @@ public class SqliteHelper extends SQLiteOpenHelper {
     public List<Bean> queryRecentData() {
         List<Bean> list = new ArrayList<>(LIMIT);
         SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.query(TABLE_HISTORY, null, null, null, null, null, "searchId DESC", LIMIT + "");
+        Cursor cursor = db.query(TABLE_HISTORY, null, null, null, null, null, "historyId DESC", LIMIT + "");
 
         if (cursor != null && cursor.moveToFirst()) {
             int timeColumnIndex = cursor.getColumnIndex("time");
             int nameColumnIndex = cursor.getColumnIndex("name");
+            int urlColumnIndex = cursor.getColumnIndex("url");
             do {
                 long time = cursor.getLong(timeColumnIndex);
                 String name = cursor.getString(nameColumnIndex);
+                String url = cursor.getString(urlColumnIndex);
                 Bean bean = new Bean();
                 bean.name = name;
                 bean.time = time;
+                bean.url = url;
                 list.add(bean);
             } while (cursor.moveToNext());
             cursor.close();

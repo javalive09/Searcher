@@ -40,10 +40,7 @@ public class RecentSearchFragment extends Fragment implements View.OnClickListen
             case R.id.recent_search_item:
                 Bean bean = (Bean) v.getTag();
                 if (bean != null) {
-                    Intent intent = new Intent(getActivity(), MainActivity.class);
-                    intent.putExtra("url", bean.url);
-                    intent.putExtra("name", bean.name);
-                    startActivity(intent);
+                    Utils.startSearchAct(getActivity(), bean.url, bean.name);
                 }
                 break;
         }
@@ -63,7 +60,7 @@ public class RecentSearchFragment extends Fragment implements View.OnClickListen
             List<Bean> searches = null;
             if (f != null) {
                 try {
-                    searches = SqliteHelper.instance(f.getActivity()).queryAllFavorite();
+                    searches = SqliteHelper.instance(f.getActivity()).queryRecentData();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -118,13 +115,11 @@ public class RecentSearchFragment extends Fragment implements View.OnClickListen
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            TextView view;
             if (convertView == null) {
-                view = (TextView) factory.inflate(R.layout.favorite_item, parent, false);
-            } else {
-                view = (TextView) convertView;
+                convertView = factory.inflate(R.layout.recent_search_item, parent, false);
             }
 
+            TextView view = (TextView) convertView;
             Bean search = getItem(position);
             view.setText(search.name);
             view.setOnClickListener(f);

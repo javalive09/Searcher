@@ -33,9 +33,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MainActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden"
-            android:launchMode="singleTask" />
+            android:name=".MainActivity"/>
         <activity
             android:name=".SettingActivity"
             android:screenOrientation="portrait" />

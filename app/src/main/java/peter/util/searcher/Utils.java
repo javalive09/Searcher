@@ -16,6 +16,8 @@
 package peter.util.searcher;
 
 
+import android.app.Activity;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -59,4 +61,12 @@ public class Utils {
             return null;
         }
     }
+
+    public static void startSearchAct(Activity act, String url, String word) {
+        Intent intent = new Intent(act, MainActivity.class);
+        intent.putExtra("url", url);
+        intent.putExtra("word", word);
+        act.startActivity(intent);
+    }
+
 }

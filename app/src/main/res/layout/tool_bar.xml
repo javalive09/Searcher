@@ -16,7 +16,19 @@
             android:id="@+id/search"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:paddingRight="@dimen/clear_txt_margin_right"
             android:hint="@string/search" />
+
+        <ImageView
+            android:id="@+id/clear"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/abc_ic_clear_mtrl_alpha"
+            android:layout_marginRight="@dimen/clear_txt_margin_right"
+            android:visibility="invisible"
+            android:layout_gravity="right|center_vertical"/>
 
         <TextView
             android:id="@+id/title"

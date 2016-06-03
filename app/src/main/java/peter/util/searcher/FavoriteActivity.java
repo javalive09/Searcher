@@ -36,10 +36,7 @@ public class FavoriteActivity extends BaseActivity {
             case R.id.favorite_item:
                 Bean bean = (Bean) v.getTag();
                 if(bean != null) {
-                    Intent intent = new Intent(FavoriteActivity.this, MainActivity.class);
-                    intent.putExtra("url", bean.url);
-                    intent.putExtra("name", bean.name);
-                    startActivity(intent);
+                    Utils.startSearchAct(FavoriteActivity.this, bean.url, bean.name);
                     finish();
                 }
                 break;

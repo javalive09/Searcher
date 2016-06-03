@@ -1,10 +1,12 @@
 package peter.util.searcher;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,16 +15,19 @@ import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.google.gson.reflect.TypeToken;
+
 import java.io.Serializable;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+
 import peter.util.searcher.net.GsonRequest;
 import peter.util.searcher.net.RequestManager;
 
@@ -53,7 +58,7 @@ public class EngineViewPagerFragment extends Fragment implements View.OnClickLis
 
     private void init() {
         RequestManager.init(getActivity());
-        Type collectionType = new TypeToken<ArrayList<TypeEngines<Engine>>>(){}.getType();
+        Type collectionType = new TypeToken<ArrayList<TypeEngines<Engine>>>() {}.getType();
         RequestManager.addRequest(new GsonRequest<>(url, collectionType,
                 responseListener(), errorListener()), getActivity());
     }
@@ -73,7 +78,17 @@ public class EngineViewPagerFragment extends Fragment implements View.OnClickLis
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-
+            case R.id.engine_item:
+                SearchActivity act = (SearchActivity) getActivity();
+                String searchWord = act.getSearchWord();
+                if(!TextUtils.isEmpty(searchWord)) {
+                    Engine engine = (Engine) v.getTag(R.id.grid_view_item);
+                    String url = UrlUtils.smartUrlFilter(searchWord, true, engine.url);
+                    Utils.startSearchAct(getActivity(), url, searchWord);
+                }
+                break;
+            default:
+                break;
         }
     }
 
@@ -84,11 +99,6 @@ public class EngineViewPagerFragment extends Fragment implements View.OnClickLis
         public EnginesAdapter(EngineViewPagerFragment f, List<TypeEngines<Engine>> list) {
             this.list = list;
             this.f = f;
-        }
-
-        public void updateData(List<TypeEngines<Engine>> list) {
-            this.list = list;
-            notifyDataSetChanged();
         }
 
         @Override
@@ -125,7 +135,7 @@ public class EngineViewPagerFragment extends Fragment implements View.OnClickLis
 
     }
 
-    public class Engine implements Serializable{
+    public class Engine implements Serializable {
         public String name;
         public String url;
         public String icon;
@@ -155,7 +165,7 @@ public class EngineViewPagerFragment extends Fragment implements View.OnClickLis
         }
     }
 
-    public static class TypeEngines<T> implements Serializable{
+    public static class TypeEngines<T> implements Serializable {
         public String title;
         public ArrayList<T> item;
 
@@ -213,14 +223,14 @@ public class EngineViewPagerFragment extends Fragment implements View.OnClickLis
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             EngineHolder holder;
-            if(convertView == null) {
+            if (convertView == null) {
                 convertView = f.getActivity().getLayoutInflater().inflate(R.layout.fragment_engine_grid_item,
                         parent, false);
                 holder = new EngineHolder();
                 holder.title = (TextView) convertView.findViewById(R.id.title);
                 holder.icon = (NetworkImageView) convertView.findViewById(R.id.icon);
                 convertView.setTag(holder);
-            }else {
+            } else {
                 holder = (EngineHolder) convertView.getTag();
             }
 
@@ -229,7 +239,8 @@ public class EngineViewPagerFragment extends Fragment implements View.OnClickLis
             holder.icon.setImageUrl(engine.icon, imageLoader);
             holder.icon.setDefaultImageResId(R.drawable.searcher_icon);
             holder.title.setText(engine.name);
-
+            convertView.setOnClickListener(f);
+            convertView.setTag(R.id.grid_view_item, engine);
             return convertView;
         }
     }

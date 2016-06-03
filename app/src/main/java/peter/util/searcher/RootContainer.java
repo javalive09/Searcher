@@ -31,7 +31,7 @@ public class RootContainer extends RelativeLayout {
             engine = findViewById(R.id.engine);
         }
         if(input == null) {
-            input = findViewById(R.id.input);
+//            input = findViewById(R.id.input);
         }
 
         Log.i("peter", ev.toString());
