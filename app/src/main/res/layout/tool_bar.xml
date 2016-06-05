@@ -18,7 +18,8 @@
             android:layout_height="match_parent"
             android:selectAllOnFocus="true"
             android:singleLine="true"
-            android:paddingRight="@dimen/clear_txt_margin_right"
+            android:paddingRight="@dimen/search_padding_right"
+            android:imeOptions="actionSearch"
             android:hint="@string/search" />
 
         <ImageView
@@ -35,6 +36,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:textSize="17sp"
+            android:background="@color/title_bg"
             android:visibility="gone"
             android:text="速搜"/>
     </FrameLayout>

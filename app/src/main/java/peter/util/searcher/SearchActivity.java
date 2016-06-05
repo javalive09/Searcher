@@ -16,10 +16,14 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
+
 import java.util.ArrayList;
 
 /**
@@ -55,17 +59,39 @@ public class SearchActivity extends AppCompatActivity implements DrawerLayoutAda
         return search.getText().toString().trim();
     }
 
+    public void closeBoard() {
+        InputMethodManager imm = (InputMethodManager)
+                getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(search.getWindowToken(), 0);
+    }
+
     private void init() {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         clear = (ImageView) findViewById(R.id.clear);
         clear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                search.requestFocus();
                 search.setText("");
                 openBoard();
             }
         });
         search = (EditText) findViewById(R.id.search);
+        search.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if(actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    String searchWord = getSearchWord();
+                    if(!TextUtils.isEmpty(searchWord)) {
+                        String engineUrl = getString(R.string.default_engine_url);
+                        String url = UrlUtils.smartUrlFilter(searchWord, true, engineUrl);
+                        Utils.startSearchAct(SearchActivity.this, url, searchWord);
+                        return true;
+                    }
+                }
+                return false;
+            }
+        });
         search.addTextChangedListener(new TextWatcher() {
             String temp;
 
@@ -117,6 +143,7 @@ public class SearchActivity extends AppCompatActivity implements DrawerLayoutAda
             public void onDrawerOpened(View drawerView) {
                 search.setVisibility(View.GONE);
                 title.setVisibility(View.VISIBLE);
+                closeBoard();
             }
         };
         mDrawerLayout.addDrawerListener(mDrawerToggle);
@@ -151,6 +178,7 @@ public class SearchActivity extends AppCompatActivity implements DrawerLayoutAda
         list.add(new DrawerLayoutAdapter.TypeBean(DrawerLayoutAdapter.HOT_LIST, R.id.hot_list_id_week_weather, getString(R.string.weeks_weather), WEATHER_URL));
         list.add(new DrawerLayoutAdapter.TypeBean(DrawerLayoutAdapter.CUSTOM, R.id.hot_list_favorite, getString(R.string.action_collection), ""));
         list.add(new DrawerLayoutAdapter.TypeBean(DrawerLayoutAdapter.CUSTOM, R.id.hot_list_history, getString(R.string.action_history), ""));
+        list.add(new DrawerLayoutAdapter.TypeBean(DrawerLayoutAdapter.CUSTOM, R.id.hot_list_setting, getString(R.string.setting_title), ""));
         return list;
     }
 
@@ -176,6 +204,9 @@ public class SearchActivity extends AppCompatActivity implements DrawerLayoutAda
                         break;
                     case R.id.hot_list_history:
                         startActivity(new Intent(SearchActivity.this, HistoryActivity.class));
+                        break;
+                    case R.id.hot_list_setting:
+                        startActivity(new Intent(SearchActivity.this, SettingActivity.class));
                         break;
                 }
                 break;

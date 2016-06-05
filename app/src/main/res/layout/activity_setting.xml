@@ -5,9 +5,20 @@
     android:background="@color/setting_bg">
 
     <include layout="@layout/activity_title"/>
+
+    <TextView
+        android:id="@+id/version"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/title"
+        android:gravity="center"
+        android:drawableTop="@drawable/icon"
+        android:layout_margin="@dimen/setting_version_margin"/>
+
     <ListView
         android:id="@+id/setting_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/title" />
+        android:layout_below="@+id/version" />
 </RelativeLayout>

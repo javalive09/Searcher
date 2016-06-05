@@ -41,8 +41,8 @@ public class SettingActivity extends Activity {
                 finish();
             }
         });
-//        TextView version = (TextView) findViewById(R.id.version);
-//        version.setText(getVersionName());
+        TextView version = (TextView) findViewById(R.id.version);
+        version.setText(getVersionName());
         windowHandler = new AsynWindowHandler(this);
         ListView settings = (ListView) findViewById(R.id.setting_list);
         settings.setAdapter(new ArrayAdapter<>(this, R.layout.setting_item, getResources().getStringArray(R.array.settings_name)));
