@@ -1,29 +1,36 @@
 package peter.util.searcher;
 
+import android.animation.ArgbEvaluator;
+import android.animation.ValueAnimator;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.LevelListDrawable;
-import android.net.Uri;
 import android.net.http.SslError;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.graphics.Palette;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
-import android.webkit.DownloadListener;
+import android.webkit.CookieManager;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
+
+
+import peter.util.searcher.download.MyDownloadListener;
 
 /**
  * Created by peter on 16/5/9.
@@ -32,7 +39,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private static final int API = android.os.Build.VERSION.SDK_INT;
     private WebView webview;
-    private View status;
+    private View status, bottomBar;
     private String searchWord;
 
     @Override
@@ -44,19 +51,28 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private void init() {
         status = findViewById(R.id.status);
+        bottomBar = findViewById(R.id.bottom_bar);
         webview = (WebView) findViewById(R.id.wv);
         if (Build.VERSION.SDK_INT < 21) {
             webview.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         }
-        webview.getSettings().setLoadWithOverviewMode(true);
-        webview.getSettings().setUseWideViewPort(true);
+
+        webview.setDrawingCacheEnabled(false);
+        webview.setWillNotCacheDrawing(true);
         webview.getSettings().setJavaScriptEnabled(true);
         webview.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
         webview.getSettings().setDomStorageEnabled(true);
-        setUserAgent(this);
+        webview.getSettings().setLoadWithOverviewMode(true);
+        webview.getSettings().setUseWideViewPort(true);
+        webview.setInitialScale(1);
 
-        WebChromeClient mWebchromeclient = new WebChromeClient();
-        webview.setWebChromeClient(mWebchromeclient);
+        setUserAgent(this);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            CookieManager.getInstance().setAcceptThirdPartyCookies(webview, true);
+        }
+
+        WebChromeClient mWebChromeClient = new MyWebChromeClient(this);
+        webview.setWebChromeClient(mWebChromeClient);
         webview.setWebViewClient(new WebViewClient() {
 
             @Override
@@ -71,6 +87,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 Log.i("peter", "url=" + url);
             }
 
+
             @Override
             public void onPageFinished(WebView view, String url) {
                 setStatusLevel(0);
@@ -80,14 +97,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 return false;
             }
         });
-        webview.setDownloadListener(new DownloadListener() {
-            @Override
-            public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype, long contentLength) {
-                Uri uri = Uri.parse(url);
-                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                startActivity(intent);
-            }
-        });
+        webview.setDownloadListener(new MyDownloadListener(this));
         checkIntentData(getIntent());
     }
 
@@ -98,11 +108,66 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
     }
 
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    private void setStatusColor(int color) {
+        Window window = getWindow();
+        // clear FLAG_TRANSLUCENT_STATUS flag:
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        // add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        // finally change the color
+        window.setStatusBarColor(color);
+    }
+
+    private int curShowColor;
+
+    public void setMainColor(Bitmap favicon) {
+        Palette.from(favicon).generate(new Palette.PaletteAsyncListener() {
+
+            @Override
+            public void onGenerated(Palette palette) {
+
+                int defaultColor = getResources().getColor(R.color.colorPrimary);
+                int curColor = palette.getVibrantColor(defaultColor);
+                if(curShowColor != curColor) {
+                    curShowColor = curColor;
+                    final int startSearchColor = getSearchBarColor(defaultColor);
+                    final int finalSearchColor = getSearchBarColor(curColor);
+                    ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), startSearchColor, finalSearchColor);
+                    colorAnimation.setDuration(250); // milliseconds
+                    colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+
+                        @Override
+                        public void onAnimationUpdate(ValueAnimator animator) {
+                            int animColor = (int) animator.getAnimatedValue();
+                            bottomBar.setBackgroundColor(animColor);
+                            if (API >= 21) {
+                                setStatusColor(animColor);
+                            }
+                        }
+
+                    });
+                    colorAnimation.start();
+                }
+            }
+        });
+    }
+
+    private int getSearchBarColor(int requestedColor) {
+        return DrawableUtils.mixColor(0.25f, requestedColor, Color.WHITE);
+    }
+
     private void checkIntentData(Intent intent) {
         if (intent != null) {
-            String url = (String) intent.getSerializableExtra("url");
-            if (!TextUtils.isEmpty(url)) {
-                searchWord = intent.getStringExtra("word");
+
+            if("peter.util.searcher".equals(intent.getAction())) {
+                String url = (String) intent.getSerializableExtra("url");
+                if (!TextUtils.isEmpty(url)) {
+                    searchWord = intent.getStringExtra("word");
+                    loadUrl(url);
+                }
+            }else {
+                String url = intent.getDataString();
                 loadUrl(url);
             }
         }
@@ -112,7 +177,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         if (!TextUtils.isEmpty(url)) {
             Log.i("peter", "url=" + url);
             webview.loadUrl(url);
-            saveData(searchWord, url);
+            if(!TextUtils.isEmpty(searchWord)) {
+                saveData(searchWord, url);
+            }
         }
     }
 
@@ -152,46 +219,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         super.onPause();
         webview.onPause();
         webview.pauseTimers();
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        switch (newConfig.orientation) {
-            case Configuration.ORIENTATION_LANDSCAPE:
-                Log.i("peter", "onConfigurationChanged ORIENTATION_LANDSCAPE");
-
-//                frame.hideBar();
-                toggleFullscreen(true);
-
-//                View title = findViewById(R.id.title);
-//                if(title.getVisibility() == View.VISIBLE) {
-//                    title.setVisibility(View.GONE);
-//                    toggleFullscreen(true);
-//                }
-                break;
-            case Configuration.ORIENTATION_PORTRAIT:
-                Log.i("peter", "onConfigurationChanged ORIENTATION_PORTRAIT");
-//                title = findViewById(R.id.title);
-//                if(title.getVisibility() != View.VISIBLE) {
-//                    title.setVisibility(View.VISIBLE);
-//                    toggleFullscreen(false);
-//                }
-
-//                frame.showBar();
-                toggleFullscreen(false);
-                break;
-        }
-    }
-
-    private void toggleFullscreen(boolean fullscreen) {
-        WindowManager.LayoutParams attrs = getWindow().getAttributes();
-        if (fullscreen) {
-            attrs.flags |= WindowManager.LayoutParams.FLAG_FULLSCREEN;
-        } else {
-            attrs.flags &= ~WindowManager.LayoutParams.FLAG_FULLSCREEN;
-        }
-        getWindow().setAttributes(attrs);
     }
 
     @Override
@@ -270,7 +297,27 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         if (webview == null) return;
         WebSettings settings = webview.getSettings();
         if (API >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            settings.setUserAgentString(WebSettings.getDefaultUserAgent(context));
+            String def = WebSettings.getDefaultUserAgent(context);
+            settings.setUserAgentString(def);
+        } else {
+            settings.setUserAgentString(settings.getUserAgentString());
+        }
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        switch (newConfig.orientation) {
+            case Configuration.ORIENTATION_LANDSCAPE:
+                Log.i("peter", "onConfigurationChanged ORIENTATION_LANDSCAPE");
+                bottomBar.setVisibility(View.GONE);
+                setFullscreen(true, true);
+                break;
+            case Configuration.ORIENTATION_PORTRAIT:
+                Log.i("peter", "onConfigurationChanged ORIENTATION_PORTRAIT");
+                bottomBar.setVisibility(View.VISIBLE);
+                setFullscreen(true, false);
+                break;
         }
     }
 
@@ -297,5 +344,32 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             webview = null;
         }
     }
+
+    /**
+     * @param enabled   status bar
+     * @param immersive
+     */
+    public void setFullscreen(boolean enabled, boolean immersive) {
+        Window window = getWindow();
+        View decor = window.getDecorView();
+        if (enabled) {
+            if (immersive) {
+                decor.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+            } else {
+                decor.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+            }
+            window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        } else {
+            window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            decor.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+        }
+    }
+
 
 }

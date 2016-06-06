@@ -64,6 +64,7 @@ public class Utils {
 
     public static void startSearchAct(Activity act, String url, String word) {
         Intent intent = new Intent(act, MainActivity.class);
+        intent.setAction("peter.util.searcher");
         intent.putExtra("url", url);
         intent.putExtra("word", word);
         act.startActivity(intent);

@@ -7,7 +7,7 @@
     android:padding="@dimen/enter_item_margin"
     android:background="@drawable/enter_item_selector"
     android:gravity="center"
-    android:text="@string/history_today_title"
-    android:textColor="@android:color/white">
+    android:theme="@style/ThemeOverlay.AppCompat.Dark"
+    android:text="@string/history_today_title">
 
 </TextView>

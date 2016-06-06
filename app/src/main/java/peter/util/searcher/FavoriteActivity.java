@@ -37,7 +37,6 @@ public class FavoriteActivity extends BaseActivity {
                 Bean bean = (Bean) v.getTag();
                 if(bean != null) {
                     Utils.startSearchAct(FavoriteActivity.this, bean.url, bean.name);
-                    finish();
                 }
                 break;
         }
