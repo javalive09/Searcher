@@ -38,7 +38,10 @@ public class SearchActivity extends AppCompatActivity implements DrawerLayoutAda
     private ActionBarDrawerToggle mDrawerToggle;
     static final String WEATHER_URL = "http://e.weather.com.cn/d/index/101010100.shtml";
     static final String HISTORY_TODAY_URL = "http://wap.lssdjt.com/";
-    static final String HOT_TOP_URL = "http://top.baidu.com/m/";
+    static final String NEWS_163 = "http://3g.163.com/touch/news/subchannel/all?version=v_standard";
+    static final String VIDEO_HUYA = "http://m.huya.com/index.php";
+    static final String WEIBO = "http://m.weibo.cn/";
+    static final String EAT_LIST = "http://m.xiachufang.com";
     private static final int RECENT_SEARCH = 1;
     private static final int ENGINE_LIST = 2;
     private int currentFragment = -1;
@@ -148,6 +151,12 @@ public class SearchActivity extends AppCompatActivity implements DrawerLayoutAda
         };
         mDrawerLayout.addDrawerListener(mDrawerToggle);
         setEngineFragment(RECENT_SEARCH);
+        mDrawerLayout.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                UpdateController.instance(getApplicationContext()).autoCheckVersion(new AsynWindowHandler(SearchActivity.this));
+            }
+        },200);
     }
 
     private void setEngineFragment(int f) {
@@ -173,9 +182,12 @@ public class SearchActivity extends AppCompatActivity implements DrawerLayoutAda
     private ArrayList<DrawerLayoutAdapter.TypeBean> getData() {
         ArrayList<DrawerLayoutAdapter.TypeBean> list = new ArrayList();
         list.add(new DrawerLayoutAdapter.TypeBean(DrawerLayoutAdapter.VERSION));
-        list.add(new DrawerLayoutAdapter.TypeBean(DrawerLayoutAdapter.HOT_LIST, R.id.hot_list_top, getString(R.string.hot_title), HOT_TOP_URL));
-        list.add(new DrawerLayoutAdapter.TypeBean(DrawerLayoutAdapter.HOT_LIST, R.id.hot_list_history_today, getString(R.string.history_today_title), HISTORY_TODAY_URL));
-        list.add(new DrawerLayoutAdapter.TypeBean(DrawerLayoutAdapter.HOT_LIST, R.id.hot_list_id_week_weather, getString(R.string.weeks_weather), WEATHER_URL));
+        list.add(new DrawerLayoutAdapter.TypeBean(DrawerLayoutAdapter.HOT_LIST, 0, getString(R.string.news_163), NEWS_163));
+        list.add(new DrawerLayoutAdapter.TypeBean(DrawerLayoutAdapter.HOT_LIST, 0, getString(R.string.weibo), WEIBO));
+        list.add(new DrawerLayoutAdapter.TypeBean(DrawerLayoutAdapter.HOT_LIST, 0, getString(R.string.eat_list), EAT_LIST));
+        list.add(new DrawerLayoutAdapter.TypeBean(DrawerLayoutAdapter.HOT_LIST, 0, getString(R.string.video_huya), VIDEO_HUYA));
+        list.add(new DrawerLayoutAdapter.TypeBean(DrawerLayoutAdapter.HOT_LIST, 0, getString(R.string.weeks_weather), WEATHER_URL));
+        list.add(new DrawerLayoutAdapter.TypeBean(DrawerLayoutAdapter.HOT_LIST, 0, getString(R.string.history_today_title), HISTORY_TODAY_URL));
         list.add(new DrawerLayoutAdapter.TypeBean(DrawerLayoutAdapter.CUSTOM, R.id.hot_list_favorite, getString(R.string.action_collection), ""));
         list.add(new DrawerLayoutAdapter.TypeBean(DrawerLayoutAdapter.CUSTOM, R.id.hot_list_history, getString(R.string.action_history), ""));
         list.add(new DrawerLayoutAdapter.TypeBean(DrawerLayoutAdapter.CUSTOM, R.id.hot_list_setting, getString(R.string.setting_title), ""));

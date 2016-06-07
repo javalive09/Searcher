@@ -78,3 +78,8 @@ public static final int *;
 }
 
 -keep class org.jsoup.**
+-keep class com.umeng.analytics.**
+-keep class com.android.volley.**
+-keep class com.anthonycr.grant.**
+-keep class com.android.support.**
+-keep class com.google.code.gson.**

@@ -2,6 +2,7 @@ package peter.util.searcher;
 
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
@@ -13,6 +14,7 @@ import android.net.http.SslError;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.graphics.Palette;
 import android.text.TextUtils;
 import android.util.Log;
@@ -29,6 +31,9 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
 
+
+import java.io.File;
+import java.util.Observable;
 
 import peter.util.searcher.download.MyDownloadListener;
 
@@ -53,18 +58,21 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         status = findViewById(R.id.status);
         bottomBar = findViewById(R.id.bottom_bar);
         webview = (WebView) findViewById(R.id.wv);
-        if (Build.VERSION.SDK_INT < 21) {
-            webview.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-        }
-
+        webview.setDrawingCacheBackgroundColor(Color.WHITE);
+        webview.setFocusableInTouchMode(true);
+        webview.setFocusable(true);
         webview.setDrawingCacheEnabled(false);
         webview.setWillNotCacheDrawing(true);
-        webview.getSettings().setJavaScriptEnabled(true);
-        webview.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
-        webview.getSettings().setDomStorageEnabled(true);
-        webview.getSettings().setLoadWithOverviewMode(true);
-        webview.getSettings().setUseWideViewPort(true);
-        webview.setInitialScale(1);
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP_MR1) {
+            //noinspection deprecation
+            webview.setAnimationCacheEnabled(false);
+            //noinspection deprecation
+            webview.setAlwaysDrawnWithCacheEnabled(false);
+        }
+        webview.setBackgroundColor(Color.WHITE);
+        webview.setScrollbarFadingEnabled(true);
+        webview.setSaveEnabled(true);
+        webview.setNetworkAvailable(true);
 
         setUserAgent(this);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -87,7 +95,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 Log.i("peter", "url=" + url);
             }
 
-
             @Override
             public void onPageFinished(WebView view, String url) {
                 setStatusLevel(0);
@@ -98,7 +105,54 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             }
         });
         webview.setDownloadListener(new MyDownloadListener(this));
+        initializeSettings();
         checkIntentData(getIntent());
+    }
+
+    /**
+     * Initialize the settings of the WebView that are intrinsic to Lightning and cannot
+     * be altered by the user. Distinguish between Incognito and Regular tabs here.
+     */
+    @SuppressLint("NewApi")
+    private void initializeSettings() {
+        if (webview == null) {
+            return;
+        }
+        final WebSettings settings = webview.getSettings();
+        if (API < Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            //noinspection deprecation
+            settings.setAppCacheMaxSize(Long.MAX_VALUE);
+        }
+        if (API < Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            //noinspection deprecation
+            settings.setEnableSmoothTransition(true);
+        }
+        if (API > Build.VERSION_CODES.JELLY_BEAN) {
+            settings.setMediaPlaybackRequiresUserGesture(true);
+        }
+        if (API >= Build.VERSION_CODES.LOLLIPOP) {
+            // We're in Incognito mode, reject
+            settings.setMixedContentMode(WebSettings.MIXED_CONTENT_NEVER_ALLOW);
+        }
+        settings.setJavaScriptEnabled(true);
+        settings.setJavaScriptCanOpenWindowsAutomatically(true);
+        settings.setLoadWithOverviewMode(true);
+        settings.setUseWideViewPort(true);
+        settings.setDomStorageEnabled(true);
+        settings.setCacheMode(WebSettings.LOAD_DEFAULT);
+        settings.setDatabaseEnabled(true);
+        settings.setSupportZoom(true);
+        settings.setBuiltInZoomControls(true);
+        settings.setDisplayZoomControls(false);
+        settings.setAllowContentAccess(true);
+        settings.setAllowFileAccess(true);
+        if (API >= Build.VERSION_CODES.JELLY_BEAN) {
+            settings.setAllowFileAccessFromFileURLs(false);
+            settings.setAllowUniversalAccessFromFileURLs(false);
+        }
+        settings.setSavePassword(true);
+        settings.setSaveFormData(true);
+        settings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.TEXT_AUTOSIZING);
     }
 
     private void setStatusLevel(int level) {
@@ -129,7 +183,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
                 int defaultColor = getResources().getColor(R.color.colorPrimary);
                 int curColor = palette.getVibrantColor(defaultColor);
-                if(curShowColor != curColor) {
+                if (curShowColor != curColor) {
                     curShowColor = curColor;
                     final int startSearchColor = getSearchBarColor(defaultColor);
                     final int finalSearchColor = getSearchBarColor(curColor);
@@ -159,16 +213,24 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private void checkIntentData(Intent intent) {
         if (intent != null) {
-
-            if("peter.util.searcher".equals(intent.getAction())) {
+            String action = intent.getAction();
+            if("peter.util.searcher".equals(action)) { // inner invoke
                 String url = (String) intent.getSerializableExtra("url");
                 if (!TextUtils.isEmpty(url)) {
                     searchWord = intent.getStringExtra("word");
                     loadUrl(url);
                 }
-            }else {
+            }else if(Intent.ACTION_MAIN.equals(action)) {//launcher invoke
+                if(intent.getCategories().contains(Intent.CATEGORY_LAUNCHER)) {
+                    Intent startIntent = new Intent(MainActivity.this, SearchActivity.class);
+                    startActivity(startIntent);
+                    finish();
+                }
+            }else if(Intent.ACTION_VIEW.equals(action)) { // outside invoke
                 String url = intent.getDataString();
-                loadUrl(url);
+                if(!TextUtils.isEmpty(url)) {
+                    loadUrl(url);
+                }
             }
         }
     }
@@ -177,7 +239,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         if (!TextUtils.isEmpty(url)) {
             Log.i("peter", "url=" + url);
             webview.loadUrl(url);
-            if(!TextUtils.isEmpty(searchWord)) {
+            if (!TextUtils.isEmpty(searchWord)) {
                 saveData(searchWord, url);
             }
         }
@@ -254,7 +316,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     sendIntent.setAction(Intent.ACTION_SEND);
                     sendIntent.putExtra(Intent.EXTRA_TEXT, url);
                     sendIntent.setType("text/plain");
-                    startActivity(Intent.createChooser(sendIntent, getString(R.string.share_title)));
+                    startActivity(Intent.createChooser(sendIntent, getString(R.string.share_link_title)));
                 }
                 break;
         }
@@ -316,7 +378,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             case Configuration.ORIENTATION_PORTRAIT:
                 Log.i("peter", "onConfigurationChanged ORIENTATION_PORTRAIT");
                 bottomBar.setVisibility(View.VISIBLE);
-                setFullscreen(true, false);
+                setFullscreen(false, false);
                 break;
         }
     }

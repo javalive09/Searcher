@@ -19,7 +19,10 @@
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:paddingRight="@dimen/search_padding_right"
+            android:theme="@style/MyEditText"
             android:imeOptions="actionSearch"
+            android:textColor="@color/edit_text_color"
+            android:textColorHint="@color/lighter_gray"
             android:hint="@string/search" />
 
         <ImageView

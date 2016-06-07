@@ -3,9 +3,14 @@
     <string name="app_name">速搜</string>
     <string name="menu_txt">更多</string>
     <string name="hot_title">实时搜索Top10</string>
+    <string name="news_163">网易新闻</string>
+    <string name="weibo">新浪微博</string>
+    <string name="eat_list">家常菜谱</string>
     <string name="favorite_url_title">常用网站</string>
-    <string name="history_today_title">历史上的今天</string>
-    <string name="weeks_weather">一周天气预报</string>
+    <string name="history_today_title">历史的今天</string>
+    <string name="weeks_weather">天气预报</string>
+    <string name="web_guide">网址导航</string>
+    <string name="video_huya">虎牙直播</string>
     <string name="clear_history"> 清空最近记录</string>
     <string name="exit_hint_title">&#60;快速退出&#62;</string>
     <string name="exit_hint_msg">从屏幕右侧边缘向左滑动</string>
@@ -13,7 +18,7 @@
     <string name="engine_title">搜索引擎</string>
     <integer name="default_engine">0</integer>
     <string name="ok"><u>确定</u></string>
-    <string name="setting_title">设置</string>
+    <string name="setting_title">我的设置</string>
     <string name="setting_back">返回</string>
     <string name="setting_feedback">反馈建议</string>
     <string name="setting_clear_cache">清理缓存</string>
@@ -46,7 +51,7 @@
     <string name="action_browser">在浏览器中打开</string>
     <string name="action_collect">收藏</string>
     <string name="action_collection">收藏夹</string>
-    <string name="action_history">历史</string>
+    <string name="action_history">历史记录</string>
     <string name="action_setting">设置</string>
     <string name="action_feedback">反馈</string>
     <string name="action_about">关于速搜</string>
