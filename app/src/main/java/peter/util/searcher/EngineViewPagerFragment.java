@@ -1,8 +1,6 @@
 package peter.util.searcher;
 
 import android.app.Fragment;
-import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -12,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,7 +20,6 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.Serializable;
-import java.lang.ref.WeakReference;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -133,57 +129,6 @@ public class EngineViewPagerFragment extends Fragment implements View.OnClickLis
             container.removeView((View) object);
         }
 
-    }
-
-    public class Engine implements Serializable {
-        public String name;
-        public String url;
-        public String icon;
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public String getUrl() {
-            return url;
-        }
-
-        public void setUrl(String url) {
-            this.url = url;
-        }
-
-        public String getIcon() {
-            return icon;
-        }
-
-        public void setIcon(String icon) {
-            this.icon = icon;
-        }
-    }
-
-    public static class TypeEngines<T> implements Serializable {
-        public String title;
-        public ArrayList<T> item;
-
-        public String getTitle() {
-            return title;
-        }
-
-        public void setTitle(String title) {
-            this.title = title;
-        }
-
-        public ArrayList<T> getItem() {
-            return item;
-        }
-
-        public void setItem(ArrayList<T> item) {
-            this.item = item;
-        }
     }
 
     protected Response.ErrorListener errorListener() {

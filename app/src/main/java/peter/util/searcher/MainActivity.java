@@ -32,6 +32,8 @@ import android.webkit.WebViewClient;
 import android.widget.Toast;
 
 
+import com.umeng.analytics.MobclickAgent;
+
 import java.io.File;
 import java.util.Observable;
 
@@ -272,15 +274,21 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     protected void onResume() {
         super.onResume();
-        webview.onResume();
-        webview.resumeTimers();
+        MobclickAgent.onResume(this);
+        if(webview != null) {
+            webview.onResume();
+            webview.resumeTimers();
+        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        webview.onPause();
-        webview.pauseTimers();
+        MobclickAgent.onPause(this);
+        if(webview != null) {
+            webview.onPause();
+            webview.pauseTimers();
+        }
     }
 
     @Override

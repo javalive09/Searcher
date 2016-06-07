@@ -24,6 +24,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.umeng.analytics.MobclickAgent;
+
 import java.util.ArrayList;
 
 /**
@@ -38,10 +40,11 @@ public class SearchActivity extends AppCompatActivity implements DrawerLayoutAda
     private ActionBarDrawerToggle mDrawerToggle;
     static final String WEATHER_URL = "http://e.weather.com.cn/d/index/101010100.shtml";
     static final String HISTORY_TODAY_URL = "http://wap.lssdjt.com/";
-    static final String NEWS_163 = "http://3g.163.com/touch/news/subchannel/all?version=v_standard";
+    static final String NEWS_163 = "http://3g.163.com/touch/all?version=v_standard";
     static final String VIDEO_HUYA = "http://m.huya.com/index.php";
     static final String WEIBO = "http://m.weibo.cn/";
     static final String EAT_LIST = "http://m.xiachufang.com";
+    static final String NAV_ENTER = "http://h5.mse.360.cn/navi.html";
     private static final int RECENT_SEARCH = 1;
     private static final int ENGINE_LIST = 2;
     private int currentFragment = -1;
@@ -51,6 +54,16 @@ public class SearchActivity extends AppCompatActivity implements DrawerLayoutAda
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
         init();
+    }
+
+    public void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 
     private void openBoard() {
@@ -188,6 +201,7 @@ public class SearchActivity extends AppCompatActivity implements DrawerLayoutAda
         list.add(new DrawerLayoutAdapter.TypeBean(DrawerLayoutAdapter.HOT_LIST, 0, getString(R.string.video_huya), VIDEO_HUYA));
         list.add(new DrawerLayoutAdapter.TypeBean(DrawerLayoutAdapter.HOT_LIST, 0, getString(R.string.weeks_weather), WEATHER_URL));
         list.add(new DrawerLayoutAdapter.TypeBean(DrawerLayoutAdapter.HOT_LIST, 0, getString(R.string.history_today_title), HISTORY_TODAY_URL));
+        list.add(new DrawerLayoutAdapter.TypeBean(DrawerLayoutAdapter.HOT_LIST, 0, getString(R.string.web_guide), NAV_ENTER));
         list.add(new DrawerLayoutAdapter.TypeBean(DrawerLayoutAdapter.CUSTOM, R.id.hot_list_favorite, getString(R.string.action_collection), ""));
         list.add(new DrawerLayoutAdapter.TypeBean(DrawerLayoutAdapter.CUSTOM, R.id.hot_list_history, getString(R.string.action_history), ""));
         list.add(new DrawerLayoutAdapter.TypeBean(DrawerLayoutAdapter.CUSTOM, R.id.hot_list_setting, getString(R.string.setting_title), ""));

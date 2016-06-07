@@ -47,6 +47,15 @@
     public void set*(...);
 }
 
+# support v7类
+-keep class android.support.v7.** { *; }
+-keep interface android.support.v7.** { *; }
+
+#Compatibility library
+-keep public class * extends android.support.v4.app.Fragment
+-keep public class * extends android.app.Fragment
+-keep public class * extends android.widget.HorizontalScrollView
+
 -keepclasseswithmembers class * {
     public <init>(android.content.Context, android.util.AttributeSet);
 }
@@ -77,9 +86,36 @@ public static final int *;
     public static ** valueOf(java.lang.String);
 }
 
--keep class org.jsoup.**
--keep class com.umeng.analytics.**
 -keep class com.android.volley.**
 -keep class com.anthonycr.grant.**
--keep class com.android.support.**
--keep class com.google.code.gson.**
+
+# Serializables类
+-keepnames class * implements java.io.Serializable
+-keepclassmembers class * implements java.io.Serializable {
+    static final long serialVersionUID;
+    private static final java.io.ObjectStreamField[] serialPersistentFields;
+    !static !transient <fields>;
+    !private <fields>;
+    !private <methods>;
+    private void writeObject(java.io.ObjectOutputStream);
+    private void readObject(java.io.ObjectInputStream);
+    java.lang.Object writeReplace();
+    java.lang.Object readResolve();
+}
+
+##---------------Begin: proguard configuration for Gson  ----------
+# Gson uses generic type information stored in a class file when working with fields. Proguard
+# removes such information by default, so configure it to keep all of it.
+-keepattributes Signature
+
+# For using GSON @Expose annotation
+-keepattributes *Annotation*
+
+# Gson specific classes
+-keep class sun.misc.Unsafe { *; }
+#-keep class com.google.gson.stream.** { *; }
+
+# Application classes that will be serialized/deserialized over Gson
+-keep class com.google.gson.examples.android.model.** { *; }
+
+##---------------End: proguard configuration for Gson  ----------

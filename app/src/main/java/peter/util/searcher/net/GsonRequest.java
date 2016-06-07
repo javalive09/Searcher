@@ -21,6 +21,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
 import peter.util.searcher.EngineViewPagerFragment;
+import peter.util.searcher.TypeEngines;
 
 public class GsonRequest<T> extends Request<T> {
 	private final Gson mGson = new Gson();
@@ -55,7 +56,7 @@ public class GsonRequest<T> extends Request<T> {
 		try {
 			String charsetName = HttpHeaderParser.parseCharset(response.headers);
 			String json = new String(response.data, charsetName);
-			List<EngineViewPagerFragment.TypeEngines> l = mGson.fromJson(json, mType);
+			List<TypeEngines> l = mGson.fromJson(json, mType);
 			return (Response<T>) Response.success(l,
 					HttpHeaderParser.parseCacheHeaders(response));
 		} catch (UnsupportedEncodingException e) {

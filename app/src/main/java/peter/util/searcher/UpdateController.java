@@ -28,7 +28,7 @@ public class UpdateController {
 
     private static UpdateController controller;
 
-    private static final String URL = "https://github.com/javalive09/Searcher/raw/master/searcher_update_info";
+    private static final String URL = "https://raw.githubusercontent.com/javalive09/config/master/searcher_update_info";
 
     boolean isChecking = false;
 
