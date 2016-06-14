@@ -60,6 +60,14 @@ public class UpdateController {
         if(handler.isActDestory()) {
             return;
         }
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        }).start();
+
         new AsyncTask<Void, Void, String>() {
 
             @Override

@@ -12,6 +12,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
+        android:name=".Searcher"
         android:allowBackup="true"
         android:fullBackupContent="true"
         android:hardwareAccelerated="true"

@@ -2,6 +2,7 @@ package peter.util.searcher;
 
 import android.graphics.Bitmap;
 import android.media.MediaPlayer;
+import android.os.Message;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
@@ -55,6 +56,19 @@ public class MyWebChromeClient extends WebChromeClient {
                                  CustomViewCallback callback) {
         showCustomView(view, callback, requestedOrientation);
         Log.i("peter", "onShowCustomView 3");
+    }
+
+    @Override
+    public boolean onCreateWindow(WebView view, boolean isDialog, boolean isUserGesture, Message resultMsg) {
+//        ((WebView.WebViewTransport) resultMsg.obj).setWebView(new WebView(view.getContext()));
+//        resultMsg.sendToTarget();
+//        return true;
+
+
+        WebView.WebViewTransport transport = (WebView.WebViewTransport) resultMsg.obj;
+        transport.setWebView(new WebView(view.getContext()));    //此webview可以是一般新创建的
+        resultMsg.sendToTarget();
+        return true;
     }
 
     public void hideCustomView() {

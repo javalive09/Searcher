@@ -60,6 +60,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         status = findViewById(R.id.status);
         bottomBar = findViewById(R.id.bottom_bar);
         webview = (WebView) findViewById(R.id.wv);
+        initWebview(webview);
+        initializeSettings(webview);
+        checkIntentData(getIntent());
+    }
+
+    private void initWebview(WebView webview) {
         webview.setDrawingCacheBackgroundColor(Color.WHITE);
         webview.setFocusableInTouchMode(true);
         webview.setFocusable(true);
@@ -107,8 +113,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             }
         });
         webview.setDownloadListener(new MyDownloadListener(this));
-        initializeSettings();
-        checkIntentData(getIntent());
     }
 
     /**
@@ -116,7 +120,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
      * be altered by the user. Distinguish between Incognito and Regular tabs here.
      */
     @SuppressLint("NewApi")
-    private void initializeSettings() {
+    private void initializeSettings(WebView webview) {
         if (webview == null) {
             return;
         }

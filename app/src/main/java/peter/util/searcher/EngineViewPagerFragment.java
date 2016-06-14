@@ -35,7 +35,6 @@ public class EngineViewPagerFragment extends Fragment implements View.OnClickLis
     String url = "https://raw.githubusercontent.com/javalive09/config/master/engines.json";
     private SlidingTabLayout mSlidingTabLayout;
     private ViewPager mViewPager;
-    View rootView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -45,7 +44,7 @@ public class EngineViewPagerFragment extends Fragment implements View.OnClickLis
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.fragment_engine_viewpager, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_engine_viewpager, container, false);
         mViewPager = (ViewPager) rootView.findViewById(R.id.viewpager);
         mSlidingTabLayout = (SlidingTabLayout) rootView.findViewById(R.id.sliding_tabs);
         init();
@@ -53,7 +52,6 @@ public class EngineViewPagerFragment extends Fragment implements View.OnClickLis
     }
 
     private void init() {
-        RequestManager.init(getActivity());
         Type collectionType = new TypeToken<ArrayList<TypeEngines<Engine>>>() {}.getType();
         RequestManager.addRequest(new GsonRequest<>(url, collectionType,
                 responseListener(), errorListener()), getActivity());
