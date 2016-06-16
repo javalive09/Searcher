@@ -40,7 +40,6 @@ public class Searcher extends Application {
     public void onCreate() {
         super.onCreate();
         RequestManager.init(this);
-
     }
 
 }

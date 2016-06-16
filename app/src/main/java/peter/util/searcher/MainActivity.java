@@ -46,7 +46,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private static final int API = android.os.Build.VERSION.SDK_INT;
     private WebView webview;
-    private View status, bottomBar;
+    private View progressBar, bottomBar;
     private String searchWord;
 
     @Override
@@ -57,7 +57,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     private void init() {
-        status = findViewById(R.id.status);
+        progressBar = findViewById(R.id.status);
         bottomBar = findViewById(R.id.bottom_bar);
         webview = (WebView) findViewById(R.id.wv);
         initWebview(webview);
@@ -100,12 +100,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 setStatusLevel(1);
+                setOptStatus(view);
                 Log.i("peter", "url=" + url);
             }
 
             @Override
             public void onPageFinished(WebView view, String url) {
                 setStatusLevel(0);
+                setOptStatus(view);
             }
 
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
@@ -162,9 +164,23 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     private void setStatusLevel(int level) {
-        LevelListDrawable d = (LevelListDrawable) status.getBackground();
+        LevelListDrawable d = (LevelListDrawable) progressBar.getBackground();
         if (d.getLevel() != level) {
             d.setLevel(level);
+        }
+    }
+
+    private void setOptStatus(WebView view) {
+        if(view.canGoBack()) {
+            findViewById(R.id.back).setEnabled(true);
+        }else {
+            findViewById(R.id.back).setEnabled(false);
+        }
+
+        if(view.canGoForward()) {
+            findViewById(R.id.go).setEnabled(true);
+        }else {
+            findViewById(R.id.go).setEnabled(false);
         }
     }
 

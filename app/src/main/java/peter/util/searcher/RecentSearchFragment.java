@@ -1,14 +1,15 @@
 package peter.util.searcher;
 
 import android.app.Fragment;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import java.lang.ref.WeakReference;
@@ -17,9 +18,11 @@ import java.util.List;
 /**
  * Created by peter on 16/5/9.
  */
-public class RecentSearchFragment extends Fragment implements View.OnClickListener {
+public class RecentSearchFragment extends Fragment implements View.OnClickListener, View.OnLongClickListener{
 
     View rootView;
+    PopupMenu popup;
+    MyAsyncTask asyncTask;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -30,8 +33,13 @@ public class RecentSearchFragment extends Fragment implements View.OnClickListen
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_recent_search, container, false);
-        new MyAsyncTask(this).execute();
         return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        refreshData();
     }
 
     @Override
@@ -44,6 +52,29 @@ public class RecentSearchFragment extends Fragment implements View.OnClickListen
                 }
                 break;
         }
+    }
+
+    private void refreshData() {
+        cancelAsyncTask();
+        asyncTask = new MyAsyncTask(this);
+        asyncTask.execute();
+    }
+
+    @Override
+    public void onDestroy() {
+        dismissPopupMenu();
+        cancelAsyncTask();
+        super.onDestroy();
+    }
+
+    @Override
+    public boolean onLongClick(View v) {
+        switch (v.getId()) {
+            case R.id.recent_search_item:
+                popupMenu(v);
+                return true;
+        }
+        return false;
     }
 
     private static class MyAsyncTask extends AsyncTask<Void, Void, List<Bean>> {
@@ -123,8 +154,41 @@ public class RecentSearchFragment extends Fragment implements View.OnClickListen
             Bean search = getItem(position);
             view.setText(search.name);
             view.setOnClickListener(f);
+            view.setOnLongClickListener(f);
             view.setTag(search);
             return view;
+        }
+    }
+
+    private void popupMenu(final View view) {
+        dismissPopupMenu();
+        popup = new PopupMenu(getActivity(), view);
+        popup.getMenuInflater().inflate(R.menu.item, popup.getMenu());
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.action_delete:
+                        Bean bean = (Bean) view.getTag();
+                        SqliteHelper.instance(getActivity()).deleteHistory(bean);
+                        refreshData();
+                        break;
+                }
+
+                return true;
+            }
+        });
+        popup.show();
+    }
+
+    private void dismissPopupMenu() {
+        if(popup != null) {
+            popup.dismiss();
+        }
+    }
+
+    private void cancelAsyncTask() {
+        if(asyncTask != null && !asyncTask.isCancelled()) {
+            asyncTask.cancel(true);
         }
     }
 

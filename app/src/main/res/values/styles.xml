@@ -10,4 +10,7 @@
         <item name="colorControlActivated">@color/edit_text_color</item>
     </style>
 
+    <style name="Theme.ToolBar.Base" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="actionMenuTextColor">@color/item_normal</item>
+    </style>
 </resources>

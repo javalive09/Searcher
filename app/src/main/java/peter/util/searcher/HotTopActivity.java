@@ -17,7 +17,7 @@ import java.util.ArrayList;
 /**
  * Created by peter on 16/5/19.
  */
-public class HotTopActivity extends BaseActivity {
+public class HotTopActivity extends BaseActivity implements View.OnClickListener{
 
     private static final String URL = "http://top.baidu.com/buzz.php?p=top10";
 

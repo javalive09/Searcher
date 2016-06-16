@@ -1,6 +1,5 @@
 package peter.util.searcher;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -9,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.Log;
@@ -26,7 +26,7 @@ import com.umeng.analytics.MobclickAgent;
 import java.io.File;
 import java.util.Date;
 
-public class SettingActivity extends Activity {
+public class SettingActivity extends BaseActivity {
 
     AsynWindowHandler windowHandler;
 
@@ -34,46 +34,53 @@ public class SettingActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
-        ((TextView)findViewById(R.id.title_txt)).setText(R.string.setting_title);
-        findViewById(R.id.back).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        if(toolbar != null) {
+            setSupportActionBar(toolbar);
+            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    finish();
+                }
+            });
+        }
         TextView version = (TextView) findViewById(R.id.version);
-        version.setText(getVersionName());
+        if(version != null) {
+            version.setText(getVersionName());
+        }
         windowHandler = new AsynWindowHandler(this);
         ListView settings = (ListView) findViewById(R.id.setting_list);
-        settings.setAdapter(new ArrayAdapter<>(this, R.layout.setting_item, getResources().getStringArray(R.array.settings_name)));
-        settings.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                switch (position) {
-                    case 0://share
-                        Intent sendIntent = new Intent();
-                        sendIntent.setAction(Intent.ACTION_SEND);
-                        sendIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.app_url));
-                        sendIntent.setType("text/plain");
-                        startActivity(Intent.createChooser(sendIntent, getString(R.string.share_title)));
-                        break;
-                    case 1://clear
-                        clearCacheFolder(getCacheDir(), 0);
-                        ClearCookies(SettingActivity.this);
-                        Toast.makeText(SettingActivity.this, R.string.setting_clear, Toast.LENGTH_LONG).show();
-                        break;
-                    case 2://feedback
-                        sendMailByIntent();
-                        break;
-                    case 3://update
-                        UpdateController.instance(getApplicationContext()).checkVersion(windowHandler, true);
-                        break;
-                    case 4://about
-                        showAlertDialog(getString(R.string.action_about), getString(R.string.setting_about));
-                        break;
+        if(settings != null) {
+            settings.setAdapter(new ArrayAdapter<>(this, R.layout.setting_item, getResources().getStringArray(R.array.settings_name)));
+            settings.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    switch (position) {
+                        case 0://share
+                            Intent sendIntent = new Intent();
+                            sendIntent.setAction(Intent.ACTION_SEND);
+                            sendIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.app_url));
+                            sendIntent.setType("text/plain");
+                            startActivity(Intent.createChooser(sendIntent, getString(R.string.share_title)));
+                            break;
+                        case 1://clear
+                            clearCacheFolder(getCacheDir(), 0);
+                            ClearCookies(SettingActivity.this);
+                            Toast.makeText(SettingActivity.this, R.string.setting_clear, Toast.LENGTH_LONG).show();
+                            break;
+                        case 2://feedback
+                            sendMailByIntent();
+                            break;
+                        case 3://update
+                            UpdateController.instance(getApplicationContext()).checkVersion(windowHandler, true);
+                            break;
+                        case 4://about
+                            showAlertDialog(getString(R.string.action_about), getString(R.string.setting_about));
+                            break;
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     public void onResume() {
@@ -86,7 +93,7 @@ public class SettingActivity extends Activity {
         MobclickAgent.onPause(this);
     }
 
-    private String getVersionName() {
+    protected String getVersionName() {
         PackageManager packageManager = getPackageManager();
         PackageInfo packInfo = null;
         try {
@@ -100,48 +107,6 @@ public class SettingActivity extends Activity {
             return "";
         } else {
             return "version " + version;
-        }
-    }
-
-    private int clearCacheFolder(final File dir, final int numDays) {
-        int deletedFiles = 0;
-        if (dir != null && dir.isDirectory()) {
-            try {
-                for (File child : dir.listFiles()) {
-
-                    //first delete subdirectories recursively
-                    if (child.isDirectory()) {
-                        deletedFiles += clearCacheFolder(child, numDays);
-                    }
-
-                    //then delete the files and subdirectories in this dir
-                    //only empty directories can be deleted, so subdirs have been done first
-                    if (child.lastModified() < new Date().getTime() - numDays * DateUtils.DAY_IN_MILLIS) {
-                        if (child.delete()) {
-                            deletedFiles++;
-                        }
-                    }
-                }
-            } catch (Exception e) {
-                Log.e("peter", String.format("Failed to clean the cache, error %s", e.getMessage()));
-            }
-        }
-        return deletedFiles;
-    }
-
-    @SuppressWarnings("deprecation")
-    private void ClearCookies(Context context) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
-            CookieManager.getInstance().removeAllCookies(null);
-            CookieManager.getInstance().flush();
-        } else {
-            CookieSyncManager cookieSyncMngr = CookieSyncManager.createInstance(context);
-            cookieSyncMngr.startSync();
-            CookieManager cookieManager = CookieManager.getInstance();
-            cookieManager.removeAllCookie();
-            cookieManager.removeSessionCookie();
-            cookieSyncMngr.stopSync();
-            cookieSyncMngr.sync();
         }
     }
 

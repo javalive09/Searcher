@@ -51,7 +51,7 @@ public class SqliteHelper extends SQLiteOpenHelper {
                 values.put("name", bean.name);
                 values.put("url", bean.url);
                 values.put("show", 1);
-                db.insert("history", null, values);
+                db.insert(TABLE_HISTORY, null, values);
             }else {
                 values.put("show", 1);
                 db.update(TABLE_HISTORY, values, "name=?", new String[]{bean.name});
@@ -148,6 +148,23 @@ public class SqliteHelper extends SQLiteOpenHelper {
         return list;
     }
 
+    public void deleteHistory(Bean bean) {
+        SQLiteDatabase db = getWritableDatabase();
+        db.delete(TABLE_HISTORY, "time=?", new String[]{bean.time + ""});
+    }
 
+    public void deleteFav(Bean bean) {
+        SQLiteDatabase db = getWritableDatabase();
+        db.delete(TABLE_FAVORITE, "time=?", new String[]{bean.time + ""});
+    }
 
+    public void deleteAllHistory() {
+        SQLiteDatabase db = getWritableDatabase();
+        db.delete(TABLE_HISTORY, null, null);
+    }
+
+    public void deleteAllFav() {
+        SQLiteDatabase db = getWritableDatabase();
+        db.delete(TABLE_FAVORITE, null, null);
+    }
 }

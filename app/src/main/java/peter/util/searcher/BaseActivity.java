@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.Log;
@@ -28,7 +29,7 @@ import peter.util.searcher.factory.BooleanFactory;
 /**
  * Created by peter on 16/5/9.
  */
-public class BaseActivity extends Activity implements View.OnClickListener{
+public class BaseActivity extends AppCompatActivity{
 
     private static final ArrayList<Activity> LIST = new ArrayList<>();
 
@@ -56,26 +57,6 @@ public class BaseActivity extends Activity implements View.OnClickListener{
             intent.putExtra("keyWord", word);
         }
         startActivity(intent);
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.back:
-                finish();
-                break;
-            case R.id.favorite_item:
-            case R.id.history_item:
-                Bean bean = (Bean) v.getTag();
-                if(bean != null) {
-                    Intent intent = new Intent(BaseActivity.this, MainActivity.class);
-                    intent.putExtra("url", bean.url);
-                    intent.putExtra("name", bean.name);
-                    startActivity(intent);
-                    finish();
-                }
-                break;
-        }
     }
 
     protected int clearCacheFolder(final File dir, final int numDays) {

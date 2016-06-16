@@ -27,7 +27,7 @@ import java.util.HashMap;
 /**
  * Created by peter on 16/5/19.
  */
-public class EnterActivity extends BaseActivity {
+public class EnterActivity extends BaseActivity implements View.OnClickListener{
 
     static final int ACTION = 0;
     static final int LOGO = 1;

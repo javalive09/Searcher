@@ -1,6 +1,3 @@
-/*
- * Created by Storm Zhang, Feb 11, 2014.
- */
 
 package peter.util.searcher.net;
 
@@ -20,7 +17,6 @@ import com.android.volley.toolbox.HttpHeaderParser;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
-import peter.util.searcher.EngineViewPagerFragment;
 import peter.util.searcher.TypeEngines;
 
 public class GsonRequest<T> extends Request<T> {

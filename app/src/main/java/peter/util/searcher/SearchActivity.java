@@ -38,7 +38,7 @@ public class SearchActivity extends AppCompatActivity implements DrawerLayoutAda
     private EditText search;
     private ImageView clear;
     private ActionBarDrawerToggle mDrawerToggle;
-    static final String WEATHER_URL = "http://e.weather.com.cn/d/index/101010100.shtml";
+    static final String WEATHER_URL = "http://mobile.weathercn.com/index.do";
     static final String HISTORY_TODAY_URL = "http://wap.lssdjt.com/";
     static final String NEWS_163 = "http://3g.163.com/touch/all?version=v_standard";
     static final String VIDEO_HUYA = "http://m.huya.com/index.php";
