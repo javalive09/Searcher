@@ -48,10 +48,13 @@ public class AsynWindowHandler extends Handler {
         if(act != null) {
             switch (msg.what) {
                 case SHOW_NEW_UPDATE_DIALOG:
-                    final String url = (String) msg.obj;
+                    final String version = msg.getData().getString("version");
+                    final String url = msg.getData().getString("url");
+                    final String content = msg.getData().getString("content");
                     dialog = new AlertDialog.Builder(act)
                             .setIconAttribute(android.R.attr.alertDialogIcon)
-                            .setTitle(R.string.update_dialog_title_one)
+                            .setTitle(act.getString(R.string.update_dialog_title_one) + version)
+                            .setMessage(content)
                             .setPositiveButton(R.string.update_dialog_ok, new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int whichButton) {
                                     UpdateController.instance(act.getApplicationContext()).doDownloadApk(url, AsynWindowHandler.this);

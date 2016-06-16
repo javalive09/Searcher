@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.2"
+    buildToolsVersion "23.0.3"
     signingConfigs {
         release {
             keyAlias 'peter'
@@ -15,8 +15,8 @@ android {
         applicationId "peter.util.searcher"
         minSdkVersion 16
         targetSdkVersion 23
-        versionCode 37
-        versionName "1.2.1"
+        versionCode 39
+        versionName "1.2.3"
     }
     buildTypes {
         release {

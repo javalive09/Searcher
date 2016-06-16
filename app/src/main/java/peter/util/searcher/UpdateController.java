@@ -6,6 +6,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.os.Message;
 import android.text.TextUtils;
 import android.widget.Toast;
@@ -61,13 +62,6 @@ public class UpdateController {
             return;
         }
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-
-            }
-        }).start();
-
         new AsyncTask<Void, Void, String>() {
 
             @Override
@@ -92,12 +86,23 @@ public class UpdateController {
                     int version = Integer.valueOf(results[0].trim());
                     int currentVersion = getVersionCode();
                     if (currentVersion < version) {
-                        String url = results[1].trim();
-                        if (!TextUtils.isEmpty(url)) {
-                            Message msg = Message.obtain();
-                            msg.what = AsynWindowHandler.SHOW_NEW_UPDATE_DIALOG;
-                            msg.obj = url;
-                            handler.sendMessage(msg);
+                        if(results.length > 1) {
+                            String url = results[1].trim();
+                            if (!TextUtils.isEmpty(url)) {
+                                String content = "";
+                                for(int i = 2, len = result.length(); i< len; i++) {
+                                    content += results[i].trim();
+                                }
+
+                                Message msg = Message.obtain();
+                                msg.what = AsynWindowHandler.SHOW_NEW_UPDATE_DIALOG;
+                                Bundle bundle = new Bundle();
+                                bundle.putString("version", version+ "");
+                                bundle.putString("url", url);
+                                bundle.putString("content", content);
+                                msg.setData(bundle);
+                                handler.sendMessage(msg);
+                            }
                         }
                     } else {
                         if (showToast) {
@@ -109,6 +114,7 @@ public class UpdateController {
         }.execute();
     }
 
+    //TODO:  download manager do it is good !
     public void doDownloadApk(final String apkUrl, final AsynWindowHandler handler) {
 
         handler.sendEmptyMessage(AsynWindowHandler.SHOW_UPDATE_PROGRESS);
