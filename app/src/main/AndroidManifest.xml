@@ -34,7 +34,13 @@
         </activity>
         <activity
             android:name=".MainActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden">
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:launchMode="singleTask">
+        </activity>
+        <activity
+            android:name=".EnterActivity"
+            android:windowSoftInputMode="stateAlwaysHidden"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -116,8 +122,9 @@
             android:name=".HistoryActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".HotTopActivity"
-            android:screenOrientation="portrait" />
+            android:name=".MultiWindowActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.NoActionBar"/>
     </application>
 
 </manifest>

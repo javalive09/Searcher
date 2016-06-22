@@ -1,275 +1,223 @@
 package peter.util.searcher;
 
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
+import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
-import android.view.LayoutInflater;
+import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
+import com.umeng.analytics.MobclickAgent;
 
-import java.io.IOException;
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * Created by peter on 16/5/19.
  */
-public class EnterActivity extends BaseActivity implements View.OnClickListener{
+public class EnterActivity extends BaseActivity implements DrawerLayoutAdapter.OnItemClickListener, View.OnClickListener{
 
-    static final int ACTION = 0;
-    static final int LOGO = 1;
-    static final int SEARCH = 2;
-    static final int HOT_LIST = 3;
-    static final int HOT_LIST_START = 4;
-    static final int HOT_LIST_END = 5;
-    static final String WEATHER_URL = "http://e.weather.com.cn/d/index/101010100.shtml";
-    static final String HISTORY_TODAY_URL = "http://wap.lssdjt.com/";
-//    AsynWindowHandler windowHandler;
+    private DrawerLayout mDrawerLayout;
+    private RecyclerView mDrawerList;
+    private ActionBarDrawerToggle mDrawerToggle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_enter);
-        ListView listView = (ListView) findViewById(R.id.enter_list);
-        listView.setAdapter(new EnterAdapter(EnterActivity.this, getData()));
-//        windowHandler = new AsynWindowHandler(this);
-        UpdateController.instance(getApplicationContext()).autoCheckVersion(new AsynWindowHandler(this));
+        init();
     }
 
-    private ArrayList<TypeBean> getData() {
-        ArrayList<TypeBean> list = new ArrayList();
-        list.add(new TypeBean(ACTION));
-        list.add(new TypeBean(LOGO));
-        list.add(new TypeBean(SEARCH));
+    public void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+        refreshMultiWindow(mDrawerLayout.isDrawerOpen(Gravity.LEFT));
+    }
 
-        list.add(new TypeBean(HOT_LIST_START, R.id.hot_list_top, getString(R.string.hot_title)));
-        list.add(new TypeBean(HOT_LIST, R.id.hot_list_history_today, getString(R.string.history_today_title), HISTORY_TODAY_URL));
-        list.add(new TypeBean(HOT_LIST_END, R.id.hot_list_id_week_weather, getString(R.string.weeks_weather), WEATHER_URL));
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        checkIntentData(intent);
+    }
 
-//        list.add(new TypeBean(HOT_LIST_START, R.id.hot_list_history, getString(R.string.action_history)));
-//        list.add(new TypeBean(HOT_LIST_END, R.id.hot_list_favorite, getString(R.string.action_collection)));
-//
-//        list.add(new TypeBean(HOT_LIST_START, R.id.hot_list_share_app, getString(R.string.setting_share_app)));
-//        list.add(new TypeBean(HOT_LIST, R.id.hot_list_clear_cache, getString(R.string.setting_clear_cache)));
-//        list.add(new TypeBean(HOT_LIST, R.id.hot_list_feedback, getString(R.string.setting_feedback)));
-//        list.add(new TypeBean(HOT_LIST, R.id.hot_list_update, getString(R.string.setting_update)));
-//        list.add(new TypeBean(HOT_LIST_END, R.id.hot_list_about, getString(R.string.action_about)));
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
+    }
 
+    public void refreshMultiWindow(boolean isDrawerOpen) {
+        TextView countView = (TextView)findViewById(R.id.multi_window);
+        int count = SearcherWebViewManager.instance().getWebViewCount();
+        if(countView != null) {
+            if(count == 0) {
+                countView.setVisibility(View.GONE);
+            }else {
+                if(isDrawerOpen) {
+                    countView.setVisibility(View.GONE);
+                }else{
+                    countView.setVisibility(View.VISIBLE);
+                }
+                String countStr = count + "";
+                if (count > 9) {
+                    countStr = "*";
+                }
+                countView.setText(countStr);
+            }
+        }
+    }
+
+    private void init() {
+        View searchInput = findViewById(R.id.search);
+        if(searchInput != null) {
+            searchInput.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                        startActivity(new Intent(EnterActivity.this, SearchActivity.class));
+                        return true;
+                    }
+                    return false;
+                }
+            });
+        }
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerList = (RecyclerView) findViewById(R.id.left_drawer);
+        mDrawerList.setHasFixedSize(true);
+        mDrawerList.setLayoutManager(new LinearLayoutManager(this));
+        mDrawerList.setAdapter(new DrawerLayoutAdapter(getData(), this));
+        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
+        setSupportActionBar(toolbar);
+        mDrawerToggle = new ActionBarDrawerToggle(
+                EnterActivity.this,
+                mDrawerLayout,
+                toolbar,
+                R.string.drawer_open,
+                R.string.drawer_close) {
+            public void onDrawerClosed(View view) {
+                findViewById(R.id.title).setVisibility(View.GONE);
+                findViewById(R.id.search).setVisibility(View.VISIBLE);
+                findViewById(R.id.search).requestFocus();
+                refreshMultiWindow(false);
+            }
+
+            @Override
+            public void onDrawerStateChanged(int newState) {
+                super.onDrawerStateChanged(newState);
+            }
+
+            public void onDrawerOpened(View drawerView) {
+                findViewById(R.id.title).setVisibility(View.VISIBLE);
+                findViewById(R.id.search).setVisibility(View.GONE);
+                refreshMultiWindow(true);
+            }
+        };
+        mDrawerLayout.addDrawerListener(mDrawerToggle);
+        mDrawerLayout.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                UpdateController.instance(getApplicationContext()).autoCheckVersion(new AsynWindowHandler(EnterActivity.this));
+            }
+        }, 200);
+        setWebSiteFragment();
+        checkIntentData(getIntent());
+    }
+
+    private void checkIntentData(Intent intent) {
+        if (intent != null) {
+            String url = intent.getDataString();
+            if (!TextUtils.isEmpty(url)) {
+                startBrowser(EnterActivity.this, url, "");
+            }
+        }
+    }
+
+    private ArrayList<DrawerLayoutAdapter.TypeBean> getData() {
+        ArrayList<DrawerLayoutAdapter.TypeBean> list = new ArrayList();
+        list.add(new DrawerLayoutAdapter.TypeBean(DrawerLayoutAdapter.VERSION));
+        list.add(new DrawerLayoutAdapter.TypeBean(DrawerLayoutAdapter.CUSTOM, R.id.hot_list_favorite, getString(R.string.action_collection), ""));
+        list.add(new DrawerLayoutAdapter.TypeBean(DrawerLayoutAdapter.CUSTOM, R.id.hot_list_history, getString(R.string.action_history), ""));
+        list.add(new DrawerLayoutAdapter.TypeBean(DrawerLayoutAdapter.CUSTOM, R.id.hot_list_setting, getString(R.string.setting_title), ""));
         return list;
     }
 
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.enter:
-                startSearch(null);
-                break;
-            case R.id.feedback:
-                sendMailByIntent();
-                break;
-            case R.id.setting:
-                Intent intent = new Intent(EnterActivity.this, SettingActivity.class);
-                startActivity(intent);
-                break;
-            case R.id.hot_list:
-                TypeBean bean = (TypeBean) v.getTag(R.id.hot_list_id);
+    private void setWebSiteFragment() {
+        Fragment fragment = new CommonWebSiteFragment();
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction ft = fragmentManager.beginTransaction();
+        ft.replace(R.id.content_frame, fragment);
+        ft.commit();
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        mDrawerToggle.syncState();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        SearcherWebViewManager.instance().shutdown();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        mDrawerToggle.onConfigurationChanged(newConfig);
+    }
+
+    @Override
+    public void onClick(View view, DrawerLayoutAdapter.TypeBean bean) {
+        switch (bean.type) {
+            case DrawerLayoutAdapter.CUSTOM:
                 switch (bean.id) {
-                    case R.id.hot_list_top:
-                        intent = new Intent(EnterActivity.this, HotTopActivity.class);
-                        startActivity(intent);
-                        break;
-                    case R.id.hot_list_history_today:
-                        intent = new Intent(EnterActivity.this, MainActivity.class);
-                        intent.putExtra("url", bean.url);
-                        startActivity(intent);
-                        break;
-                    case R.id.hot_list_id_week_weather:
-                        intent = new Intent(EnterActivity.this, MainActivity.class);
-                        intent.putExtra("url", bean.url);
-                        startActivity(intent);
+                    case R.id.hot_list_favorite:
+                        startActivity(new Intent(EnterActivity.this, FavoriteActivity.class));
                         break;
                     case R.id.hot_list_history:
                         startActivity(new Intent(EnterActivity.this, HistoryActivity.class));
                         break;
-                    case R.id.hot_list_favorite:
-                        startActivity(new Intent(EnterActivity.this, FavoriteActivity.class));
+                    case R.id.hot_list_setting:
+                        startActivity(new Intent(EnterActivity.this, SettingActivity.class));
                         break;
-                    case R.id.hot_list_share_app:
-                        Intent sendIntent = new Intent();
-                        sendIntent.setAction(Intent.ACTION_SEND);
-                        sendIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.app_url));
-                        sendIntent.setType("text/plain");
-                        startActivity(Intent.createChooser(sendIntent, getString(R.string.share_title)));
-                        break;
-                    case R.id.hot_list_clear_cache:
-                        clearCacheFolder(getCacheDir(), 0);
-                        ClearCookies(EnterActivity.this);
-                        Toast.makeText(EnterActivity.this, R.string.setting_clear, Toast.LENGTH_LONG).show();
-                        break;
-                    case R.id.hot_list_feedback:
-                        sendMailByIntent();
-                        break;
-                    case R.id.hot_list_update:
-//                        UpdateController.instance(getApplicationContext()).checkVersion(windowHandler, true);
-                        break;
-                    case R.id.hot_list_about:
-                        showAlertDialog(getString(R.string.action_about), getString(R.string.setting_about));
-                        break;
+                }
+                break;
+            case DrawerLayoutAdapter.HOT_LIST:
+                String url = UrlUtils.smartUrlFilter(bean.url, true, bean.url);
+                startBrowser(EnterActivity.this, url, bean.content);
+                break;
+            case DrawerLayoutAdapter.VERSION:
+                break;
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.multi_window:
+                int count = SearcherWebViewManager.instance().getWebViewCount();
+                if(count > 0) {
+                    startActivity(new Intent(EnterActivity.this, MultiWindowActivity.class));
+                }else {
+                    Toast.makeText(EnterActivity.this, R.string.action_about, Toast.LENGTH_SHORT).show();
                 }
                 break;
         }
     }
 
-
-    static class EnterAdapter extends BaseAdapter {
-
-        EnterActivity act;
-        LayoutInflater inflater;
-        ArrayList<TypeBean> list;
-
-        public EnterAdapter(EnterActivity act, ArrayList<TypeBean> list) {
-            this.act = act;
-            this.list = list;
-            inflater = LayoutInflater.from(act);
-        }
-
-        @Override
-        public int getCount() {
-            return list.size();
-        }
-
-        @Override
-        public TypeBean getItem(int position) {
-            return list.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        @Override
-        public int getItemViewType(int position) {
-            return getItem(position).type;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            Holder holder;
-            if(convertView == null) {
-                convertView = inflater.inflate(R.layout.enter_item, parent, false);
-                holder = new Holder();
-                holder.version = (TextView) convertView.findViewById(R.id.version);
-                holder.search = convertView.findViewById(R.id.enter);
-                holder.hotList = (TextView)convertView.findViewById(R.id.hot_list);
-                holder.favoriteUrl = convertView.findViewById(R.id.favorite_url);
-                holder.setting = convertView.findViewById(R.id.setting);
-                holder.feedback = convertView.findViewById(R.id.feedback);
-                convertView.setTag(holder);
-            }else {
-                holder = (Holder) convertView.getTag();
-            }
-
-            holder.version.setVisibility(View.GONE);
-            holder.search.setVisibility(View.GONE);
-            holder.hotList.setVisibility(View.GONE);
-            holder.setting.setVisibility(View.GONE);
-            holder.feedback.setVisibility(View.GONE);
-
-            holder.version.setOnClickListener(act);
-            holder.search.setOnClickListener(act);
-            holder.hotList.setOnClickListener(act);
-            holder.setting.setOnClickListener(act);
-            holder.feedback.setOnClickListener(act);
-
-            switch(getItemViewType(position)) {
-                case ACTION:
-                    holder.setting.setVisibility(View.VISIBLE);
-                    holder.feedback.setVisibility(View.VISIBLE);
-                    break;
-                case LOGO:
-                    holder.version.setVisibility(View.VISIBLE);
-                    holder.version.setText(act.getVersionName());
-                    break;
-                case SEARCH:
-                    holder.search.setVisibility(View.VISIBLE);
-                    break;
-                case HOT_LIST:
-                    TypeBean bean = getItem(position);
-                    holder.hotList.setVisibility(View.VISIBLE);
-                    holder.hotList.setText(bean.content);
-                    holder.hotList.setTag(R.id.hot_list_id, bean);
-                    holder.hotList.setBackgroundResource(R.drawable.enter_item_selector);
-                    break;
-                case HOT_LIST_START:
-                    bean = getItem(position);
-                    holder.hotList.setVisibility(View.VISIBLE);
-                    holder.hotList.setText(bean.content);
-                    holder.hotList.setTag(R.id.hot_list_id, bean);
-                    holder.hotList.setBackgroundResource(R.drawable.enter_item_start_selector);
-                    break;
-                case HOT_LIST_END:
-                    bean = getItem(position);
-                    holder.hotList.setVisibility(View.VISIBLE);
-                    holder.hotList.setText(bean.content);
-                    holder.hotList.setTag(R.id.hot_list_id, bean);
-                    holder.hotList.setBackgroundResource(R.drawable.enter_item_end_selector);
-                    RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) holder.hotList.getLayoutParams();
-                    params.bottomMargin = act.getResources().getDimensionPixelOffset(R.dimen.enter_item_margin);
-                    holder.hotList.setLayoutParams(params);
-                    break;
-            }
-            return convertView;
-        }
-    }
-
-    static class Holder{
-        TextView version;
-        View search;
-        TextView hotList;
-        View favoriteUrl;
-        View feedback;
-        View setting;
-    }
-
-    static class TypeBean{
-        int type;
-        int id;
-        String content;
-        String url;
-
-        public TypeBean(int type) {
-            this.type = type;
-        }
-
-        public TypeBean(int type, int id) {
-            this.type = type;
-            this.id = id;
-        }
-
-        public TypeBean(int type, int id, String content) {
-            this.type = type;
-            this.id = id;
-            this.content = content;
-        }
-
-        public TypeBean(int type, int id, String content, String url) {
-            this.type = type;
-            this.id = id;
-            this.content = content;
-            this.url = url;
-        }
-    }
 }

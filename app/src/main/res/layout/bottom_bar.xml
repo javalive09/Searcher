@@ -13,6 +13,7 @@
         android:layout_weight="1"
         android:background="@drawable/menu_selector"
         android:onClick="onClick"
+        android:scaleType="center"
         android:src="@drawable/bar_back_selector" />
 
     <ImageView
@@ -20,35 +21,40 @@
         android:layout_width="0dp"
         android:layout_height="@dimen/bottom_h"
         android:layout_weight="1"
-        android:onClick="onClick"
         android:background="@drawable/menu_selector"
+        android:onClick="onClick"
+        android:scaleType="center"
         android:src="@drawable/bar_forward_selector" />
 
     <ImageView
-        android:id="@+id/close"
+        android:id="@+id/refresh"
         android:layout_width="0dp"
         android:layout_height="@dimen/bottom_h"
         android:layout_weight="1"
-        android:onClick="onClick"
         android:background="@drawable/menu_selector"
-        android:src="@drawable/bar_home" />
+        android:onClick="onClick"
+        android:scaleType="center"
+        android:src="@drawable/refresh" />
 
     <ImageView
         android:id="@+id/favorite"
         android:layout_width="0dp"
         android:layout_height="@dimen/bottom_h"
         android:layout_weight="1"
-        android:onClick="onClick"
         android:background="@drawable/menu_selector"
-        android:src="@drawable/bar_bookmark" />
+        android:onClick="onClick"
+        android:scaleType="center"
+        android:src="@drawable/fav_selector" />
 
     <ImageView
         android:id="@+id/share"
         android:layout_width="0dp"
         android:layout_height="@dimen/bottom_h"
         android:layout_weight="1"
-        android:onClick="onClick"
         android:background="@drawable/menu_selector"
-        android:src="@drawable/share" />
+        android:onClick="onClick"
+        android:scaleType="center"
+        android:src="@drawable/share_selector" />
+
 
 </LinearLayout>

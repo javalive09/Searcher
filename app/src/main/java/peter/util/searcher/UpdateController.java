@@ -90,8 +90,10 @@ public class UpdateController {
                             String url = results[1].trim();
                             if (!TextUtils.isEmpty(url)) {
                                 String content = "";
-                                for(int i = 2, len = result.length(); i< len; i++) {
-                                    content += results[i].trim();
+                                if(results.length > 2) {
+                                    for (int i =2, len = results.length - 1; i < len; i++) {
+                                        content += results[i].trim();
+                                    }
                                 }
 
                                 Message msg = Message.obtain();

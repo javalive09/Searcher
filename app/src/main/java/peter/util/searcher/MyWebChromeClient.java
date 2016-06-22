@@ -27,9 +27,11 @@ public class MyWebChromeClient extends WebChromeClient {
     private WebChromeClient.CustomViewCallback mCustomViewCallback;
     private static final FrameLayout.LayoutParams COVER_SCREEN_PARAMS = new FrameLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+    private SearcherWebView searcherWebView;
 
-    public MyWebChromeClient(MainActivity act) {
+    public MyWebChromeClient(SearcherWebView view, MainActivity act) {
         this.act = act;
+        this.searcherWebView = view;
     }
 
     @Override
@@ -41,7 +43,7 @@ public class MyWebChromeClient extends WebChromeClient {
     @Override
     public void onReceivedIcon(WebView view, Bitmap icon) {
         super.onReceivedIcon(view, icon);
-        act.setMainColor(icon);
+        searcherWebView.setMainColor(icon);
     }
 
     @Override

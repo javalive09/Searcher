@@ -3,31 +3,40 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-
-    <include
-        android:id="@+id/tool_bar"
-        layout="@layout/tool_bar" />
-
-    <android.support.v4.widget.DrawerLayout
-        android:id="@+id/drawer_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
         <FrameLayout
-            android:id="@+id/content_frame"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            android:paddingLeft="5dp"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark"
+            android:orientation="vertical">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/left_drawer"
-            android:layout_width="240dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="left"
-            android:choiceMode="singleChoice"
-            android:background="@color/drawer_layout_bg"
-            android:divider="@null"
-            android:scrollbars="vertical" />
+            <EditText
+                android:id="@+id/search"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="@string/search"
+                android:imeOptions="actionSearch"
+                android:paddingRight="@dimen/search_padding_right"
+                android:selectAllOnFocus="true"
+                android:singleLine="true"
+                android:textColor="@color/edit_text_color"
+                android:textColorHint="@color/lighter_gray"
+                android:theme="@style/MyEditText" />
 
-    </android.support.v4.widget.DrawerLayout>
+            <ImageView
+                android:id="@+id/clear"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right|center_vertical"
+                android:layout_marginRight="@dimen/clear_txt_margin_right"
+                android:src="@drawable/abc_ic_clear_mtrl_alpha"
+                android:visibility="invisible" />
+        </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/content_frame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
 </LinearLayout>

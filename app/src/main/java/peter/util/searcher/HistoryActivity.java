@@ -88,7 +88,7 @@ public class HistoryActivity extends BaseActivity implements View.OnClickListene
             case R.id.history_item:
                 Bean bean = (Bean) v.getTag();
                 if (bean != null) {
-                    Utils.startSearchAct(HistoryActivity.this, bean.url, bean.name);
+                    startBrowser(HistoryActivity.this, bean.url, bean.name);
                 }
                 break;
         }

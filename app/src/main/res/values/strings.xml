@@ -42,6 +42,7 @@
     <string name="cannot_download">仅可下载以 \"http\" 或 \"https\" 开头的链接地址</string>
     <string name="problem_location_download">Cannot download to the specified location</string>
     <string name="download_pending">开始下载…</string>
+    <string name="clear_all_multi">全部清除</string>
 
     <string name="action_cancel">取消</string>
     <string name="action_share">分享</string>
@@ -57,6 +58,7 @@
     <string name="action_about">关于速搜</string>
     <string name="action_delete">删除</string>
     <string name="action_delete_all">删除全部</string>
+    <string name="not_window_hint">没有打开的标签</string>
 
     <string name="update_dialog_title">正在下载更新包</string>
     <string name="update_dialog_cancel">取消</string>
@@ -68,6 +70,7 @@
     <string name="share_title">分享应用给小伙伴</string>
     <string name="share_link_title">分享链接</string>
     <string name="default_engine_url">http://m.baidu.com/s?word=%s</string>
+    <string name="exit_hint">再按一次退出程序</string>
 
     <string-array name="settings_name">
         <item>分享APP</item>

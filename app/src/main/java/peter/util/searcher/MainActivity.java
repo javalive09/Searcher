@@ -1,53 +1,28 @@
 package peter.util.searcher;
 
-import android.animation.ArgbEvaluator;
-import android.animation.ValueAnimator;
-import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.drawable.LevelListDrawable;
-import android.net.http.SslError;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v7.graphics.Palette;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.webkit.CookieManager;
-import android.webkit.SslErrorHandler;
-import android.webkit.WebChromeClient;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
+import android.widget.FrameLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
-
 import com.umeng.analytics.MobclickAgent;
-
-import java.io.File;
-import java.util.Observable;
-
-import peter.util.searcher.download.MyDownloadListener;
 
 /**
  * Created by peter on 16/5/9.
  */
 public class MainActivity extends BaseActivity implements View.OnClickListener {
 
-    private static final int API = android.os.Build.VERSION.SDK_INT;
-    private WebView webview;
-    private View progressBar, bottomBar;
-    private String searchWord;
+    private static final int API = Build.VERSION.SDK_INT;
+    private View bottomBar;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -57,135 +32,22 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     private void init() {
-        progressBar = findViewById(R.id.status);
         bottomBar = findViewById(R.id.bottom_bar);
-        webview = (WebView) findViewById(R.id.wv);
-        initWebview(webview);
-        initializeSettings(webview);
         checkIntentData(getIntent());
     }
 
-    private void initWebview(WebView webview) {
-        webview.setDrawingCacheBackgroundColor(Color.WHITE);
-        webview.setFocusableInTouchMode(true);
-        webview.setFocusable(true);
-        webview.setDrawingCacheEnabled(false);
-        webview.setWillNotCacheDrawing(true);
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP_MR1) {
-            //noinspection deprecation
-            webview.setAnimationCacheEnabled(false);
-            //noinspection deprecation
-            webview.setAlwaysDrawnWithCacheEnabled(false);
-        }
-        webview.setBackgroundColor(Color.WHITE);
-        webview.setScrollbarFadingEnabled(true);
-        webview.setSaveEnabled(true);
-        webview.setNetworkAvailable(true);
-
-        setUserAgent(this);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            CookieManager.getInstance().setAcceptThirdPartyCookies(webview, true);
-        }
-
-        WebChromeClient mWebChromeClient = new MyWebChromeClient(this);
-        webview.setWebChromeClient(mWebChromeClient);
-        webview.setWebViewClient(new WebViewClient() {
-
-            @Override
-            public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
-                handler.proceed();
-                // Ignore SSL certificate errors
-            }
-
-            @Override
-            public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                setStatusLevel(1);
-                setOptStatus(view);
-                Log.i("peter", "url=" + url);
-            }
-
-            @Override
-            public void onPageFinished(WebView view, String url) {
-                setStatusLevel(0);
-                setOptStatus(view);
-            }
-
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                return false;
-            }
-        });
-        webview.setDownloadListener(new MyDownloadListener(this));
+    public void setBottomBarColor(int animColor) {
+        bottomBar.setBackgroundColor(animColor);
     }
 
-    /**
-     * Initialize the settings of the WebView that are intrinsic to Lightning and cannot
-     * be altered by the user. Distinguish between Incognito and Regular tabs here.
-     */
-    @SuppressLint("NewApi")
-    private void initializeSettings(WebView webview) {
-        if (webview == null) {
-            return;
-        }
-        final WebSettings settings = webview.getSettings();
-        if (API < Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            //noinspection deprecation
-            settings.setAppCacheMaxSize(Long.MAX_VALUE);
-        }
-        if (API < Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            //noinspection deprecation
-            settings.setEnableSmoothTransition(true);
-        }
-        if (API > Build.VERSION_CODES.JELLY_BEAN) {
-            settings.setMediaPlaybackRequiresUserGesture(true);
-        }
-        if (API >= Build.VERSION_CODES.LOLLIPOP) {
-            // We're in Incognito mode, reject
-            settings.setMixedContentMode(WebSettings.MIXED_CONTENT_NEVER_ALLOW);
-        }
-        settings.setJavaScriptEnabled(true);
-        settings.setJavaScriptCanOpenWindowsAutomatically(true);
-        settings.setLoadWithOverviewMode(true);
-        settings.setUseWideViewPort(true);
-        settings.setDomStorageEnabled(true);
-        settings.setCacheMode(WebSettings.LOAD_DEFAULT);
-        settings.setDatabaseEnabled(true);
-        settings.setSupportZoom(true);
-        settings.setBuiltInZoomControls(true);
-        settings.setDisplayZoomControls(false);
-        settings.setAllowContentAccess(true);
-        settings.setAllowFileAccess(true);
-        if (API >= Build.VERSION_CODES.JELLY_BEAN) {
-            settings.setAllowFileAccessFromFileURLs(false);
-            settings.setAllowUniversalAccessFromFileURLs(false);
-        }
-        settings.setSavePassword(true);
-        settings.setSaveFormData(true);
-        settings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.TEXT_AUTOSIZING);
-    }
-
-    private void setStatusLevel(int level) {
-        LevelListDrawable d = (LevelListDrawable) progressBar.getBackground();
-        if (d.getLevel() != level) {
-            d.setLevel(level);
-        }
-    }
-
-    private void setOptStatus(WebView view) {
-        if(view.canGoBack()) {
-            findViewById(R.id.back).setEnabled(true);
-        }else {
-            findViewById(R.id.back).setEnabled(false);
-        }
-
-        if(view.canGoForward()) {
-            findViewById(R.id.go).setEnabled(true);
-        }else {
-            findViewById(R.id.go).setEnabled(false);
-        }
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        checkIntentData(intent);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    private void setStatusColor(int color) {
+    public void setStatusColor(int color) {
         Window window = getWindow();
         // clear FLAG_TRANSLUCENT_STATUS flag:
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
@@ -195,151 +57,85 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         window.setStatusBarColor(color);
     }
 
-    private int curShowColor;
-
-    public void setMainColor(Bitmap favicon) {
-        Palette.from(favicon).generate(new Palette.PaletteAsyncListener() {
-
-            @Override
-            public void onGenerated(Palette palette) {
-
-                int defaultColor = getResources().getColor(R.color.colorPrimary);
-                int curColor = palette.getVibrantColor(defaultColor);
-                if (curShowColor != curColor) {
-                    curShowColor = curColor;
-                    final int startSearchColor = getSearchBarColor(defaultColor);
-                    final int finalSearchColor = getSearchBarColor(curColor);
-                    ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), startSearchColor, finalSearchColor);
-                    colorAnimation.setDuration(250); // milliseconds
-                    colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-
-                        @Override
-                        public void onAnimationUpdate(ValueAnimator animator) {
-                            int animColor = (int) animator.getAnimatedValue();
-                            bottomBar.setBackgroundColor(animColor);
-                            if (API >= 21) {
-                                setStatusColor(animColor);
-                            }
-                        }
-
-                    });
-                    colorAnimation.start();
-                }
-            }
-        });
-    }
-
-    private int getSearchBarColor(int requestedColor) {
-        return DrawableUtils.mixColor(0.25f, requestedColor, Color.WHITE);
-    }
-
     private void checkIntentData(Intent intent) {
         if (intent != null) {
             String action = intent.getAction();
-            if("peter.util.searcher".equals(action)) { // inner invoke
+            if (ACTION_INNER_BROWSE.equals(action)) { // inner invoke
                 String url = (String) intent.getSerializableExtra("url");
                 if (!TextUtils.isEmpty(url)) {
-                    searchWord = intent.getStringExtra("word");
-                    loadUrl(url);
-                }
-            }else if(Intent.ACTION_MAIN.equals(action)) {//launcher invoke
-                if(intent.getCategories().contains(Intent.CATEGORY_LAUNCHER)) {
-                    Intent startIntent = new Intent(MainActivity.this, SearchActivity.class);
-                    startActivity(startIntent);
-                    finish();
-                }
-            }else if(Intent.ACTION_VIEW.equals(action)) { // outside invoke
-                String url = intent.getDataString();
-                if(!TextUtils.isEmpty(url)) {
-                    loadUrl(url);
+                    String searchWord = intent.getStringExtra("word");
+                    loadUrl(url, searchWord);
                 }
             }
         }
     }
 
-    private void loadUrl(String url) {
-        if (!TextUtils.isEmpty(url)) {
-            Log.i("peter", "url=" + url);
-            webview.loadUrl(url);
-            if (!TextUtils.isEmpty(searchWord)) {
-                saveData(searchWord, url);
-            }
+    public void refreshStatusColor(SearcherWebView view) {
+        setBottomBarColor(view.getMainColor());
+        if (API >= 21) {
+            setStatusColor(view.getMainColor());
         }
     }
 
-    private void saveData(final String word, final String url) {
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... params) {
-                Bean search = new Bean();
-                search.name = word;
-                search.time = System.currentTimeMillis();
-                search.url = url;
-                SqliteHelper.instance(getApplicationContext()).insertHistory(search);
-                return null;
-            }
-        }.execute();
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if ((keyCode == KeyEvent.KEYCODE_BACK)) {
-            if (webview != null && webview.canGoBack()) {
-                webview.goBack();
-                return true;
-            }
+    private void loadUrl(String url, String searchWord) {
+        SearcherWebView view = SearcherWebViewManager.instance().newWebview(this, url, searchWord);
+        FrameLayout contentFrame = (FrameLayout) findViewById(R.id.content_frame);
+        if (contentFrame != null && view != null) {
+            contentFrame.removeAllViews();
+            contentFrame.addView(view.getRootView());
         }
-        return super.onKeyDown(keyCode, event);
     }
 
     protected void onResume() {
         super.onResume();
         MobclickAgent.onResume(this);
-        if(webview != null) {
-            webview.onResume();
-            webview.resumeTimers();
-        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         MobclickAgent.onPause(this);
-        if(webview != null) {
-            webview.onPause();
-            webview.pauseTimers();
-        }
+
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        FrameLayout contentFrame = (FrameLayout) findViewById(R.id.content_frame);
+        contentFrame.removeAllViews();
     }
 
     @Override
     public void onClick(View v) {
+        SearcherWebView webView = SearcherWebViewManager.instance().getCurrentWebView();
         switch (v.getId()) {
             case R.id.back:
-                if (webview.canGoBack()) {
-                    webview.goBack();
+                if (webView.canGoBack()) {
+                    webView.goBack();
                 }
                 break;
             case R.id.go:
-                if (webview.canGoForward()) {
-                    webview.goForward();
+                if (webView.canGoForward()) {
+                    webView.goForward();
                 }
                 break;
-            case R.id.close:
-                finish();
+            case R.id.refresh:
+                SearcherWebViewManager.instance().getCurrentWebView().refresh();
                 break;
+
             case R.id.favorite:
-                if (webview.getUrl() != null) {
+                if (!TextUtils.isEmpty(webView.getUrl())) {
                     Bean bean = new Bean();
-                    bean.name = getFavName(webview.getUrl());
-                    bean.url = webview.getUrl();
+                    bean.name = webView.getFavName();
+                    bean.url = webView.getUrl();
                     bean.time = System.currentTimeMillis();
                     SqliteHelper.instance(MainActivity.this).insertFav(bean);
                     Toast.makeText(MainActivity.this, R.string.favorite_txt, Toast.LENGTH_SHORT).show();
                 }
                 break;
             case R.id.share:
-                if (webview.getUrl() != null) {
-                    String url = webview.getUrl();
+                if (!TextUtils.isEmpty(webView.getUrl())) {
+                    String url = webView.getUrl();
                     Intent sendIntent = new Intent();
                     sendIntent.setAction(Intent.ACTION_SEND);
                     sendIntent.putExtra(Intent.EXTRA_TEXT, url);
@@ -347,50 +143,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     startActivity(Intent.createChooser(sendIntent, getString(R.string.share_link_title)));
                 }
                 break;
-        }
-    }
-
-    public String getFavName(String engineName) {
-        String word = searchWord;
-        String title = webview.getTitle();
-        Log.i("peter", "title = " + title);
-        Log.i("peter", "engineName = " + engineName);
-        if (getString(R.string.url_title_mark_cb).equals(engineName)) {//词霸
-            title = word + " - " + engineName;
-        } else if (getString(R.string.url_title_mark_yd).equals(engineName)) {//有道
-            title = word + " - " + title;
-        } else if (getString(R.string.url_title_mark_jd).equals(engineName)) {//京东
-            title = word + " - " + engineName;
-        } else if (getString(R.string.url_title_mark_tb).equals(engineName)) {//淘宝
-            title = word + " - " + engineName;
-        } else if (getString(R.string.url_title_mark_tx).equals(engineName)) {//腾讯视频
-            title = word + " - " + engineName + " - " + title;
-        } else if (getString(R.string.url_title_mark_sh).equals(engineName)) {//搜狐视频
-            title = word + " - " + engineName + " - " + title;
-        } else if (getString(R.string.url_title_mark_aqy).equals(engineName)) {//爱奇艺
-            title = word + " - " + engineName + " - " + title;
-        } else if (getString(R.string.url_title_mark_yyb).equals(engineName)) {//应用宝
-            title = word + " - " + engineName;
-        } else if (getString(R.string.url_title_mark_360zs).equals(engineName)) {//360助手
-            title = word + " - " + engineName + " - " + title;
-        } else if (getString(R.string.url_title_mark_bdzs).equals(engineName)) {//百度助手
-            title = word + " - " + engineName + " - " + title;
-        } else if (getString(R.string.url_title_mark_xm).equals(engineName)) {//小米
-            title = word + " - " + engineName + " - " + title;
-        }
-        Log.i("peter", "title = " + title);
-        return title;
-    }
-
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
-    private void setUserAgent(Context context) {
-        if (webview == null) return;
-        WebSettings settings = webview.getSettings();
-        if (API >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            String def = WebSettings.getDefaultUserAgent(context);
-            settings.setUserAgentString(def);
-        } else {
-            settings.setUserAgentString(settings.getUserAgentString());
         }
     }
 
@@ -408,30 +160,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 bottomBar.setVisibility(View.VISIBLE);
                 setFullscreen(false, false);
                 break;
-        }
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (webview != null) {
-            // Check to make sure the WebView has been removed
-            // before calling destroy() so that a memory leak is not created
-            ViewGroup parent = (ViewGroup) webview.getParent();
-            if (parent != null) {
-                parent.removeView(webview);
-            }
-            webview.stopLoading();
-            webview.onPause();
-            webview.clearHistory();
-            webview.setVisibility(View.GONE);
-            webview.removeAllViews();
-            webview.destroyDrawingCache();
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                //this is causing the segfault occasionally below 4.2
-                webview.destroy();
-            }
-            webview = null;
         }
     }
 

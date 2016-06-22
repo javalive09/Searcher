@@ -31,6 +31,7 @@ import peter.util.searcher.factory.BooleanFactory;
  */
 public class BaseActivity extends AppCompatActivity{
 
+    public static final String ACTION_INNER_BROWSE = "peter.util.searcher";
     private static final ArrayList<Activity> LIST = new ArrayList<>();
 
     @Override
@@ -51,12 +52,12 @@ public class BaseActivity extends AppCompatActivity{
         }
     }
 
-    public void startSearch(String word) {
-        Intent intent = new Intent(BaseActivity.this, MainActivity.class);
-        if(!TextUtils.isEmpty(word)) {
-            intent.putExtra("keyWord", word);
-        }
-        startActivity(intent);
+    public void startBrowser(Activity act, String url, String word) {
+        Intent intent = new Intent(act, MainActivity.class);
+        intent.setAction(ACTION_INNER_BROWSE);
+        intent.putExtra("url", url);
+        intent.putExtra("word", word);
+        act.startActivity(intent);
     }
 
     protected int clearCacheFolder(final File dir, final int numDays) {

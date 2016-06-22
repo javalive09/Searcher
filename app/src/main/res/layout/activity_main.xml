@@ -11,17 +11,11 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true" />
 
-    <WebView
-        android:id="@+id/wv"
+    <FrameLayout
+        android:id="@+id/content_frame"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/bottom_bar" />
-
-    <View
-        android:id="@+id/status"
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="@drawable/status" />
-
+        android:layout_above="@+id/bottom_bar"
+        />
 
 </RelativeLayout>

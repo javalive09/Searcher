@@ -1,5 +1,6 @@
 package peter.util.searcher;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
@@ -52,7 +53,8 @@ public class EngineViewPagerFragment extends Fragment implements View.OnClickLis
     }
 
     private void init() {
-        Type collectionType = new TypeToken<ArrayList<TypeEngines<Engine>>>() {}.getType();
+        Type collectionType = new TypeToken<ArrayList<TypeEngines<Engine>>>() {
+        }.getType();
         RequestManager.addRequest(new GsonRequest<>(url, collectionType,
                 responseListener(), errorListener()), getActivity());
     }
@@ -73,12 +75,15 @@ public class EngineViewPagerFragment extends Fragment implements View.OnClickLis
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.engine_item:
-                SearchActivity act = (SearchActivity) getActivity();
-                String searchWord = act.getSearchWord();
-                if(!TextUtils.isEmpty(searchWord)) {
+                Activity act = getActivity();
+                String searchWord;
+                SearchActivity searchAct = (SearchActivity) act;
+                searchWord = searchAct.getSearchWord();
+                if (!TextUtils.isEmpty(searchWord)) {
                     Engine engine = (Engine) v.getTag(R.id.grid_view_item);
                     String url = UrlUtils.smartUrlFilter(searchWord, true, engine.url);
-                    Utils.startSearchAct(getActivity(), url, searchWord);
+                    searchAct.startBrowser(getActivity(), url, searchWord);
+                    searchAct.finish();
                 }
                 break;
             default:
