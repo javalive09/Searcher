@@ -50,13 +50,15 @@ public class BaseActivity extends AppCompatActivity{
     }
 
     protected void exit() {
+        SearcherWebViewManager.instance().clearAllWebViews();
         for(Activity act: LIST) {
             act.finish();
         }
     }
 
     public boolean isNewTab(Intent intent){
-        return intent.getBooleanExtra(NEW_TAB, false);
+        boolean isNewTab = intent.getBooleanExtra(NEW_TAB, false);
+        return isNewTab;
     }
 
     public void startBrowser(Activity act, String url, String word) {

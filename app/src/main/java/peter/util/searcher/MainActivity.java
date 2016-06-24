@@ -20,6 +20,8 @@ import android.widget.Toast;
 
 import com.umeng.analytics.MobclickAgent;
 
+import java.util.Set;
+
 /**
  * Created by peter on 16/5/9.
  */
@@ -37,7 +39,16 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private void init() {
         bottomBar = findViewById(R.id.bottom_bar);
-        checkIntentData(getIntent());
+        Intent intent = getIntent();
+        if (intent != null) {
+            Set<String> category = intent.getCategories();
+            if (category != null && category.contains(Intent.CATEGORY_LAUNCHER)) {//launcher invoke
+                startSearch(true);
+                finish();
+            } else {
+                checkIntentData(intent);
+            }
+        }
     }
 
     public void setBottomBarColor(int animColor) {
@@ -70,11 +81,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     String searchWord = intent.getStringExtra(NAME_WORD);
                     loadUrl(url, searchWord, isNewTab(intent));
                 }
-            } else if (Intent.ACTION_MAIN.equals(action)) {//launcher invoke
-                if (intent.getCategories().contains(Intent.CATEGORY_LAUNCHER)) {
-                    startSearch(true);
-                    finish();
-                }
             } else if (Intent.ACTION_VIEW.equals(action)) { // outside invoke
                 String url = intent.getDataString();
                 if (!TextUtils.isEmpty(url)) {
@@ -96,23 +102,25 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         return super.onKeyDown(keyCode, event);
     }
 
-    public void refreshStatusColor(SearcherWebView view) {
-        setBottomBarColor(view.getMainColor());
+    public void refreshStatusColor(int animColor) {
+        setBottomBarColor(animColor);
         if (API >= 21) {
-            setStatusColor(view.getMainColor());
+            setStatusColor(animColor);
         }
     }
 
     private void loadUrl(String url, String searchWord, boolean isNewTab) {
         SearcherWebView view;
         if (isNewTab) {
-            view = SearcherWebViewManager.instance().newWebview(this, url, searchWord);
+            view = SearcherWebViewManager.instance().newWebview(this);
+            view.loadUrl(url, searchWord);
         } else {
-            view = SearcherWebViewManager.instance().getCurrentWebView();
-            if(view != null) {
-                view.loadUrl(this, url, searchWord);
-            }else {
-                view = SearcherWebViewManager.instance().newWebview(this, url, searchWord);
+            view = SearcherWebViewManager.instance().containUrlView(url);
+            if(view != null) {//切换
+                refreshStatusColor(view.getMainColor());
+            }else {//搜索
+                view = SearcherWebViewManager.instance().getCurrentWebView();
+                view.loadUrl(url, searchWord);
             }
         }
 

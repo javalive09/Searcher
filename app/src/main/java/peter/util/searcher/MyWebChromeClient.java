@@ -18,15 +18,13 @@ import android.widget.VideoView;
 public class MyWebChromeClient extends WebChromeClient {
 
     private static final String TAG = MyWebChromeClient.class.getSimpleName();
-    MainActivity act;
+    private MainActivity act;
     // Full Screen Video Views
     private int mOriginalOrientation;
     private FrameLayout mFullscreenContainer;
     private VideoView mVideoView;
     private View mCustomView;
     private WebChromeClient.CustomViewCallback mCustomViewCallback;
-    private static final FrameLayout.LayoutParams COVER_SCREEN_PARAMS = new FrameLayout.LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
     private SearcherWebView searcherWebView;
 
     public MyWebChromeClient(SearcherWebView view, MainActivity act) {
@@ -156,8 +154,10 @@ public class MyWebChromeClient extends WebChromeClient {
             mVideoView.setOnErrorListener(new VideoCompletionListener());
             mVideoView.setOnCompletionListener(new VideoCompletionListener());
         }
-        decorView.addView(mFullscreenContainer, COVER_SCREEN_PARAMS);
-        mFullscreenContainer.addView(mCustomView, COVER_SCREEN_PARAMS);
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        decorView.addView(mFullscreenContainer, params);
+        mFullscreenContainer.addView(mCustomView, params);
         decorView.requestLayout();
         act.setFullscreen(true, true);
     }

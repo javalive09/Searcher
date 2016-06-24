@@ -35,28 +35,13 @@ public class SearcherWebView {
     private WebView webview;
     private View progressBar;
     private MainActivity activity;
-    private String searchWord;
-    private String url;
     private View rootView;
     private int curShowColor;
     private int mainColor = -1;
 
-    public SearcherWebView(MainActivity activity, String url, String searchWord) {
+    public SearcherWebView(MainActivity activity) {
         this.activity = activity;
-        this.searchWord = searchWord;
-        this.url = url;
         init();
-    }
-
-    public String getSearchWord() {
-        return searchWord;
-    }
-
-    public void loadUrl(MainActivity activity, String url, String searchWord) {
-        this.activity = activity;
-        this.searchWord = searchWord;
-        this.url = url;
-        loadUrl(url);
     }
 
     private void init() {
@@ -65,7 +50,6 @@ public class SearcherWebView {
         progressBar = rootView.findViewById(R.id.status);
         initWebview(webview);
         initializeSettings(webview);
-        loadUrl(url);
     }
 
     public Bitmap getThumbNail() {
@@ -101,10 +85,7 @@ public class SearcherWebView {
                             @Override
                             public void onAnimationUpdate(ValueAnimator animator) {
                                 int animColor = (int) animator.getAnimatedValue();
-                                activity.setBottomBarColor(animColor);
-                                if (API >= 21) {
-                                    activity.setStatusColor(animColor);
-                                }
+                                activity.refreshStatusColor(animColor);
                             }
 
                         });
@@ -139,40 +120,13 @@ public class SearcherWebView {
         webview.setScrollbarFadingEnabled(true);
         webview.setSaveEnabled(true);
         webview.setNetworkAvailable(true);
-
+        webview.setWebChromeClient(new MyWebChromeClient(this, activity));
+        webview.setWebViewClient(new MyWebClient(this, activity));
+        webview.setDownloadListener(new MyDownloadListener(activity));
         setUserAgent(activity);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             CookieManager.getInstance().setAcceptThirdPartyCookies(webview, true);
         }
-
-        WebChromeClient mWebChromeClient = new MyWebChromeClient(this, activity);
-        webview.setWebChromeClient(mWebChromeClient);
-        webview.setWebViewClient(new WebViewClient() {
-
-            @Override
-            public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
-                handler.proceed();
-                // Ignore SSL certificate errors
-            }
-
-            @Override
-            public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                setStatusLevel(1);
-                setOptStatus(view);
-                Log.i("peter", "url=" + url);
-            }
-
-            @Override
-            public void onPageFinished(WebView view, String url) {
-                setStatusLevel(0);
-                setOptStatus(view);
-            }
-
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                return false;
-            }
-        });
-        webview.setDownloadListener(new MyDownloadListener(activity));
     }
 
     /**
@@ -221,14 +175,14 @@ public class SearcherWebView {
         settings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.TEXT_AUTOSIZING);
     }
 
-    private void setStatusLevel(int level) {
+    public void setStatusLevel(int level) {
         LevelListDrawable d = (LevelListDrawable) progressBar.getBackground();
         if (d.getLevel() != level) {
             d.setLevel(level);
         }
     }
 
-    private void setOptStatus(WebView view) {
+    public void setOptStatus(WebView view) {
         if (view.canGoBack()) {
             activity.findViewById(R.id.back).setEnabled(true);
         } else {
@@ -240,10 +194,9 @@ public class SearcherWebView {
         } else {
             activity.findViewById(R.id.go).setEnabled(false);
         }
-//        activity.refreshMultiCount();
     }
 
-    private void loadUrl(String url) {
+    public void loadUrl(String url, String searchWord) {
         if (!TextUtils.isEmpty(url)) {
             Log.i("peter", "url=" + url);
             webview.loadUrl(url);
@@ -370,7 +323,10 @@ public class SearcherWebView {
     }
 
     public String getUrl() {
-        return url;
+        if (webview != null) {
+            return webview.getUrl();
+        }
+        return null;
     }
 
     public String getTitle() {
@@ -381,34 +337,7 @@ public class SearcherWebView {
     }
 
     public String getFavName() {
-        String engineName = url;
-        String word = searchWord;
-        String title = webview.getTitle();
-        Log.i("peter", "title = " + title);
-        Log.i("peter", "engineName = " + engineName);
-        if (webview.getContext().getString(R.string.url_title_mark_cb).equals(engineName)) {//词霸
-            title = word + " - " + engineName;
-        } else if (webview.getContext().getString(R.string.url_title_mark_yd).equals(engineName)) {//有道
-            title = word + " - " + title;
-        } else if (webview.getContext().getString(R.string.url_title_mark_jd).equals(engineName)) {//京东
-            title = word + " - " + engineName;
-        } else if (webview.getContext().getString(R.string.url_title_mark_tb).equals(engineName)) {//淘宝
-            title = word + " - " + engineName;
-        } else if (webview.getContext().getString(R.string.url_title_mark_tx).equals(engineName)) {//腾讯视频
-            title = word + " - " + engineName + " - " + title;
-        } else if (webview.getContext().getString(R.string.url_title_mark_sh).equals(engineName)) {//搜狐视频
-            title = word + " - " + engineName + " - " + title;
-        } else if (webview.getContext().getString(R.string.url_title_mark_aqy).equals(engineName)) {//爱奇艺
-            title = word + " - " + engineName + " - " + title;
-        } else if (webview.getContext().getString(R.string.url_title_mark_yyb).equals(engineName)) {//应用宝
-            title = word + " - " + engineName;
-        } else if (webview.getContext().getString(R.string.url_title_mark_360zs).equals(engineName)) {//360助手
-            title = word + " - " + engineName + " - " + title;
-        } else if (webview.getContext().getString(R.string.url_title_mark_bdzs).equals(engineName)) {//百度助手
-            title = word + " - " + engineName + " - " + title;
-        } else if (webview.getContext().getString(R.string.url_title_mark_xm).equals(engineName)) {//小米
-            title = word + " - " + engineName + " - " + title;
-        }
+        String title = webview.getTitle() + "-" + getUrl();
         Log.i("peter", "title = " + title);
         return title;
     }

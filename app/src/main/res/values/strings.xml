@@ -53,7 +53,7 @@
     <string name="action_browser">在浏览器中打开</string>
     <string name="action_collect">收藏</string>
     <string name="action_collection">收藏夹</string>
-    <string name="action_history">历史记录</string>
+    <string name="action_history">搜索记录</string>
     <string name="action_setting">设置</string>
     <string name="action_feedback">反馈</string>
     <string name="action_about">关于速搜</string>
@@ -72,6 +72,23 @@
     <string name="share_link_title">分享链接</string>
     <string name="default_engine_url">http://m.baidu.com/s?word=%s</string>
     <string name="exit_hint">再按一次退出程序</string>
+
+    <string name="title_sign_in">登录</string>
+    <string name="hint_username">用户名</string>
+    <string name="hint_password">密码</string>
+
+    <string name="message_insecure_connection">Connection to this site is not secure:\n%1$s\nProceed anyway?</string>
+    <string name="message_certificate_date_invalid">date of certificate is invalid</string>
+    <string name="message_certificate_expired">certificate is expired</string>
+    <string name="message_certificate_domain_mismatch">domain in certificate does not match the site domain</string>
+    <string name="message_certificate_invalid">certificate is invalid</string>
+    <string name="message_certificate_not_yet_valid">certificate is not yet valid</string>
+    <string name="message_certificate_untrusted">certificate is not trusted</string>
+
+    <string name="title_warning">警告</string>
+
+    <string name="action_yes">确认</string>
+    <string name="action_no">取消</string>
 
     <string-array name="settings_name">
         <item>分享APP</item>

@@ -2,7 +2,6 @@ package peter.util.searcher;
 
 
 import java.util.ArrayList;
-import java.util.Collection;
 
 
 /**
@@ -32,16 +31,14 @@ public class SearcherWebViewManager {
         return mList.size();
     }
 
-    public SearcherWebView newWebview(MainActivity activity, String url, String searchWord) {
+    public SearcherWebView newWebview(MainActivity activity) {
         if (isMaxViewsLimite()) {
             SearcherWebView currentWebView = getCurrentWebView();
-            currentWebView.loadUrl(activity, url, searchWord);
             return currentWebView;
         } else {
-            SearcherWebView searcherWebView = new SearcherWebView(activity, url, searchWord);
+            SearcherWebView searcherWebView = new SearcherWebView(activity);
             mList.add(searcherWebView);
-            int position = mList.indexOf(searcherWebView);
-            setCurrentWebView(position);
+            setCurrentWebView(searcherWebView);
             return searcherWebView;
         }
 
@@ -57,11 +54,8 @@ public class SearcherWebViewManager {
         return null;
     }
 
-    public void setCurrentWebView(int position) {
-        if (position >= mList.size()) {
-            return;
-        }
-        mCurrentWebView = mList.get(position);
+    public void setCurrentWebView(SearcherWebView searcherWebView) {
+        mCurrentWebView = searcherWebView;
         for (SearcherWebView view : mList) {
             if (view != mCurrentWebView) {
                 view.onPause();
@@ -70,10 +64,6 @@ public class SearcherWebViewManager {
         }
         mCurrentWebView.onResume();
         mCurrentWebView.resumeTimers();
-    }
-
-    public void setCurrentWebView(SearcherWebView view) {
-        setCurrentWebView(mList.indexOf(view));
     }
 
     private void removeWebView(int position) {

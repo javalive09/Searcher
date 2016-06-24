@@ -22,7 +22,6 @@ import java.util.ArrayList;
  */
 public class MultiWindowActivity extends BaseActivity {
 
-    public static final String ACTION = "multi_window";
     DeckView<SearcherWebView> mDeckView;
     Drawable defaultHeadIcon;
     int scrollToChildIndex = -1;
@@ -32,12 +31,12 @@ public class MultiWindowActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_multiwindow);
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(CURRENT_SCROLL)) {
                 scrollToChildIndex = savedInstanceState.getInt(CURRENT_SCROLL);
             }
         }
-        setContentView(R.layout.activity_multiwindow);
         mDeckView = (DeckView<SearcherWebView>) findViewById(R.id.deckview);
         defaultHeadIcon = new BitmapDrawable(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher));
         final ArrayList<SearcherWebView> mEntries = SearcherWebViewManager.instance().getAllViews();
@@ -63,13 +62,13 @@ public class MultiWindowActivity extends BaseActivity {
                 if (SearcherWebViewManager.instance().getWebViewCount() > 0) {
                     mDeckView.notifyDataSetChanged();
                 } else {
-                    onBackPressed();
+                    exit();
                 }
             }
 
             @Override
             public void onItemClick(SearcherWebView item) {
-                startBrowser(MultiWindowActivity.this, item.getUrl(), item.getSearchWord());
+                startBrowser(MultiWindowActivity.this, item.getUrl(), "");
                 finish();
             }
 
@@ -98,8 +97,7 @@ public class MultiWindowActivity extends BaseActivity {
             clearAll.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    SearcherWebViewManager.instance().clearAllWebViews();
-                    onBackPressed();
+                    exit();
                 }
             });
         }
