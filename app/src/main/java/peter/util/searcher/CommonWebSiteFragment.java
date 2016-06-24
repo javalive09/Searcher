@@ -1,9 +1,7 @@
 package peter.util.searcher;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,10 +49,11 @@ public class CommonWebSiteFragment extends Fragment implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.web_site_item:
-                EnterActivity enterActivity = (EnterActivity) (getActivity());
+                BaseActivity baseActivity = (BaseActivity) (getActivity());
                 WebSiteBean bean = (WebSiteBean) v.getTag();
                 if (bean != null) {
-                    enterActivity.startBrowser(getActivity(), bean.url, bean.title);
+                    baseActivity.startBrowser(getActivity(), bean.url, bean.title);
+                    baseActivity.finish();
                 }
                 break;
             default:

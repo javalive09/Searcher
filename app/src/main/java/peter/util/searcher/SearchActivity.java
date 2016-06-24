@@ -20,6 +20,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.webkit.WebViewFragment;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -37,6 +38,7 @@ public class SearchActivity extends BaseActivity {
     private ImageView clear;
     private static final int RECENT_SEARCH = 1;
     private static final int ENGINE_LIST = 2;
+    private static final int WEB_SITES = 3;
     private int currentFragment = -1;
 
     @Override
@@ -108,7 +110,7 @@ public class SearchActivity extends BaseActivity {
             public void afterTextChanged(Editable s) {
                 String content = s.toString();
                 if (TextUtils.isEmpty(content)) {
-                    setEngineFragment(RECENT_SEARCH);
+                    setEngineFragment(WEB_SITES);
                     clear.setVisibility(View.INVISIBLE);
                 } else if (!content.equals(temp)) {
                     setEngineFragment(ENGINE_LIST);
@@ -116,7 +118,7 @@ public class SearchActivity extends BaseActivity {
                 }
             }
         });
-        setEngineFragment(RECENT_SEARCH);
+        setEngineFragment(WEB_SITES);
     }
 
     private void setEngineFragment(int f) {
@@ -130,6 +132,9 @@ public class SearchActivity extends BaseActivity {
                 case ENGINE_LIST:
                     fragment = new EngineViewPagerFragment();
                     break;
+                case WEB_SITES:
+                    fragment = new CommonWebSiteFragment();
+                    break;
             }
             FragmentManager fragmentManager = getFragmentManager();
             FragmentTransaction ft = fragmentManager.beginTransaction();
@@ -137,6 +142,5 @@ public class SearchActivity extends BaseActivity {
             ft.commit();
         }
     }
-
 
 }

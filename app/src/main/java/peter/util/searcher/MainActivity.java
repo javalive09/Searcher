@@ -7,10 +7,14 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.webkit.WebView;
 import android.widget.FrameLayout;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -61,13 +65,35 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         if (intent != null) {
             String action = intent.getAction();
             if (ACTION_INNER_BROWSE.equals(action)) { // inner invoke
-                String url = (String) intent.getSerializableExtra("url");
+                String url = (String) intent.getSerializableExtra(NAME_URL);
                 if (!TextUtils.isEmpty(url)) {
-                    String searchWord = intent.getStringExtra("word");
-                    loadUrl(url, searchWord);
+                    String searchWord = intent.getStringExtra(NAME_WORD);
+                    loadUrl(url, searchWord, isNewTab(intent));
+                }
+            } else if (Intent.ACTION_MAIN.equals(action)) {//launcher invoke
+                if (intent.getCategories().contains(Intent.CATEGORY_LAUNCHER)) {
+                    startSearch(true);
+                    finish();
+                }
+            } else if (Intent.ACTION_VIEW.equals(action)) { // outside invoke
+                String url = intent.getDataString();
+                if (!TextUtils.isEmpty(url)) {
+                    loadUrl(url, "", true);
                 }
             }
         }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if ((keyCode == KeyEvent.KEYCODE_BACK)) {
+            SearcherWebView searcherWebView = SearcherWebViewManager.instance().getCurrentWebView();
+            if (searcherWebView != null && searcherWebView.canGoBack()) {
+                searcherWebView.goBack();
+                return true;
+            }
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
     public void refreshStatusColor(SearcherWebView view) {
@@ -77,8 +103,19 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
     }
 
-    private void loadUrl(String url, String searchWord) {
-        SearcherWebView view = SearcherWebViewManager.instance().newWebview(this, url, searchWord);
+    private void loadUrl(String url, String searchWord, boolean isNewTab) {
+        SearcherWebView view;
+        if (isNewTab) {
+            view = SearcherWebViewManager.instance().newWebview(this, url, searchWord);
+        } else {
+            view = SearcherWebViewManager.instance().getCurrentWebView();
+            if(view != null) {
+                view.loadUrl(this, url, searchWord);
+            }else {
+                view = SearcherWebViewManager.instance().newWebview(this, url, searchWord);
+            }
+        }
+
         FrameLayout contentFrame = (FrameLayout) findViewById(R.id.content_frame);
         if (contentFrame != null && view != null) {
             contentFrame.removeAllViews();
@@ -89,6 +126,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     protected void onResume() {
         super.onResume();
         MobclickAgent.onResume(this);
+        refreshMultiWindow();
     }
 
     @Override
@@ -105,6 +143,18 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         contentFrame.removeAllViews();
     }
 
+    public void refreshMultiWindow() {
+        TextView countView = (TextView) findViewById(R.id.multi_window);
+        int count = SearcherWebViewManager.instance().getWebViewCount();
+        if (countView != null) {
+            String countStr = count + "";
+            if (count > 9) {
+                countStr = "*";
+            }
+            countView.setText(countStr);
+        }
+    }
+
     @Override
     public void onClick(View v) {
         SearcherWebView webView = SearcherWebViewManager.instance().getCurrentWebView();
@@ -119,31 +169,65 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     webView.goForward();
                 }
                 break;
-            case R.id.refresh:
-                SearcherWebViewManager.instance().getCurrentWebView().refresh();
+            case R.id.search:
+                startSearch(false);
                 break;
 
-            case R.id.favorite:
-                if (!TextUtils.isEmpty(webView.getUrl())) {
-                    Bean bean = new Bean();
-                    bean.name = webView.getFavName();
-                    bean.url = webView.getUrl();
-                    bean.time = System.currentTimeMillis();
-                    SqliteHelper.instance(MainActivity.this).insertFav(bean);
-                    Toast.makeText(MainActivity.this, R.string.favorite_txt, Toast.LENGTH_SHORT).show();
-                }
+            case R.id.multi_window:
+                startActivity(new Intent(MainActivity.this, MultiWindowActivity.class));
                 break;
-            case R.id.share:
-                if (!TextUtils.isEmpty(webView.getUrl())) {
-                    String url = webView.getUrl();
-                    Intent sendIntent = new Intent();
-                    sendIntent.setAction(Intent.ACTION_SEND);
-                    sendIntent.putExtra(Intent.EXTRA_TEXT, url);
-                    sendIntent.setType("text/plain");
-                    startActivity(Intent.createChooser(sendIntent, getString(R.string.share_link_title)));
-                }
+            case R.id.menu:
+                popupMenu(v);
                 break;
         }
+    }
+
+    private void popupMenu(View menu) {
+        PopupMenu popup = new PopupMenu(this, menu);
+        popup.getMenuInflater().inflate(R.menu.web, popup.getMenu());
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.action_refresh:
+                        SearcherWebViewManager.instance().getCurrentWebView().refresh();
+                        break;
+                    case R.id.action_share:
+                        String url = SearcherWebViewManager.instance().getCurrentWebView().getUrl();
+                        Intent sendIntent = new Intent();
+                        sendIntent.setAction(Intent.ACTION_SEND);
+                        sendIntent.putExtra(Intent.EXTRA_TEXT, url);
+                        sendIntent.setType("text/plain");
+                        startActivity(Intent.createChooser(sendIntent, getString(R.string.share_link_title)));
+                        break;
+                    case R.id.action_setting:
+                        Intent intent = new Intent(MainActivity.this, SettingActivity.class);
+                        startActivity(intent);
+                        break;
+                    case R.id.action_collect:
+                        SearcherWebView webView = SearcherWebViewManager.instance().getCurrentWebView();
+                        if (!TextUtils.isEmpty(webView.getUrl())) {
+                            Bean bean = new Bean();
+                            bean.name = webView.getFavName();
+                            bean.url = webView.getUrl();
+                            bean.time = System.currentTimeMillis();
+                            SqliteHelper.instance(MainActivity.this).insertFav(bean);
+                            Toast.makeText(MainActivity.this, R.string.favorite_txt, Toast.LENGTH_SHORT).show();
+                        }
+                        break;
+                    case R.id.action_collection:
+                        startActivity(new Intent(MainActivity.this, FavoriteActivity.class));
+                        break;
+                    case R.id.action_history:
+                        startActivity(new Intent(MainActivity.this, HistoryActivity.class));
+                        break;
+                    case R.id.action_exit:
+                        exit();
+                        break;
+                }
+                return true;
+            }
+        });
+        popup.show();
     }
 
     @Override

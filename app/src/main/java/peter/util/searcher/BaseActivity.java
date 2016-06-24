@@ -31,7 +31,10 @@ import peter.util.searcher.factory.BooleanFactory;
  */
 public class BaseActivity extends AppCompatActivity{
 
-    public static final String ACTION_INNER_BROWSE = "peter.util.searcher";
+    public static final String ACTION_INNER_BROWSE = "peter.util.searcher.inner";
+    public static final String NEW_TAB = "peter.util.searcher.new.tab";
+    public static final String NAME_URL = "peter.util.searcher.url";
+    public static final String NAME_WORD = "peter.util.searcher.word";
     private static final ArrayList<Activity> LIST = new ArrayList<>();
 
     @Override
@@ -52,12 +55,23 @@ public class BaseActivity extends AppCompatActivity{
         }
     }
 
+    public boolean isNewTab(Intent intent){
+        return intent.getBooleanExtra(NEW_TAB, false);
+    }
+
     public void startBrowser(Activity act, String url, String word) {
         Intent intent = new Intent(act, MainActivity.class);
         intent.setAction(ACTION_INNER_BROWSE);
-        intent.putExtra("url", url);
-        intent.putExtra("word", word);
+        intent.putExtra(NAME_URL, url);
+        intent.putExtra(NAME_WORD, word);
+        intent.putExtra(NEW_TAB, isNewTab(getIntent()));
         act.startActivity(intent);
+    }
+
+    public void startSearch(boolean isNewTab) {
+        Intent intent = new Intent(BaseActivity.this, SearchActivity.class);
+        intent.putExtra(NEW_TAB,isNewTab);
+        startActivity(intent);
     }
 
     protected int clearCacheFolder(final File dir, final int numDays) {

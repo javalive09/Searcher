@@ -103,6 +103,16 @@ public class MultiWindowActivity extends BaseActivity {
                 }
             });
         }
+        final View newTab = findViewById(R.id.new_tab);
+        if(newTab != null) {
+            newTab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startSearch(true);
+                }
+            });
+        }
+
     }
 
     private void loadViewDataInternal(SearcherWebView item, final WeakReference<DeckChildView<SearcherWebView>> weakView) {

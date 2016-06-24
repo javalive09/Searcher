@@ -10,16 +10,36 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <Button
-        android:id="@+id/clear_all"
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_gravity="bottom"
-        android:background="@drawable/clear_all_multi_btn"
-        android:layout_marginLeft="30dp"
-        android:layout_marginRight="30dp"
-        android:layout_marginBottom="5dp"
-        android:text="@string/clear_all_multi"
-        />
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/new_tab"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:layout_weight="1"
+            android:background="@drawable/clear_all_multi_btn"
+            android:text="@string/new_tab" />
+
+        <Button
+            android:id="@+id/clear_all"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:layout_weight="1"
+            android:background="@drawable/clear_all_multi_btn"
+            android:text="@string/clear_all_multi" />
+
+    </LinearLayout>
+
 
 </FrameLayout>

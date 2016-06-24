@@ -17,7 +17,7 @@ public class SearcherWebViewManager {
 
     public static SearcherWebViewManager instance() {
         synchronized (SearcherWebViewManager.class) {
-            if(manager == null) {
+            if (manager == null) {
                 manager = new SearcherWebViewManager();
             }
             return manager;
@@ -33,30 +33,24 @@ public class SearcherWebViewManager {
     }
 
     public SearcherWebView newWebview(MainActivity activity, String url, String searchWord) {
-        SearcherWebView existView = containUrlView(url);
-        if(existView != null) {
-            setCurrentWebView(existView);
-            activity.refreshStatusColor(existView);
-            return  existView;
-        }else {
-            if(isMaxViewsLimite()) {
-                SearcherWebView currentWebView = getCurrentWebView();
-                currentWebView.loadUrl(activity, url, searchWord);
-                return currentWebView;
-            }else {
-                SearcherWebView searcherWebView = new SearcherWebView(activity, url, searchWord);
-                mList.add(searcherWebView);
-                int position = mList.indexOf(searcherWebView);
-                setCurrentWebView(position);
-                return searcherWebView;
-            }
+        if (isMaxViewsLimite()) {
+            SearcherWebView currentWebView = getCurrentWebView();
+            currentWebView.loadUrl(activity, url, searchWord);
+            return currentWebView;
+        } else {
+            SearcherWebView searcherWebView = new SearcherWebView(activity, url, searchWord);
+            mList.add(searcherWebView);
+            int position = mList.indexOf(searcherWebView);
+            setCurrentWebView(position);
+            return searcherWebView;
         }
+
     }
 
     public SearcherWebView containUrlView(String url) {
-        for(int i = 0, len = mList.size(); i< len ; i++) {
+        for (int i = 0, len = mList.size(); i < len; i++) {
             SearcherWebView view = mList.get(i);
-            if(view.getUrl().equals(url)) {
+            if (view.getUrl().equals(url)) {
                 return view;
             }
         }
@@ -88,9 +82,9 @@ public class SearcherWebViewManager {
         }
         final SearcherWebView tab = mList.remove(position);
         if (mCurrentWebView == tab) {
-            if(mList.size() > 0) {
+            if (mList.size() > 0) {
                 mCurrentWebView = mList.get(mList.size() - 1);
-            }else {
+            } else {
                 mCurrentWebView = null;
             }
         }
@@ -98,7 +92,7 @@ public class SearcherWebViewManager {
     }
 
     public void clearAllWebViews() {
-        for(SearcherWebView view : mList) {
+        for (SearcherWebView view : mList) {
             view.onDestroy();
         }
         mList.clear();
@@ -114,7 +108,7 @@ public class SearcherWebViewManager {
     }
 
     public int getCurrentWebViewPos() {
-        if(mCurrentWebView != null) {
+        if (mCurrentWebView != null) {
             return mList.indexOf(mCurrentWebView);
         }
         return -1;
