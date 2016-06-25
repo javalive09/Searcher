@@ -108,8 +108,15 @@ public class MultiWindowActivity extends BaseActivity {
     private void loadViewDataInternal(SearcherWebView item, final WeakReference<DeckChildView<SearcherWebView>> weakView) {
         if (weakView.get() != null) {
             Bitmap thumbnail = item.getThumbNail();
+            Bitmap icon = item.getFavIcon();
+            Drawable iconDrawable;
+            if(icon != null) {
+                iconDrawable = new BitmapDrawable(icon);
+            }else {
+                iconDrawable = defaultHeadIcon;
+            }
             weakView.get().onDataLoaded(item, thumbnail,
-                    defaultHeadIcon, item.getTitle(), item.getMainColor());
+                    iconDrawable, item.getTitle(), item.getMainColor());
         }
     }
 

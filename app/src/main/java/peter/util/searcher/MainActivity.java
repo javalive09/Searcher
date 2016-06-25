@@ -29,6 +29,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private static final int API = Build.VERSION.SDK_INT;
     private View bottomBar;
+    private int mainColor = -1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -53,6 +54,17 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     public void setBottomBarColor(int animColor) {
         bottomBar.setBackgroundColor(animColor);
+    }
+
+    public void setMainColor(int color) {
+        mainColor = color;
+    }
+
+    public int getMainColor() {
+        if(mainColor == -1) {
+            mainColor = getResources().getColor(R.color.colorPrimary);
+        }
+        return mainColor;
     }
 
     @Override
@@ -112,7 +124,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         } else {
             view = SearcherWebViewManager.instance().containUrlView(url);
             if(view != null) {//切换
-                view.refreshStatusColor(view.getMainColor());
+                view.setStatusMainColor();
             }else {//搜索
                 view = SearcherWebViewManager.instance().getCurrentWebView();
                 view.loadUrl(url, searchWord);

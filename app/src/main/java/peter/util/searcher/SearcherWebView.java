@@ -45,6 +45,10 @@ public class SearcherWebView {
         init();
     }
 
+    public Bitmap getFavIcon() {
+        return webview.getFavicon();
+    }
+
     private void init() {
         rootView = View.inflate(activity, R.layout.searcher_webview, null);
         webview = (WebView) rootView.findViewById(R.id.wv);
@@ -68,15 +72,19 @@ public class SearcherWebView {
 
     public int getMainColor() {
         if(mainColor == -1) {
-            return activity.getResources().getColor(R.color.colorPrimary);
+            mainColor = activity.getResources().getColor(R.color.colorPrimary);
         }
         return mainColor;
     }
 
-    public void refreshStatusColor(int animColor) {
+    public void setStatusMainColor() {
         if(colorAnimation != null) {
             colorAnimation.cancel();
         }
+        refreshStatusColor(getMainColor());
+    }
+
+    private void refreshStatusColor(int animColor) {
         activity.setBottomBarColor(animColor);
         if (API >= 21) {
             activity.setStatusColor(animColor);
@@ -91,14 +99,14 @@ public class SearcherWebView {
 
             @Override
             public void onGenerated(Palette palette) {
-                int defaultColor = activity.getResources().getColor(R.color.colorPrimary);
+                int defaultColor = activity.getMainColor();
                 int curColor = palette.getVibrantColor(defaultColor);
                 if (curShowColor != curColor) {
                     curShowColor = curColor;
                     mainColor = getSearchBarColor(curColor);
-                    int startSearchColor = getSearchBarColor(defaultColor);
-                    if (startSearchColor != mainColor) {
-                        colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), startSearchColor, mainColor);
+                    if (defaultColor != mainColor) {
+                        activity.setMainColor(mainColor);
+                        colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), defaultColor, mainColor);
                         colorAnimation.setDuration(600); // milliseconds
                         colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
 
