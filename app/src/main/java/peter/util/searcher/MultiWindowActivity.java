@@ -92,15 +92,7 @@ public class MultiWindowActivity extends BaseActivity {
                 mDeckView.scrollToChild(scrollToChildIndex);
             }
         });
-        View clearAll = findViewById(R.id.clear_all);
-        if(clearAll != null) {
-            clearAll.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    exit();
-                }
-            });
-        }
+
         final View newTab = findViewById(R.id.new_tab);
         if(newTab != null) {
             newTab.setOnClickListener(new View.OnClickListener() {

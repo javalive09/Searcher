@@ -38,6 +38,7 @@ public class SearcherWebView {
     private View rootView;
     private int curShowColor;
     private int mainColor = -1;
+    private ValueAnimator colorAnimation;
 
     public SearcherWebView(MainActivity activity) {
         this.activity = activity;
@@ -50,6 +51,12 @@ public class SearcherWebView {
         progressBar = rootView.findViewById(R.id.status);
         initWebview(webview);
         initializeSettings(webview);
+    }
+
+    public void resetCacheMode() {
+        if(webview.getSettings().getCacheMode() != WebSettings.LOAD_DEFAULT) {
+            webview.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
+        }
     }
 
     public Bitmap getThumbNail() {
@@ -66,7 +73,20 @@ public class SearcherWebView {
         return mainColor;
     }
 
+    public void refreshStatusColor(int animColor) {
+        if(colorAnimation != null) {
+            colorAnimation.cancel();
+        }
+        activity.setBottomBarColor(animColor);
+        if (API >= 21) {
+            activity.setStatusColor(animColor);
+        }
+    }
+
     public void setMainColor(Bitmap favicon) {
+        if(colorAnimation != null) {
+            colorAnimation.cancel();
+        }
         Palette.from(favicon).generate(new Palette.PaletteAsyncListener() {
 
             @Override
@@ -78,14 +98,14 @@ public class SearcherWebView {
                     mainColor = getSearchBarColor(curColor);
                     int startSearchColor = getSearchBarColor(defaultColor);
                     if (startSearchColor != mainColor) {
-                        ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), startSearchColor, mainColor);
-                        colorAnimation.setDuration(300); // milliseconds
+                        colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), startSearchColor, mainColor);
+                        colorAnimation.setDuration(600); // milliseconds
                         colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
 
                             @Override
                             public void onAnimationUpdate(ValueAnimator animator) {
                                 int animColor = (int) animator.getAnimatedValue();
-                                activity.refreshStatusColor(animColor);
+                                refreshStatusColor(animColor);
                             }
 
                         });
@@ -159,7 +179,7 @@ public class SearcherWebView {
         settings.setLoadWithOverviewMode(true);
         settings.setUseWideViewPort(true);
         settings.setDomStorageEnabled(true);
-        settings.setCacheMode(WebSettings.LOAD_DEFAULT);
+        settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
         settings.setDatabaseEnabled(true);
         settings.setSupportZoom(true);
         settings.setBuiltInZoomControls(true);
@@ -183,16 +203,25 @@ public class SearcherWebView {
     }
 
     public void setOptStatus(WebView view) {
+        final View back = activity.findViewById(R.id.back);
         if (view.canGoBack()) {
-            activity.findViewById(R.id.back).setEnabled(true);
+            if(back != null && !back.isEnabled()) {
+                back.setEnabled(true);
+            }
         } else {
-            activity.findViewById(R.id.back).setEnabled(false);
+            if(back != null && back.isEnabled()) {
+                back.setEnabled(false);
+            }
         }
-
+        final View go = activity.findViewById(R.id.go);
         if (view.canGoForward()) {
-            activity.findViewById(R.id.go).setEnabled(true);
+            if(go != null && !go.isEnabled()) {
+                go.setEnabled(true);
+            }
         } else {
-            activity.findViewById(R.id.go).setEnabled(false);
+            if(go != null && go.isEnabled()) {
+                go.setEnabled(false);
+            }
         }
     }
 
@@ -224,14 +253,12 @@ public class SearcherWebView {
     public void onResume() {
         if (webview != null) {
             webview.onResume();
-            webview.resumeTimers();
         }
     }
 
     public void onPause() {
         if (webview != null) {
             webview.onPause();
-            webview.pauseTimers();
         }
     }
 

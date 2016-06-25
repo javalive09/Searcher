@@ -12,4 +12,17 @@
     <style name="Theme.ToolBar.Base" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="actionMenuTextColor">@color/item_normal</item>
     </style>
+
+    <style name="MultiWindowTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsTranslucent">true</item>
+    </style>
+
+    <style name="Theme.AppCompat.Light.NoActionBar.FullScreen" parent="@style/Theme.AppCompat.Light">
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
 </resources>

@@ -96,17 +96,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             SearcherWebView searcherWebView = SearcherWebViewManager.instance().getCurrentWebView();
             if (searcherWebView != null && searcherWebView.canGoBack()) {
                 searcherWebView.goBack();
-                return true;
+            }else{
+                exit();
             }
+            return true;
         }
         return super.onKeyDown(keyCode, event);
-    }
-
-    public void refreshStatusColor(int animColor) {
-        setBottomBarColor(animColor);
-        if (API >= 21) {
-            setStatusColor(animColor);
-        }
     }
 
     private void loadUrl(String url, String searchWord, boolean isNewTab) {
@@ -117,7 +112,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         } else {
             view = SearcherWebViewManager.instance().containUrlView(url);
             if(view != null) {//切换
-                refreshStatusColor(view.getMainColor());
+                view.refreshStatusColor(view.getMainColor());
             }else {//搜索
                 view = SearcherWebViewManager.instance().getCurrentWebView();
                 view.loadUrl(url, searchWord);
@@ -134,6 +129,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     protected void onResume() {
         super.onResume();
         MobclickAgent.onResume(this);
+        SearcherWebViewManager.instance().resumeAll();
         refreshMultiWindow();
     }
 
@@ -141,14 +137,16 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     protected void onPause() {
         super.onPause();
         MobclickAgent.onPause(this);
-
+        SearcherWebViewManager.instance().pauseAll();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         FrameLayout contentFrame = (FrameLayout) findViewById(R.id.content_frame);
-        contentFrame.removeAllViews();
+        if(contentFrame != null) {
+            contentFrame.removeAllViews();
+        }
     }
 
     public void refreshMultiWindow() {

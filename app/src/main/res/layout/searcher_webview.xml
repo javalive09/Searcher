@@ -6,10 +6,7 @@
     <WebView
         android:id="@+id/wv"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:alwaysDrawnWithCache="true"
-        android:drawingCacheQuality="low"
-        android:layout_above="@+id/bottom_bar" />
+        android:layout_height="match_parent" />
 
     <View
         android:id="@+id/status"

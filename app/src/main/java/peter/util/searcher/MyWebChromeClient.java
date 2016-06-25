@@ -38,6 +38,10 @@ public class MyWebChromeClient extends WebChromeClient {
         Log.i("peter", "onHideCustomView");
     }
 
+    public void onProgressChanged(WebView view, int newProgress) {
+        searcherWebView.setOptStatus(view);
+    }
+
     @Override
     public void onReceivedIcon(WebView view, Bitmap icon) {
         super.onReceivedIcon(view, icon);

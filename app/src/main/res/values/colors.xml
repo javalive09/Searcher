@@ -25,4 +25,6 @@
 
     <color name="back_press">#cccccc</color>
     <color name="back_normal">@color/title_bg</color>
+
+    <color name="black">#000000</color>
 </resources>

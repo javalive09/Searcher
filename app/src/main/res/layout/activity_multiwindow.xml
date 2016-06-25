@@ -1,45 +1,23 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@android:color/background_dark"
-    tools:context=".MultiWindowActivity">
+    android:layout_height="match_parent">
 
     <com.appeaser.deckview.views.DeckView
         android:id="@+id/deckview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:background="@color/black"/>
 
-
-    <LinearLayout
+    <Button
+        android:id="@+id/new_tab"
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_gravity="bottom"
-        android:orientation="horizontal">
+        android:background="@drawable/clear_all_multi_btn"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginBottom="5dp"
+        android:text="@string/new_tab"
+        />
 
-        <Button
-            android:id="@+id/new_tab"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="5dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="5dp"
-            android:layout_weight="1"
-            android:background="@drawable/clear_all_multi_btn"
-            android:text="@string/new_tab" />
-
-        <Button
-            android:id="@+id/clear_all"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="5dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="10dp"
-            android:layout_weight="1"
-            android:background="@drawable/clear_all_multi_btn"
-            android:text="@string/clear_all_multi" />
-
-    </LinearLayout>
-
-
-</FrameLayout>
+</merge>

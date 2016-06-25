@@ -51,6 +51,7 @@ public class MyWebClient extends WebViewClient {
         if(view.isShown()) {
             view.postInvalidate();
         }
+        searcherWebView.resetCacheMode();
         searcherWebView.setStatusLevel(0);
         searcherWebView.setOptStatus(view);
     }
