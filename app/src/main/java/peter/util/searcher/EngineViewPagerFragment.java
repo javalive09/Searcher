@@ -33,7 +33,7 @@ import peter.util.searcher.net.RequestManager;
  */
 public class EngineViewPagerFragment extends Fragment implements View.OnClickListener {
 
-    String url = "https://raw.githubusercontent.com/javalive09/config/master/engines.json";
+    String url = "http://7xoxmg.com1.z0.glb.clouddn.com/engines.json";
     private SlidingTabLayout mSlidingTabLayout;
     private ViewPager mViewPager;
 

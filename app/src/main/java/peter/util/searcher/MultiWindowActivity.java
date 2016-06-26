@@ -68,7 +68,7 @@ public class MultiWindowActivity extends BaseActivity {
 
             @Override
             public void onItemClick(SearcherWebView item) {
-                startBrowser(MultiWindowActivity.this, item.getUrl(), "", false);
+                switchBrowser(MultiWindowActivity.this, item.getUrl());
                 finish();
             }
 

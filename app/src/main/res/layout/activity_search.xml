@@ -3,12 +3,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark"
+        android:orientation="horizontal">
+
         <FrameLayout
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:background="@color/colorPrimary"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark"
-            android:orientation="vertical">
+            android:layout_weight="1">
 
             <EditText
                 android:id="@+id/search"
@@ -16,10 +22,10 @@
                 android:layout_height="match_parent"
                 android:hint="@string/search"
                 android:imeOptions="actionSearch"
+                android:paddingLeft="@dimen/clear_txt_margin_right"
                 android:paddingRight="@dimen/search_padding_right"
                 android:selectAllOnFocus="true"
                 android:singleLine="true"
-                android:paddingLeft="@dimen/clear_txt_margin_right"
                 android:textColor="@color/edit_text_color"
                 android:textColorHint="@color/edit_text_color"
                 android:theme="@style/MyEditText" />
@@ -31,8 +37,22 @@
                 android:layout_gravity="right|center_vertical"
                 android:layout_marginRight="@dimen/clear_txt_margin_right"
                 android:src="@drawable/abc_ic_clear_mtrl_alpha"
+                android:onClick="onClick"
                 android:visibility="invisible" />
         </FrameLayout>
+
+        <ImageView
+            android:id="@+id/more"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="5dp"
+            android:background="@drawable/more_selector"
+            android:src="@drawable/more__"
+            android:onClick="onClick"
+            android:visibility="gone"/>
+    </LinearLayout>
 
     <FrameLayout
         android:id="@+id/content_frame"

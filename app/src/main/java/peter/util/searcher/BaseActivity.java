@@ -75,6 +75,10 @@ public class BaseActivity extends AppCompatActivity{
         act.startActivity(intent);
     }
 
+    public void switchBrowser(Activity act, String url) {
+        startBrowser(act, url, "", false);
+    }
+
     public void startSearch(boolean isNewTab) {
         Intent intent = new Intent(BaseActivity.this, SearchActivity.class);
         intent.putExtra(NEW_TAB,isNewTab);

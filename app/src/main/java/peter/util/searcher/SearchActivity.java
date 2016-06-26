@@ -32,14 +32,16 @@ import java.util.ArrayList;
 /**
  * Created by peter on 16/5/19.
  */
-public class SearchActivity extends BaseActivity {
+public class SearchActivity extends BaseActivity implements View.OnClickListener{
 
     private EditText search;
-    private ImageView clear;
-    private static final int RECENT_SEARCH = 1;
-    private static final int ENGINE_LIST = 2;
-    private static final int WEB_SITES = 3;
-    private int currentFragment = -1;
+    private ImageView clear, more;
+    private static final String RECENT_SEARCH = "recent_search";
+    private static final String ENGINE_LIST = "engine_list";
+    private static final String WEB_SITES = "web_sites";
+    private static final String WEB_HINT = "web_hint";
+    private String currentFragmentTag = "";
+    private Fragment currentFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,14 +79,7 @@ public class SearchActivity extends BaseActivity {
 
     private void init() {
         clear = (ImageView) findViewById(R.id.clear);
-        clear.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                search.requestFocus();
-                search.setText("");
-                openBoard();
-            }
-        });
+        more = (ImageView) findViewById(R.id.more);
         search = (EditText) findViewById(R.id.search);
         search.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -119,35 +114,51 @@ public class SearchActivity extends BaseActivity {
                 if (TextUtils.isEmpty(content)) {
                     setEngineFragment(RECENT_SEARCH);
                     clear.setVisibility(View.INVISIBLE);
+                    more.setVisibility(View.GONE);
                 } else if (!content.equals(temp)) {
-                    setEngineFragment(ENGINE_LIST);
+                    setEngineFragment(WEB_HINT);
+                    WebHintFragment f = (WebHintFragment)currentFragment;
+                    f.refreshData(content);
                     clear.setVisibility(View.VISIBLE);
+                    more.setVisibility(View.VISIBLE);
                 }
             }
         });
         setEngineFragment(RECENT_SEARCH);
     }
 
-    private void setEngineFragment(int f) {
-        if (currentFragment != f) {
-            currentFragment = f;
+    private void setEngineFragment(String tag) {
+        if(!currentFragmentTag.equals(tag)) {
+            currentFragmentTag = tag;
             Fragment fragment = null;
-            switch (f) {
-                case RECENT_SEARCH:
-                    fragment = new RecentSearchFragment();
-                    break;
-                case ENGINE_LIST:
-                    fragment = new EngineViewPagerFragment();
-                    break;
-                case WEB_SITES:
-                    fragment = new CommonWebSiteFragment();
-                    break;
+            if(tag.equals(RECENT_SEARCH)){
+                fragment = new RecentSearchFragment();
+            }else if(tag.equals(ENGINE_LIST)) {
+                fragment = new EngineViewPagerFragment();
+            }else if(tag.equals(WEB_SITES)) {
+                fragment = new CommonWebSiteFragment();
+            }else if(tag.equals(WEB_HINT)) {
+                fragment = new WebHintFragment();
             }
+            currentFragment = fragment;
             FragmentManager fragmentManager = getFragmentManager();
             FragmentTransaction ft = fragmentManager.beginTransaction();
-            ft.replace(R.id.content_frame, fragment);
+            ft.replace(R.id.content_frame, fragment, tag);
             ft.commit();
         }
     }
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.clear:
+                search.requestFocus();
+                search.setText("");
+                openBoard();
+                break;
+            case R.id.more:
+                setEngineFragment(ENGINE_LIST);
+                break;
+        }
+    }
 }

@@ -51,6 +51,7 @@ public class GsonRequest<T> extends Request<T> {
 	protected Response<T> parseNetworkResponse(NetworkResponse response) {
 		try {
 			String charsetName = HttpHeaderParser.parseCharset(response.headers);
+			charsetName = "utf-8";
 			String json = new String(response.data, charsetName);
 			List<TypeEngines> l = mGson.fromJson(json, mType);
 			return (Response<T>) Response.success(l,

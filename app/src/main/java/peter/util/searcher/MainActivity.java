@@ -191,8 +191,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     webView.goForward();
                 }
                 break;
-            case R.id.close:
-                finish();
+            case R.id.home:
+                startActivity(new Intent(MainActivity.this, EnterActivity.class));
                 break;
 
             case R.id.multi_window:

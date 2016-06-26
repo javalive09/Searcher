@@ -26,15 +26,25 @@
         android:scaleType="center"
         android:src="@drawable/bar_forward_selector" />
 
+    <!--<ImageView-->
+    <!--android:id="@+id/search"-->
+    <!--android:layout_width="0dp"-->
+    <!--android:layout_height="@dimen/bottom_h"-->
+    <!--android:layout_weight="1"-->
+    <!--android:background="@drawable/menu_selector"-->
+    <!--android:onClick="onClick"-->
+    <!--android:scaleType="center"-->
+    <!--android:src="@drawable/bar_search" />-->
+
     <ImageView
-        android:id="@+id/close"
+        android:id="@+id/home"
         android:layout_width="0dp"
         android:layout_height="@dimen/bottom_h"
         android:layout_weight="1"
         android:background="@drawable/menu_selector"
         android:onClick="onClick"
         android:scaleType="center"
-        android:src="@drawable/close" />
+        android:src="@drawable/toolbar_home" />
 
     <TextView
         android:id="@+id/multi_window"
@@ -44,9 +54,9 @@
         android:background="@drawable/multi_window_top_selector"
         android:gravity="center"
         android:onClick="onClick"
-        android:textSize="10sp"
         android:textColor="@android:color/white"
-        android:textStyle="bold"/>
+        android:textSize="10sp"
+        android:textStyle="bold" />
 
     <ImageView
         android:id="@+id/menu"

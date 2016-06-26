@@ -167,10 +167,10 @@ public class MyWebClient extends WebViewClient {
     @Override
     public boolean shouldOverrideUrlLoading(@NonNull WebView view, @NonNull String url) {
 
-        if (url.startsWith("about:") && Utils.doesSupportHeaders()) {
-            view.loadUrl(url);
-            return true;
-        }
+//        if (url.startsWith("about:") && Utils.doesSupportHeaders()) {
+//            view.loadUrl(url);
+//            return true;
+//        }
         if (url.startsWith("mailto:")) {
             MailTo mailTo = MailTo.parse(url);
             Intent i = Utils.newEmailIntent(mailTo.getTo(), mailTo.getSubject(),
@@ -200,10 +200,11 @@ public class MyWebClient extends WebViewClient {
             }
         }
 
-        if (!mIntentUtils.startActivityForUrl(view, url) && Utils.doesSupportHeaders()) {
-            view.loadUrl(url);
-        }
-        return Utils.doesSupportHeaders() || super.shouldOverrideUrlLoading(view, url);
+        return false;
+//        if (!mIntentUtils.startActivityForUrl(view, url) && Utils.doesSupportHeaders()) {
+//            view.loadUrl(url);
+//        }
+//        return Utils.doesSupportHeaders() || super.shouldOverrideUrlLoading(view, url);
     }
 
 }
