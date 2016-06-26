@@ -61,12 +61,17 @@ public class BaseActivity extends AppCompatActivity{
         return isNewTab;
     }
 
-    public void startBrowser(Activity act, String url, String word) {
+    public void startBrowserFromSearch(Activity act, String url, String word) {
+        startBrowser(act, url, word, isNewTab(getIntent()));
+        act.finish();
+    }
+
+    public void startBrowser(Activity act, String url, String word, boolean isNewTab) {
         Intent intent = new Intent(act, MainActivity.class);
         intent.setAction(ACTION_INNER_BROWSE);
         intent.putExtra(NAME_URL, url);
         intent.putExtra(NAME_WORD, word);
-        intent.putExtra(NEW_TAB, isNewTab(getIntent()));
+        intent.putExtra(NEW_TAB, isNewTab);
         act.startActivity(intent);
     }
 

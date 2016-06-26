@@ -46,39 +46,11 @@ public class EnterActivity extends BaseActivity implements DrawerLayoutAdapter.O
     public void onResume() {
         super.onResume();
         MobclickAgent.onResume(this);
-        refreshMultiWindow(mDrawerLayout.isDrawerOpen(Gravity.LEFT));
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        checkIntentData(intent);
     }
 
     public void onPause() {
         super.onPause();
         MobclickAgent.onPause(this);
-    }
-
-    public void refreshMultiWindow(boolean isDrawerOpen) {
-        TextView countView = (TextView)findViewById(R.id.multi_window);
-        int count = SearcherWebViewManager.instance().getWebViewCount();
-        if(countView != null) {
-            if(count == 0) {
-                countView.setVisibility(View.GONE);
-            }else {
-                if(isDrawerOpen) {
-                    countView.setVisibility(View.GONE);
-                }else{
-                    countView.setVisibility(View.VISIBLE);
-                }
-                String countStr = count + "";
-                if (count > 9) {
-                    countStr = "*";
-                }
-                countView.setText(countStr);
-            }
-        }
     }
 
     private void init() {
@@ -88,7 +60,7 @@ public class EnterActivity extends BaseActivity implements DrawerLayoutAdapter.O
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
                     if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                        startActivity(new Intent(EnterActivity.this, SearchActivity.class));
+                        startSearch(true);
                         return true;
                     }
                     return false;
@@ -112,7 +84,6 @@ public class EnterActivity extends BaseActivity implements DrawerLayoutAdapter.O
                 findViewById(R.id.title).setVisibility(View.GONE);
                 findViewById(R.id.search).setVisibility(View.VISIBLE);
                 findViewById(R.id.search).requestFocus();
-                refreshMultiWindow(false);
             }
 
             @Override
@@ -123,7 +94,6 @@ public class EnterActivity extends BaseActivity implements DrawerLayoutAdapter.O
             public void onDrawerOpened(View drawerView) {
                 findViewById(R.id.title).setVisibility(View.VISIBLE);
                 findViewById(R.id.search).setVisibility(View.GONE);
-                refreshMultiWindow(true);
             }
         };
         mDrawerLayout.addDrawerListener(mDrawerToggle);
@@ -134,16 +104,6 @@ public class EnterActivity extends BaseActivity implements DrawerLayoutAdapter.O
             }
         }, 200);
         setWebSiteFragment();
-        checkIntentData(getIntent());
-    }
-
-    private void checkIntentData(Intent intent) {
-        if (intent != null) {
-            String url = intent.getDataString();
-            if (!TextUtils.isEmpty(url)) {
-                startBrowser(EnterActivity.this, url, "");
-            }
-        }
     }
 
     private ArrayList<DrawerLayoutAdapter.TypeBean> getData() {
@@ -170,12 +130,6 @@ public class EnterActivity extends BaseActivity implements DrawerLayoutAdapter.O
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        SearcherWebViewManager.instance().shutdown();
-    }
-
-    @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         mDrawerToggle.onConfigurationChanged(newConfig);
@@ -199,7 +153,7 @@ public class EnterActivity extends BaseActivity implements DrawerLayoutAdapter.O
                 break;
             case DrawerLayoutAdapter.HOT_LIST:
                 String url = UrlUtils.smartUrlFilter(bean.url, true, bean.url);
-                startBrowser(EnterActivity.this, url, bean.content);
+                startBrowser(EnterActivity.this, url, bean.content, true);
                 break;
             case DrawerLayoutAdapter.VERSION:
                 break;

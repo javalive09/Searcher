@@ -1,11 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/recent_search_item"
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="40dp"
-    android:drawableLeft="@drawable/search_small"
-    android:background="@drawable/list_item_selector"
-    android:singleLine="true"
-    android:gravity="center_vertical"
-    android:paddingLeft="7dp"
-    android:paddingRight="7dp" />
+    android:orientation="horizontal">
+
+    <TextView
+        android:id="@+id/recent_search_item"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_weight="1"
+        android:background="@drawable/list_item_selector"
+        android:drawableLeft="@drawable/search_small"
+        android:gravity="center_vertical"
+        android:paddingLeft="7dp"
+        android:paddingRight="7dp"
+        android:singleLine="true" />
+
+    <ImageView
+        android:id="@+id/choose"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/up_choise"
+        android:background="@drawable/menu_selector"/>
+
+</LinearLayout>

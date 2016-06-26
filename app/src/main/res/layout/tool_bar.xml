@@ -16,19 +16,8 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:hint="@string/search"
-            android:textColorHint="@color/lighter_gray"/>
-
-        <TextView
-            android:id="@+id/multi_window"
-            android:layout_width="@dimen/title_h"
-            android:layout_height="match_parent"
-            android:layout_gravity="right|center_vertical"
-            android:background="@drawable/multi_window_top_selector"
-            android:gravity="center"
-            android:onClick="onClick"
-            android:textColor="@color/edit_text_color"
-            android:textSize="10sp"
-            android:textStyle="bold" />
+            android:textColorHint="@color/edit_text_color"
+            android:theme="@style/MyEditText"/>
 
         <TextView
             android:id="@+id/title"

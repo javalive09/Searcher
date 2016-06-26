@@ -82,8 +82,7 @@ public class EngineViewPagerFragment extends Fragment implements View.OnClickLis
                 if (!TextUtils.isEmpty(searchWord)) {
                     Engine engine = (Engine) v.getTag(R.id.grid_view_item);
                     String url = UrlUtils.smartUrlFilter(searchWord, true, engine.url);
-                    searchAct.startBrowser(getActivity(), url, searchWord);
-                    searchAct.finish();
+                    searchAct.startBrowserFromSearch(getActivity(), url, searchWord);
                 }
                 break;
             default:

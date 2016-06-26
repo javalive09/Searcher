@@ -52,8 +52,7 @@ public class CommonWebSiteFragment extends Fragment implements View.OnClickListe
                 BaseActivity baseActivity = (BaseActivity) (getActivity());
                 WebSiteBean bean = (WebSiteBean) v.getTag();
                 if (bean != null) {
-                    baseActivity.startBrowser(getActivity(), bean.url, bean.title);
-                    baseActivity.finish();
+                    baseActivity.startBrowser(getActivity(), bean.url, bean.title, true);
                 }
                 break;
             default:

@@ -9,6 +9,7 @@
     <item name="hot_list_favorite" type="id"/>
     <item name="hot_list_history" type="id"/>
     <item name="hot_list_setting" type="id"/>
+    <item name="recent_search" type="id"/>
 
     <item name="hot_list_share_app" type="id"/>
     <item name="hot_list_clear_cache" type="id"/>

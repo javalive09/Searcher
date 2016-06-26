@@ -57,6 +57,7 @@ public class UpdateController {
             return;
         }
         isChecking = true;
+        setCheckedTime(System.currentTimeMillis());
 
         if(handler.isActDestory()) {
             return;
@@ -147,8 +148,6 @@ public class UpdateController {
                         finished = true;
                     }
 
-                    //下载成功后设置更新时间
-                    setUpdateTime(System.currentTimeMillis());
                 } catch (MalformedURLException e) {
                     e.printStackTrace();
                 } catch (IOException e) {
@@ -245,7 +244,7 @@ public class UpdateController {
     }
 
     protected void autoCheckVersion(final AsynWindowHandler handler) {
-        long time = getUpdateTime();
+        long time = getCheckedTime();
         if (time == 0) {
             checkVersion(handler, false);
         } else {
@@ -256,14 +255,13 @@ public class UpdateController {
         }
     }
 
-    private long getUpdateTime() {
+    private long getCheckedTime() {
         return mContext.getSharedPreferences("updateTime", Context.MODE_PRIVATE).getLong("lastTime", 0);
     }
 
-    private void setUpdateTime(long time) {
+    private void setCheckedTime(long time) {
         mContext.getSharedPreferences("updateTime", Context.MODE_PRIVATE).edit().putLong("lastTime",
                 time).commit();
     }
-
 
 }

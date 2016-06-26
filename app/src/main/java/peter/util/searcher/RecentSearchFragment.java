@@ -8,6 +8,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
@@ -44,13 +45,18 @@ public class RecentSearchFragment extends Fragment implements View.OnClickListen
 
     @Override
     public void onClick(View v) {
+        Bean bean = (Bean) ((View)v.getParent()).getTag();
         switch (v.getId()) {
             case R.id.recent_search_item:
-                Bean bean = (Bean) v.getTag();
                 if (bean != null) {
                     SearchActivity searchActivity = (SearchActivity) getActivity();
-                    searchActivity.startBrowser(getActivity(), bean.url, bean.name);
-                    searchActivity.finish();
+                    searchActivity.startBrowserFromSearch(getActivity(), bean.url, bean.name);
+                }
+                break;
+            case R.id.choose:
+                if(bean != null) {
+                    SearchActivity searchActivity = (SearchActivity) getActivity();
+                    searchActivity.setSearchWord(bean.name);
                 }
                 break;
         }
@@ -148,18 +154,30 @@ public class RecentSearchFragment extends Fragment implements View.OnClickListen
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
+            Holder holder;
             if (convertView == null) {
                 convertView = factory.inflate(R.layout.recent_search_item, parent, false);
+                holder = new Holder();
+                holder.content = (TextView) convertView.findViewById(R.id.recent_search_item);
+                holder.choice = (ImageView) convertView.findViewById(R.id.choose);
+                convertView.setTag(R.id.recent_search, holder);
+            }else {
+                holder = (Holder) convertView.getTag(R.id.recent_search);
             }
 
-            TextView view = (TextView) convertView;
             Bean search = getItem(position);
-            view.setText(search.name);
-            view.setOnClickListener(f);
-            view.setOnLongClickListener(f);
-            view.setTag(search);
-            return view;
+            holder.content.setText(search.name);
+            holder.content.setOnClickListener(f);
+            holder.content.setOnLongClickListener(f);
+            convertView.setTag(search);
+            holder.choice.setOnClickListener(f);
+            return convertView;
         }
+    }
+
+    static class Holder{
+        TextView content;
+        ImageView choice;
     }
 
     private void popupMenu(final View view) {

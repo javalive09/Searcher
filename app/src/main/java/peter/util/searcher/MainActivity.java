@@ -1,6 +1,8 @@
 package peter.util.searcher;
 
 import android.annotation.TargetApi;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Build;
@@ -44,7 +46,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         if (intent != null) {
             Set<String> category = intent.getCategories();
             if (category != null && category.contains(Intent.CATEGORY_LAUNCHER)) {//launcher invoke
-                startSearch(true);
+                startActivity(new Intent(MainActivity.this, EnterActivity.class));
                 finish();
             } else {
                 checkIntentData(intent);
@@ -109,7 +111,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             if (searcherWebView != null && searcherWebView.canGoBack()) {
                 searcherWebView.goBack();
             }else{
-                exit();
+                finish();
             }
             return true;
         }
@@ -125,6 +127,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             view = SearcherWebViewManager.instance().containUrlView(url);
             if(view != null) {//切换
                 view.setStatusMainColor();
+                SearcherWebViewManager.instance().setCurrentWebView(view);
             }else {//搜索
                 view = SearcherWebViewManager.instance().getCurrentWebView();
                 view.loadUrl(url, searchWord);
@@ -155,6 +158,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        SearcherWebViewManager.instance().shutdown();
         FrameLayout contentFrame = (FrameLayout) findViewById(R.id.content_frame);
         if(contentFrame != null) {
             contentFrame.removeAllViews();
@@ -187,8 +191,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     webView.goForward();
                 }
                 break;
-            case R.id.search:
-                startSearch(false);
+            case R.id.close:
+                finish();
                 break;
 
             case R.id.multi_window:
@@ -217,10 +221,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         sendIntent.setType("text/plain");
                         startActivity(Intent.createChooser(sendIntent, getString(R.string.share_link_title)));
                         break;
-                    case R.id.action_setting:
-                        Intent intent = new Intent(MainActivity.this, SettingActivity.class);
-                        startActivity(intent);
-                        break;
+//                    case R.id.action_setting:
+//                        Intent intent = new Intent(MainActivity.this, SettingActivity.class);
+//                        startActivity(intent);
+//                        break;
                     case R.id.action_collect:
                         SearcherWebView webView = SearcherWebViewManager.instance().getCurrentWebView();
                         if (!TextUtils.isEmpty(webView.getUrl())) {
@@ -231,6 +235,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                             SqliteHelper.instance(MainActivity.this).insertFav(bean);
                             Toast.makeText(MainActivity.this, R.string.favorite_txt, Toast.LENGTH_SHORT).show();
                         }
+                        break;
+                    case R.id.action_copy_link:
+                        url = SearcherWebViewManager.instance().getCurrentWebView().getUrl();
+                        String title = SearcherWebViewManager.instance().getCurrentWebView().getTitle();
+                        ClipboardManager clipboard = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
+                        ClipData clip = ClipData.newPlainText(title, url);
+                        clipboard.setPrimaryClip(clip);
+                        Toast.makeText(MainActivity.this, R.string.copy_link_txt, Toast.LENGTH_SHORT).show();
                         break;
                     case R.id.action_collection:
                         startActivity(new Intent(MainActivity.this, FavoriteActivity.class));

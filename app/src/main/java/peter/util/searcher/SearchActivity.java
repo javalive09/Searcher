@@ -53,6 +53,14 @@ public class SearchActivity extends BaseActivity {
         MobclickAgent.onResume(this);
     }
 
+    public void setSearchWord(String word) {
+        search.setText(word);
+        if(!TextUtils.isEmpty(word)) {
+            int position = word.length();
+            search.setSelection(position);
+        }
+    }
+
     public void onPause() {
         super.onPause();
         MobclickAgent.onPause(this);
@@ -86,8 +94,7 @@ public class SearchActivity extends BaseActivity {
                     if(!TextUtils.isEmpty(searchWord)) {
                         String engineUrl = getString(R.string.default_engine_url);
                         String url = UrlUtils.smartUrlFilter(searchWord, true, engineUrl);
-                        startBrowser(SearchActivity.this, url, searchWord);
-                        finish();
+                        startBrowserFromSearch(SearchActivity.this, url, searchWord);
                         return true;
                     }
                 }
@@ -110,7 +117,7 @@ public class SearchActivity extends BaseActivity {
             public void afterTextChanged(Editable s) {
                 String content = s.toString();
                 if (TextUtils.isEmpty(content)) {
-                    setEngineFragment(WEB_SITES);
+                    setEngineFragment(RECENT_SEARCH);
                     clear.setVisibility(View.INVISIBLE);
                 } else if (!content.equals(temp)) {
                     setEngineFragment(ENGINE_LIST);
@@ -118,7 +125,7 @@ public class SearchActivity extends BaseActivity {
                 }
             }
         });
-        setEngineFragment(WEB_SITES);
+        setEngineFragment(RECENT_SEARCH);
     }
 
     private void setEngineFragment(int f) {

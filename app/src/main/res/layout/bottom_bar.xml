@@ -27,14 +27,14 @@
         android:src="@drawable/bar_forward_selector" />
 
     <ImageView
-        android:id="@+id/search"
+        android:id="@+id/close"
         android:layout_width="0dp"
         android:layout_height="@dimen/bottom_h"
         android:layout_weight="1"
         android:background="@drawable/menu_selector"
         android:onClick="onClick"
         android:scaleType="center"
-        android:src="@drawable/bar_search" />
+        android:src="@drawable/close" />
 
     <TextView
         android:id="@+id/multi_window"

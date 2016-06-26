@@ -36,11 +36,6 @@ public class SearcherWebViewManager {
             SearcherWebView currentWebView = getCurrentWebView();
             return currentWebView;
         } else {
-            for (SearcherWebView tab : mList) {
-                if (tab != null) {
-                    tab.onPause();
-                }
-            }
             SearcherWebView searcherWebView = new SearcherWebView(activity);
             mList.add(searcherWebView);
             setCurrentWebView(searcherWebView);
@@ -60,9 +55,13 @@ public class SearcherWebViewManager {
     }
 
     public void setCurrentWebView(SearcherWebView searcherWebView) {
+        for (SearcherWebView tab : mList) {
+            if (tab != searcherWebView) {
+                tab.onPause();
+            }
+        }
         mCurrentWebView = searcherWebView;
         mCurrentWebView.onResume();
-
     }
 
     private void removeWebView(int position) {
@@ -145,6 +144,7 @@ public class SearcherWebViewManager {
         }
         mList.clear();
         mCurrentWebView = null;
+        manager = null;
     }
 
     /**
