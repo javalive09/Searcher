@@ -56,6 +56,8 @@
     <string name="action_collection">我的收藏</string>
     <string name="action_copy_link">复制链接</string>
     <string name="action_history">搜索记录</string>
+    <string name="action_history_url">浏览记录</string>
+    <string name="action_url_history">浏览记录</string>
     <string name="action_setting">设置</string>
     <string name="action_feedback">反馈</string>
     <string name="action_about">关于速搜</string>

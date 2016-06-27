@@ -40,6 +40,7 @@
     <dimen name="engine_list_item_padding">7dp</dimen>
     <dimen name="input_padding_left">50dp</dimen>
     <dimen name="input_padding_right">35dp</dimen>
+    <dimen name="item_height">45dp</dimen>
 
     <dimen name="shadow_width">15dp</dimen>
     <dimen name="slidingmenu_offset">60dp</dimen>

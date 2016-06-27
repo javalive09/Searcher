@@ -2,13 +2,13 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="40dp"
+    android:layout_height="@dimen/item_height"
     android:orientation="horizontal">
 
     <TextView
         android:id="@+id/recent_search_item"
         android:layout_width="0dp"
-        android:layout_height="40dp"
+        android:layout_height="@dimen/item_height"
         android:layout_weight="1"
         android:background="@drawable/list_item_selector"
         android:drawableLeft="@drawable/search_small"
@@ -19,9 +19,9 @@
 
     <ImageView
         android:id="@+id/choose"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="@dimen/item_height"
+        android:layout_height="@dimen/item_height"
         android:src="@drawable/up_choise"
-        android:background="@drawable/menu_selector"/>
+        android:background="@drawable/list_item_selector"/>
 
 </LinearLayout>

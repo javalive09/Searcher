@@ -29,7 +29,8 @@
         <activity
             android:name=".EnterActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateAlwaysHidden">
+            android:windowSoftInputMode="stateAlwaysHidden"
+            android:launchMode="singleTop">
         </activity>
         <activity
             android:name=".SearchActivity"
@@ -119,6 +120,9 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".HistoryActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".HistoryURLActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".MultiWindowActivity"

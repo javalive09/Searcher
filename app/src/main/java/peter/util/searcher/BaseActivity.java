@@ -35,6 +35,7 @@ public class BaseActivity extends AppCompatActivity{
     public static final String NEW_TAB = "peter.util.searcher.new.tab";
     public static final String NAME_URL = "peter.util.searcher.url";
     public static final String NAME_WORD = "peter.util.searcher.word";
+    public static final String NAME_LAUNCHER = "peter.util.searcher.launcher";
     private static final ArrayList<Activity> LIST = new ArrayList<>();
 
     @Override
@@ -62,9 +63,22 @@ public class BaseActivity extends AppCompatActivity{
         startActivity(intent);
     }
 
+    public void startLauncher() {
+        Intent intent = new Intent(BaseActivity.this, EnterActivity.class);
+        intent.putExtra(NEW_TAB, true);
+        intent.putExtra(NAME_LAUNCHER, true);
+        startActivity(intent);
+        finish();
+    }
+
     public boolean isNewTab(Intent intent){
         boolean isNewTab = intent.getBooleanExtra(NEW_TAB, true);
         return isNewTab;
+    }
+
+    public boolean isLaunchTab(Intent intent) {
+        boolean isLaunchTab = intent.getBooleanExtra(NAME_LAUNCHER, false);
+        return isLaunchTab;
     }
 
     public void startBrowserFromSearch(Activity act, String url, String word) {
@@ -80,6 +94,12 @@ public class BaseActivity extends AppCompatActivity{
 
     public void startHistoryAct() {
         Intent intent = new Intent(BaseActivity.this, HistoryActivity.class);
+        intent.putExtra(NEW_TAB, isNewTab(getIntent()));
+        startActivity(intent);
+    }
+
+    public void startHistorUrlyAct() {
+        Intent intent = new Intent(BaseActivity.this, HistoryURLActivity.class);
         intent.putExtra(NEW_TAB, isNewTab(getIntent()));
         startActivity(intent);
     }
@@ -111,6 +131,7 @@ public class BaseActivity extends AppCompatActivity{
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean(NEW_TAB, isNewTab(getIntent()));
+        outState.putBoolean(NAME_LAUNCHER, isLaunchTab(getIntent()));
     }
 
     protected int clearCacheFolder(final File dir, final int numDays) {

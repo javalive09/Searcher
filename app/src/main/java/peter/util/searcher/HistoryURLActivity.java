@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * Created by peter on 16/5/9.
  */
-public class HistoryActivity extends BaseActivity implements View.OnClickListener, View.OnLongClickListener {
+public class HistoryURLActivity extends BaseActivity implements View.OnClickListener, View.OnLongClickListener {
 
     PopupMenu popup;
     MyAsyncTask asyncTask;
@@ -29,7 +29,7 @@ public class HistoryActivity extends BaseActivity implements View.OnClickListene
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_history);
+        setContentView(R.layout.activity_history_url);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         if (toolbar != null) {
             setSupportActionBar(toolbar);
@@ -54,7 +54,7 @@ public class HistoryActivity extends BaseActivity implements View.OnClickListene
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_delete_all:
-                SqliteHelper.instance(HistoryActivity.this).deleteAllHistory();
+                SqliteHelper.instance(HistoryURLActivity.this).deleteAllHistoryURL();
                 refreshData();
                 return true;
             case R.id.action_exit:
@@ -89,7 +89,7 @@ public class HistoryActivity extends BaseActivity implements View.OnClickListene
             case R.id.history_item:
                 Bean bean = (Bean) v.getTag();
                 if (bean != null) {
-                    startBrowser(HistoryActivity.this, bean.url, bean.name);
+                    startBrowser(HistoryURLActivity.this, bean.url, bean.name);
                 }
                 break;
         }
@@ -107,9 +107,9 @@ public class HistoryActivity extends BaseActivity implements View.OnClickListene
 
     private static class MyAsyncTask extends AsyncTask<Void, Void, List<Bean>> {
 
-        WeakReference<HistoryActivity> wr;
+        WeakReference<HistoryURLActivity> wr;
 
-        public MyAsyncTask(HistoryActivity act) {
+        public MyAsyncTask(HistoryURLActivity act) {
             wr = new WeakReference<>(act);
         }
 
@@ -119,7 +119,7 @@ public class HistoryActivity extends BaseActivity implements View.OnClickListene
             List<Bean> searches = null;
             if (act != null) {
                 try {
-                    searches = SqliteHelper.instance(act).queryAllHistory();
+                    searches = SqliteHelper.instance(act).queryAllHistoryURL();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -130,7 +130,7 @@ public class HistoryActivity extends BaseActivity implements View.OnClickListene
         @Override
         protected void onPostExecute(List<Bean> beans) {
             super.onPostExecute(beans);
-            HistoryActivity act = wr.get();
+            HistoryURLActivity act = wr.get();
             if (act != null) {
                 View loading = act.findViewById(R.id.loading);
                 if (loading != null) {
@@ -139,26 +139,28 @@ public class HistoryActivity extends BaseActivity implements View.OnClickListene
 
                 if (beans != null) {
                     ListView history = (ListView) act.findViewById(R.id.history);
-                    if (history != null) {
+                    if(history != null) {
                         Adapter adapter = history.getAdapter();
                         if (adapter == null) {
                             history.setAdapter(new HistoryAdapter(beans, act));
                         } else {
-                            ((HistoryAdapter) adapter).updateData(beans);
+                            ((HistoryAdapter)adapter).updateData(beans);
                         }
                     }
                 }
             }
+
         }
+
     }
 
     private static class HistoryAdapter extends BaseAdapter {
 
         private final LayoutInflater factory;
-        HistoryActivity act;
+        HistoryURLActivity act;
         private List<Bean> list;
 
-        public HistoryAdapter(List<Bean> objects, HistoryActivity act) {
+        public HistoryAdapter(List<Bean> objects, HistoryURLActivity act) {
             this.act = act;
             factory = LayoutInflater.from(act);
             list = objects;
@@ -206,14 +208,14 @@ public class HistoryActivity extends BaseActivity implements View.OnClickListene
 
     private void popupMenu(final View view) {
         dismissPopupMenu();
-        popup = new PopupMenu(HistoryActivity.this, view);
+        popup = new PopupMenu(HistoryURLActivity.this, view);
         popup.getMenuInflater().inflate(R.menu.item, popup.getMenu());
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.action_delete:
                         Bean bean = (Bean) view.getTag();
-                        SqliteHelper.instance(HistoryActivity.this).deleteHistory(bean);
+                        SqliteHelper.instance(HistoryURLActivity.this).deleteHistoryURL(bean);
                         refreshData();
                         break;
                 }

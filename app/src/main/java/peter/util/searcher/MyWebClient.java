@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.media.MediaPlayer;
 import android.net.MailTo;
 import android.net.http.SslError;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Message;
 import android.support.annotation.NonNull;
@@ -38,12 +39,10 @@ import java.util.Map;
 public class MyWebClient extends WebViewClient {
     private MainActivity mActivity;
     private SearcherWebView searcherWebView;
-    private IntentUtils mIntentUtils;
 
     public MyWebClient(SearcherWebView view, MainActivity activity) {
         this.mActivity = activity;
         this.searcherWebView = view;
-        mIntentUtils = new IntentUtils(activity);
     }
 
     @Override
@@ -54,13 +53,29 @@ public class MyWebClient extends WebViewClient {
         searcherWebView.resetCacheMode();
         searcherWebView.setStatusLevel(0);
         searcherWebView.setOptStatus(view);
+        saveUrlData(searcherWebView.getTitle(), url);
     }
 
     @Override
     public void onPageStarted(WebView view, String url, Bitmap favicon) {
         searcherWebView.setStatusLevel(1);
         searcherWebView.setOptStatus(view);
+        searcherWebView.setStatusMainColor();
         Log.i("peter", "url=" + url);
+    }
+
+    private void saveUrlData(final String title, final String url) {
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                Bean search = new Bean();
+                search.name = title;
+                search.time = System.currentTimeMillis();
+                search.url = url;
+                SqliteHelper.instance(mActivity).insertHistoryURL(search);
+                return null;
+            }
+        }.execute();
     }
 
     @Override

@@ -32,6 +32,7 @@ public class WebHintFragment extends Fragment implements View.OnClickListener {
     View rootView;
     MyAsyncTask asyncTask;
     static final String webHintUrl = "http://unionsug.baidu.com/su/?wd=%s";
+    static final int LIMIT = 5;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -123,7 +124,7 @@ public class WebHintFragment extends Fragment implements View.OnClickListener {
                 int end = result.indexOf("]");
                 result = result.substring(start, end);
                 String[] strs = result.split(",");
-                int size = strs.length > 5 ? 5 : strs.length;
+                int size = strs.length > LIMIT ? LIMIT : strs.length;
                 List<Bean> searches = new ArrayList<>();
                 for (int i = 0; i < size; i++) {
                     if (!TextUtils.isEmpty(strs[i])) {

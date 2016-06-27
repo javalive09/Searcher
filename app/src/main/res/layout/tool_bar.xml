@@ -16,7 +16,6 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:hint="@string/search"
-            android:textColorHint="@color/edit_text_color"
             android:theme="@style/MyEditText"/>
 
         <TextView
@@ -26,6 +25,7 @@
             android:layout_gravity="center_vertical"
             android:background="@color/title_bg"
             android:gravity="center_vertical"
+            android:textColor="@android:color/white"
             android:text="速搜"
             android:textSize="17sp"
             android:visibility="gone" />

@@ -27,7 +27,6 @@
                 android:selectAllOnFocus="true"
                 android:singleLine="true"
                 android:textColor="@color/edit_text_color"
-                android:textColorHint="@color/edit_text_color"
                 android:theme="@style/MyEditText" />
 
             <ImageView

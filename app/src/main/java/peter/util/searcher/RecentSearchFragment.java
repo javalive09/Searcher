@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * Created by peter on 16/5/9.
  */
-public class RecentSearchFragment extends Fragment implements View.OnClickListener, View.OnLongClickListener{
+public class RecentSearchFragment extends Fragment implements View.OnClickListener, View.OnLongClickListener {
 
     View rootView;
     PopupMenu popup;
@@ -45,7 +45,7 @@ public class RecentSearchFragment extends Fragment implements View.OnClickListen
 
     @Override
     public void onClick(View v) {
-        Bean bean = (Bean) ((View)v.getParent()).getTag();
+        Bean bean = (Bean) ((View) v.getParent()).getTag();
         switch (v.getId()) {
             case R.id.recent_search_item:
                 if (bean != null) {
@@ -54,7 +54,7 @@ public class RecentSearchFragment extends Fragment implements View.OnClickListen
                 }
                 break;
             case R.id.choose:
-                if(bean != null) {
+                if (bean != null) {
                     SearchActivity searchActivity = (SearchActivity) getActivity();
                     searchActivity.setSearchWord(bean.name);
                 }
@@ -110,13 +110,18 @@ public class RecentSearchFragment extends Fragment implements View.OnClickListen
         @Override
         protected void onPostExecute(List<Bean> beans) {
             super.onPostExecute(beans);
-            if (beans != null) {
-                RecentSearchFragment f = wr.get();
-                if (f != null) {
-                    if (!f.isDetached()) {
-                        f.rootView.findViewById(R.id.loading).setVisibility(View.GONE);
+            RecentSearchFragment f = wr.get();
+            if (f != null) {
+                if (!f.isDetached()) {
+                    View loading = f.rootView.findViewById(R.id.loading);
+                    if (loading != null) {
+                        loading.setVisibility(View.GONE);
+                    }
+                    if (beans != null) {
                         ListView recentSearch = (ListView) f.rootView.findViewById(R.id.recent_search);
-                        recentSearch.setAdapter(new RecentSearchAdapter(beans, f));
+                        if(recentSearch != null) {
+                            recentSearch.setAdapter(new RecentSearchAdapter(beans, f));
+                        }
                     }
                 }
             }
@@ -161,7 +166,7 @@ public class RecentSearchFragment extends Fragment implements View.OnClickListen
                 holder.content = (TextView) convertView.findViewById(R.id.recent_search_item);
                 holder.choice = (ImageView) convertView.findViewById(R.id.choose);
                 convertView.setTag(R.id.recent_search, holder);
-            }else {
+            } else {
                 holder = (Holder) convertView.getTag(R.id.recent_search);
             }
 
@@ -175,7 +180,7 @@ public class RecentSearchFragment extends Fragment implements View.OnClickListen
         }
     }
 
-    static class Holder{
+    static class Holder {
         TextView content;
         ImageView choice;
     }
@@ -201,13 +206,13 @@ public class RecentSearchFragment extends Fragment implements View.OnClickListen
     }
 
     private void dismissPopupMenu() {
-        if(popup != null) {
+        if (popup != null) {
             popup.dismiss();
         }
     }
 
     private void cancelAsyncTask() {
-        if(asyncTask != null && !asyncTask.isCancelled()) {
+        if (asyncTask != null && !asyncTask.isCancelled()) {
             asyncTask.cancel(true);
         }
     }

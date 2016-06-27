@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.webkit.WebView;
@@ -46,8 +47,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         if (intent != null) {
             Set<String> category = intent.getCategories();
             if (category != null && category.contains(Intent.CATEGORY_LAUNCHER)) {//launcher invoke
-                startActivity(new Intent(MainActivity.this, EnterActivity.class));
-                finish();
+                startLauncher();
             } else {
                 checkIntentData(intent);
             }
@@ -133,7 +133,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         FrameLayout contentFrame = (FrameLayout) findViewById(R.id.content_frame);
         if (contentFrame != null && view != null) {
             contentFrame.removeAllViews();
-            contentFrame.addView(view.getRootView());
+            View content = view.getRootView();
+            ViewGroup parent = (ViewGroup) content.getParent();
+            if(parent != null) {
+                parent.removeAllViews();
+            }
+            contentFrame.addView(content);
         }
     }
 

@@ -8,6 +8,7 @@
     <item name="hot_list_id_week_weather" type="id"/>
     <item name="hot_list_favorite" type="id"/>
     <item name="hot_list_history" type="id"/>
+    <item name="hot_list_url_history" type="id"/>
     <item name="hot_list_setting" type="id"/>
     <item name="recent_search" type="id"/>
 
