@@ -50,14 +50,20 @@ public class BaseActivity extends AppCompatActivity{
     }
 
     protected void exit() {
-        SearcherWebViewManager.instance().clearAllWebViews();
         for(Activity act: LIST) {
             act.finish();
         }
+        SearcherWebViewManager.instance().clear();
+    }
+
+    public void startHome(boolean isNewTab) {
+        Intent intent = new Intent(BaseActivity.this, EnterActivity.class);
+        intent.putExtra(NEW_TAB, isNewTab);
+        startActivity(intent);
     }
 
     public boolean isNewTab(Intent intent){
-        boolean isNewTab = intent.getBooleanExtra(NEW_TAB, false);
+        boolean isNewTab = intent.getBooleanExtra(NEW_TAB, true);
         return isNewTab;
     }
 
@@ -66,13 +72,29 @@ public class BaseActivity extends AppCompatActivity{
         act.finish();
     }
 
-    public void startBrowser(Activity act, String url, String word, boolean isNewTab) {
+    public void startFavAct() {
+        Intent intent = new Intent(BaseActivity.this, FavoriteActivity.class);
+        intent.putExtra(NEW_TAB, isNewTab(getIntent()));
+        startActivity(intent);
+    }
+
+    public void startHistoryAct() {
+        Intent intent = new Intent(BaseActivity.this, HistoryActivity.class);
+        intent.putExtra(NEW_TAB, isNewTab(getIntent()));
+        startActivity(intent);
+    }
+
+    private void startBrowser(Activity act, String url, String word, boolean isNewTab) {
         Intent intent = new Intent(act, MainActivity.class);
         intent.setAction(ACTION_INNER_BROWSE);
         intent.putExtra(NAME_URL, url);
         intent.putExtra(NAME_WORD, word);
         intent.putExtra(NEW_TAB, isNewTab);
         act.startActivity(intent);
+    }
+
+    public void startBrowser(Activity act, String url, String word) {
+        startBrowser(act, url, word, isNewTab(getIntent()));
     }
 
     public void switchBrowser(Activity act, String url) {
@@ -83,6 +105,12 @@ public class BaseActivity extends AppCompatActivity{
         Intent intent = new Intent(BaseActivity.this, SearchActivity.class);
         intent.putExtra(NEW_TAB,isNewTab);
         startActivity(intent);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(NEW_TAB, isNewTab(getIntent()));
     }
 
     protected int clearCacheFolder(final File dir, final int numDays) {

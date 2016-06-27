@@ -36,7 +36,6 @@ public class SearcherWebView {
     private View progressBar;
     private MainActivity activity;
     private View rootView;
-    private int curShowColor;
     private int mainColor = -1;
     private ValueAnimator colorAnimation;
 
@@ -58,7 +57,7 @@ public class SearcherWebView {
     }
 
     public void resetCacheMode() {
-        if(webview.getSettings().getCacheMode() != WebSettings.LOAD_DEFAULT) {
+        if (webview.getSettings().getCacheMode() != WebSettings.LOAD_DEFAULT) {
             webview.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
         }
     }
@@ -71,14 +70,14 @@ public class SearcherWebView {
     }
 
     public int getMainColor() {
-        if(mainColor == -1) {
+        if (mainColor == -1) {
             mainColor = activity.getResources().getColor(R.color.colorPrimary);
         }
         return mainColor;
     }
 
     public void setStatusMainColor() {
-        if(colorAnimation != null) {
+        if (colorAnimation != null) {
             colorAnimation.cancel();
         }
         refreshStatusColor(getMainColor());
@@ -92,34 +91,27 @@ public class SearcherWebView {
     }
 
     public void setMainColor(Bitmap favicon) {
-        if(colorAnimation != null) {
+        if (colorAnimation != null) {
             colorAnimation.cancel();
         }
         Palette.from(favicon).generate(new Palette.PaletteAsyncListener() {
 
             @Override
             public void onGenerated(Palette palette) {
-                int defaultColor = activity.getMainColor();
-                int curColor = palette.getVibrantColor(defaultColor);
-                if (curShowColor != curColor) {
-                    curShowColor = curColor;
-                    mainColor = getSearchBarColor(curColor);
-                    if (defaultColor != mainColor) {
-                        activity.setMainColor(mainColor);
-                        colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), defaultColor, mainColor);
-                        colorAnimation.setDuration(600); // milliseconds
-                        colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                mainColor = getSearchBarColor(palette.getVibrantColor(getMainColor()));//real main color
+                int currentActCur = activity.getCurColor() == -1 ? getMainColor() : activity.getCurColor();
+                colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), currentActCur, mainColor);
+                colorAnimation.setDuration(300); // milliseconds
+                colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
 
-                            @Override
-                            public void onAnimationUpdate(ValueAnimator animator) {
-                                int animColor = (int) animator.getAnimatedValue();
-                                refreshStatusColor(animColor);
-                            }
-
-                        });
-                        colorAnimation.start();
+                    @Override
+                    public void onAnimationUpdate(ValueAnimator animator) {
+                        int animColor = (int) animator.getAnimatedValue();
+                        refreshStatusColor(animColor);
                     }
-                }
+
+                });
+                colorAnimation.start();
             }
         });
     }
@@ -213,21 +205,21 @@ public class SearcherWebView {
     public void setOptStatus(WebView view) {
         final View back = activity.findViewById(R.id.back);
         if (view.canGoBack()) {
-            if(back != null && !back.isEnabled()) {
+            if (back != null && !back.isEnabled()) {
                 back.setEnabled(true);
             }
         } else {
-            if(back != null && back.isEnabled()) {
+            if (back != null && back.isEnabled()) {
                 back.setEnabled(false);
             }
         }
         final View go = activity.findViewById(R.id.go);
         if (view.canGoForward()) {
-            if(go != null && !go.isEnabled()) {
+            if (go != null && !go.isEnabled()) {
                 go.setEnabled(true);
             }
         } else {
-            if(go != null && go.isEnabled()) {
+            if (go != null && go.isEnabled()) {
                 go.setEnabled(false);
             }
         }

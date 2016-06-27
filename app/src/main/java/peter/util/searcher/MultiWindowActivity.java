@@ -60,9 +60,10 @@ public class MultiWindowActivity extends BaseActivity {
             public void onViewDismissed(SearcherWebView item) {
                 SearcherWebViewManager.instance().removeWebView(item);
                 if (SearcherWebViewManager.instance().getWebViewCount() > 0) {
+                    SearcherWebViewManager.instance().setDefaultCurrentWebView();
                     mDeckView.notifyDataSetChanged();
                 } else {
-                    exit();
+                    startBrowser(MultiWindowActivity.this, "", "");
                 }
             }
 
@@ -98,11 +99,17 @@ public class MultiWindowActivity extends BaseActivity {
             newTab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    startSearch(true);
+                    startHome(true);
                 }
             });
         }
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        SearcherWebView view = SearcherWebViewManager.instance().getCurrentWebView();
+        switchBrowser(MultiWindowActivity.this, view.getUrl());
     }
 
     private void loadViewDataInternal(SearcherWebView item, final WeakReference<DeckChildView<SearcherWebView>> weakView) {

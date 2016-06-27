@@ -31,7 +31,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private static final int API = Build.VERSION.SDK_INT;
     private View bottomBar;
-    private int mainColor = -1;
+    private int curColor = -1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -55,18 +55,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     public void setBottomBarColor(int animColor) {
+        curColor = animColor;
         bottomBar.setBackgroundColor(animColor);
     }
 
-    public void setMainColor(int color) {
-        mainColor = color;
-    }
-
-    public int getMainColor() {
-        if(mainColor == -1) {
-            mainColor = getResources().getColor(R.color.colorPrimary);
-        }
-        return mainColor;
+    public int getCurColor() {
+        return curColor;
     }
 
     @Override
@@ -94,6 +88,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 if (!TextUtils.isEmpty(url)) {
                     String searchWord = intent.getStringExtra(NAME_WORD);
                     loadUrl(url, searchWord, isNewTab(intent));
+                }else {// url null finish
+                    finish();
                 }
             } else if (Intent.ACTION_VIEW.equals(action)) { // outside invoke
                 String url = intent.getDataString();
@@ -158,11 +154,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        SearcherWebViewManager.instance().shutdown();
-        FrameLayout contentFrame = (FrameLayout) findViewById(R.id.content_frame);
-        if(contentFrame != null) {
-            contentFrame.removeAllViews();
-        }
     }
 
     public void refreshMultiWindow() {
@@ -192,9 +183,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 }
                 break;
             case R.id.home:
-                startActivity(new Intent(MainActivity.this, EnterActivity.class));
+                startHome(false);
                 break;
-
             case R.id.multi_window:
                 startActivity(new Intent(MainActivity.this, MultiWindowActivity.class));
                 break;

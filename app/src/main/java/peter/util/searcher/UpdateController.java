@@ -92,15 +92,14 @@ public class UpdateController {
                             if (!TextUtils.isEmpty(url)) {
                                 String content = "";
                                 if(results.length > 2) {
-                                    for (int i =2, len = results.length - 1; i < len; i++) {
-                                        content += results[i].trim();
+                                    for (int i =2, len = results.length; i < len; i++) {
+                                        content += results[i].trim() + "\n";
                                     }
                                 }
 
                                 Message msg = Message.obtain();
                                 msg.what = AsynWindowHandler.SHOW_NEW_UPDATE_DIALOG;
                                 Bundle bundle = new Bundle();
-                                bundle.putString("version", version+ "");
                                 bundle.putString("url", url);
                                 bundle.putString("content", content);
                                 msg.setData(bundle);

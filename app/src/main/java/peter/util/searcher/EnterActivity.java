@@ -141,10 +141,10 @@ public class EnterActivity extends BaseActivity implements DrawerLayoutAdapter.O
             case DrawerLayoutAdapter.CUSTOM:
                 switch (bean.id) {
                     case R.id.hot_list_favorite:
-                        startActivity(new Intent(EnterActivity.this, FavoriteActivity.class));
+                        startFavAct();
                         break;
                     case R.id.hot_list_history:
-                        startActivity(new Intent(EnterActivity.this, HistoryActivity.class));
+                        startHistoryAct();
                         break;
                     case R.id.hot_list_setting:
                         startActivity(new Intent(EnterActivity.this, SettingActivity.class));
@@ -153,7 +153,7 @@ public class EnterActivity extends BaseActivity implements DrawerLayoutAdapter.O
                 break;
             case DrawerLayoutAdapter.HOT_LIST:
                 String url = UrlUtils.smartUrlFilter(bean.url, true, bean.url);
-                startBrowser(EnterActivity.this, url, bean.content, true);
+                startBrowser(EnterActivity.this, url, bean.content);
                 break;
             case DrawerLayoutAdapter.VERSION:
                 break;

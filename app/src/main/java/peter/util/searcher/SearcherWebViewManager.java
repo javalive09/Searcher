@@ -54,6 +54,15 @@ public class SearcherWebViewManager {
         return null;
     }
 
+    public SearcherWebView setDefaultCurrentWebView() {
+        if(mList.size() > 0) {
+            SearcherWebView webView = mList.get(mList.size() - 1);
+            setCurrentWebView(webView);
+            return webView;
+        }
+        return null;
+    }
+
     public void setCurrentWebView(SearcherWebView searcherWebView) {
         for (SearcherWebView tab : mList) {
             if (tab != searcherWebView) {
@@ -77,14 +86,6 @@ public class SearcherWebViewManager {
             }
         }
         tab.onDestroy();
-    }
-
-    public void clearAllWebViews() {
-        for (SearcherWebView view : mList) {
-            view.onDestroy();
-        }
-        mList.clear();
-        mCurrentWebView = null;
     }
 
     public void removeWebView(SearcherWebView view) {
@@ -142,6 +143,10 @@ public class SearcherWebViewManager {
         for (SearcherWebView tab : mList) {
             tab.onDestroy();
         }
+        clear();
+    }
+
+    public void clear() {
         mList.clear();
         mCurrentWebView = null;
         manager = null;
