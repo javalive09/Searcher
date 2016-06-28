@@ -116,7 +116,6 @@ public class EnterActivity extends BaseActivity implements DrawerLayoutAdapter.O
                     Toast.makeText(this, R.string.exit_hint, Toast.LENGTH_SHORT).show();
                     mExitTime = System.currentTimeMillis();// 更新mExitTime
                 } else {
-                    SearcherWebViewManager.instance().shutdown();
                     finish();
                 }
                 return true;
