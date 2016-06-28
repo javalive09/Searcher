@@ -46,16 +46,23 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         bottomBar = findViewById(R.id.bottom_bar);
         final View search = findViewById(R.id.search);
         if(search != null) {
-            search.setOnTouchListener(new View.OnTouchListener() {
+            search.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                        startSearch(false);
-                        return true;
-                    }
-                    return false;
+                public void onClick(View v) {
+                    startSearch(false);
                 }
             });
+            search.setLongClickable(false);
+//            search.setOnTouchListener(new View.OnTouchListener() {
+//                @Override
+//                public boolean onTouch(View v, MotionEvent event) {
+//                    if (event.getAction() == MotionEvent.ACTION_UP) {
+//                        startSearch(false);
+//                        return true;
+//                    }
+//                    return true;
+//                }
+//            });
         }
         Intent intent = getIntent();
         if (intent != null) {

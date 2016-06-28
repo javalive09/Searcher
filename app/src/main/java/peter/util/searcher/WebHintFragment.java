@@ -58,10 +58,12 @@ public class WebHintFragment extends Fragment implements View.OnClickListener {
             case R.id.recent_search_item:
                 if (bean != null) {
                     SearchActivity searchActivity = (SearchActivity) getActivity();
-                    String searchWord = bean.name;
-                    String engineUrl = getString(R.string.default_engine_url);
-                    String url = UrlUtils.smartUrlFilter(searchWord, true, engineUrl);
-                    searchActivity.startBrowserFromSearch(getActivity(), url, searchWord);
+//                    String searchWord = bean.name;
+//                    String engineUrl = getString(R.string.default_engine_url);
+//                    String url = UrlUtils.smartUrlFilter(searchWord, true, engineUrl);
+//                    searchActivity.startBrowserFromSearch(getActivity(), url, searchWord);
+                    searchActivity.setSearchWord(bean.name);
+                    searchActivity.setEngineFragment(SearchActivity.ENGINE_LIST);
                 }
                 break;
             case R.id.choose:
@@ -167,6 +169,10 @@ public class WebHintFragment extends Fragment implements View.OnClickListener {
                 WebHintFragment f = wr.get();
                 if (f != null) {
                     if (!f.isDetached()) {
+                        View loading = f.rootView.findViewById(R.id.loading);
+                        if (loading != null) {
+                            loading.setVisibility(View.GONE);
+                        }
                         ListView recentSearch = (ListView) f.rootView.findViewById(R.id.hint_list);
                         RecentSearchAdapter adapter = (RecentSearchAdapter) recentSearch.getAdapter();
                         if(adapter == null) {

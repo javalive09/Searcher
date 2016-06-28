@@ -36,6 +36,7 @@ public class EngineViewPagerFragment extends Fragment implements View.OnClickLis
     String url = "http://7xoxmg.com1.z0.glb.clouddn.com/engines.json";
     private SlidingTabLayout mSlidingTabLayout;
     private ViewPager mViewPager;
+    View rootView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -45,7 +46,7 @@ public class EngineViewPagerFragment extends Fragment implements View.OnClickLis
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_engine_viewpager, container, false);
+        rootView = inflater.inflate(R.layout.fragment_engine_viewpager, container, false);
         mViewPager = (ViewPager) rootView.findViewById(R.id.viewpager);
         mSlidingTabLayout = (SlidingTabLayout) rootView.findViewById(R.id.sliding_tabs);
         init();
@@ -64,6 +65,10 @@ public class EngineViewPagerFragment extends Fragment implements View.OnClickLis
 
             @Override
             public void onResponse(ArrayList<TypeEngines<Engine>> response) {
+                View loading = rootView.findViewById(R.id.loading);
+                if (loading != null) {
+                    loading.setVisibility(View.GONE);
+                }
                 EnginesAdapter adapter = new EnginesAdapter(EngineViewPagerFragment.this, response);
                 mViewPager.setAdapter(adapter);
                 mSlidingTabLayout.setViewPager(mViewPager);

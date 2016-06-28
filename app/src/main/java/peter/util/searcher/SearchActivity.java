@@ -33,13 +33,12 @@ import java.util.ArrayList;
 /**
  * Created by peter on 16/5/19.
  */
-public class SearchActivity extends BaseActivity implements View.OnClickListener{
+public class SearchActivity extends BaseActivity implements View.OnClickListener {
 
     private EditText search;
     private ImageView clear;
-    private TextView cancel;
     private static final String RECENT_SEARCH = "recent_search";
-    private static final String ENGINE_LIST = "engine_list";
+    public static final String ENGINE_LIST = "engine_list";
     private static final String WEB_SITES = "web_sites";
     private static final String WEB_HINT = "web_hint";
     private String currentFragmentTag = "";
@@ -59,7 +58,7 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
 
     public void setSearchWord(String word) {
         search.setText(word);
-        if(!TextUtils.isEmpty(word)) {
+        if (!TextUtils.isEmpty(word)) {
             int position = word.length();
             search.setSelection(position);
         }
@@ -81,19 +80,23 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
 
     private void init() {
         clear = (ImageView) findViewById(R.id.clear);
-        cancel = (TextView) findViewById(R.id.cancel);
         search = (EditText) findViewById(R.id.search);
         search.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if(actionId == EditorInfo.IME_ACTION_SEARCH) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                     String searchWord = getSearchWord();
-                    if(!TextUtils.isEmpty(searchWord)) {
-                        String engineUrl = getString(R.string.default_engine_url);
-                        String url = UrlUtils.smartUrlFilter(searchWord, true, engineUrl);
-                        startBrowserFromSearch(SearchActivity.this, url, searchWord);
-                        return true;
+                    if (!TextUtils.isEmpty(searchWord)) {
+                        if (!ENGINE_LIST.equals(currentFragmentTag)) {
+                            setEngineFragment(ENGINE_LIST);
+                        } else {
+                            String engineUrl = getString(R.string.default_engine_url);
+                            String url = UrlUtils.smartUrlFilter(searchWord, true, engineUrl);
+                            startBrowserFromSearch(SearchActivity.this, url, searchWord);
+                        }
                     }
+                    search.requestFocus();
+                    return true;
                 }
                 return false;
             }
@@ -116,11 +119,9 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
                 if (TextUtils.isEmpty(content)) {
                     setEngineFragment(RECENT_SEARCH);
                     clear.setVisibility(View.INVISIBLE);
-                    cancel.setText(R.string.action_cancel);
                 } else if (!content.equals(temp)) {
-                    cancel.setText(R.string.app_name);
                     setEngineFragment(WEB_HINT);
-                    WebHintFragment f = (WebHintFragment)currentFragment;
+                    WebHintFragment f = (WebHintFragment) currentFragment;
                     f.refreshData(content);
                     clear.setVisibility(View.VISIBLE);
                 }
@@ -129,17 +130,17 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
         setEngineFragment(RECENT_SEARCH);
     }
 
-    private void setEngineFragment(String tag) {
-        if(!currentFragmentTag.equals(tag)) {
+    public void setEngineFragment(String tag) {
+        if (!currentFragmentTag.equals(tag)) {
             currentFragmentTag = tag;
             Fragment fragment = null;
-            if(tag.equals(RECENT_SEARCH)){
+            if (tag.equals(RECENT_SEARCH)) {
                 fragment = new RecentSearchFragment();
-            }else if(tag.equals(ENGINE_LIST)) {
+            } else if (tag.equals(ENGINE_LIST)) {
                 fragment = new EngineViewPagerFragment();
-            }else if(tag.equals(WEB_SITES)) {
+            } else if (tag.equals(WEB_SITES)) {
                 fragment = new CommonWebSiteFragment();
-            }else if(tag.equals(WEB_HINT)) {
+            } else if (tag.equals(WEB_HINT)) {
                 fragment = new WebHintFragment();
             }
             currentFragment = fragment;
@@ -159,11 +160,7 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
                 openBoard();
                 break;
             case R.id.cancel:
-                if(cancel.getText().equals(getString(R.string.action_cancel))) {
-                    finish();
-                }else {
-                    setEngineFragment(ENGINE_LIST);
-                }
+                finish();
                 break;
         }
     }

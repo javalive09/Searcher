@@ -26,16 +26,6 @@
     <!--android:scaleType="center"-->
     <!--android:src="@drawable/toolbar_home" />-->
 
-    <EditText
-        android:id="@+id/search"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:hint="@string/search"
-        android:drawableLeft="@drawable/abc_ic_search_api_mtrl_alpha"
-        android:focusable="false"
-        android:theme="@style/BottomEditText" />
-
     <ImageView
         android:id="@+id/back"
         android:layout_width="@dimen/bottom_item_w"
@@ -43,18 +33,48 @@
         android:background="@drawable/menu_selector"
         android:onClick="onClick"
         android:scaleType="center"
-        android:visibility="gone"
-        android:src="@drawable/bar_back_selector" />
+        android:src="@drawable/bar_back_selector"
+        android:visibility="visible" />
+
+    <EditText
+        android:id="@+id/search"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:drawableLeft="@drawable/abc_ic_search_api_mtrl_alpha"
+        android:focusable="false"
+        android:hint="@string/search"
+        android:theme="@style/BottomEditText" />
+
+    <!--<ImageView-->
+    <!--android:id="@+id/back"-->
+    <!--android:layout_width="@dimen/bottom_item_w"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:background="@drawable/menu_selector"-->
+    <!--android:onClick="onClick"-->
+    <!--android:scaleType="center"-->
+    <!--android:visibility="gone"-->
+    <!--android:src="@drawable/bar_back_selector" />-->
 
     <ImageView
-        android:id="@+id/go"
+    android:id="@+id/go"
+    android:layout_width="@dimen/bottom_item_w"
+    android:layout_height="match_parent"
+    android:background="@drawable/menu_selector"
+    android:onClick="onClick"
+    android:scaleType="center"
+    android:visibility="gone"
+    android:src="@drawable/bar_forward_selector" />
+
+    <ImageView
+        android:id="@+id/home"
         android:layout_width="@dimen/bottom_item_w"
         android:layout_height="match_parent"
         android:background="@drawable/menu_selector"
         android:onClick="onClick"
         android:scaleType="center"
-        android:visibility="gone"
-        android:src="@drawable/bar_forward_selector" />
+        android:src="@drawable/toolbar_home" />
+
     <TextView
         android:id="@+id/multi_window"
         android:layout_width="@dimen/bottom_item_w"
