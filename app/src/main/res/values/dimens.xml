@@ -2,7 +2,8 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="title_h">40dp</dimen>
     <dimen name="enter_padding_top">20dp</dimen>
-    <dimen name="bottom_h">@dimen/title_h</dimen>
+    <dimen name="bottom_h">47dp</dimen>
+    <dimen name="bottom_item_w">55dp</dimen>
     <dimen name="hot_oval_d">80dp</dimen>
     <dimen name="menu_h">@dimen/title_h</dimen>
     <dimen name="menu_w">@dimen/title_h</dimen>

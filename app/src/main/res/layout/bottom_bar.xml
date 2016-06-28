@@ -2,29 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/bottom_bar"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/bottom_h"
+    android:layout_height="match_parent"
     android:background="@color/title_bg"
     android:orientation="horizontal">
-
-    <ImageView
-        android:id="@+id/back"
-        android:layout_width="0dp"
-        android:layout_height="@dimen/bottom_h"
-        android:layout_weight="1"
-        android:background="@drawable/menu_selector"
-        android:onClick="onClick"
-        android:scaleType="center"
-        android:src="@drawable/bar_back_selector" />
-
-    <ImageView
-        android:id="@+id/go"
-        android:layout_width="0dp"
-        android:layout_height="@dimen/bottom_h"
-        android:layout_weight="1"
-        android:background="@drawable/menu_selector"
-        android:onClick="onClick"
-        android:scaleType="center"
-        android:src="@drawable/bar_forward_selector" />
 
     <!--<ImageView-->
     <!--android:id="@+id/search"-->
@@ -36,21 +16,49 @@
     <!--android:scaleType="center"-->
     <!--android:src="@drawable/bar_search" />-->
 
-    <ImageView
-        android:id="@+id/home"
+    <!--<ImageView-->
+    <!--android:id="@+id/home"-->
+    <!--android:layout_width="0dp"-->
+    <!--android:layout_height="@dimen/bottom_h"-->
+    <!--android:layout_weight="1"-->
+    <!--android:background="@drawable/menu_selector"-->
+    <!--android:onClick="onClick"-->
+    <!--android:scaleType="center"-->
+    <!--android:src="@drawable/toolbar_home" />-->
+
+    <EditText
+        android:id="@+id/search"
         android:layout_width="0dp"
-        android:layout_height="@dimen/bottom_h"
+        android:layout_height="match_parent"
         android:layout_weight="1"
+        android:hint="@string/search"
+        android:drawableLeft="@drawable/abc_ic_search_api_mtrl_alpha"
+        android:focusable="false"
+        android:theme="@style/BottomEditText" />
+
+    <ImageView
+        android:id="@+id/back"
+        android:layout_width="@dimen/bottom_item_w"
+        android:layout_height="match_parent"
         android:background="@drawable/menu_selector"
         android:onClick="onClick"
         android:scaleType="center"
-        android:src="@drawable/toolbar_home" />
+        android:visibility="gone"
+        android:src="@drawable/bar_back_selector" />
 
+    <ImageView
+        android:id="@+id/go"
+        android:layout_width="@dimen/bottom_item_w"
+        android:layout_height="match_parent"
+        android:background="@drawable/menu_selector"
+        android:onClick="onClick"
+        android:scaleType="center"
+        android:visibility="gone"
+        android:src="@drawable/bar_forward_selector" />
     <TextView
         android:id="@+id/multi_window"
-        android:layout_width="0dp"
-        android:layout_height="@dimen/bottom_h"
-        android:layout_weight="1"
+        android:layout_width="@dimen/bottom_item_w"
+        android:layout_height="match_parent"
         android:background="@drawable/multi_window_top_selector"
         android:gravity="center"
         android:onClick="onClick"
@@ -60,9 +68,8 @@
 
     <ImageView
         android:id="@+id/menu"
-        android:layout_width="0dp"
-        android:layout_height="@dimen/bottom_h"
-        android:layout_weight="1"
+        android:layout_width="@dimen/bottom_item_w"
+        android:layout_height="match_parent"
         android:background="@drawable/menu_selector"
         android:onClick="onClick"
         android:scaleType="center"

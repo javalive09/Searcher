@@ -12,16 +12,20 @@
         android:id="@+id/action_share"
         android:orderInCategory="1"
         android:title="@string/action_share" />
+    <item
+        android:id="@+id/action_go"
+        android:orderInCategory="2"
+        android:title="@string/action_go" />
 
     <item
         android:id="@+id/action_collect"
-        android:orderInCategory="2"
+        android:orderInCategory="3"
         android:title="@string/action_collect" />
 
     <!--<item-->
-        <!--android:id="@+id/action_setting"-->
-        <!--android:orderInCategory="3"-->
-        <!--android:title="@string/action_setting" />-->
+    <!--android:id="@+id/action_setting"-->
+    <!--android:orderInCategory="3"-->
+    <!--android:title="@string/action_setting" />-->
 
     <item
         android:id="@+id/action_copy_link"
@@ -29,14 +33,14 @@
         android:title="@string/action_copy_link" />
 
     <!--<item-->
-        <!--android:id="@+id/action_collection"-->
-        <!--android:orderInCategory="5"-->
-        <!--android:title="@string/action_collection" />-->
+    <!--android:id="@+id/action_collection"-->
+    <!--android:orderInCategory="5"-->
+    <!--android:title="@string/action_collection" />-->
 
     <!--<item-->
-        <!--android:id="@+id/action_history"-->
-        <!--android:orderInCategory="6"-->
-        <!--android:title="@string/action_history" />-->
+    <!--android:id="@+id/action_history"-->
+    <!--android:orderInCategory="6"-->
+    <!--android:title="@string/action_history" />-->
 
     <item
         android:id="@+id/action_exit"

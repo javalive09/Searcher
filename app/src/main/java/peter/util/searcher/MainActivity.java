@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -43,6 +44,19 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private void init() {
         bottomBar = findViewById(R.id.bottom_bar);
+        final View search = findViewById(R.id.search);
+        if(search != null) {
+            search.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                        startSearch(false);
+                        return true;
+                    }
+                    return false;
+                }
+            });
+        }
         Intent intent = getIntent();
         if (intent != null) {
             Set<String> category = intent.getCategories();
@@ -228,6 +242,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                             bean.time = System.currentTimeMillis();
                             SqliteHelper.instance(MainActivity.this).insertFav(bean);
                             Toast.makeText(MainActivity.this, R.string.favorite_txt, Toast.LENGTH_SHORT).show();
+                        }
+                        break;
+                    case R.id.action_go:
+                        webView = SearcherWebViewManager.instance().getCurrentWebView();
+                        if (webView.canGoForward()) {
+                            webView.goForward();
                         }
                         break;
                     case R.id.action_copy_link:

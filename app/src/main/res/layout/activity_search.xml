@@ -26,6 +26,7 @@
                 android:paddingRight="@dimen/search_padding_right"
                 android:selectAllOnFocus="true"
                 android:singleLine="true"
+                android:drawableLeft="@drawable/search_top"
                 android:textColor="@color/edit_text_color"
                 android:theme="@style/MyEditText" />
 
@@ -40,17 +41,19 @@
                 android:visibility="invisible" />
         </FrameLayout>
 
-        <ImageView
-            android:id="@+id/more"
+        <TextView
+            android:id="@+id/cancel"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_gravity="center_vertical"
-            android:layout_marginRight="10dp"
-            android:layout_marginLeft="5dp"
+            android:gravity="center"
+            android:paddingRight="10dp"
+            android:paddingLeft="10dp"
             android:background="@drawable/more_selector"
-            android:src="@drawable/more__"
             android:onClick="onClick"
-            android:visibility="gone"/>
+            android:textColor="@color/edit_text_color"
+            android:textSize="17sp"
+            android:text="@string/action_no"/>
     </LinearLayout>
 
     <FrameLayout

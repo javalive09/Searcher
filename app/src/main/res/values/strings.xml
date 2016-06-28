@@ -47,6 +47,7 @@
 
     <string name="action_cancel">取消</string>
     <string name="action_share">分享</string>
+    <string name="action_go">前进</string>
     <string name="action_exit">退出程序</string>
     <string name="action_refresh">刷新</string>
     <string name="favorite_txt">已经添加到收藏夹</string>

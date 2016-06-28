@@ -6,6 +6,7 @@ import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.media.Image;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -35,7 +36,8 @@ import java.util.ArrayList;
 public class SearchActivity extends BaseActivity implements View.OnClickListener{
 
     private EditText search;
-    private ImageView clear, more;
+    private ImageView clear;
+    private TextView cancel;
     private static final String RECENT_SEARCH = "recent_search";
     private static final String ENGINE_LIST = "engine_list";
     private static final String WEB_SITES = "web_sites";
@@ -79,7 +81,7 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
 
     private void init() {
         clear = (ImageView) findViewById(R.id.clear);
-        more = (ImageView) findViewById(R.id.more);
+        cancel = (TextView) findViewById(R.id.cancel);
         search = (EditText) findViewById(R.id.search);
         search.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -114,13 +116,13 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
                 if (TextUtils.isEmpty(content)) {
                     setEngineFragment(RECENT_SEARCH);
                     clear.setVisibility(View.INVISIBLE);
-                    more.setVisibility(View.GONE);
+                    cancel.setText(R.string.action_cancel);
                 } else if (!content.equals(temp)) {
+                    cancel.setText(R.string.app_name);
                     setEngineFragment(WEB_HINT);
                     WebHintFragment f = (WebHintFragment)currentFragment;
                     f.refreshData(content);
                     clear.setVisibility(View.VISIBLE);
-                    more.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -156,8 +158,12 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
                 search.setText("");
                 openBoard();
                 break;
-            case R.id.more:
-                setEngineFragment(ENGINE_LIST);
+            case R.id.cancel:
+                if(cancel.getText().equals(getString(R.string.action_cancel))) {
+                    finish();
+                }else {
+                    setEngineFragment(ENGINE_LIST);
+                }
                 break;
         }
     }
