@@ -18,7 +18,6 @@ import android.widget.VideoView;
 public class MyWebChromeClient extends WebChromeClient {
 
     private static final String TAG = MyWebChromeClient.class.getSimpleName();
-    private MainActivity act;
     // Full Screen Video Views
     private int mOriginalOrientation;
     private FrameLayout mFullscreenContainer;
@@ -27,8 +26,7 @@ public class MyWebChromeClient extends WebChromeClient {
     private WebChromeClient.CustomViewCallback mCustomViewCallback;
     private SearcherWebView searcherWebView;
 
-    public MyWebChromeClient(SearcherWebView view, MainActivity act) {
-        this.act = act;
+    public MyWebChromeClient(SearcherWebView view) {
         this.searcherWebView = view;
     }
 
@@ -39,7 +37,7 @@ public class MyWebChromeClient extends WebChromeClient {
     }
 
     public void onProgressChanged(WebView view, int newProgress) {
-        searcherWebView.setOptStatus(view);
+
     }
 
     @Override
@@ -50,7 +48,7 @@ public class MyWebChromeClient extends WebChromeClient {
 
     @Override
     public void onShowCustomView(View view, CustomViewCallback callback) {
-        int requestedOrientation = mOriginalOrientation = act.getRequestedOrientation();
+        int requestedOrientation = mOriginalOrientation = SearcherWebViewManager.instance().getActivity().getRequestedOrientation();
         showCustomView(view, callback, requestedOrientation);
         Log.i("peter", "onShowCustomView 2");
     }
@@ -93,7 +91,7 @@ public class MyWebChromeClient extends WebChromeClient {
         } catch (SecurityException e) {
             Log.e(TAG, "WebView is not allowed to keep the screen on");
         }
-        act.setFullscreen(false, false);
+        SearcherWebViewManager.instance().getActivity().setFullscreen(false, false);
         if (mFullscreenContainer != null) {
             ViewGroup parent = (ViewGroup) mFullscreenContainer.getParent();
             if (parent != null) {
@@ -119,7 +117,7 @@ public class MyWebChromeClient extends WebChromeClient {
             }
         }
         mCustomViewCallback = null;
-        act.setRequestedOrientation(mOriginalOrientation);
+        SearcherWebViewManager.instance().getActivity().setRequestedOrientation(mOriginalOrientation);
     }
 
     public synchronized void showCustomView(final View view, WebChromeClient.CustomViewCallback callback, int requestedOrientation) {
@@ -138,15 +136,15 @@ public class MyWebChromeClient extends WebChromeClient {
         } catch (SecurityException e) {
             Log.e(TAG, "WebView is not allowed to keep the screen on");
         }
-        mOriginalOrientation = act.getRequestedOrientation();
+        mOriginalOrientation = SearcherWebViewManager.instance().getActivity().getRequestedOrientation();
         mCustomViewCallback = callback;
         mCustomView = view;
 
-        act.setRequestedOrientation(requestedOrientation);
-        final FrameLayout decorView = (FrameLayout) act.getWindow().getDecorView();
+        SearcherWebViewManager.instance().getActivity().setRequestedOrientation(requestedOrientation);
+        final FrameLayout decorView = (FrameLayout) SearcherWebViewManager.instance().getActivity().getWindow().getDecorView();
 
-        mFullscreenContainer = new FrameLayout(act);
-        mFullscreenContainer.setBackgroundColor(ContextCompat.getColor(act, android.R.color.black));
+        mFullscreenContainer = new FrameLayout(SearcherWebViewManager.instance().getActivity());
+        mFullscreenContainer.setBackgroundColor(ContextCompat.getColor(SearcherWebViewManager.instance().getActivity(), android.R.color.black));
         if (view instanceof FrameLayout) {
             if (((FrameLayout) view).getFocusedChild() instanceof VideoView) {
                 mVideoView = (VideoView) ((FrameLayout) view).getFocusedChild();
@@ -163,7 +161,7 @@ public class MyWebChromeClient extends WebChromeClient {
         decorView.addView(mFullscreenContainer, params);
         mFullscreenContainer.addView(mCustomView, params);
         decorView.requestLayout();
-        act.setFullscreen(true, true);
+        SearcherWebViewManager.instance().getActivity().setFullscreen(true, true);
     }
 
     private class VideoCompletionListener implements MediaPlayer.OnCompletionListener,

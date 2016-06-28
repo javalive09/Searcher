@@ -1,47 +1,36 @@
 package peter.util.searcher;
 
+import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.media.MediaPlayer;
 import android.net.MailTo;
 import android.net.http.SslError;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.os.Message;
 import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
-import android.view.View;
-import android.view.ViewGroup;
 import android.webkit.HttpAuthHandler;
 import android.webkit.SslErrorHandler;
-import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.VideoView;
-
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by peter on 16/6/6.
  */
 public class MyWebClient extends WebViewClient {
-    private MainActivity mActivity;
     private SearcherWebView searcherWebView;
 
-    public MyWebClient(SearcherWebView view, MainActivity activity) {
-        this.mActivity = activity;
+    public MyWebClient(SearcherWebView view) {
         this.searcherWebView = view;
     }
 
@@ -50,17 +39,13 @@ public class MyWebClient extends WebViewClient {
         if(view.isShown()) {
             view.postInvalidate();
         }
-        searcherWebView.resetCacheMode();
-        searcherWebView.setStatusLevel(0);
-        searcherWebView.setOptStatus(view);
+        searcherWebView.refreshAllStatus();
         saveUrlData(searcherWebView.getTitle(), url);
     }
 
     @Override
     public void onPageStarted(WebView view, String url, Bitmap favicon) {
-        searcherWebView.setStatusLevel(1);
-        searcherWebView.setOptStatus(view);
-        searcherWebView.setStatusMainColor();
+        searcherWebView.reSetAllStatus();
         Log.i("peter", "url=" + url);
     }
 
@@ -72,7 +57,7 @@ public class MyWebClient extends WebViewClient {
                 search.name = title;
                 search.time = System.currentTimeMillis();
                 search.url = url;
-                SqliteHelper.instance(mActivity).insertHistoryURL(search);
+                SqliteHelper.instance(SearcherWebViewManager.instance().getActivity()).insertHistoryURL(search);
                 return null;
             }
         }.execute();
@@ -82,6 +67,7 @@ public class MyWebClient extends WebViewClient {
     public void onReceivedHttpAuthRequest(final WebView view, @NonNull final HttpAuthHandler handler,
                                           final String host, final String realm) {
 
+        Activity mActivity = SearcherWebViewManager.instance().getActivity();
         AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
         final EditText name = new EditText(mActivity);
         final EditText password = new EditText(mActivity);
@@ -125,14 +111,15 @@ public class MyWebClient extends WebViewClient {
     public void onReceivedSslError(WebView view, @NonNull final SslErrorHandler handler, @NonNull SslError error) {
         List<Integer> errorCodeMessageCodes = getAllSslErrorMessageCodes(error);
 
+        Activity mActivity = SearcherWebViewManager.instance().getActivity();
         StringBuilder stringBuilder = new StringBuilder();
         for (Integer messageCode : errorCodeMessageCodes) {
-            stringBuilder.append(" - ").append(mActivity.getString(messageCode)).append('\n');
+            stringBuilder.append(" - ").append(SearcherWebViewManager.instance().getActivity().getString(messageCode)).append('\n');
         }
         String alertMessage =
                 mActivity.getString(R.string.message_insecure_connection, stringBuilder.toString());
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+        AlertDialog.Builder builder = new AlertDialog.Builder(SearcherWebViewManager.instance().getActivity());
         builder.setTitle(mActivity.getString(R.string.title_warning));
         builder.setMessage(alertMessage)
                 .setCancelable(true)
@@ -190,7 +177,7 @@ public class MyWebClient extends WebViewClient {
             MailTo mailTo = MailTo.parse(url);
             Intent i = Utils.newEmailIntent(mailTo.getTo(), mailTo.getSubject(),
                     mailTo.getBody(), mailTo.getCc());
-            mActivity.startActivity(i);
+            SearcherWebViewManager.instance().getActivity().startActivity(i);
             view.reload();
             return true;
         } else if (url.startsWith("intent://")) {
@@ -207,7 +194,7 @@ public class MyWebClient extends WebViewClient {
                     intent.setSelector(null);
                 }
                 try {
-                    mActivity.startActivity(intent);
+                    SearcherWebViewManager.instance().getActivity().startActivity(intent);
                 } catch (ActivityNotFoundException e) {
                     e.printStackTrace();
                 }

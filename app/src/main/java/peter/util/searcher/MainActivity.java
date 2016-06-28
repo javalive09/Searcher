@@ -32,11 +32,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private static final int API = Build.VERSION.SDK_INT;
     private View bottomBar;
-    private int curColor = -1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        SearcherWebViewManager.instance().setMainAct(this);
         setContentView(R.layout.activity_main);
         init();
     }
@@ -55,12 +55,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     public void setBottomBarColor(int animColor) {
-        curColor = animColor;
         bottomBar.setBackgroundColor(animColor);
-    }
-
-    public int getCurColor() {
-        return curColor;
     }
 
     @Override
@@ -116,16 +111,19 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private void loadUrl(String url, String searchWord, boolean isNewTab) {
         SearcherWebView view;
-        if (isNewTab) {
-            view = SearcherWebViewManager.instance().newWebview(this);
+        if (isNewTab) {//new tab
+            view = SearcherWebViewManager.instance().newWebview();
             view.loadUrl(url, searchWord);
         } else {
             view = SearcherWebViewManager.instance().containUrlView(url);
             if(view != null) {//切换
                 view.setStatusMainColor();
                 SearcherWebViewManager.instance().setCurrentWebView(view);
-            }else {//搜索
+            }else {//搜索, first
                 view = SearcherWebViewManager.instance().getCurrentWebView();
+                if(view == null) {
+                    view = SearcherWebViewManager.instance().newWebview();
+                }
                 view.loadUrl(url, searchWord);
             }
         }
@@ -159,6 +157,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        SearcherWebViewManager.instance().setMainAct(null);
     }
 
     public void refreshMultiWindow() {

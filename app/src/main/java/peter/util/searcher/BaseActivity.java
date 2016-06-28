@@ -65,7 +65,7 @@ public class BaseActivity extends AppCompatActivity{
 
     public void startLauncher() {
         Intent intent = new Intent(BaseActivity.this, EnterActivity.class);
-        intent.putExtra(NEW_TAB, true);
+        intent.putExtra(NEW_TAB, false);
         intent.putExtra(NAME_LAUNCHER, true);
         startActivity(intent);
         finish();

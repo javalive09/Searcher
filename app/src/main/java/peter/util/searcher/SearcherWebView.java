@@ -1,14 +1,12 @@
 package peter.util.searcher;
 
-import android.animation.ArgbEvaluator;
-import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.LevelListDrawable;
-import android.net.http.SslError;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.support.v7.graphics.Palette;
@@ -17,12 +15,8 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.CookieManager;
-import android.webkit.SslErrorHandler;
-import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
-import android.widget.TextView;
 
 import peter.util.searcher.download.MyDownloadListener;
 
@@ -34,13 +28,11 @@ public class SearcherWebView {
     private static final int API = Build.VERSION.SDK_INT;
     private WebView webview;
     private View progressBar;
-    private MainActivity activity;
     private View rootView;
     private int mainColor = -1;
-    private ValueAnimator colorAnimation;
+    private int defaultColor;
 
-    public SearcherWebView(MainActivity activity) {
-        this.activity = activity;
+    public SearcherWebView() {
         init();
     }
 
@@ -49,17 +41,31 @@ public class SearcherWebView {
     }
 
     private void init() {
+        Activity activity = SearcherWebViewManager.instance().getActivity();
         rootView = View.inflate(activity, R.layout.searcher_webview, null);
         webview = (WebView) rootView.findViewById(R.id.wv);
         progressBar = rootView.findViewById(R.id.status);
+        defaultColor =activity.getResources().getColor(R.color.colorPrimary);
         initWebview(webview);
         initializeSettings(webview);
     }
 
-    public void resetCacheMode() {
+    private void resetCacheMode() {
         if (webview.getSettings().getCacheMode() != WebSettings.LOAD_DEFAULT) {
             webview.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
         }
+    }
+
+    public void refreshAllStatus() {
+        resetCacheMode();
+        setStatusLevel(0);
+        setOptStatus();
+    }
+
+    public void reSetAllStatus() {
+        setStatusLevel(1);
+        setOptStatus();
+        refreshStatusColor(defaultColor);
     }
 
     public Bitmap getThumbNail() {
@@ -71,47 +77,32 @@ public class SearcherWebView {
 
     public int getMainColor() {
         if (mainColor == -1) {
-            mainColor = activity.getResources().getColor(R.color.colorPrimary);
+            mainColor = SearcherWebViewManager.instance().getActivity().getResources().getColor(R.color.colorPrimary);
         }
         return mainColor;
     }
 
-    public void setStatusMainColor() {
-        if (colorAnimation != null) {
-            colorAnimation.cancel();
+    private void refreshStatusColor(int animColor) {
+        MainActivity activity = SearcherWebViewManager.instance().getActivity();
+        if(activity != null) {
+            activity.setBottomBarColor(animColor);
+            if (API >= 21) {
+                activity.setStatusColor(animColor);
+            }
         }
+    }
+
+    public void setStatusMainColor() {
         refreshStatusColor(getMainColor());
     }
 
-    private void refreshStatusColor(int animColor) {
-        activity.setBottomBarColor(animColor);
-        if (API >= 21) {
-            activity.setStatusColor(animColor);
-        }
-    }
-
     public void setMainColor(Bitmap favicon) {
-        if (colorAnimation != null) {
-            colorAnimation.cancel();
-        }
         Palette.from(favicon).generate(new Palette.PaletteAsyncListener() {
 
             @Override
             public void onGenerated(Palette palette) {
                 mainColor = getSearchBarColor(palette.getVibrantColor(getMainColor()));//real main color
-                int currentActCur = activity.getCurColor() == -1 ? getMainColor() : activity.getCurColor();
-                colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), currentActCur, mainColor);
-                colorAnimation.setDuration(300); // milliseconds
-                colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-
-                    @Override
-                    public void onAnimationUpdate(ValueAnimator animator) {
-                        int animColor = (int) animator.getAnimatedValue();
-                        refreshStatusColor(animColor);
-                    }
-
-                });
-                colorAnimation.start();
+                refreshStatusColor(mainColor);
             }
         });
     }
@@ -140,10 +131,10 @@ public class SearcherWebView {
         webview.setScrollbarFadingEnabled(true);
         webview.setSaveEnabled(true);
         webview.setNetworkAvailable(true);
-        webview.setWebChromeClient(new MyWebChromeClient(this, activity));
-        webview.setWebViewClient(new MyWebClient(this, activity));
-        webview.setDownloadListener(new MyDownloadListener(activity));
-        setUserAgent(activity);
+        webview.setWebChromeClient(new MyWebChromeClient(this));
+        webview.setWebViewClient(new MyWebClient(this));
+        webview.setDownloadListener(new MyDownloadListener(SearcherWebViewManager.instance().getActivity()));
+        setUserAgent(SearcherWebViewManager.instance().getActivity());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             CookieManager.getInstance().setAcceptThirdPartyCookies(webview, true);
         }
@@ -195,32 +186,35 @@ public class SearcherWebView {
         settings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.TEXT_AUTOSIZING);
     }
 
-    public void setStatusLevel(int level) {
+    private void setStatusLevel(int level) {
         LevelListDrawable d = (LevelListDrawable) progressBar.getBackground();
         if (d.getLevel() != level) {
             d.setLevel(level);
         }
     }
 
-    public void setOptStatus(WebView view) {
-        final View back = activity.findViewById(R.id.back);
-        if (view.canGoBack()) {
-            if (back != null && !back.isEnabled()) {
-                back.setEnabled(true);
+    public void setOptStatus() {
+        Activity activity = SearcherWebViewManager.instance().getActivity();
+        if(activity != null) {
+            final View back = activity.findViewById(R.id.back);
+            if (webview.canGoBack()) {
+                if (back != null && !back.isEnabled()) {
+                    back.setEnabled(true);
+                }
+            } else {
+                if (back != null && back.isEnabled()) {
+                    back.setEnabled(false);
+                }
             }
-        } else {
-            if (back != null && back.isEnabled()) {
-                back.setEnabled(false);
-            }
-        }
-        final View go = activity.findViewById(R.id.go);
-        if (view.canGoForward()) {
-            if (go != null && !go.isEnabled()) {
-                go.setEnabled(true);
-            }
-        } else {
-            if (go != null && go.isEnabled()) {
-                go.setEnabled(false);
+            final View go = SearcherWebViewManager.instance().getActivity().findViewById(R.id.go);
+            if (webview.canGoForward()) {
+                if (go != null && !go.isEnabled()) {
+                    go.setEnabled(true);
+                }
+            } else {
+                if (go != null && go.isEnabled()) {
+                    go.setEnabled(false);
+                }
             }
         }
     }
@@ -243,7 +237,7 @@ public class SearcherWebView {
                 search.name = word;
                 search.time = System.currentTimeMillis();
                 search.url = url;
-                SqliteHelper.instance(activity).insertHistory(search);
+                SqliteHelper.instance(SearcherWebViewManager.instance().getActivity()).insertHistory(search);
                 return null;
             }
         }.execute();

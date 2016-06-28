@@ -13,6 +13,7 @@ public class SearcherWebViewManager {
     private ArrayList<SearcherWebView> mList = new ArrayList<>();
     private SearcherWebView mCurrentWebView;
     private static SearcherWebViewManager manager;
+    private MainActivity activity;
 
     public static SearcherWebViewManager instance() {
         synchronized (SearcherWebViewManager.class) {
@@ -23,6 +24,14 @@ public class SearcherWebViewManager {
         }
     }
 
+    public void setMainAct(MainActivity activity) {
+        this.activity = activity;
+    }
+
+    public MainActivity getActivity() {
+        return activity;
+    }
+
     public ArrayList<SearcherWebView> getAllViews() {
         return mList;
     }
@@ -31,12 +40,12 @@ public class SearcherWebViewManager {
         return mList.size();
     }
 
-    public SearcherWebView newWebview(MainActivity activity) {
+    public SearcherWebView newWebview() {
         if (isMaxViewsLimite()) {
             SearcherWebView currentWebView = getCurrentWebView();
             return currentWebView;
         } else {
-            SearcherWebView searcherWebView = new SearcherWebView(activity);
+            SearcherWebView searcherWebView = new SearcherWebView();
             mList.add(searcherWebView);
             setCurrentWebView(searcherWebView);
             return searcherWebView;
@@ -70,6 +79,7 @@ public class SearcherWebViewManager {
             }
         }
         mCurrentWebView = searcherWebView;
+        mCurrentWebView.refreshAllStatus();
         mCurrentWebView.onResume();
     }
 
