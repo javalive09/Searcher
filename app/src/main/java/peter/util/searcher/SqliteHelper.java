@@ -35,6 +35,7 @@ public class SqliteHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("create table if not exists " + TABLE_HISTORY + " (historyId integer primary key autoincrement, time integer, name varchar(20), show integer, url varchar(100))");
         db.execSQL("create table if not exists " + TABLE_FAVORITE + " (favId integer primary key autoincrement, time integer, name varchar(20), url varchar(100))");
+        db.execSQL("create table if not exists " + TABLE_URL_HISTORY + " (historyId integer primary key autoincrement, time integer, name varchar(20), show integer, url varchar(100))");
     }
 
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
