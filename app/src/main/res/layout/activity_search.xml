@@ -42,7 +42,7 @@
         </FrameLayout>
 
         <TextView
-            android:id="@+id/cancel"
+            android:id="@+id/search_btn"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="center_vertical"
@@ -53,7 +53,7 @@
             android:onClick="onClick"
             android:textColor="@color/edit_text_color"
             android:textSize="17sp"
-            android:text="@string/action_no"/>
+            android:text="@string/search"/>
     </LinearLayout>
 
     <FrameLayout

@@ -17,6 +17,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -25,6 +26,7 @@ import android.webkit.WebViewFragment;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.umeng.analytics.MobclickAgent;
 
@@ -41,6 +43,7 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
     public static final String ENGINE_LIST = "engine_list";
     private static final String WEB_SITES = "web_sites";
     private static final String WEB_HINT = "web_hint";
+    private static final String COMMON_ENTER = "common_enter";
     private String currentFragmentTag = "";
     private Fragment currentFragment;
 
@@ -117,7 +120,7 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
             public void afterTextChanged(Editable s) {
                 String content = s.toString();
                 if (TextUtils.isEmpty(content)) {
-                    setEngineFragment(RECENT_SEARCH);
+                    setEngineFragment(COMMON_ENTER);
                     clear.setVisibility(View.INVISIBLE);
                 } else if (!content.equals(temp)) {
                     setEngineFragment(WEB_HINT);
@@ -127,7 +130,7 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
                 }
             }
         });
-        setEngineFragment(RECENT_SEARCH);
+        setEngineFragment(COMMON_ENTER);
     }
 
     public void setEngineFragment(String tag) {
@@ -142,6 +145,8 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
                 fragment = new CommonWebSiteFragment();
             } else if (tag.equals(WEB_HINT)) {
                 fragment = new WebHintFragment();
+            } else if (tag.equals(COMMON_ENTER)) {
+                fragment = new CommonEnterFragment();
             }
             currentFragment = fragment;
             FragmentManager fragmentManager = getFragmentManager();
@@ -152,6 +157,17 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
     }
 
     @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (isLaunchTab(getIntent())) {
+                exit();
+                return true;
+            }
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.clear:
@@ -159,8 +175,11 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
                 search.setText("");
                 openBoard();
                 break;
-            case R.id.cancel:
-                finish();
+            case R.id.search_btn:
+                String searchWord = getSearchWord();
+                if (!TextUtils.isEmpty(searchWord)) {
+                    setEngineFragment(ENGINE_LIST);
+                }
                 break;
         }
     }

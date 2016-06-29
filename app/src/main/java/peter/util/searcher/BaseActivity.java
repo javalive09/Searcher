@@ -64,11 +64,12 @@ public class BaseActivity extends AppCompatActivity{
     }
 
     public void startLauncher() {
-        Intent intent = new Intent(BaseActivity.this, EnterActivity.class);
+//        Intent intent = new Intent(BaseActivity.this, EnterActivity.class);
+        Intent intent = new Intent(BaseActivity.this, SearchActivity.class);
         intent.putExtra(NEW_TAB, false);
         intent.putExtra(NAME_LAUNCHER, true);
         startActivity(intent);
-        finish();
+//        finish();
     }
 
     public boolean isNewTab(Intent intent){
@@ -111,6 +112,7 @@ public class BaseActivity extends AppCompatActivity{
         intent.putExtra(NAME_WORD, word);
         intent.putExtra(NEW_TAB, isNewTab);
         act.startActivity(intent);
+        act.finish();
     }
 
     public void startBrowser(Activity act, String url, String word) {

@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -32,6 +33,7 @@ import java.util.Set;
 public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private View bottomBar;
+    private long mExitTime = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -44,7 +46,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private void init() {
         bottomBar = findViewById(R.id.bottom_bar);
         final View search = findViewById(R.id.search);
-        if(search != null) {
+        if (search != null) {
             search.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -93,14 +95,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 if (!TextUtils.isEmpty(url)) {
                     String searchWord = intent.getStringExtra(NAME_WORD);
                     loadUrl(url, searchWord, isNewTab(intent));
-                }else {// url null finish
+                } else {// url null finish
                     finish();
                 }
             } else if (Intent.ACTION_VIEW.equals(action)) { // outside invoke
                 String url = intent.getDataString();
                 if (!TextUtils.isEmpty(url)) {
                     loadUrl(url, "", true);
-                }else {// url null finish
+                } else {// url null finish
                     finish();
                 }
             }
@@ -113,8 +115,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             SearcherWebView searcherWebView = SearcherWebViewManager.instance().getCurrentWebView();
             if (searcherWebView != null && searcherWebView.canGoBack()) {
                 searcherWebView.goBack();
-            }else{
-                finish();
+            } else {
+                if ((System.currentTimeMillis() - mExitTime) > 2000) {//
+                    Toast.makeText(this, R.string.exit_hint, Toast.LENGTH_SHORT).show();
+                    mExitTime = System.currentTimeMillis();// 更新mExitTime
+                } else {
+                    exit();
+                }
             }
             return true;
         }
@@ -122,24 +129,24 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     private void loadUrl(String url, String searchWord, boolean isNewTab) {
-        clearFrameContentView();
         SearcherWebView view;
         if (isNewTab) {//new tab
             view = SearcherWebViewManager.instance().newWebview();
             view.loadUrl(url, searchWord);
         } else {
             view = SearcherWebViewManager.instance().containUrlView(url);
-            if(view != null) {//切换
+            if (view != null) {//切换
                 view.setStatusMainColor();
                 SearcherWebViewManager.instance().setCurrentWebView(view);
-            }else {//搜索, first
+            } else {//搜索, first
                 view = SearcherWebViewManager.instance().getCurrentWebView();
-                if(view == null) {
+                if (view == null) {
                     view = SearcherWebViewManager.instance().newWebview();
                 }
                 view.loadUrl(url, searchWord);
             }
         }
+        clearFrameContentView();
         setFrameContentView(view.getRootView());
     }
 
@@ -248,16 +255,16 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                             Toast.makeText(MainActivity.this, R.string.favorite_txt, Toast.LENGTH_SHORT).show();
                         }
                         break;
-                    case R.id.action_go:
-                        webView = SearcherWebViewManager.instance().getCurrentWebView();
-                        if (webView.canGoForward()) {
-                            webView.goForward();
-                        }
-                        break;
+//                    case R.id.action_go:
+//                        webView = SearcherWebViewManager.instance().getCurrentWebView();
+//                        if (webView.canGoForward()) {
+//                            webView.goForward();
+//                        }
+//                        break;
                     case R.id.action_copy_link:
                         url = SearcherWebViewManager.instance().getCurrentWebView().getUrl();
                         String title = SearcherWebViewManager.instance().getCurrentWebView().getTitle();
-                        ClipboardManager clipboard = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
+                        ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
                         ClipData clip = ClipData.newPlainText(title, url);
                         clipboard.setPrimaryClip(clip);
                         Toast.makeText(MainActivity.this, R.string.copy_link_txt, Toast.LENGTH_SHORT).show();

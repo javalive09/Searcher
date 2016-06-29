@@ -36,6 +36,15 @@
         android:src="@drawable/bar_back_selector"
         android:visibility="visible" />
 
+    <ImageView
+        android:id="@+id/go"
+        android:layout_width="@dimen/bottom_item_w"
+        android:layout_height="match_parent"
+        android:background="@drawable/menu_selector"
+        android:onClick="onClick"
+        android:scaleType="center"
+        android:src="@drawable/bar_forward_selector" />
+
     <EditText
         android:id="@+id/search"
         android:layout_width="0dp"
@@ -46,26 +55,6 @@
         android:hint="@string/search"
         android:theme="@style/BottomEditText" />
 
-    <!--<ImageView-->
-    <!--android:id="@+id/back"-->
-    <!--android:layout_width="@dimen/bottom_item_w"-->
-    <!--android:layout_height="match_parent"-->
-    <!--android:background="@drawable/menu_selector"-->
-    <!--android:onClick="onClick"-->
-    <!--android:scaleType="center"-->
-    <!--android:visibility="gone"-->
-    <!--android:src="@drawable/bar_back_selector" />-->
-
-    <ImageView
-    android:id="@+id/go"
-    android:layout_width="@dimen/bottom_item_w"
-    android:layout_height="match_parent"
-    android:background="@drawable/menu_selector"
-    android:onClick="onClick"
-    android:scaleType="center"
-    android:visibility="gone"
-    android:src="@drawable/bar_forward_selector" />
-
     <ImageView
         android:id="@+id/home"
         android:layout_width="@dimen/bottom_item_w"
@@ -73,7 +62,8 @@
         android:background="@drawable/menu_selector"
         android:onClick="onClick"
         android:scaleType="center"
-        android:src="@drawable/toolbar_home" />
+        android:src="@drawable/toolbar_home"
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/multi_window"
