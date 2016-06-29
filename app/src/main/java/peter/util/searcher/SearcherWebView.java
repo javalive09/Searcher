@@ -65,7 +65,7 @@ public class SearcherWebView {
     public void reSetAllStatus() {
         setStatusLevel(1);
         setOptStatus();
-        refreshStatusColor(defaultColor);
+        refreshStatusColor(mainColor == -1 ? defaultColor : mainColor);
     }
 
     public Bitmap getThumbNail() {
@@ -133,7 +133,7 @@ public class SearcherWebView {
         webview.setNetworkAvailable(true);
         webview.setWebChromeClient(new MyWebChromeClient(this));
         webview.setWebViewClient(new MyWebClient(this));
-        webview.setDownloadListener(new MyDownloadListener(SearcherWebViewManager.instance().getActivity()));
+        webview.setDownloadListener(new MyDownloadListener());
         setUserAgent(SearcherWebViewManager.instance().getActivity());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             CookieManager.getInstance().setAcceptThirdPartyCookies(webview, true);

@@ -45,7 +45,7 @@ public class RecentSearchFragment extends Fragment implements View.OnClickListen
 
     @Override
     public void onClick(View v) {
-        Bean bean = (Bean) ((View) v.getParent()).getTag();
+        Bean bean = (Bean)v.getTag();
         switch (v.getId()) {
             case R.id.recent_search_item:
                 if (bean != null) {
@@ -176,7 +176,8 @@ public class RecentSearchFragment extends Fragment implements View.OnClickListen
             holder.content.setText(search.name);
             holder.content.setOnClickListener(f);
             holder.content.setOnLongClickListener(f);
-            convertView.setTag(search);
+            holder.content.setTag(search);
+            holder.choice.setTag(search);
             holder.choice.setOnClickListener(f);
             return convertView;
         }

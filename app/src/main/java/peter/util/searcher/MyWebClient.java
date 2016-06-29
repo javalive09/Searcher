@@ -68,43 +68,45 @@ public class MyWebClient extends WebViewClient {
                                           final String host, final String realm) {
 
         Activity mActivity = SearcherWebViewManager.instance().getActivity();
-        AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-        final EditText name = new EditText(mActivity);
-        final EditText password = new EditText(mActivity);
-        LinearLayout passLayout = new LinearLayout(mActivity);
-        passLayout.setOrientation(LinearLayout.VERTICAL);
+        if(mActivity != null) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+            final EditText name = new EditText(mActivity);
+            final EditText password = new EditText(mActivity);
+            LinearLayout passLayout = new LinearLayout(mActivity);
+            passLayout.setOrientation(LinearLayout.VERTICAL);
 
-        passLayout.addView(name);
-        passLayout.addView(password);
+            passLayout.addView(name);
+            passLayout.addView(password);
 
-        name.setHint(mActivity.getString(R.string.hint_username));
-        name.setSingleLine();
-        password.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
-        password.setSingleLine();
-        password.setTransformationMethod(new PasswordTransformationMethod());
-        password.setHint(mActivity.getString(R.string.hint_password));
-        builder.setTitle(mActivity.getString(R.string.title_sign_in));
-        builder.setView(passLayout);
-        builder.setCancelable(true)
-                .setPositiveButton(mActivity.getString(R.string.title_sign_in),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int id) {
-                                String user = name.getText().toString();
-                                String pass = password.getText().toString();
-                                handler.proceed(user.trim(), pass.trim());
+            name.setHint(mActivity.getString(R.string.hint_username));
+            name.setSingleLine();
+            password.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            password.setSingleLine();
+            password.setTransformationMethod(new PasswordTransformationMethod());
+            password.setHint(mActivity.getString(R.string.hint_password));
+            builder.setTitle(mActivity.getString(R.string.title_sign_in));
+            builder.setView(passLayout);
+            builder.setCancelable(true)
+                    .setPositiveButton(mActivity.getString(R.string.title_sign_in),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int id) {
+                                    String user = name.getText().toString();
+                                    String pass = password.getText().toString();
+                                    handler.proceed(user.trim(), pass.trim());
 
-                            }
-                        })
-                .setNegativeButton(mActivity.getString(R.string.action_cancel),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int id) {
-                                handler.cancel();
-                            }
-                        });
-        AlertDialog alert = builder.create();
-        alert.show();
+                                }
+                            })
+                    .setNegativeButton(mActivity.getString(R.string.action_cancel),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int id) {
+                                    handler.cancel();
+                                }
+                            });
+            AlertDialog alert = builder.create();
+            alert.show();
+        }
     }
 
     @Override
@@ -112,32 +114,34 @@ public class MyWebClient extends WebViewClient {
         List<Integer> errorCodeMessageCodes = getAllSslErrorMessageCodes(error);
 
         Activity mActivity = SearcherWebViewManager.instance().getActivity();
-        StringBuilder stringBuilder = new StringBuilder();
-        for (Integer messageCode : errorCodeMessageCodes) {
-            stringBuilder.append(" - ").append(SearcherWebViewManager.instance().getActivity().getString(messageCode)).append('\n');
-        }
-        String alertMessage =
-                mActivity.getString(R.string.message_insecure_connection, stringBuilder.toString());
+        if(mActivity != null) {
+            StringBuilder stringBuilder = new StringBuilder();
+            for (Integer messageCode : errorCodeMessageCodes) {
+                stringBuilder.append(" - ").append(SearcherWebViewManager.instance().getActivity().getString(messageCode)).append('\n');
+            }
+            String alertMessage =
+                    mActivity.getString(R.string.message_insecure_connection, stringBuilder.toString());
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(SearcherWebViewManager.instance().getActivity());
-        builder.setTitle(mActivity.getString(R.string.title_warning));
-        builder.setMessage(alertMessage)
-                .setCancelable(true)
-                .setPositiveButton(mActivity.getString(R.string.action_yes),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int id) {
-                                handler.proceed();
-                            }
-                        })
-                .setNegativeButton(mActivity.getString(R.string.action_no),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int id) {
-                                handler.cancel();
-                            }
-                        });
-        builder.create().show();
+            AlertDialog.Builder builder = new AlertDialog.Builder(SearcherWebViewManager.instance().getActivity());
+            builder.setTitle(mActivity.getString(R.string.title_warning));
+            builder.setMessage(alertMessage)
+                    .setCancelable(true)
+                    .setPositiveButton(mActivity.getString(R.string.action_yes),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int id) {
+                                    handler.proceed();
+                                }
+                            })
+                    .setNegativeButton(mActivity.getString(R.string.action_no),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int id) {
+                                    handler.cancel();
+                                }
+                            });
+            builder.create().show();
+        }
     }
 
     @NonNull

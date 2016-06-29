@@ -31,7 +31,6 @@ import java.util.Set;
  */
 public class MainActivity extends BaseActivity implements View.OnClickListener {
 
-    private static final int API = Build.VERSION.SDK_INT;
     private View bottomBar;
 
     @Override
@@ -53,16 +52,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 }
             });
             search.setLongClickable(false);
-//            search.setOnTouchListener(new View.OnTouchListener() {
-//                @Override
-//                public boolean onTouch(View v, MotionEvent event) {
-//                    if (event.getAction() == MotionEvent.ACTION_UP) {
-//                        startSearch(false);
-//                        return true;
-//                    }
-//                    return true;
-//                }
-//            });
         }
         Intent intent = getIntent();
         if (intent != null) {
@@ -111,6 +100,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 String url = intent.getDataString();
                 if (!TextUtils.isEmpty(url)) {
                     loadUrl(url, "", true);
+                }else {// url null finish
+                    finish();
                 }
             }
         }
@@ -131,6 +122,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     private void loadUrl(String url, String searchWord, boolean isNewTab) {
+        clearFrameContentView();
         SearcherWebView view;
         if (isNewTab) {//new tab
             view = SearcherWebViewManager.instance().newWebview();
@@ -148,16 +140,20 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 view.loadUrl(url, searchWord);
             }
         }
+        setFrameContentView(view.getRootView());
+    }
 
+    private void clearFrameContentView() {
         FrameLayout contentFrame = (FrameLayout) findViewById(R.id.content_frame);
-        if (contentFrame != null && view != null) {
+        if (contentFrame != null) {
             contentFrame.removeAllViews();
-            View content = view.getRootView();
-            ViewGroup parent = (ViewGroup) content.getParent();
-            if(parent != null) {
-                parent.removeAllViews();
-            }
-            contentFrame.addView(content);
+        }
+    }
+
+    private void setFrameContentView(View contentView) {
+        FrameLayout contentFrame = (FrameLayout) findViewById(R.id.content_frame);
+        if (contentFrame != null) {
+            contentFrame.addView(contentView);
         }
     }
 
@@ -178,6 +174,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        clearFrameContentView();
         SearcherWebViewManager.instance().setMainAct(null);
     }
 

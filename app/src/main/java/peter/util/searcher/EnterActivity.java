@@ -111,6 +111,11 @@ public class EnterActivity extends BaseActivity implements DrawerLayoutAdapter.O
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if(mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
+                mDrawerLayout.closeDrawers();
+                return true;
+            }
+
             if (isLaunchTab(getIntent())) {
                 if ((System.currentTimeMillis() - mExitTime) > 2000) {//
                     Toast.makeText(this, R.string.exit_hint, Toast.LENGTH_SHORT).show();
