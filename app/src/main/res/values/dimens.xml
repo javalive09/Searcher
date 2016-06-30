@@ -41,10 +41,12 @@
     <dimen name="engine_list_item_padding">7dp</dimen>
     <dimen name="input_padding_left">50dp</dimen>
     <dimen name="input_padding_right">35dp</dimen>
-    <dimen name="item_height">45dp</dimen>
+    <dimen name="item_height">40dp</dimen>
 
     <dimen name="shadow_width">15dp</dimen>
     <dimen name="slidingmenu_offset">60dp</dimen>
     <dimen name="list_padding">10dp</dimen>
     <dimen name="enter_item_radius">8dp</dimen>
+    <dimen name="drawable_padding">5dp</dimen>
+    <dimen name="item_padding">7dp</dimen>
 </resources>

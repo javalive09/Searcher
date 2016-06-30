@@ -120,17 +120,17 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
             public void afterTextChanged(Editable s) {
                 String content = s.toString();
                 if (TextUtils.isEmpty(content)) {
-                    setEngineFragment(COMMON_ENTER);
+                    setEngineFragment(RECENT_SEARCH);
                     clear.setVisibility(View.INVISIBLE);
                 } else if (!content.equals(temp)) {
-                    setEngineFragment(WEB_HINT);
-                    WebHintFragment f = (WebHintFragment) currentFragment;
-                    f.refreshData(content);
+                    setEngineFragment(ENGINE_LIST);
+//                    WebHintFragment f = (WebHintFragment) currentFragment;
+//                    f.refreshData(content);
                     clear.setVisibility(View.VISIBLE);
                 }
             }
         });
-        setEngineFragment(COMMON_ENTER);
+        setEngineFragment(RECENT_SEARCH);
     }
 
     public void setEngineFragment(String tag) {
@@ -146,7 +146,7 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
             } else if (tag.equals(WEB_HINT)) {
                 fragment = new WebHintFragment();
             } else if (tag.equals(COMMON_ENTER)) {
-                fragment = new CommonEnterFragment();
+                fragment = new RecentCommonFragment();
             }
             currentFragment = fragment;
             FragmentManager fragmentManager = getFragmentManager();

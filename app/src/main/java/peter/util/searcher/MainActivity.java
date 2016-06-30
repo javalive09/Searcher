@@ -34,6 +34,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private View bottomBar;
     private long mExitTime = 0;
+    public static final String HOME = "file:///android_asset/susou.html";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -47,19 +48,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         bottomBar = findViewById(R.id.bottom_bar);
         final View search = findViewById(R.id.search);
         if (search != null) {
-            search.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    startSearch(false);
-                }
-            });
+            search.setOnClickListener(this);
             search.setLongClickable(false);
         }
         Intent intent = getIntent();
         if (intent != null) {
             Set<String> category = intent.getCategories();
             if (category != null && category.contains(Intent.CATEGORY_LAUNCHER)) {//launcher invoke
-                startLauncher();
+                startBrowser(this,  MainActivity.HOME, "", false);
             } else {
                 checkIntentData(intent);
             }
@@ -212,7 +208,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 }
                 break;
             case R.id.home:
-                startHome(false);
+                startBrowser(this,  MainActivity.HOME, "", false);
+                break;
+            case R.id.search:
+                startSearch(false);
                 break;
             case R.id.multi_window:
                 startActivity(new Intent(MainActivity.this, MultiWindowActivity.class));
@@ -240,10 +239,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         sendIntent.setType("text/plain");
                         startActivity(Intent.createChooser(sendIntent, getString(R.string.share_link_title)));
                         break;
-//                    case R.id.action_setting:
-//                        Intent intent = new Intent(MainActivity.this, SettingActivity.class);
-//                        startActivity(intent);
-//                        break;
+                    case R.id.action_setting:
+                        Intent intent = new Intent(MainActivity.this, SettingActivity.class);
+                        startActivity(intent);
+                        break;
                     case R.id.action_collect:
                         SearcherWebView webView = SearcherWebViewManager.instance().getCurrentWebView();
                         if (!TextUtils.isEmpty(webView.getUrl())) {
@@ -268,6 +267,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         ClipData clip = ClipData.newPlainText(title, url);
                         clipboard.setPrimaryClip(clip);
                         Toast.makeText(MainActivity.this, R.string.copy_link_txt, Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.id.action_history_url:
+                        startActivity(new Intent(MainActivity.this, HistoryURLActivity.class));
                         break;
                     case R.id.action_collection:
                         startActivity(new Intent(MainActivity.this, FavoriteActivity.class));

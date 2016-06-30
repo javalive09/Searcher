@@ -4,9 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="@dimen/item_height"
     android:drawableLeft="@drawable/web_site_icon"
-    android:drawablePadding="5dp"
+    android:drawablePadding="@dimen/drawable_padding"
     android:background="@drawable/list_item_selector"
     android:singleLine="true"
     android:gravity="center_vertical"
-    android:paddingLeft="7dp"
-    android:paddingRight="7dp" />
+    android:paddingLeft="@dimen/item_padding"
+    android:paddingRight="@dimen/item_padding" />

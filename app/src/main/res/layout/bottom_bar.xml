@@ -43,7 +43,8 @@
         android:background="@drawable/menu_selector"
         android:onClick="onClick"
         android:scaleType="center"
-        android:src="@drawable/bar_forward_selector" />
+        android:src="@drawable/bar_forward_selector"
+        android:visibility="visible"/>
 
     <EditText
         android:id="@+id/search"

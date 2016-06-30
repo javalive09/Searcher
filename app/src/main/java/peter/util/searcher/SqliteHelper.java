@@ -15,7 +15,7 @@ public class SqliteHelper extends SQLiteOpenHelper {
     private static final String TABLE_URL_HISTORY = "historyurl";
     private static final String TABLE_FAVORITE = "favorite";
     private static final int version = 2;
-    private static final int LIMIT = 5;
+    private static final int LIMIT = 6;
     private static SqliteHelper helper;
 
     private SqliteHelper(Context context) {

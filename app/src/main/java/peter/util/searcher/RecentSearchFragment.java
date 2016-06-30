@@ -50,9 +50,9 @@ public class RecentSearchFragment extends Fragment implements View.OnClickListen
             case R.id.recent_search_item:
                 if (bean != null) {
                     SearchActivity searchActivity = (SearchActivity) getActivity();
-//                    searchActivity.startBrowserFromSearch(getActivity(), bean.url, bean.name);
-                    searchActivity.setSearchWord(bean.name);
-                    searchActivity.setEngineFragment(SearchActivity.ENGINE_LIST);
+                    searchActivity.startBrowserFromSearch(getActivity(), bean.url, bean.name);
+//                    searchActivity.setSearchWord(bean.name);
+//                    searchActivity.setEngineFragment(SearchActivity.ENGINE_LIST);
                 }
                 break;
             case R.id.choose:

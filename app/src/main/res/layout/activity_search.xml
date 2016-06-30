@@ -53,6 +53,7 @@
             android:onClick="onClick"
             android:textColor="@color/edit_text_color"
             android:textSize="17sp"
+            android:visibility="gone"
             android:text="@string/search"/>
     </LinearLayout>
 

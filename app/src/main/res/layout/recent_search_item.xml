@@ -12,9 +12,10 @@
         android:layout_weight="1"
         android:background="@drawable/list_item_selector"
         android:drawableLeft="@drawable/search_small"
+        android:drawablePadding="@dimen/drawable_padding"
         android:gravity="center_vertical"
-        android:paddingLeft="7dp"
-        android:paddingRight="7dp"
+        android:paddingLeft="@dimen/item_padding"
+        android:paddingRight="@dimen/item_padding"
         android:singleLine="true" />
 
     <ImageView

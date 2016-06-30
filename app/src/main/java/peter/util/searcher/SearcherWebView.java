@@ -350,6 +350,13 @@ public class SearcherWebView {
         return null;
     }
 
+    public String getOriginUrl() {
+        if(webview != null) {
+            return webview.getOriginalUrl();
+        }
+        return null;
+    }
+
     public String getTitle() {
         if (webview != null) {
             return webview.getTitle();

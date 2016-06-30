@@ -56,7 +56,7 @@ public class SearcherWebViewManager {
     public SearcherWebView containUrlView(String url) {
         for (int i = 0, len = mList.size(); i < len; i++) {
             SearcherWebView view = mList.get(i);
-            if (view.getUrl().equals(url)) {
+            if (view.getUrl().equals(url) || view.getOriginUrl().equals(url)) {
                 return view;
             }
         }
