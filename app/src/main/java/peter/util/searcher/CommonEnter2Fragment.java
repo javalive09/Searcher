@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -22,8 +23,9 @@ import java.util.List;
 /**
  * Created by peter on 16/5/9.
  */
-public class RecentCommonFragment extends Fragment implements View.OnClickListener, View.OnLongClickListener {
+public class CommonEnter2Fragment extends Fragment implements View.OnClickListener, View.OnLongClickListener {
 
+    ListView mList;
     View rootView;
     PopupMenu popup;
     MyAsyncTask asyncTask;
@@ -40,7 +42,8 @@ public class RecentCommonFragment extends Fragment implements View.OnClickListen
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.fragment_recent_search, container, false);
+        rootView = inflater.inflate(R.layout.fragment_common_website, container, false);
+        mList = (ListView) rootView.findViewById(R.id.web_sites);
         return rootView;
     }
 
@@ -50,26 +53,41 @@ public class RecentCommonFragment extends Fragment implements View.OnClickListen
         refreshData();
     }
 
-    private List<CommonBean> getData(List<CommonBean> list) {
+    private void cancelAsyncTask() {
+        if (asyncTask != null && !asyncTask.isCancelled()) {
+            asyncTask.cancel(true);
+        }
+    }
+
+    private void refreshData() {
+        cancelAsyncTask();
+        asyncTask = new MyAsyncTask(this);
+        asyncTask.execute();
+    }
+
+    private List<CommonBean> getData() {
+        List<CommonBean> list = new ArrayList();
         list.add(new CommonBean(R.drawable.web_site_icon, getString(R.string.history_today_title), HISTORY_TODAY_URL, 0));
+        list.add(new CommonBean(R.drawable.web_site_icon, getString(R.string.weeks_weather), WEATHER_URL, 0));
         list.add(new CommonBean(R.drawable.web_site_icon, getString(R.string.web_guide), NAV_ENTER, 0));
         list.add(new CommonBean(R.drawable.web_site_icon, getString(R.string.news_163), NEWS_163, 0));
 
-        list.add(new CommonBean(R.drawable.fav_icon, getString(R.string.action_collection), "", 0));
         list.add(new CommonBean(R.drawable.history_icon, getString(R.string.action_history), "", 0));
         list.add(new CommonBean(R.drawable.history_url_icon, getString(R.string.action_history_url), "", 0));
+        list.add(new CommonBean(R.drawable.fav_icon, getString(R.string.action_collection), "", 0));
+        list.add(new CommonBean(R.drawable.settings_icon, getString(R.string.setting_title), "", 0));
         return list;
     }
 
     @Override
     public void onClick(View v) {
-        CommonBean bean = (CommonBean) v.getTag();
         switch (v.getId()) {
-            case R.id.recent_search_item:
+            case R.id.web_site_item:
                 BaseActivity baseActivity = (BaseActivity) (getActivity());
+                CommonBean bean = (CommonBean) v.getTag();
                 switch (bean.iconId) {
                     case R.drawable.web_site_icon:
-                        baseActivity.startBrowser(getActivity(), bean.url, "");
+                        baseActivity.startBrowser(getActivity(), bean.url, bean.title);
                         break;
                     case R.drawable.history_icon:
                         baseActivity.startHistoryAct();
@@ -83,33 +101,12 @@ public class RecentCommonFragment extends Fragment implements View.OnClickListen
                     case R.drawable.settings_icon:
                         startActivity(new Intent(baseActivity, SettingActivity.class));
                         break;
-                    case R.drawable.search_small:
-                        baseActivity.startBrowserFromSearch(getActivity(), bean.url, bean.title);
-                        break;
                 }
-                break;
-            case R.id.choose:
-                if (bean != null) {
-                    SearchActivity searchActivity = (SearchActivity) getActivity();
-                    searchActivity.setSearchWord(bean.title);
-                }
+
                 break;
             default:
                 break;
         }
-    }
-
-    private void refreshData() {
-        cancelAsyncTask();
-        asyncTask = new MyAsyncTask(this);
-        asyncTask.execute();
-    }
-
-    @Override
-    public void onDestroy() {
-        dismissPopupMenu();
-        cancelAsyncTask();
-        super.onDestroy();
     }
 
     @Override
@@ -124,37 +121,39 @@ public class RecentCommonFragment extends Fragment implements View.OnClickListen
 
     private static class MyAsyncTask extends AsyncTask<Void, Void, List<CommonBean>> {
 
-        WeakReference<RecentCommonFragment> wr;
+        WeakReference<CommonEnter2Fragment> wr;
 
-        public MyAsyncTask(RecentCommonFragment f) {
+        public MyAsyncTask(CommonEnter2Fragment f) {
             wr = new WeakReference<>(f);
         }
 
         @Override
         protected List<CommonBean> doInBackground(Void... params) {
-            RecentCommonFragment f = wr.get();
-            List<CommonBean> list = null;
+            CommonEnter2Fragment f = wr.get();
+            List<CommonBean> searches = new ArrayList<>();
             if (f != null) {
-                list = new ArrayList<>();
+                List<Bean> recentList = null;
                 try {
-                    List<Bean> searches = SqliteHelper.instance(f.getActivity()).queryRecentData();
-                    for(Bean bean : searches) {
-                        CommonBean commonBean = new CommonBean(R.drawable.search_small, bean.name, bean.url, bean.time);
-                        list.add(commonBean);
-                    }
+                    recentList = SqliteHelper.instance(f.getActivity()).queryRecentData();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }finally {
-                    f.getData(list);
+                    if(recentList != null) {
+                        for (Bean bean : recentList) {
+                            CommonBean cb = new CommonBean(R.drawable.search_small, bean.name, bean.url, bean.time);
+                            searches.add(cb);
+                        }
+                        searches.addAll(f.getData());
+                    }
                 }
             }
-            return list;
+            return searches;
         }
 
         @Override
         protected void onPostExecute(List<CommonBean> beans) {
             super.onPostExecute(beans);
-            RecentCommonFragment f = wr.get();
+            CommonEnter2Fragment f = wr.get();
             if (f != null) {
                 if (!f.isDetached()) {
                     View loading = f.rootView.findViewById(R.id.loading);
@@ -168,28 +167,30 @@ public class RecentCommonFragment extends Fragment implements View.OnClickListen
                             if(adapter == null) {
                                 recentSearch.setAdapter(new RecentSearchAdapter(beans, f));
                             }else {
-                                adapter.refreshData(beans);
+                                adapter.refresh(beans);
                             }
                         }
                     }
                 }
             }
+
         }
+
     }
 
     private static class RecentSearchAdapter extends BaseAdapter {
 
         private final LayoutInflater factory;
-        RecentCommonFragment f;
+        CommonEnter2Fragment f;
         private List<CommonBean> list;
 
-        public RecentSearchAdapter(List<CommonBean> list, RecentCommonFragment f) {
+        public RecentSearchAdapter(List<CommonBean> list, CommonEnter2Fragment f) {
             this.f = f;
             factory = LayoutInflater.from(f.getActivity());
             this.list = list;
         }
 
-        public void refreshData(List<CommonBean> list) {
+        public void refresh(List<CommonBean> list) {
             this.list = list;
             notifyDataSetChanged();
         }
@@ -223,23 +224,24 @@ public class RecentCommonFragment extends Fragment implements View.OnClickListen
             }
 
             CommonBean search = getItem(position);
+            holder.content.setText(search.title);
+
             Drawable drawable= f.getResources().getDrawable(search.iconId);
             /// 这一步必须要做,否则不会显示.
             drawable.setBounds(0, 0, drawable.getMinimumWidth(), drawable.getMinimumHeight());
             holder.content.setCompoundDrawables(drawable,null,null,null);
-            holder.content.setText(search.title);
-            holder.content.setOnClickListener(f);
-            holder.content.setOnClickListener(f);
-            holder.content.setTag(search);
+
             if(search.iconId == R.drawable.search_small) {
                 holder.choice.setVisibility(View.VISIBLE);
-                holder.choice.setTag(search);
                 holder.choice.setOnClickListener(f);
+                holder.choice.setTag(search);
                 holder.content.setOnLongClickListener(f);
             }else {
-                holder.content.setOnLongClickListener(null);
                 holder.choice.setVisibility(View.GONE);
             }
+
+            holder.content.setOnClickListener(f);
+            holder.content.setTag(search);
 
             return convertView;
         }
@@ -248,38 +250,6 @@ public class RecentCommonFragment extends Fragment implements View.OnClickListen
     static class Holder {
         TextView content;
         ImageView choice;
-    }
-
-    private void popupMenu(final View view) {
-        dismissPopupMenu();
-        popup = new PopupMenu(getActivity(), view);
-        popup.getMenuInflater().inflate(R.menu.item, popup.getMenu());
-        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.action_delete:
-                        CommonBean bean = (CommonBean) view.getTag();
-                        SqliteHelper.instance(getActivity()).deleteHistory(bean.getBean());
-                        refreshData();
-                        break;
-                }
-
-                return true;
-            }
-        });
-        popup.show();
-    }
-
-    private void dismissPopupMenu() {
-        if (popup != null) {
-            popup.dismiss();
-        }
-    }
-
-    private void cancelAsyncTask() {
-        if (asyncTask != null && !asyncTask.isCancelled()) {
-            asyncTask.cancel(true);
-        }
     }
 
     public static class CommonBean{
@@ -294,13 +264,31 @@ public class RecentCommonFragment extends Fragment implements View.OnClickListen
             this.url = url;
             this.time = time;
         }
+    }
 
-        public Bean getBean() {
-            Bean bean = new Bean();
-            bean.time = time;
-            bean.name = title;
-            bean.url = url;
-            return bean;
+    private void popupMenu(final View view) {
+        dismissPopupMenu();
+        popup = new PopupMenu(getActivity(), view);
+        popup.getMenuInflater().inflate(R.menu.item, popup.getMenu());
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.action_delete:
+                        Bean bean = (Bean) view.getTag();
+                        SqliteHelper.instance(getActivity()).deleteHistory(bean);
+                        refreshData();
+                        break;
+                }
+
+                return true;
+            }
+        });
+        popup.show();
+    }
+
+    private void dismissPopupMenu() {
+        if (popup != null) {
+            popup.dismiss();
         }
     }
 

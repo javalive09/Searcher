@@ -106,6 +106,15 @@ public class UrlUtils {
         return "";
     }
 
+    public static boolean isUrl(String url) {
+        String inUrl = url.trim();
+        Matcher matcher = ACCEPTED_URI_SCHEMA.matcher(inUrl);
+        if(matcher.matches()) {
+            return true;
+        }
+        return false;
+    }
+
     /* package */
     @NonNull
     static String fixUrl(@NonNull String inUrl) {

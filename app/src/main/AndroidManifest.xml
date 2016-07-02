@@ -123,6 +123,10 @@
             android:name=".MultiWindowActivity"
             android:screenOrientation="portrait"
             android:theme="@style/MultiWindowTheme"/>
+        <activity
+            android:name=".MultiWindow2Activity"
+            android:screenOrientation="portrait"
+            android:theme="@style/MultiWindowTheme"/>
     </application>
 
 </manifest>

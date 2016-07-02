@@ -12,6 +12,7 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
+import android.text.TextUtils;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.webkit.HttpAuthHandler;
@@ -54,7 +55,8 @@ public class MyWebClient extends WebViewClient {
             @Override
             protected Void doInBackground(Void... params) {
                 Bean search = new Bean();
-                search.name = title;
+
+                search.name = TextUtils.isEmpty(title) ? url : title;
                 search.time = System.currentTimeMillis();
                 search.url = url;
                 SqliteHelper.instance(SearcherWebViewManager.instance().getActivity()).insertHistoryURL(search);

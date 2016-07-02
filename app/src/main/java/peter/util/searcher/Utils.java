@@ -39,7 +39,7 @@ import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
-import android.support.design.widget.Snackbar;
+//import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
@@ -109,29 +109,29 @@ public class Utils {
         alert.show();
     }
 
-    /**
-     * Displays a snackbar to the user with a String resource.
-     *
-     * @param activity the activity needed to create a snackbar.
-     * @param resource the string resource to show to the user.
-     */
-    public static void showSnackbar(@NonNull Activity activity, @StringRes int resource) {
-        View view = activity.findViewById(android.R.id.content);
-        if (view == null) return;
-        Snackbar.make(view, resource, Snackbar.LENGTH_SHORT).show();
-    }
-
-    /**
-     * Displays a snackbar to the user with a string message.
-     *
-     * @param activity the activity needed to create a snackbar.
-     * @param message  the string message to show to the user.
-     */
-    public static void showSnackbar(@NonNull Activity activity, @NonNull String message) {
-        View view = activity.findViewById(android.R.id.content);
-        if (view == null) return;
-        Snackbar.make(view, message, Snackbar.LENGTH_SHORT).show();
-    }
+//    /**
+//     * Displays a snackbar to the user with a String resource.
+//     *
+//     * @param activity the activity needed to create a snackbar.
+//     * @param resource the string resource to show to the user.
+//     */
+//    public static void showSnackbar(@NonNull Activity activity, @StringRes int resource) {
+//        View view = activity.findViewById(android.R.id.content);
+//        if (view == null) return;
+//        Snackbar.make(view, resource, Snackbar.LENGTH_SHORT).show();
+//    }
+//
+//    /**
+//     * Displays a snackbar to the user with a string message.
+//     *
+//     * @param activity the activity needed to create a snackbar.
+//     * @param message  the string message to show to the user.
+//     */
+//    public static void showSnackbar(@NonNull Activity activity, @NonNull String message) {
+//        View view = activity.findViewById(android.R.id.content);
+//        if (view == null) return;
+//        Snackbar.make(view, message, Snackbar.LENGTH_SHORT).show();
+//    }
 
     /**
      * Converts Density Pixels (DP) to Pixels (PX).

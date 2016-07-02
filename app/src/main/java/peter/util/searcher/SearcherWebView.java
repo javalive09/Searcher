@@ -5,6 +5,8 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.LevelListDrawable;
 import android.os.AsyncTask;
@@ -31,13 +33,18 @@ public class SearcherWebView {
     private View rootView;
     private int mainColor = -1;
     private int defaultColor;
+    Bitmap thumbNail;
 
     public SearcherWebView() {
         init();
     }
 
     public Bitmap getFavIcon() {
-        return webview.getFavicon();
+        Bitmap favIcon = webview.getFavicon();
+        if(favIcon == null) {
+            favIcon = BitmapFactory.decodeResource(webview.getResources(), R.drawable.web_site_icon);
+        }
+        return favIcon;
     }
 
     private void init() {
@@ -50,16 +57,17 @@ public class SearcherWebView {
         initializeSettings(webview);
     }
 
-    private void resetCacheMode() {
-        if (webview.getSettings().getCacheMode() != WebSettings.LOAD_DEFAULT) {
-            webview.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
-        }
+    public void clearView() {
+        webview.clearView();
     }
 
     public void refreshAllStatus() {
-        resetCacheMode();
         setStatusLevel(0);
         setOptStatus();
+    }
+
+    public WebSettings getSetting() {
+        return webview.getSettings();
     }
 
     public void reSetAllStatus() {
@@ -68,11 +76,19 @@ public class SearcherWebView {
         refreshStatusColor(mainColor == -1 ? defaultColor : mainColor);
     }
 
+    private Bitmap loadBitmapFromView(View v) {
+        Bitmap b = Bitmap.createBitmap( v.getMeasuredWidth(), v.getMeasuredHeight(), Bitmap.Config.ARGB_8888);
+        Canvas c = new Canvas(b);
+        v.layout(0, 0, v.getMeasuredWidth(), v.getMeasuredHeight());
+        v.draw(c);
+        return b;
+    }
+
     public Bitmap getThumbNail() {
-        if (webview != null) {
-            return webview.getDrawingCache();
+        if(thumbNail == null) {
+            thumbNail = loadBitmapFromView(webview);
         }
-        return null;
+        return thumbNail;
     }
 
     public int getMainColor() {
@@ -119,8 +135,8 @@ public class SearcherWebView {
         webview.setDrawingCacheBackgroundColor(Color.WHITE);
         webview.setFocusableInTouchMode(true);
         webview.setFocusable(true);
-        webview.setDrawingCacheEnabled(true);
-        webview.setWillNotCacheDrawing(false);
+        webview.setDrawingCacheEnabled(false);
+        webview.setWillNotCacheDrawing(true);
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP_MR1) {
             //noinspection deprecation
             webview.setAnimationCacheEnabled(false);

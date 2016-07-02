@@ -28,7 +28,8 @@
 
     <ImageView
         android:id="@+id/back"
-        android:layout_width="@dimen/bottom_item_w"
+        android:layout_width="0dp"
+        android:layout_weight="1"
         android:layout_height="match_parent"
         android:background="@drawable/menu_selector"
         android:onClick="onClick"
@@ -38,13 +39,14 @@
 
     <ImageView
         android:id="@+id/go"
-        android:layout_width="@dimen/bottom_item_w"
+        android:layout_width="0dp"
+        android:layout_weight="1"
         android:layout_height="match_parent"
         android:background="@drawable/menu_selector"
         android:onClick="onClick"
         android:scaleType="center"
         android:src="@drawable/bar_forward_selector"
-        android:visibility="visible"/>
+        android:visibility="visible" />
 
     <EditText
         android:id="@+id/search"
@@ -54,7 +56,30 @@
         android:drawableLeft="@drawable/abc_ic_search_api_mtrl_alpha"
         android:focusable="false"
         android:hint="@string/search"
-        android:theme="@style/BottomEditText" />
+        android:theme="@style/BottomEditText"
+        android:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/search_btn"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="match_parent"
+        android:background="@drawable/menu_selector"
+        android:onClick="onClick"
+        android:scaleType="center"
+        android:src="@drawable/bar_search"
+        android:visibility="visible" />
+
+    <ImageView
+        android:id="@+id/refresh"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="match_parent"
+        android:background="@drawable/menu_selector"
+        android:onClick="onClick"
+        android:scaleType="center"
+        android:src="@drawable/refresh"
+        android:visibility="visible" />
 
     <ImageView
         android:id="@+id/home"
@@ -68,7 +93,8 @@
 
     <TextView
         android:id="@+id/multi_window"
-        android:layout_width="@dimen/bottom_item_w"
+        android:layout_width="0dp"
+        android:layout_weight="1"
         android:layout_height="match_parent"
         android:background="@drawable/multi_window_top_selector"
         android:gravity="center"
@@ -79,7 +105,8 @@
 
     <ImageView
         android:id="@+id/menu"
-        android:layout_width="@dimen/bottom_item_w"
+        android:layout_width="0dp"
+        android:layout_weight="1"
         android:layout_height="match_parent"
         android:background="@drawable/menu_selector"
         android:onClick="onClick"

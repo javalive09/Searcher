@@ -11,20 +11,27 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.PopupMenu;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.umeng.analytics.MobclickAgent;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -46,16 +53,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private void init() {
         bottomBar = findViewById(R.id.bottom_bar);
-        final View search = findViewById(R.id.search);
-        if (search != null) {
-            search.setOnClickListener(this);
-            search.setLongClickable(false);
-        }
         Intent intent = getIntent();
         if (intent != null) {
             Set<String> category = intent.getCategories();
             if (category != null && category.contains(Intent.CATEGORY_LAUNCHER)) {//launcher invoke
-                startBrowser(this,  MainActivity.HOME, "", false);
+//                startBrowser(this,  MainActivity.HOME, "", false);
+                startSearch(true);
+                finish();
             } else {
                 checkIntentData(intent);
             }
@@ -128,6 +132,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         SearcherWebView view;
         if (isNewTab) {//new tab
             view = SearcherWebViewManager.instance().newWebview();
+            view.getSetting().setCacheMode(WebSettings.LOAD_NO_CACHE);
+            view.clearView();
             view.loadUrl(url, searchWord);
         } else {
             view = SearcherWebViewManager.instance().containUrlView(url);
@@ -139,6 +145,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 if (view == null) {
                     view = SearcherWebViewManager.instance().newWebview();
                 }
+                view.clearView();
+                view.getSetting().setCacheMode(WebSettings.LOAD_DEFAULT);
                 view.loadUrl(url, searchWord);
             }
         }
@@ -210,11 +218,18 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             case R.id.home:
                 startBrowser(this,  MainActivity.HOME, "", false);
                 break;
+            case R.id.refresh:
+                webView.refresh();
+                break;
             case R.id.search:
                 startSearch(false);
                 break;
+            case R.id.search_btn:
+                startSearch(false);
+                break;
             case R.id.multi_window:
-                startActivity(new Intent(MainActivity.this, MultiWindowActivity.class));
+//                popUpMultiWindow(v);
+                startActivity(new Intent(MainActivity.this, MultiWindow2Activity.class));
                 break;
             case R.id.menu:
                 popupMenu(v);
@@ -268,9 +283,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         clipboard.setPrimaryClip(clip);
                         Toast.makeText(MainActivity.this, R.string.copy_link_txt, Toast.LENGTH_SHORT).show();
                         break;
-                    case R.id.action_history_url:
-                        startActivity(new Intent(MainActivity.this, HistoryURLActivity.class));
-                        break;
+//                    case R.id.action_history_url:
+//                        startActivity(new Intent(MainActivity.this, HistoryURLActivity.class));
+//                        break;
                     case R.id.action_collection:
                         startActivity(new Intent(MainActivity.this, FavoriteActivity.class));
                         break;
@@ -286,6 +301,77 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         });
         popup.show();
     }
+
+//    private void popUpMultiWindow(View anchor) {
+//        LayoutInflater inflater = LayoutInflater.from(this);
+//        View view = inflater.inflate(R.layout.popup_window_list, null);
+//        ListView listView = (ListView) view.findViewById(R.id.list);
+//        listView.setAdapter(new PopupWindowAdapter(inflater,
+//                SearcherWebViewManager.instance().getAllViews(),
+//                new View.OnClickListener() {
+//
+//                    @Override
+//                    public void onClick(View v) {
+//
+//                    }
+//                }));
+//        PopupWindow popupWindow = new PopupWindow(view, ViewGroup.LayoutParams.MATCH_PARENT,
+//                ViewGroup.LayoutParams.WRAP_CONTENT);
+//        popupWindow.setOutsideTouchable(true);
+//        popupWindow.setAnimationStyle(android.R.style.Animation_Dialog);
+//        popupWindow.update();
+//        popupWindow.setTouchable(true);
+//        popupWindow.setFocusable(true);
+//        popupWindow.showAtLocation(findViewById(R.id.root), Gravity.LEFT | Gravity.TOP, 0, 0);
+//
+//    }
+
+//    static class PopupWindowAdapter extends BaseAdapter {
+//
+//        private List<SearcherWebView> list;
+//        private LayoutInflater inflater;
+//        private View.OnClickListener listener;
+//
+//        public PopupWindowAdapter(LayoutInflater inflater, List<SearcherWebView> list, View.OnClickListener listener) {
+//            this.list = list;
+//            this.inflater = inflater;
+//            this.listener = listener;
+//        }
+//
+//        @Override
+//        public int getCount() {
+//            return list.size();
+//        }
+//
+//        @Override
+//        public SearcherWebView getItem(int position) {
+//            return list.get(position);
+//        }
+//
+//        @Override
+//        public long getItemId(int position) {
+//            return position;
+//        }
+//
+//        @Override
+//        public View getView(int position, View convertView, ViewGroup parent) {
+//            if(convertView == null) {
+//                convertView = inflater.inflate(R.layout.multi_window_list_item, parent, false);
+//            }
+//            TextView content = (TextView) convertView.findViewById(R.id.list_item);
+//            ImageView close = (ImageView) convertView.findViewById(R.id.close);
+//            ImageView icon = (ImageView) convertView.findViewById(R.id.icon);
+//
+//            SearcherWebView search = getItem(position);
+//            icon.setImageBitmap(search.getFavIcon());
+//            content.setText(search.getTitle());
+//            content.setOnClickListener(listener);
+//            content.setTag(search);
+//            close.setTag(search);
+//            close.setOnClickListener(listener);
+//            return convertView;
+//        }
+//    }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {

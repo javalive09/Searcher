@@ -11,6 +11,7 @@
     <item name="hot_list_url_history" type="id"/>
     <item name="hot_list_setting" type="id"/>
     <item name="recent_search" type="id"/>
+    <item name="multi_window" type="id"/>
 
     <item name="hot_list_share_app" type="id"/>
     <item name="hot_list_clear_cache" type="id"/>

@@ -99,7 +99,8 @@ public class MultiWindowActivity extends BaseActivity {
             newTab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    startBrowser(MultiWindowActivity.this, MainActivity.HOME, "", true);
+//                    startBrowser(MultiWindowActivity.this, MainActivity.HOME, "", true);
+                    startSearch(true);
                 }
             });
         }

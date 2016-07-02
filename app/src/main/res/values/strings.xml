@@ -1,5 +1,6 @@
 <resources>
     <string name="search">搜索</string>
+    <string name="enter">进入</string>
     <string name="app_name">速搜</string>
     <string name="menu_txt">更多</string>
     <string name="hot_title">实时搜索Top10</string>
@@ -7,7 +8,7 @@
     <string name="weibo">新浪微博</string>
     <string name="eat_list">家常菜谱</string>
     <string name="favorite_url_title">常用网站</string>
-    <string name="history_today_title">历史今天</string>
+    <string name="history_today_title">历史.今天</string>
     <string name="weeks_weather">天气预报</string>
     <string name="web_guide">网址导航</string>
     <string name="video_huya">虎牙直播</string>
@@ -43,7 +44,7 @@
     <string name="problem_location_download">Cannot download to the specified location</string>
     <string name="download_pending">开始下载…</string>
     <string name="clear_all_multi">全部清除</string>
-    <string name="new_tab">新建窗口</string>
+    <string name="new_tab">新建搜索窗口</string>
 
     <string name="action_cancel">取消</string>
     <string name="action_share">分享</string>

@@ -194,6 +194,7 @@ public class BaseActivity extends AppCompatActivity{
         return dialog;
     }
 
+
     protected String getVersionName() {
         PackageManager packageManager = getPackageManager();
         PackageInfo packInfo = null;

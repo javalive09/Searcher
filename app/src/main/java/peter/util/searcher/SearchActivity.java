@@ -39,6 +39,7 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
 
     private EditText search;
     private ImageView clear;
+    private TextView search_btn;
     private static final String RECENT_SEARCH = "recent_search";
     public static final String ENGINE_LIST = "engine_list";
     private static final String WEB_SITES = "web_sites";
@@ -82,8 +83,10 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
     }
 
     private void init() {
+        search_btn = (TextView) findViewById(R.id.search_btn);
         clear = (ImageView) findViewById(R.id.clear);
         search = (EditText) findViewById(R.id.search);
+        search_btn.setOnClickListener(this);
         search.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -120,17 +123,23 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
             public void afterTextChanged(Editable s) {
                 String content = s.toString();
                 if (TextUtils.isEmpty(content)) {
-                    setEngineFragment(RECENT_SEARCH);
+                    setEngineFragment(COMMON_ENTER);
                     clear.setVisibility(View.INVISIBLE);
+                    search_btn.setText(R.string.action_cancel);
                 } else if (!content.equals(temp)) {
-                    setEngineFragment(ENGINE_LIST);
-//                    WebHintFragment f = (WebHintFragment) currentFragment;
-//                    f.refreshData(content);
+                    if (UrlUtils.isUrl(content)) {
+                        search_btn.setText(R.string.enter);
+                    } else {
+                        search_btn.setText(R.string.search);
+                    }
+                    setEngineFragment(WEB_HINT);
+                    WebHintFragment f = (WebHintFragment) currentFragment;
+                    f.refreshData(content);
                     clear.setVisibility(View.VISIBLE);
                 }
             }
         });
-        setEngineFragment(RECENT_SEARCH);
+        setEngineFragment(COMMON_ENTER);
     }
 
     public void setEngineFragment(String tag) {
@@ -176,9 +185,20 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
                 openBoard();
                 break;
             case R.id.search_btn:
-                String searchWord = getSearchWord();
-                if (!TextUtils.isEmpty(searchWord)) {
-                    setEngineFragment(ENGINE_LIST);
+                String btnText = search_btn.getText().toString();
+                if (btnText.equals(getString(R.string.action_cancel))) {//取消
+                    finish();
+                } else {
+                    String searchWord = getSearchWord();
+                    if (!TextUtils.isEmpty(searchWord)) {
+                        if (btnText.equals(getString(R.string.action_cancel))) {//取消
+                            finish();
+                        } else if (btnText.equals(getString(R.string.enter))) {//进入
+                            startBrowserFromSearch(SearchActivity.this, searchWord, searchWord);
+                        } else if (btnText.equals(getString(R.string.search))) {//搜索
+                            setEngineFragment(ENGINE_LIST);
+                        }
+                    }
                 }
                 break;
         }

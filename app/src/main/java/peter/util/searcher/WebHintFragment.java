@@ -58,12 +58,12 @@ public class WebHintFragment extends Fragment implements View.OnClickListener {
             case R.id.recent_search_item:
                 if (bean != null) {
                     SearchActivity searchActivity = (SearchActivity) getActivity();
-//                    String searchWord = bean.name;
-//                    String engineUrl = getString(R.string.default_engine_url);
-//                    String url = UrlUtils.smartUrlFilter(searchWord, true, engineUrl);
-//                    searchActivity.startBrowserFromSearch(getActivity(), url, searchWord);
-                    searchActivity.setSearchWord(bean.name);
-                    searchActivity.setEngineFragment(SearchActivity.ENGINE_LIST);
+                    String searchWord = bean.name;
+                    String engineUrl = getString(R.string.default_engine_url);
+                    String url = UrlUtils.smartUrlFilter(searchWord, true, engineUrl);
+                    searchActivity.startBrowserFromSearch(getActivity(), url, searchWord);
+//                    searchActivity.setSearchWord(bean.name);
+//                    searchActivity.setEngineFragment(SearchActivity.ENGINE_LIST);
                 }
                 break;
             case R.id.choose:

@@ -23,6 +23,7 @@
     <color name="menu_press">#cccccc</color>
     <color name="menu_normal">@color/title_bg</color>
 
+    <color name="transparent">#00000000</color>w
     <color name="back_press">#cccccc</color>
     <color name="back_normal">@color/title_bg</color>
 
