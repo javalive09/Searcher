@@ -64,6 +64,13 @@ public class SearcherWebView {
     public void refreshAllStatus() {
         setStatusLevel(0);
         setOptStatus();
+        resetCacheMode();
+    }
+
+    private void resetCacheMode() {
+        if(webview.getSettings().getCacheMode() != WebSettings.LOAD_DEFAULT) {
+            webview.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
+        }
     }
 
     public WebSettings getSetting() {
@@ -245,6 +252,7 @@ public class SearcherWebView {
     public void loadUrl(String url, String searchWord) {
         if (!TextUtils.isEmpty(url)) {
             Log.i("peter", "url=" + url);
+            webview.clearView();
             webview.loadUrl(url);
             if (!TextUtils.isEmpty(searchWord.trim())) {
                 saveData(searchWord, url);

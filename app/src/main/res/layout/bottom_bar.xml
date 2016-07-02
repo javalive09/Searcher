@@ -79,7 +79,7 @@
         android:onClick="onClick"
         android:scaleType="center"
         android:src="@drawable/refresh"
-        android:visibility="visible" />
+        android:visibility="gone" />
 
     <ImageView
         android:id="@+id/home"
