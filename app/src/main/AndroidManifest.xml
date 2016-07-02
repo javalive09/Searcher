@@ -126,7 +126,7 @@
         <activity
             android:name=".MultiWindow2Activity"
             android:screenOrientation="portrait"
-            android:theme="@style/MultiWindowTheme"/>
+            android:theme="@style/MultiWindow2Theme"/>
     </application>
 
 </manifest>

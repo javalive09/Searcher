@@ -19,7 +19,12 @@
         <item name="actionMenuTextColor">@color/item_normal</item>
     </style>
 
-    <style name="MultiWindowTheme" parent="Theme.AppCompat.DayNight.Dialog.Alert">
+    <style name="MultiWindowTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsTranslucent">true</item>
+    </style>
+
+    <style name="MultiWindow2Theme" parent="Theme.AppCompat.DayNight.Dialog.Alert">
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowIsTranslucent">true</item>
         <item name="windowActionBar">false</item>
@@ -33,17 +38,17 @@
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowAnimationStyle">@android:style/Animation.Translucent</item>
-        <item name ="android:windowBackground">@color/transparent</item>
+        <item name="android:windowBackground">@color/transparent</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:colorForeground">#fff</item>
     </style>
 
 
-    <style name="Transparent" parent ="Theme.AppCompat">
+    <style name="Transparent" parent="Theme.AppCompat">
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">true</item>
         <item name="android:windowIsTranslucent">true</item>
-        <item name ="android:windowBackground">@color/transparent</item>
+        <item name="android:windowBackground">@color/transparent</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:colorForeground">#fff</item>
     </style>

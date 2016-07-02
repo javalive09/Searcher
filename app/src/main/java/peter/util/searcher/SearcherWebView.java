@@ -33,7 +33,7 @@ public class SearcherWebView {
     private View rootView;
     private int mainColor = -1;
     private int defaultColor;
-    Bitmap thumbNail;
+//    Bitmap thumbNail;
 
     public SearcherWebView() {
         init();
@@ -85,11 +85,18 @@ public class SearcherWebView {
     }
 
     public Bitmap getThumbNail() {
-        if(thumbNail == null) {
-            thumbNail = loadBitmapFromView(webview);
+        if(webview != null) {
+            return webview.getDrawingCache();
         }
-        return thumbNail;
+        return null;
     }
+
+//    public Bitmap getThumbNail2() {
+//        if(thumbNail == null) {
+//            thumbNail = loadBitmapFromView(webview);
+//        }
+//        return thumbNail;
+//    }
 
     public int getMainColor() {
         if (mainColor == -1) {
@@ -135,8 +142,8 @@ public class SearcherWebView {
         webview.setDrawingCacheBackgroundColor(Color.WHITE);
         webview.setFocusableInTouchMode(true);
         webview.setFocusable(true);
-        webview.setDrawingCacheEnabled(false);
-        webview.setWillNotCacheDrawing(true);
+        webview.setDrawingCacheEnabled(true);
+        webview.setWillNotCacheDrawing(false);
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP_MR1) {
             //noinspection deprecation
             webview.setAnimationCacheEnabled(false);

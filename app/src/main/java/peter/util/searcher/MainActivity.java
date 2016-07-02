@@ -229,7 +229,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 break;
             case R.id.multi_window:
 //                popUpMultiWindow(v);
-                startActivity(new Intent(MainActivity.this, MultiWindow2Activity.class));
+                startActivity(new Intent(MainActivity.this, MultiWindowActivity.class));
                 break;
             case R.id.menu:
                 popupMenu(v);
