@@ -84,7 +84,6 @@ public class BaseActivity extends AppCompatActivity{
 
     public void startBrowserFromSearch(Activity act, String url, String word) {
         startBrowser(act, url, word, isNewTab(getIntent()));
-        act.finish();
     }
 
     public void startFavAct() {

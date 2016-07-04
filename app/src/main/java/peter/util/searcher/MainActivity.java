@@ -123,15 +123,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             SearcherWebView searcherWebView = SearcherWebViewManager.instance().getCurrentWebView();
             if (searcherWebView != null && searcherWebView.canGoBack()) {
                 searcherWebView.goBack();
-            } else {
-                if ((System.currentTimeMillis() - mExitTime) > 2000) {//
-                    Toast.makeText(this, R.string.exit_hint, Toast.LENGTH_SHORT).show();
-                    mExitTime = System.currentTimeMillis();// 更新mExitTime
-                } else {
-                    exit();
-                }
+                return true;
             }
-            return true;
         }
         return super.onKeyDown(keyCode, event);
     }
