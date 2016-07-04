@@ -1,6 +1,7 @@
 package peter.util.searcher;
 
 import android.annotation.TargetApi;
+import android.app.SearchManager;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
@@ -96,6 +97,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     String searchWord = intent.getStringExtra(NAME_WORD);
                     loadUrl(url, searchWord, isNewTab(intent));
                 } else {// url null finish
+                    startSearch(true);
                     finish();
                 }
             } else if (Intent.ACTION_VIEW.equals(action)) { // outside invoke
@@ -103,8 +105,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 if (!TextUtils.isEmpty(url)) {
                     loadUrl(url, "", true);
                 } else {// url null finish
+                    startSearch(true);
                     finish();
                 }
+            }else if (Intent.ACTION_WEB_SEARCH.equals(action)) {
+                String searchWord = intent.getStringExtra(SearchManager.QUERY);
+                String engineUrl = getString(R.string.default_engine_url);
+                String url = UrlUtils.smartUrlFilter(searchWord, true, engineUrl);
+                loadUrl(url, searchWord, true);
             }
         }
     }

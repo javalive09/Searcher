@@ -69,7 +69,8 @@ public class RecentCommonFragment extends Fragment implements View.OnClickListen
                 BaseActivity baseActivity = (BaseActivity) (getActivity());
                 switch (bean.iconId) {
                     case R.drawable.web_site_icon:
-                        baseActivity.startBrowser(getActivity(), bean.url, "");
+//                        baseActivity.startBrowser(getActivity(), bean.url, "");
+                        baseActivity.startBrowserFromSearch(getActivity(), bean.url, "");
                         break;
                     case R.drawable.history_icon:
                         baseActivity.startHistoryAct();

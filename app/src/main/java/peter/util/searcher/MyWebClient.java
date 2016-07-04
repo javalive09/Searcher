@@ -1,5 +1,6 @@
 package peter.util.searcher;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
@@ -17,10 +18,14 @@ import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.webkit.HttpAuthHandler;
 import android.webkit.SslErrorHandler;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+
+import java.io.ByteArrayInputStream;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,9 +35,23 @@ import java.util.List;
  */
 public class MyWebClient extends WebViewClient {
     private SearcherWebView searcherWebView;
+    IntentUtils mIntentUtils;
+    AdBlock mAdBlock;
 
     public MyWebClient(SearcherWebView view) {
         this.searcherWebView = view;
+        mIntentUtils = new IntentUtils(SearcherWebViewManager.instance().getActivity());
+        mAdBlock = AdBlock.instance(SearcherWebViewManager.instance().getActivity());
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    @Override
+    public WebResourceResponse shouldInterceptRequest(WebView view, @NonNull WebResourceRequest request) {
+        if (mAdBlock.isAd(request.getUrl().toString())) {
+            ByteArrayInputStream EMPTY = new ByteArrayInputStream("".getBytes());
+            return new WebResourceResponse("text/plain", "utf-8", EMPTY);
+        }
+        return super.shouldInterceptRequest(view, request);
     }
 
     @Override
@@ -175,10 +194,10 @@ public class MyWebClient extends WebViewClient {
     @Override
     public boolean shouldOverrideUrlLoading(@NonNull WebView view, @NonNull String url) {
 
-//        if (url.startsWith("about:") && Utils.doesSupportHeaders()) {
-//            view.loadUrl(url);
-//            return true;
-//        }
+        if (url.startsWith("about:") && Utils.doesSupportHeaders()) {
+            view.loadUrl(url);
+            return true;
+        }
         if (url.startsWith("mailto:")) {
             MailTo mailTo = MailTo.parse(url);
             Intent i = Utils.newEmailIntent(mailTo.getTo(), mailTo.getSubject(),
@@ -208,7 +227,8 @@ public class MyWebClient extends WebViewClient {
             }
         }
 
-        return false;
+        return mIntentUtils.startActivityForUrl(view, url);
+
 //        if (!mIntentUtils.startActivityForUrl(view, url) && Utils.doesSupportHeaders()) {
 //            view.loadUrl(url);
 //        }
