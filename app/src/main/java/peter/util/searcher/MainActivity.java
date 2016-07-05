@@ -6,6 +6,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -97,7 +98,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     String searchWord = intent.getStringExtra(NAME_WORD);
                     loadUrl(url, searchWord, isNewTab(intent));
                 } else {// url null finish
-                    startSearch(true);
                     finish();
                 }
             } else if (Intent.ACTION_VIEW.equals(action)) { // outside invoke
@@ -105,7 +105,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 if (!TextUtils.isEmpty(url)) {
                     loadUrl(url, "", true);
                 } else {// url null finish
-                    startSearch(true);
                     finish();
                 }
             }else if (Intent.ACTION_WEB_SEARCH.equals(action)) {
@@ -188,6 +187,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         super.onDestroy();
         clearFrameContentView();
         SearcherWebViewManager.instance().setMainAct(null);
+        SearcherWebViewManager.instance().clear();
     }
 
     public void refreshMultiWindow() {
@@ -247,8 +247,19 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     case R.id.action_refresh:
                         SearcherWebViewManager.instance().getCurrentWebView().refresh();
                         break;
-                    case R.id.action_share:
+                    case R.id.action_close:
+                        finish();
+                        break;
+                    case R.id.action_browser:
                         String url = SearcherWebViewManager.instance().getCurrentWebView().getUrl();
+                        Intent intent = new Intent();
+                        intent.setAction("android.intent.action.VIEW");
+                        Uri content_url = Uri.parse(url);
+                        intent.setData(content_url);
+                        startActivity(intent);
+                        break;
+                    case R.id.action_share:
+                        url = SearcherWebViewManager.instance().getCurrentWebView().getUrl();
                         Intent sendIntent = new Intent();
                         sendIntent.setAction(Intent.ACTION_SEND);
                         sendIntent.putExtra(Intent.EXTRA_TEXT, url);
@@ -256,7 +267,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         startActivity(Intent.createChooser(sendIntent, getString(R.string.share_link_title)));
                         break;
                     case R.id.action_setting:
-                        Intent intent = new Intent(MainActivity.this, SettingActivity.class);
+                        intent = new Intent(MainActivity.this, SettingActivity.class);
                         startActivity(intent);
                         break;
                     case R.id.action_collect:
