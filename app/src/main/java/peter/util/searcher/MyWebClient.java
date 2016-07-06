@@ -34,14 +34,14 @@ import java.util.List;
  * Created by peter on 16/6/6.
  */
 public class MyWebClient extends WebViewClient {
-    private SearcherWebView searcherWebView;
+    private MainActivity mainActivity;
     IntentUtils mIntentUtils;
     AdBlock mAdBlock;
 
-    public MyWebClient(SearcherWebView view) {
-        this.searcherWebView = view;
-        mIntentUtils = new IntentUtils(SearcherWebViewManager.instance().getActivity());
-        mAdBlock = AdBlock.instance(SearcherWebViewManager.instance().getActivity());
+    public MyWebClient(MainActivity activity) {
+        this.mainActivity = activity;
+        mIntentUtils = new IntentUtils(mainActivity);
+        mAdBlock = AdBlock.instance(mainActivity);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -59,13 +59,15 @@ public class MyWebClient extends WebViewClient {
         if(view.isShown()) {
             view.postInvalidate();
         }
-        searcherWebView.refreshAllStatus();
-        saveUrlData(searcherWebView.getTitle(), url);
+        mainActivity.refreshOptStatus();
+        mainActivity.setStatusLevel(0);
+        saveUrlData(mainActivity.getWebViewTitle(), url);
     }
 
     @Override
     public void onPageStarted(WebView view, String url, Bitmap favicon) {
-        searcherWebView.reSetAllStatus();
+        mainActivity.refreshOptStatus();
+        mainActivity.setStatusLevel(1);
         Log.i("peter", "url=" + url);
     }
 
@@ -74,11 +76,10 @@ public class MyWebClient extends WebViewClient {
             @Override
             protected Void doInBackground(Void... params) {
                 Bean search = new Bean();
-
                 search.name = TextUtils.isEmpty(title) ? url : title;
                 search.time = System.currentTimeMillis();
                 search.url = url;
-                SqliteHelper.instance(SearcherWebViewManager.instance().getActivity()).insertHistoryURL(search);
+                SqliteHelper.instance(mainActivity).insertHistoryURL(search);
                 return null;
             }
         }.execute();
@@ -88,7 +89,7 @@ public class MyWebClient extends WebViewClient {
     public void onReceivedHttpAuthRequest(final WebView view, @NonNull final HttpAuthHandler handler,
                                           final String host, final String realm) {
 
-        Activity mActivity = SearcherWebViewManager.instance().getActivity();
+        Activity mActivity = mainActivity;
         if(mActivity != null) {
             AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
             final EditText name = new EditText(mActivity);
@@ -133,17 +134,16 @@ public class MyWebClient extends WebViewClient {
     @Override
     public void onReceivedSslError(WebView view, @NonNull final SslErrorHandler handler, @NonNull SslError error) {
         List<Integer> errorCodeMessageCodes = getAllSslErrorMessageCodes(error);
-
-        Activity mActivity = SearcherWebViewManager.instance().getActivity();
+        Activity mActivity = mainActivity;
         if(mActivity != null) {
             StringBuilder stringBuilder = new StringBuilder();
             for (Integer messageCode : errorCodeMessageCodes) {
-                stringBuilder.append(" - ").append(SearcherWebViewManager.instance().getActivity().getString(messageCode)).append('\n');
+                stringBuilder.append(" - ").append(mainActivity.getString(messageCode)).append('\n');
             }
             String alertMessage =
                     mActivity.getString(R.string.message_insecure_connection, stringBuilder.toString());
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(SearcherWebViewManager.instance().getActivity());
+            AlertDialog.Builder builder = new AlertDialog.Builder(mainActivity);
             builder.setTitle(mActivity.getString(R.string.title_warning));
             builder.setMessage(alertMessage)
                     .setCancelable(true)
@@ -193,7 +193,6 @@ public class MyWebClient extends WebViewClient {
 
     @Override
     public boolean shouldOverrideUrlLoading(@NonNull WebView view, @NonNull String url) {
-
         if (url.startsWith("about:") && Utils.doesSupportHeaders()) {
             view.loadUrl(url);
             return true;
@@ -202,7 +201,7 @@ public class MyWebClient extends WebViewClient {
             MailTo mailTo = MailTo.parse(url);
             Intent i = Utils.newEmailIntent(mailTo.getTo(), mailTo.getSubject(),
                     mailTo.getBody(), mailTo.getCc());
-            SearcherWebViewManager.instance().getActivity().startActivity(i);
+            mainActivity.startActivity(i);
             view.reload();
             return true;
         } else if (url.startsWith("intent://")) {
@@ -219,20 +218,14 @@ public class MyWebClient extends WebViewClient {
                     intent.setSelector(null);
                 }
                 try {
-                    SearcherWebViewManager.instance().getActivity().startActivity(intent);
+                    mainActivity.startActivity(intent);
                 } catch (ActivityNotFoundException e) {
                     e.printStackTrace();
                 }
                 return true;
             }
         }
-
         return mIntentUtils.startActivityForUrl(view, url);
-
-//        if (!mIntentUtils.startActivityForUrl(view, url) && Utils.doesSupportHeaders()) {
-//            view.loadUrl(url);
-//        }
-//        return Utils.doesSupportHeaders() || super.shouldOverrideUrlLoading(view, url);
     }
 
 }

@@ -13,14 +13,11 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.google.gson.reflect.TypeToken;
-
-import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -82,12 +79,12 @@ public class EngineViewPagerFragment extends Fragment implements View.OnClickLis
             case R.id.engine_item:
                 Activity act = getActivity();
                 String searchWord;
-                SearchActivity searchAct = (SearchActivity) act;
-                searchWord = searchAct.getSearchWord();
+                EnterActivity enterActivity = (EnterActivity) act;
+                searchWord = enterActivity.getSearchWord();
                 if (!TextUtils.isEmpty(searchWord)) {
                     Engine engine = (Engine) v.getTag(R.id.grid_view_item);
                     String url = UrlUtils.smartUrlFilter(searchWord, true, engine.url);
-                    searchAct.startBrowserFromSearch(getActivity(), url, searchWord);
+                    enterActivity.startBrowser(url, searchWord);
                 }
                 break;
             default:

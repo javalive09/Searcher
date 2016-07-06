@@ -10,22 +10,10 @@
 
     <color name="setting_bg">#f7f7f9</color>
 
-    <color name="enter_bg">@color/title_bg</color>
-
     <color name="item_normal">#ffffff</color>
     <color name="item_press">#88cccccc</color>
-    <color name="clear_all">#0d1b34</color>
-
-
-    <color name="engine_item_normal">#cccccc</color>
-    <color name="engine_item_press">#888888</color>
-
-    <color name="menu_press">#cccccc</color>
-    <color name="menu_normal">@color/title_bg</color>
 
     <color name="transparent">#00000000</color>w
     <color name="back_press">#cccccc</color>
-    <color name="back_normal">@color/title_bg</color>
 
-    <color name="black">#000000</color>
 </resources>

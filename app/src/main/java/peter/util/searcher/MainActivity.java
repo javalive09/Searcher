@@ -1,69 +1,216 @@
 package peter.util.searcher;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.SearchManager;
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.LevelListDrawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.graphics.Palette;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.webkit.CookieManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.widget.BaseAdapter;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.PopupMenu;
-import android.widget.PopupWindow;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.umeng.analytics.MobclickAgent;
 
-import java.util.List;
 import java.util.Set;
+
+import peter.util.searcher.download.MyDownloadListener;
 
 /**
  * Created by peter on 16/5/9.
  */
 public class MainActivity extends BaseActivity implements View.OnClickListener {
 
+    private static final int API = Build.VERSION.SDK_INT;
     private View bottomBar;
-    private long mExitTime = 0;
-    public static final String HOME = "file:///android_asset/susou.html";
+    private WebView webview;
+    private View progressBar;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        SearcherWebViewManager.instance().setMainAct(this);
         setContentView(R.layout.activity_main);
         init();
     }
 
+    public String getWebViewTitle() {
+        String title = "";
+        if (webview != null) {
+            title = webview.getTitle();
+            title = TextUtils.isEmpty(title) ? webview.getUrl() : title;
+        }
+        return title;
+    }
+
     private void init() {
+        webview = (WebView) findViewById(R.id.wv);
+        progressBar = findViewById(R.id.status);
         bottomBar = findViewById(R.id.bottom_bar);
         Intent intent = getIntent();
         if (intent != null) {
             Set<String> category = intent.getCategories();
             if (category != null && category.contains(Intent.CATEGORY_LAUNCHER)) {//launcher invoke
-//                startBrowser(this,  MainActivity.HOME, "", false);
-                startSearch(true);
+                startActivity(new Intent(MainActivity.this, EnterActivity.class));
                 finish();
             } else {
                 checkIntentData(intent);
+            }
+        }
+        initWebView(webview);
+        initializeSettings(webview);
+    }
+
+    private void initWebView(WebView webview) {
+        webview.setDrawingCacheBackgroundColor(Color.WHITE);
+        webview.setFocusableInTouchMode(true);
+        webview.setFocusable(true);
+        webview.setDrawingCacheEnabled(false);
+        webview.setWillNotCacheDrawing(true);
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP_MR1) {
+            //noinspection deprecation
+            webview.setAnimationCacheEnabled(false);
+            //noinspection deprecation
+            webview.setAlwaysDrawnWithCacheEnabled(false);
+        }
+        webview.setBackgroundColor(Color.WHITE);
+        webview.setScrollbarFadingEnabled(true);
+        webview.setSaveEnabled(true);
+        webview.setNetworkAvailable(true);
+        webview.setWebChromeClient(new MyWebChromeClient(this));
+        webview.setWebViewClient(new MyWebClient(this));
+        webview.setDownloadListener(new MyDownloadListener(this));
+        setUserAgent(MainActivity.this);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            CookieManager.getInstance().setAcceptThirdPartyCookies(webview, true);
+        }
+    }
+
+    /**
+     * Initialize the settings of the WebView that are intrinsic to Lightning and cannot
+     * be altered by the user. Distinguish between Incognito and Regular tabs here.
+     */
+    @SuppressLint("NewApi")
+    private void initializeSettings(WebView webview) {
+        if (webview == null) {
+            return;
+        }
+        final WebSettings settings = webview.getSettings();
+        if (API < Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            //noinspection deprecation
+            settings.setAppCacheMaxSize(Long.MAX_VALUE);
+        }
+        if (API < Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            //noinspection deprecation
+            settings.setEnableSmoothTransition(true);
+        }
+        if (API > Build.VERSION_CODES.JELLY_BEAN) {
+            settings.setMediaPlaybackRequiresUserGesture(true);
+        }
+        if (API >= Build.VERSION_CODES.LOLLIPOP) {
+            // We're in Incognito mode, reject
+            settings.setMixedContentMode(WebSettings.MIXED_CONTENT_NEVER_ALLOW);
+        }
+        settings.setJavaScriptEnabled(true);
+        settings.setJavaScriptCanOpenWindowsAutomatically(true);
+        settings.setLoadWithOverviewMode(true);
+        settings.setUseWideViewPort(true);
+        settings.setDomStorageEnabled(true);
+        settings.setCacheMode(WebSettings.LOAD_DEFAULT);
+        settings.setDatabaseEnabled(true);
+        settings.setSupportZoom(true);
+        settings.setBuiltInZoomControls(true);
+        settings.setDisplayZoomControls(false);
+        settings.setAllowContentAccess(true);
+        settings.setAllowFileAccess(true);
+        if (API >= Build.VERSION_CODES.JELLY_BEAN) {
+            settings.setAllowFileAccessFromFileURLs(false);
+            settings.setAllowUniversalAccessFromFileURLs(false);
+        }
+        settings.setSavePassword(true);
+        settings.setSaveFormData(true);
+        settings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.TEXT_AUTOSIZING);
+    }
+
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
+    private void setUserAgent(Context context) {
+        if (webview == null) return;
+        WebSettings settings = webview.getSettings();
+        if (API >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            String def = WebSettings.getDefaultUserAgent(context);
+            settings.setUserAgentString(def);
+        } else {
+            settings.setUserAgentString(settings.getUserAgentString());
+        }
+    }
+
+    public void setMainColor(Bitmap favicon) {
+        Palette.from(favicon).generate(new Palette.PaletteAsyncListener() {
+
+            @Override
+            public void onGenerated(Palette palette) {
+                int defaultColor = getResources().getColor(R.color.colorPrimary);
+                int mainColor = getSearchBarColor(palette.getVibrantColor(defaultColor));//real main color
+                refreshStatusColor(mainColor);
+            }
+        });
+    }
+
+    private int getSearchBarColor(int requestedColor) {
+        return DrawableUtils.mixColor(0.25f, requestedColor, Color.WHITE);
+    }
+
+    private void refreshStatusColor(int animColor) {
+        setBottomBarColor(animColor);
+        if (API >= 21) {
+            setStatusColor(animColor);
+        }
+    }
+
+    public void setStatusLevel(int level) {
+        LevelListDrawable d = (LevelListDrawable) progressBar.getBackground();
+        if (d.getLevel() != level) {
+            d.setLevel(level);
+        }
+    }
+
+    public void refreshOptStatus() {
+        final View back = findViewById(R.id.back);
+        if (webview.canGoBack()) {
+            if (back != null && !back.isEnabled()) {
+                back.setEnabled(true);
+            }
+        } else {
+            if (back != null && back.isEnabled()) {
+                back.setEnabled(false);
+            }
+        }
+        final View go = findViewById(R.id.go);
+        if (webview.canGoForward()) {
+            if (go != null && !go.isEnabled()) {
+                go.setEnabled(true);
+            }
+        } else {
+            if (go != null && go.isEnabled()) {
+                go.setEnabled(false);
             }
         }
     }
@@ -96,22 +243,18 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 String url = (String) intent.getSerializableExtra(NAME_URL);
                 if (!TextUtils.isEmpty(url)) {
                     String searchWord = intent.getStringExtra(NAME_WORD);
-                    loadUrl(url, searchWord, isNewTab(intent));
-                } else {// url null finish
-                    finish();
+                    loadUrl(url, searchWord);
                 }
             } else if (Intent.ACTION_VIEW.equals(action)) { // outside invoke
                 String url = intent.getDataString();
                 if (!TextUtils.isEmpty(url)) {
-                    loadUrl(url, "", true);
-                } else {// url null finish
-                    finish();
+                    loadUrl(url, "");
                 }
-            }else if (Intent.ACTION_WEB_SEARCH.equals(action)) {
+            } else if (Intent.ACTION_WEB_SEARCH.equals(action)) {
                 String searchWord = intent.getStringExtra(SearchManager.QUERY);
                 String engineUrl = getString(R.string.default_engine_url);
                 String url = UrlUtils.smartUrlFilter(searchWord, true, engineUrl);
-                loadUrl(url, searchWord, true);
+                loadUrl(url, searchWord);
             }
         }
     }
@@ -119,118 +262,78 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if ((keyCode == KeyEvent.KEYCODE_BACK)) {
-            SearcherWebView searcherWebView = SearcherWebViewManager.instance().getCurrentWebView();
-            if (searcherWebView != null && searcherWebView.canGoBack()) {
-                searcherWebView.goBack();
+            if (webview != null && webview.canGoBack()) {
+                webview.goBack();
                 return true;
             }
         }
         return super.onKeyDown(keyCode, event);
     }
 
-    private void loadUrl(String url, String searchWord, boolean isNewTab) {
-        SearcherWebView view;
-        if (isNewTab) {//new tab
-            view = SearcherWebViewManager.instance().newWebview();
-            view.getSetting().setCacheMode(WebSettings.LOAD_NO_CACHE);
-            view.clearView();
-            view.loadUrl(url, searchWord);
-        } else {
-            view = SearcherWebViewManager.instance().containUrlView(url);
-            if (view != null) {//切换
-                view.setStatusMainColor();
-                SearcherWebViewManager.instance().setCurrentWebView(view);
-            } else {//搜索, first
-                view = SearcherWebViewManager.instance().getCurrentWebView();
-                if (view == null) {
-                    view = SearcherWebViewManager.instance().newWebview();
-                }
-                view.clearView();
-                view.getSetting().setCacheMode(WebSettings.LOAD_DEFAULT);
-                view.loadUrl(url, searchWord);
+    private void loadUrl(String url, String searchWord) {
+        if (!TextUtils.isEmpty(url)) {
+            Log.i("peter", "url=" + url);
+            webview.loadUrl(url);
+            if (!TextUtils.isEmpty(searchWord)) {
+                saveData(searchWord, url);
             }
         }
-        clearFrameContentView();
-        setFrameContentView(view.getRootView());
     }
 
-    private void clearFrameContentView() {
-        FrameLayout contentFrame = (FrameLayout) findViewById(R.id.content_frame);
-        if (contentFrame != null) {
-            contentFrame.removeAllViews();
-        }
-    }
-
-    private void setFrameContentView(View contentView) {
-        FrameLayout contentFrame = (FrameLayout) findViewById(R.id.content_frame);
-        if (contentFrame != null) {
-            contentFrame.addView(contentView);
-        }
+    private void saveData(final String word, final String url) {
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                Bean search = new Bean();
+                search.name = word;
+                search.time = System.currentTimeMillis();
+                search.url = url;
+                SqliteHelper.instance(getApplicationContext()).insertHistory(search);
+                return null;
+            }
+        }.execute();
     }
 
     protected void onResume() {
         super.onResume();
         MobclickAgent.onResume(this);
-        SearcherWebViewManager.instance().resumeAll();
-        refreshMultiWindow();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         MobclickAgent.onPause(this);
-        SearcherWebViewManager.instance().pauseAll();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        clearFrameContentView();
-        SearcherWebViewManager.instance().setMainAct(null);
-        SearcherWebViewManager.instance().clear();
-    }
-
-    public void refreshMultiWindow() {
-        TextView countView = (TextView) findViewById(R.id.multi_window);
-        int count = SearcherWebViewManager.instance().getWebViewCount();
-        if (countView != null) {
-            String countStr = count + "";
-            if (count > 9) {
-                countStr = "*";
-            }
-            countView.setText(countStr);
-        }
     }
 
     @Override
     public void onClick(View v) {
-        SearcherWebView webView = SearcherWebViewManager.instance().getCurrentWebView();
         switch (v.getId()) {
             case R.id.back:
-                if (webView.canGoBack()) {
-                    webView.goBack();
+                if (webview.canGoBack()) {
+                    webview.goBack();
                 }
                 break;
             case R.id.go:
-                if (webView.canGoForward()) {
-                    webView.goForward();
+                if (webview.canGoForward()) {
+                    webview.goForward();
                 }
                 break;
             case R.id.home:
-                startBrowser(this,  MainActivity.HOME, "", false);
+                startActivity(new Intent(MainActivity.this, EnterActivity.class));
                 break;
             case R.id.refresh:
-                webView.refresh();
+                webview.reload();
                 break;
             case R.id.search:
-                startSearch(false);
                 break;
             case R.id.search_btn:
-                startSearch(false);
                 break;
             case R.id.multi_window:
-//                popUpMultiWindow(v);
-                startActivity(new Intent(MainActivity.this, MultiWindowActivity.class));
                 break;
             case R.id.menu:
                 popupMenu(v);
@@ -244,14 +347,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
-                    case R.id.action_refresh:
-                        SearcherWebViewManager.instance().getCurrentWebView().refresh();
-                        break;
-                    case R.id.action_close:
-                        finish();
-                        break;
                     case R.id.action_browser:
-                        String url = SearcherWebViewManager.instance().getCurrentWebView().getUrl();
+                        String url = webview.getUrl();
                         Intent intent = new Intent();
                         intent.setAction("android.intent.action.VIEW");
                         Uri content_url = Uri.parse(url);
@@ -259,50 +356,30 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         startActivity(intent);
                         break;
                     case R.id.action_share:
-                        url = SearcherWebViewManager.instance().getCurrentWebView().getUrl();
+                        url = webview.getUrl();
                         Intent sendIntent = new Intent();
                         sendIntent.setAction(Intent.ACTION_SEND);
                         sendIntent.putExtra(Intent.EXTRA_TEXT, url);
                         sendIntent.setType("text/plain");
                         startActivity(Intent.createChooser(sendIntent, getString(R.string.share_link_title)));
                         break;
-                    case R.id.action_setting:
-                        intent = new Intent(MainActivity.this, SettingActivity.class);
-                        startActivity(intent);
-                        break;
                     case R.id.action_collect:
-                        SearcherWebView webView = SearcherWebViewManager.instance().getCurrentWebView();
-                        if (!TextUtils.isEmpty(webView.getUrl())) {
+                        if (!TextUtils.isEmpty(webview.getUrl())) {
                             Bean bean = new Bean();
-                            bean.name = webView.getFavName();
-                            bean.url = webView.getUrl();
+                            bean.name = webview.getTitle() + "-" + webview.getUrl();
+                            bean.url = webview.getUrl();
                             bean.time = System.currentTimeMillis();
                             SqliteHelper.instance(MainActivity.this).insertFav(bean);
                             Toast.makeText(MainActivity.this, R.string.favorite_txt, Toast.LENGTH_SHORT).show();
                         }
                         break;
-//                    case R.id.action_go:
-//                        webView = SearcherWebViewManager.instance().getCurrentWebView();
-//                        if (webView.canGoForward()) {
-//                            webView.goForward();
-//                        }
-//                        break;
                     case R.id.action_copy_link:
-                        url = SearcherWebViewManager.instance().getCurrentWebView().getUrl();
-                        String title = SearcherWebViewManager.instance().getCurrentWebView().getTitle();
+                        url = webview.getUrl();
+                        String title = webview.getTitle();
                         ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
                         ClipData clip = ClipData.newPlainText(title, url);
                         clipboard.setPrimaryClip(clip);
                         Toast.makeText(MainActivity.this, R.string.copy_link_txt, Toast.LENGTH_SHORT).show();
-                        break;
-//                    case R.id.action_history_url:
-//                        startActivity(new Intent(MainActivity.this, HistoryURLActivity.class));
-//                        break;
-                    case R.id.action_collection:
-                        startActivity(new Intent(MainActivity.this, FavoriteActivity.class));
-                        break;
-                    case R.id.action_history:
-                        startActivity(new Intent(MainActivity.this, HistoryActivity.class));
                         break;
                     case R.id.action_exit:
                         exit();
@@ -313,77 +390,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         });
         popup.show();
     }
-
-//    private void popUpMultiWindow(View anchor) {
-//        LayoutInflater inflater = LayoutInflater.from(this);
-//        View view = inflater.inflate(R.layout.popup_window_list, null);
-//        ListView listView = (ListView) view.findViewById(R.id.list);
-//        listView.setAdapter(new PopupWindowAdapter(inflater,
-//                SearcherWebViewManager.instance().getAllViews(),
-//                new View.OnClickListener() {
-//
-//                    @Override
-//                    public void onClick(View v) {
-//
-//                    }
-//                }));
-//        PopupWindow popupWindow = new PopupWindow(view, ViewGroup.LayoutParams.MATCH_PARENT,
-//                ViewGroup.LayoutParams.WRAP_CONTENT);
-//        popupWindow.setOutsideTouchable(true);
-//        popupWindow.setAnimationStyle(android.R.style.Animation_Dialog);
-//        popupWindow.update();
-//        popupWindow.setTouchable(true);
-//        popupWindow.setFocusable(true);
-//        popupWindow.showAtLocation(findViewById(R.id.root), Gravity.LEFT | Gravity.TOP, 0, 0);
-//
-//    }
-
-//    static class PopupWindowAdapter extends BaseAdapter {
-//
-//        private List<SearcherWebView> list;
-//        private LayoutInflater inflater;
-//        private View.OnClickListener listener;
-//
-//        public PopupWindowAdapter(LayoutInflater inflater, List<SearcherWebView> list, View.OnClickListener listener) {
-//            this.list = list;
-//            this.inflater = inflater;
-//            this.listener = listener;
-//        }
-//
-//        @Override
-//        public int getCount() {
-//            return list.size();
-//        }
-//
-//        @Override
-//        public SearcherWebView getItem(int position) {
-//            return list.get(position);
-//        }
-//
-//        @Override
-//        public long getItemId(int position) {
-//            return position;
-//        }
-//
-//        @Override
-//        public View getView(int position, View convertView, ViewGroup parent) {
-//            if(convertView == null) {
-//                convertView = inflater.inflate(R.layout.multi_window_list_item, parent, false);
-//            }
-//            TextView content = (TextView) convertView.findViewById(R.id.list_item);
-//            ImageView close = (ImageView) convertView.findViewById(R.id.close);
-//            ImageView icon = (ImageView) convertView.findViewById(R.id.icon);
-//
-//            SearcherWebView search = getItem(position);
-//            icon.setImageBitmap(search.getFavIcon());
-//            content.setText(search.getTitle());
-//            content.setOnClickListener(listener);
-//            content.setTag(search);
-//            close.setTag(search);
-//            close.setOnClickListener(listener);
-//            return convertView;
-//        }
-//    }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {

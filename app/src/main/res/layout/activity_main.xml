@@ -5,15 +5,22 @@
     android:layout_height="match_parent">
 
     <include
+        android:id="@+id/bottom_bar"
         layout="@layout/bottom_bar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/bottom_h"
-        android:layout_alignParentBottom="true"/>
+        android:layout_alignParentBottom="true" />
 
-    <FrameLayout
-        android:id="@+id/content_frame"
+    <WebView
+        android:id="@+id/wv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/bottom_bar"/>
+        android:layout_above="@+id/bottom_bar" />
+
+    <View
+        android:id="@+id/status"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@drawable/status" />
 
 </RelativeLayout>

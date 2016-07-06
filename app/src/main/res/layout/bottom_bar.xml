@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/bottom_bar"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/title_bg"
     android:orientation="horizontal">
 
     <!--<ImageView-->
@@ -68,6 +66,17 @@
         android:onClick="onClick"
         android:scaleType="center"
         android:src="@drawable/bar_search"
+        android:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/home"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="match_parent"
+        android:background="@drawable/menu_selector"
+        android:onClick="onClick"
+        android:scaleType="center"
+        android:src="@drawable/toolbar_home"
         android:visibility="visible" />
 
     <ImageView
@@ -79,29 +88,8 @@
         android:onClick="onClick"
         android:scaleType="center"
         android:src="@drawable/refresh"
-        android:visibility="gone" />
+        android:visibility="visible" />
 
-    <ImageView
-        android:id="@+id/home"
-        android:layout_width="@dimen/bottom_item_w"
-        android:layout_height="match_parent"
-        android:background="@drawable/menu_selector"
-        android:onClick="onClick"
-        android:scaleType="center"
-        android:src="@drawable/toolbar_home"
-        android:visibility="gone" />
-
-    <TextView
-        android:id="@+id/multi_window"
-        android:layout_width="0dp"
-        android:layout_weight="1"
-        android:layout_height="match_parent"
-        android:background="@drawable/multi_window_top_selector"
-        android:gravity="center"
-        android:onClick="onClick"
-        android:textColor="@android:color/white"
-        android:textSize="10sp"
-        android:textStyle="bold" />
 
     <ImageView
         android:id="@+id/menu"

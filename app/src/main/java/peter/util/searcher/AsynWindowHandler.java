@@ -6,13 +6,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Handler;
 import android.os.Message;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ListPopupWindow;
-
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by peter on 16/5/5.

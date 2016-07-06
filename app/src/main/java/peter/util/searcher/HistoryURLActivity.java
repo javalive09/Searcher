@@ -89,7 +89,7 @@ public class HistoryURLActivity extends BaseActivity implements View.OnClickList
             case R.id.history_item:
                 Bean bean = (Bean) v.getTag();
                 if (bean != null) {
-                    startBrowser(HistoryURLActivity.this, bean.url, bean.name);
+                    startBrowser(bean.url, bean.name);
                 }
                 break;
         }

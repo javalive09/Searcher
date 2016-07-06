@@ -79,7 +79,7 @@ public class FavoriteActivity extends BaseActivity implements View.OnClickListen
             case R.id.favorite_item:
                 Bean bean = (Bean) v.getTag();
                 if(bean != null) {
-                    startBrowser(FavoriteActivity.this, bean.url, bean.name);
+                    startBrowser(bean.url, bean.name);
                 }
                 break;
         }

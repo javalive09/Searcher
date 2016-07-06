@@ -12,17 +12,17 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.umeng.analytics.MobclickAgent;
 
@@ -31,12 +31,18 @@ import java.util.ArrayList;
 /**
  * Created by peter on 16/5/19.
  */
-public class EnterActivity extends BaseActivity implements DrawerLayoutAdapter.OnItemClickListener, View.OnClickListener {
+public class EnterActivity extends BaseActivity implements DrawerLayoutAdapter.OnItemClickListener ,View.OnClickListener{
 
+    private EditText search;
+    private ImageView clear;
     private DrawerLayout mDrawerLayout;
-    private RecyclerView mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
-    private long mExitTime = 0;
+    private static final String RECENT_SEARCH = "recent_search";
+    public static final String ENGINE_LIST = "engine_list";
+    private static final String WEB_SITES = "web_sites";
+    private static final String WEB_HINT = "web_hint";
+    private static final String COMMON_ENTER = "common_enter";
+    private String currentFragmentTag = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,22 +61,39 @@ public class EnterActivity extends BaseActivity implements DrawerLayoutAdapter.O
         MobclickAgent.onPause(this);
     }
 
-    private void init() {
-        View searchInput = findViewById(R.id.search);
-        if (searchInput != null) {
-            searchInput.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                        startSearch(isNewTab(getIntent()));
-                        return true;
-                    }
-                    return false;
-                }
-            });
+    public void setSearchWord(String word) {
+        search.setText(word);
+        if (!TextUtils.isEmpty(word)) {
+            int position = word.length();
+            search.setSelection(position);
         }
+    }
+
+    public String getSearchWord() {
+        return search.getText().toString().trim();
+    }
+
+    private void init() {
+        clear = (ImageView) findViewById(R.id.clear);
+        search = (EditText) findViewById(R.id.search);
+        search.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    String searchWord = getSearchWord();
+                    if (!TextUtils.isEmpty(searchWord)) {
+                        String engineUrl = getString(R.string.default_engine_url);
+                        String url = UrlUtils.smartUrlFilter(searchWord, true, engineUrl);
+                        startBrowser(url, searchWord);
+                    }
+                    search.requestFocus();
+                    return true;
+                }
+                return false;
+            }
+        });
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawerList = (RecyclerView) findViewById(R.id.left_drawer);
+        RecyclerView mDrawerList = (RecyclerView) findViewById(R.id.left_drawer);
         mDrawerList.setHasFixedSize(true);
         mDrawerList.setLayoutManager(new LinearLayoutManager(this));
         mDrawerList.setAdapter(new DrawerLayoutAdapter(getData(), this));
@@ -84,8 +107,8 @@ public class EnterActivity extends BaseActivity implements DrawerLayoutAdapter.O
                 R.string.drawer_close) {
             public void onDrawerClosed(View view) {
                 findViewById(R.id.title).setVisibility(View.GONE);
-                findViewById(R.id.search).setVisibility(View.VISIBLE);
-                findViewById(R.id.search).requestFocus();
+                search.setVisibility(View.VISIBLE);
+                search.requestFocus();
             }
 
             @Override
@@ -95,7 +118,8 @@ public class EnterActivity extends BaseActivity implements DrawerLayoutAdapter.O
 
             public void onDrawerOpened(View drawerView) {
                 findViewById(R.id.title).setVisibility(View.VISIBLE);
-                findViewById(R.id.search).setVisibility(View.GONE);
+                search.setVisibility(View.GONE);
+                hideBoard();
             }
         };
         mDrawerLayout.addDrawerListener(mDrawerToggle);
@@ -105,24 +129,56 @@ public class EnterActivity extends BaseActivity implements DrawerLayoutAdapter.O
                 UpdateController.instance(getApplicationContext()).autoCheckVersion(new AsynWindowHandler(EnterActivity.this));
             }
         }, 200);
-        setWebSiteFragment();
+        search.addTextChangedListener(new TextWatcher() {
+            String temp;
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                temp = s.toString();
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String content = s.toString();
+                if (TextUtils.isEmpty(content)) {
+                    setEngineFragment(RECENT_SEARCH);
+                    clear.setVisibility(View.INVISIBLE);
+                } else if (!content.equals(temp)) {
+                    setEngineFragment(ENGINE_LIST);
+                    clear.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+        setEngineFragment(RECENT_SEARCH);
+    }
+
+    public void setEngineFragment(String tag) {
+        if (!currentFragmentTag.equals(tag)) {
+            currentFragmentTag = tag;
+            Fragment fragment = null;
+            if (tag.equals(RECENT_SEARCH)) {
+                fragment = new RecentSearchFragment();
+            } else if (tag.equals(ENGINE_LIST)) {
+                fragment = new EngineViewPagerFragment();
+            } else if (tag.equals(WEB_SITES)) {
+                fragment = new CommonWebSiteFragment();
+            }
+            FragmentManager fragmentManager = getFragmentManager();
+            FragmentTransaction ft = fragmentManager.beginTransaction();
+            ft.replace(R.id.content_frame, fragment, tag);
+            ft.commit();
+        }
     }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if(mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
+            if (mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
                 mDrawerLayout.closeDrawers();
-                return true;
-            }
-
-            if (isLaunchTab(getIntent())) {
-                if ((System.currentTimeMillis() - mExitTime) > 2000) {//
-                    Toast.makeText(this, R.string.exit_hint, Toast.LENGTH_SHORT).show();
-                    mExitTime = System.currentTimeMillis();// 更新mExitTime
-                } else {
-                    finish();
-                }
                 return true;
             }
         }
@@ -139,13 +195,6 @@ public class EnterActivity extends BaseActivity implements DrawerLayoutAdapter.O
         return list;
     }
 
-    private void setWebSiteFragment() {
-        Fragment fragment = new CommonWebSiteFragment();
-        FragmentManager fragmentManager = getFragmentManager();
-        FragmentTransaction ft = fragmentManager.beginTransaction();
-        ft.replace(R.id.content_frame, fragment);
-        ft.commit();
-    }
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
@@ -170,13 +219,13 @@ public class EnterActivity extends BaseActivity implements DrawerLayoutAdapter.O
             case DrawerLayoutAdapter.CUSTOM:
                 switch (bean.id) {
                     case R.id.hot_list_favorite:
-                        startFavAct();
+                        startActivity(new Intent(EnterActivity.this, FavoriteActivity.class));
                         break;
                     case R.id.hot_list_history:
-                        startHistoryAct();
+                        startActivity(new Intent(EnterActivity.this, HistoryActivity.class));
                         break;
                     case R.id.hot_list_url_history:
-                        startHistorUrlyAct();
+                        startActivity(new Intent(EnterActivity.this, HistoryURLActivity.class));
                         break;
                     case R.id.hot_list_setting:
                         startActivity(new Intent(EnterActivity.this, SettingActivity.class));
@@ -184,24 +233,29 @@ public class EnterActivity extends BaseActivity implements DrawerLayoutAdapter.O
                 }
                 break;
             case DrawerLayoutAdapter.HOT_LIST:
-                String url = UrlUtils.smartUrlFilter(bean.url, true, bean.url);
-                startBrowser(EnterActivity.this, url, bean.content);
                 break;
             case DrawerLayoutAdapter.VERSION:
                 break;
         }
     }
 
+    private void openBoard() {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.showSoftInput(search, InputMethodManager.SHOW_IMPLICIT);
+    }
+
+    private void hideBoard() {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(search.getWindowToken(), 0); //强制隐藏键盘
+    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.multi_window:
-                int count = SearcherWebViewManager.instance().getWebViewCount();
-                if (count > 0) {
-                    startActivity(new Intent(EnterActivity.this, MultiWindowActivity.class));
-                } else {
-                    Toast.makeText(EnterActivity.this, R.string.action_about, Toast.LENGTH_SHORT).show();
-                }
+            case R.id.clear:
+                search.requestFocus();
+                search.setText("");
+                openBoard();
                 break;
         }
     }

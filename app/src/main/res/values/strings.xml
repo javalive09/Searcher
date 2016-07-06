@@ -1,30 +1,12 @@
 <resources>
     <string name="search">搜索</string>
-    <string name="enter">进入</string>
     <string name="app_name">速搜</string>
-    <string name="menu_txt">更多</string>
-    <string name="hot_title">实时搜索Top10</string>
     <string name="news_163">网易新闻</string>
-    <string name="weibo">新浪微博</string>
-    <string name="eat_list">家常菜谱</string>
-    <string name="favorite_url_title">常用网站</string>
     <string name="history_today_title">历史.今天</string>
     <string name="weeks_weather">天气预报</string>
     <string name="web_guide">网址导航</string>
-    <string name="video_huya">虎牙直播</string>
-    <string name="clear_history"> 清空最近记录</string>
-    <string name="exit_hint_title">&#60;快速退出&#62;</string>
-    <string name="exit_hint_msg">从屏幕右侧边缘向左滑动</string>
-    <string name="web_hint_url">http://unionsug.baidu.com/su/?wd=%s</string>
-    <string name="engine_title">搜索引擎</string>
-    <integer name="default_engine">0</integer>
-    <string name="ok"><u>确定</u></string>
     <string name="setting_title">我的设置</string>
-    <string name="setting_back">返回</string>
     <string name="setting_feedback">反馈建议</string>
-    <string name="setting_clear_cache">清理缓存</string>
-    <string name="setting_share_app">分享APP</string>
-    <string name="setting_update">版本更新</string>
     <string name="setting_feedback_body">您的反馈和建议</string>
     <string name="setting_feedback_address">mailto:javalive09@163.com</string>
     <string name="setting_about">提供简单畅快的搜索体验。搜索一步完成，退出一步完成。功能强大，干净省电。
@@ -43,15 +25,10 @@
     <string name="cannot_download">仅可下载以 \"http\" 或 \"https\" 开头的链接地址</string>
     <string name="problem_location_download">Cannot download to the specified location</string>
     <string name="download_pending">开始下载…</string>
-    <string name="clear_all_multi">全部清除</string>
-    <string name="new_tab">新建搜索窗口</string>
 
     <string name="action_cancel">取消</string>
     <string name="action_share">分享</string>
-    <string name="action_go">前进</string>
     <string name="action_exit">退出程序</string>
-    <string name="action_refresh">刷新</string>
-    <string name="action_close">关闭</string>
     <string name="favorite_txt">已经添加到收藏夹</string>
     <string name="copy_link_txt">已经复制链接</string>
     <string name="action_browser">在浏览器中打开</string>
@@ -60,15 +37,10 @@
     <string name="action_copy_link">复制链接</string>
     <string name="action_history">搜索记录</string>
     <string name="action_history_url">浏览记录</string>
-    <string name="fav_his_title">收藏/记录</string>
-    <string name="menu_other">其他</string>
     <string name="action_url_history">浏览记录</string>
-    <string name="action_setting">设置</string>
-    <string name="action_feedback">反馈</string>
     <string name="action_about">关于速搜</string>
     <string name="action_delete">删除</string>
     <string name="action_delete_all">删除全部</string>
-    <string name="not_window_hint">没有打开的标签</string>
 
     <string name="update_dialog_title">正在下载更新包</string>
     <string name="update_dialog_cancel">取消</string>
@@ -80,7 +52,6 @@
     <string name="share_title">分享应用给小伙伴</string>
     <string name="share_link_title">分享链接</string>
     <string name="default_engine_url">http://m5.baidu.com/s?word=%s</string>
-    <string name="exit_hint">再按一次退出程序</string>
 
     <string name="title_sign_in">登录</string>
     <string name="hint_username">用户名</string>
@@ -105,15 +76,6 @@
         <item>反馈意见</item>
         <item>版本更新</item>
         <item>关于速搜</item>
-    </string-array>
-
-    <string-array name="menus_name">
-        <item>@string/action_setting</item>
-        <item>@string/action_collection</item>
-        <item>@string/action_history</item>
-        <item>@string/action_share</item>
-        <item>@string/action_collect</item>
-        <item>退出</item>
     </string-array>
 
 </resources>

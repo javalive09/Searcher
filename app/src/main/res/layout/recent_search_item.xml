@@ -18,11 +18,4 @@
         android:paddingRight="@dimen/item_padding"
         android:singleLine="true" />
 
-    <ImageView
-        android:id="@+id/choose"
-        android:layout_width="@dimen/item_height"
-        android:layout_height="@dimen/item_height"
-        android:src="@drawable/up_choise"
-        android:background="@drawable/list_item_selector"/>
-
 </LinearLayout>
