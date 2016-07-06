@@ -25,7 +25,7 @@ import android.widget.Toast;
 import java.io.File;
 import java.io.IOException;
 
-import peter.util.searcher.MainActivity;
+import peter.util.searcher.activity.MainActivity;
 import peter.util.searcher.R;
 
 

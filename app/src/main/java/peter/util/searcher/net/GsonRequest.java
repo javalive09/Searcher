@@ -17,7 +17,7 @@ import com.android.volley.toolbox.HttpHeaderParser;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
-import peter.util.searcher.TypeEngines;
+import peter.util.searcher.bean.TypeEngines;
 
 public class GsonRequest<T> extends Request<T> {
 	private final Gson mGson = new Gson();
@@ -50,8 +50,8 @@ public class GsonRequest<T> extends Request<T> {
 	@Override
 	protected Response<T> parseNetworkResponse(NetworkResponse response) {
 		try {
-			String charsetName = HttpHeaderParser.parseCharset(response.headers);
-			charsetName = "utf-8";
+//			String charsetName = HttpHeaderParser.parseCharset(response.headers);
+			String charsetName = "utf-8";
 			String json = new String(response.data, charsetName);
 			List<TypeEngines> l = mGson.fromJson(json, mType);
 			return (Response<T>) Response.success(l,

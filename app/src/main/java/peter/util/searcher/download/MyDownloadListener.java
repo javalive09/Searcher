@@ -12,7 +12,7 @@ import android.webkit.URLUtil;
 import com.anthonycr.grant.PermissionsManager;
 import com.anthonycr.grant.PermissionsResultAction;
 
-import peter.util.searcher.MainActivity;
+import peter.util.searcher.activity.MainActivity;
 import peter.util.searcher.R;
 
 

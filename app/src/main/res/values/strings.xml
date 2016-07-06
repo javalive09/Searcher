@@ -69,6 +69,7 @@
 
     <string name="action_yes">确认</string>
     <string name="action_no">取消</string>
+    <string name="recent_search_rec">最近搜索记录</string>
 
     <string-array name="settings_name">
         <item>分享APP</item>

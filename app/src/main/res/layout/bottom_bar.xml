@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
     android:orientation="horizontal">
 
     <!--<ImageView-->
@@ -46,27 +47,6 @@
         android:src="@drawable/bar_forward_selector"
         android:visibility="visible" />
 
-    <EditText
-        android:id="@+id/search"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:drawableLeft="@drawable/abc_ic_search_api_mtrl_alpha"
-        android:focusable="false"
-        android:hint="@string/search"
-        android:theme="@style/BottomEditText"
-        android:visibility="gone" />
-
-    <ImageView
-        android:id="@+id/search_btn"
-        android:layout_width="0dp"
-        android:layout_weight="1"
-        android:layout_height="match_parent"
-        android:background="@drawable/menu_selector"
-        android:onClick="onClick"
-        android:scaleType="center"
-        android:src="@drawable/bar_search"
-        android:visibility="gone" />
 
     <ImageView
         android:id="@+id/home"
