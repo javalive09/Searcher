@@ -6,7 +6,6 @@ import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.drawable.LevelListDrawable;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -16,7 +15,6 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
@@ -32,7 +30,6 @@ import com.iflytek.cloud.InitListener;
 import com.iflytek.cloud.SpeechConstant;
 import com.iflytek.cloud.SpeechError;
 import com.iflytek.cloud.SpeechRecognizer;
-import com.iflytek.cloud.SpeechUtility;
 import com.iflytek.cloud.ui.RecognizerDialog;
 import com.iflytek.cloud.ui.RecognizerDialogListener;
 import com.umeng.analytics.MobclickAgent;
@@ -63,7 +60,10 @@ public class EnterActivity extends BaseActivity implements DrawerLayoutAdapter.O
     private static final String RECENT_SEARCH = "recent_search";
     public static final String ENGINE_LIST = "engine_list";
     private String currentFragmentTag = "";
-    private RecognizerDialog iatDialog;
+    // 语音听写对象
+    private SpeechRecognizer mIat;
+    // 语音听写UI
+    private RecognizerDialog mIatDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,12 +90,27 @@ public class EnterActivity extends BaseActivity implements DrawerLayoutAdapter.O
         }
     }
 
+    //Listener for dialog
+    private InitListener mInitListener = new InitListener() {
+
+        @Override
+        public void onInit(int code) {
+            if (code != ErrorCode.SUCCESS) {
+                Toast.makeText(EnterActivity.this, "error code " + code, Toast.LENGTH_SHORT).show();
+            }
+        }
+    };
+
+
     public String getSearchWord() {
         return search.getText().toString().trim();
     }
 
     private void init() {
-        iatDialog = new RecognizerDialog(EnterActivity.this, mInitListener);
+        mIat = SpeechRecognizer.createRecognizer(EnterActivity.this, mInitListener);
+        mIatDialog = new RecognizerDialog(EnterActivity.this, mInitListener);
+        mIatDialog.setListener(mRecognizerDialogListener);
+        setParam();
         opt = (ImageView) findViewById(R.id.opt);
         search = (EditText) findViewById(R.id.search);
         search.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -192,8 +207,32 @@ public class EnterActivity extends BaseActivity implements DrawerLayoutAdapter.O
             FragmentManager fragmentManager = getFragmentManager();
             FragmentTransaction ft = fragmentManager.beginTransaction();
             ft.replace(R.id.content_frame, fragment, tag);
-            ft.commit();
+            ft.commitAllowingStateLoss();
         }
+    }
+
+    private void setParam() {
+        mIat.setParameter(SpeechConstant.PARAMS, null);
+
+        // 设置听写引擎
+        mIat.setParameter(SpeechConstant.ENGINE_TYPE, SpeechConstant.TYPE_CLOUD);
+        // 设置返回结果格式
+        mIat.setParameter(SpeechConstant.RESULT_TYPE, "json");
+
+        // 设置语言
+        mIat.setParameter(SpeechConstant.LANGUAGE, "zh_cn");
+        // 设置语言区域
+        mIat.setParameter(SpeechConstant.ACCENT, "mandarin");
+
+        // 设置语音前端点:静音超时时间，即用户多长时间不说话则当做超时处理
+        mIat.setParameter(SpeechConstant.VAD_BOS, "4000");
+
+        // 设置语音后端点:后端点静音检测时间，即用户停止说话多长时间内即认为不再输入， 自动停止录音
+        mIat.setParameter(SpeechConstant.VAD_EOS, "1000");
+
+        // 设置标点符号,设置为"0"返回结果无标点,设置为"1"返回结果有标点
+        mIat.setParameter(SpeechConstant.ASR_PTT, "0");
+
     }
 
     @Override
@@ -216,7 +255,6 @@ public class EnterActivity extends BaseActivity implements DrawerLayoutAdapter.O
         list.add(new DrawerLayoutAdapter.TypeBean(DrawerLayoutAdapter.CUSTOM, R.id.hot_list_setting, getString(R.string.setting_title), ""));
         return list;
     }
-
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
@@ -282,14 +320,7 @@ public class EnterActivity extends BaseActivity implements DrawerLayoutAdapter.O
                         openBoard();
                         break;
                     case 0://voice
-                        SpeechUtility.createUtility(EnterActivity.this, SpeechConstant.APPID + "=5775fcb4");
-                        //语音初始化和设置组件
-                        SpeechRecognizer mIat = SpeechRecognizer.createRecognizer(EnterActivity.this, null);
-                        mIat.setParameter(SpeechConstant.LANGUAGE, "zh_cn");
-                        mIat.setParameter(SpeechConstant.ACCENT, "mandarin ");
-                        mIat.setParameter(SpeechConstant.ASR_PTT, "0");
-                        iatDialog.setListener(recognizerDialogListener);
-                        iatDialog.show();
+                        mIatDialog.show();
                         break;
                 }
 
@@ -298,34 +329,22 @@ public class EnterActivity extends BaseActivity implements DrawerLayoutAdapter.O
         }
     }
 
-    //Listener for dialog
-    private InitListener mInitListener = new InitListener() {
-
-        @Override
-        public void onInit(int code) {
-            Log.d("peter123", "SpeechRecognizer init() code = " + code);
-            if (code != ErrorCode.SUCCESS) {
-                Toast.makeText(EnterActivity.this, code + "  error !!!", Toast.LENGTH_SHORT).show();
-            }
-        }
-    };
-
     /**
      * Dialog监听器
      */
-    private RecognizerDialogListener recognizerDialogListener = new RecognizerDialogListener() {
+    private RecognizerDialogListener mRecognizerDialogListener = new RecognizerDialogListener() {
         @Override
-        public void onResult(com.iflytek.cloud.RecognizerResult recognizerResult, boolean b) {
+        public void onResult(com.iflytek.cloud.RecognizerResult recognizerResult, boolean isLast) {
 
             if (recognizerResult != null) {
                 String json = recognizerResult.getResultString();
                 if (!TextUtils.isEmpty(json)) {
                     String result = parseIatResult(json);
-                    setSearchWord(result);
-                    iatDialog.dismiss();
+                    if(!TextUtils.isEmpty(result)) {
+                        setSearchWord(result);
+                    }
                 }
             }
-
         }
 
         @Override
@@ -352,5 +371,6 @@ public class EnterActivity extends BaseActivity implements DrawerLayoutAdapter.O
         }
         return ret.toString();
     }
+
 
 }

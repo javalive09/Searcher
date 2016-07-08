@@ -169,28 +169,28 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
     }
 
-    public void setMainColor(Bitmap favicon) {
-        Palette.from(favicon).generate(new Palette.PaletteAsyncListener() {
+//    public void setMainColor(Bitmap favicon) {
+//        Palette.from(favicon).generate(new Palette.PaletteAsyncListener() {
+//
+//            @Override
+//            public void onGenerated(Palette palette) {
+//                int defaultColor = getResources().getColor(R.color.colorPrimary);
+//                int mainColor = getSearchBarColor(palette.getVibrantColor(defaultColor));//real main color
+//                refreshStatusColor(mainColor);
+//            }
+//        });
+//    }
 
-            @Override
-            public void onGenerated(Palette palette) {
-                int defaultColor = getResources().getColor(R.color.colorPrimary);
-                int mainColor = getSearchBarColor(palette.getVibrantColor(defaultColor));//real main color
-                refreshStatusColor(mainColor);
-            }
-        });
-    }
+//    private int getSearchBarColor(int requestedColor) {
+//        return DrawableUtils.mixColor(0.25f, requestedColor, Color.WHITE);
+//    }
 
-    private int getSearchBarColor(int requestedColor) {
-        return DrawableUtils.mixColor(0.25f, requestedColor, Color.WHITE);
-    }
-
-    private void refreshStatusColor(int animColor) {
-        setBottomBarColor(animColor);
-        if (API >= 21) {
-            setStatusColor(animColor);
-        }
-    }
+//    private void refreshStatusColor(int animColor) {
+//        setBottomBarColor(animColor);
+//        if (API >= 21) {
+//            setStatusColor(animColor);
+//        }
+//    }
 
     public void setStatusLevel(int level) {
         LevelListDrawable d = (LevelListDrawable) progressBar.getBackground();
@@ -222,9 +222,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
     }
 
-    public void setBottomBarColor(int animColor) {
-        bottomBar.setBackgroundColor(animColor);
-    }
+//    public void setBottomBarColor(int animColor) {
+//        bottomBar.setBackgroundColor(animColor);
+//    }
 
     @Override
     protected void onNewIntent(Intent intent) {
