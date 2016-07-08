@@ -5,9 +5,9 @@
     android:layout_height="wrap_content"
     android:layout_gravity="center"
     android:padding="@dimen/enter_item_margin"
-    android:background="@drawable/enter_item_selector"
+    android:background="@drawable/enter_item_selector2"
+    android:textSize="15sp"
     android:gravity="center"
-    android:theme="@style/ThemeOverlay.AppCompat.Dark"
     android:text="@string/history_today_title">
 
 </TextView>
