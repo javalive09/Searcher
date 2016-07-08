@@ -45,7 +45,7 @@ public class MyWebChromeClient extends WebChromeClient {
     @Override
     public void onReceivedIcon(WebView view, Bitmap icon) {
         super.onReceivedIcon(view, icon);
-//        mainActivity.setMainColor(icon);
+        mainActivity.setMainColor(icon);
     }
 
     @Override

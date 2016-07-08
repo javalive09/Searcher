@@ -15,8 +15,8 @@ android {
         applicationId "peter.util.searcher"
         minSdkVersion 16
         targetSdkVersion 23
-        versionCode 58
-        versionName "1.5.6"
+        versionCode 59
+        versionName "1.5.7"
     }
     buildTypes {
         release {
@@ -47,7 +47,7 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:23.4.0'
     compile 'com.google.code.gson:gson:2.4'
     compile 'com.android.volley:volley:1.0.0'
-    compile 'com.anthonycr.grant:permissions:1.1.2'
+    compile 'com.anthonycr.grant:permissions:1.0'
     compile 'com.android.support:palette-v7:23.4.0'
     compile 'com.android.support:design:23.4.0'
     compile files('libs/Msc.jar')

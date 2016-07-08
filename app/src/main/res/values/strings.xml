@@ -25,6 +25,7 @@
     <string name="cannot_download">仅可下载以 \"http\" 或 \"https\" 开头的链接地址</string>
     <string name="problem_location_download">Cannot download to the specified location</string>
     <string name="download_pending">开始下载…</string>
+    <string name="permission_hint">使用语音输入需要点击确定按钮</string>
 
     <string name="action_cancel">取消</string>
     <string name="action_share">分享</string>
