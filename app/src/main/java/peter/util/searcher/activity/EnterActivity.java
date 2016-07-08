@@ -8,7 +8,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
@@ -24,30 +27,11 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.webkit.URLUtil;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.anthonycr.grant.PermissionsManager;
-import com.anthonycr.grant.PermissionsResultAction;
-import com.iflytek.cloud.ErrorCode;
-import com.iflytek.cloud.InitListener;
-import com.iflytek.cloud.SpeechConstant;
-import com.iflytek.cloud.SpeechError;
-import com.iflytek.cloud.SpeechRecognizer;
-import com.iflytek.cloud.ui.RecognizerDialog;
-import com.iflytek.cloud.ui.RecognizerDialogListener;
 import com.umeng.analytics.MobclickAgent;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.json.JSONTokener;
-
 import java.util.ArrayList;
-
-import peter.util.searcher.download.DownloadHandler;
 import peter.util.searcher.update.AsynWindowHandler;
 import peter.util.searcher.engine.EngineViewPagerFragment;
 import peter.util.searcher.R;
@@ -62,16 +46,11 @@ public class EnterActivity extends BaseActivity implements DrawerLayoutAdapter.O
 
     private EditText search;
     private ImageView opt;
-    private int level = 0; // 0-voice 1-clear
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
     private static final String RECENT_SEARCH = "recent_search";
     public static final String ENGINE_LIST = "engine_list";
     private String currentFragmentTag = "";
-    // 语音听写对象
-    private SpeechRecognizer mIat;
-    // 语音听写UI
-    private RecognizerDialog mIatDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,27 +77,11 @@ public class EnterActivity extends BaseActivity implements DrawerLayoutAdapter.O
         }
     }
 
-    //Listener for dialog
-    private InitListener mInitListener = new InitListener() {
-
-        @Override
-        public void onInit(int code) {
-            if (code != ErrorCode.SUCCESS) {
-                Toast.makeText(EnterActivity.this, "error code " + code, Toast.LENGTH_SHORT).show();
-            }
-        }
-    };
-
-
     public String getSearchWord() {
         return search.getText().toString().trim();
     }
 
     private void init() {
-        mIat = SpeechRecognizer.createRecognizer(EnterActivity.this, mInitListener);
-        mIatDialog = new RecognizerDialog(EnterActivity.this, mInitListener);
-        mIatDialog.setListener(mRecognizerDialogListener);
-        setParam();
         opt = (ImageView) findViewById(R.id.opt);
         search = (EditText) findViewById(R.id.search);
         search.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -191,12 +154,10 @@ public class EnterActivity extends BaseActivity implements DrawerLayoutAdapter.O
                 String content = s.toString();
                 if (TextUtils.isEmpty(content)) {
                     setEngineFragment(RECENT_SEARCH);
-                    level = 0;
-                    opt.setImageResource(R.drawable.abc_ic_voice_search_api_mtrl_alpha);
+                    opt.setVisibility(View.GONE);
                 } else if (!content.equals(temp)) {
                     setEngineFragment(ENGINE_LIST);
-                    level = 1;
-                    opt.setImageResource(R.drawable.abc_ic_clear_mtrl_alpha);
+                    opt.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -217,30 +178,6 @@ public class EnterActivity extends BaseActivity implements DrawerLayoutAdapter.O
             ft.replace(R.id.content_frame, fragment, tag);
             ft.commitAllowingStateLoss();
         }
-    }
-
-    private void setParam() {
-        mIat.setParameter(SpeechConstant.PARAMS, null);
-
-        // 设置听写引擎
-        mIat.setParameter(SpeechConstant.ENGINE_TYPE, SpeechConstant.TYPE_CLOUD);
-        // 设置返回结果格式
-        mIat.setParameter(SpeechConstant.RESULT_TYPE, "json");
-
-        // 设置语言
-        mIat.setParameter(SpeechConstant.LANGUAGE, "zh_cn");
-        // 设置语言区域
-        mIat.setParameter(SpeechConstant.ACCENT, "mandarin");
-
-        // 设置语音前端点:静音超时时间，即用户多长时间不说话则当做超时处理
-        mIat.setParameter(SpeechConstant.VAD_BOS, "4000");
-
-        // 设置语音后端点:后端点静音检测时间，即用户停止说话多长时间内即认为不再输入， 自动停止录音
-        mIat.setParameter(SpeechConstant.VAD_EOS, "1000");
-
-        // 设置标点符号,设置为"0"返回结果无标点,设置为"1"返回结果有标点
-        mIat.setParameter(SpeechConstant.ASR_PTT, "0");
-
     }
 
     @Override
@@ -321,74 +258,11 @@ public class EnterActivity extends BaseActivity implements DrawerLayoutAdapter.O
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.opt:
-                switch (level) {
-                    case 1://clear
-                        search.requestFocus();
-                        search.setText("");
-                        openBoard();
-                        break;
-                    case 0://voice
-                        PermissionsManager.getInstance().requestPermissionsIfNecessaryForResult(EnterActivity.this,
-                                new String[]{Manifest.permission.RECORD_AUDIO},
-                                new PermissionsResultAction() {
-                                    @Override
-                                    public void onGranted() {
-                                        mIatDialog.show();
-                                    }
-
-                                    @Override
-                                    public void onDenied(String permission) {
-                                        Toast.makeText(EnterActivity.this, R.string.permission_hint, Toast.LENGTH_LONG).show();
-                                    }
-                                });
-                        break;
-                }
+                search.requestFocus();
+                search.setText("");
+                openBoard();
                 break;
         }
     }
-
-    /**
-     * Dialog监听器
-     */
-    private RecognizerDialogListener mRecognizerDialogListener = new RecognizerDialogListener() {
-        @Override
-        public void onResult(com.iflytek.cloud.RecognizerResult recognizerResult, boolean isLast) {
-
-            if (recognizerResult != null) {
-                String json = recognizerResult.getResultString();
-                if (!TextUtils.isEmpty(json)) {
-                    String result = parseIatResult(json);
-                    if (!TextUtils.isEmpty(result)) {
-                        setSearchWord(result);
-                    }
-                }
-            }
-        }
-
-        @Override
-        public void onError(SpeechError speechError) {
-
-        }
-    };
-
-    private String parseIatResult(String json) {
-        StringBuffer ret = new StringBuffer();
-        try {
-            JSONTokener tokener = new JSONTokener(json);
-            JSONObject joResult = new JSONObject(tokener);
-
-            JSONArray words = joResult.getJSONArray("ws");
-            for (int i = 0; i < words.length(); i++) {
-                // 转写结果词，默认使用第一个结果
-                JSONArray items = words.getJSONObject(i).getJSONArray("cw");
-                JSONObject obj = items.getJSONObject(0);
-                ret.append(obj.getString("w"));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return ret.toString();
-    }
-
 
 }
