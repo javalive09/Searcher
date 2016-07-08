@@ -119,3 +119,5 @@ public static final int *;
 -keep class com.google.gson.examples.android.model.** { *; }
 
 ##---------------End: proguard configuration for Gson  ----------
+
+-keep class com.iflytek.**{*;}

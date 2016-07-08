@@ -3,6 +3,8 @@ package peter.util.searcher.engine;
 import android.app.Fragment;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -11,6 +13,24 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.iflytek.cloud.ErrorCode;
+import com.iflytek.cloud.InitListener;
+import com.iflytek.cloud.SpeechConstant;
+import com.iflytek.cloud.SpeechError;
+import com.iflytek.cloud.SpeechRecognizer;
+import com.iflytek.cloud.SpeechSynthesizer;
+import com.iflytek.cloud.SpeechUtility;
+import com.iflytek.cloud.ui.RecognizerDialog;
+import com.iflytek.cloud.ui.RecognizerDialogListener;
+import com.iflytek.speech.RecognizerListener;
+import com.iflytek.speech.RecognizerResult;
+import com.iflytek.speech.SpeechRecognizerAidl;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
@@ -49,17 +69,17 @@ public class RecentSearchFragment extends Fragment implements View.OnClickListen
 
     @Override
     public void onClick(View v) {
-        Bean bean = (Bean)v.getTag();
+        Bean bean = (Bean) v.getTag();
         switch (v.getId()) {
             case R.id.recent_search_item:
                 if (bean != null) {
                     EnterActivity enterActivity = (EnterActivity) getActivity();
                     enterActivity.setSearchWord(bean.name);
-                    enterActivity.setEngineFragment(EnterActivity.ENGINE_LIST);
                 }
                 break;
         }
     }
+
 
     private void refreshData() {
         cancelAsyncTask();
@@ -118,7 +138,7 @@ public class RecentSearchFragment extends Fragment implements View.OnClickListen
                     }
                     if (beans != null) {
                         ListView recentSearch = (ListView) f.rootView.findViewById(R.id.recent_search);
-                        if(recentSearch != null) {
+                        if (recentSearch != null) {
                             recentSearch.setAdapter(new RecentSearchAdapter(beans, f));
                         }
                     }

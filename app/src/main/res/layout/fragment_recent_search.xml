@@ -7,7 +7,17 @@
     <ListView
         android:id="@+id/recent_search"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
+
+<!--
+    <ImageView
+        android:id="@+id/voice"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/voice_click" />
+-->
 
     <ProgressBar
         android:id="@+id/loading"

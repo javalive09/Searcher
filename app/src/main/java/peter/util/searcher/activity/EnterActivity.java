@@ -6,6 +6,7 @@ import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.drawable.LevelListDrawable;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -15,6 +16,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
@@ -23,8 +25,24 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.iflytek.cloud.ErrorCode;
+import com.iflytek.cloud.InitListener;
+import com.iflytek.cloud.SpeechConstant;
+import com.iflytek.cloud.SpeechError;
+import com.iflytek.cloud.SpeechRecognizer;
+import com.iflytek.cloud.SpeechUtility;
+import com.iflytek.cloud.ui.RecognizerDialog;
+import com.iflytek.cloud.ui.RecognizerDialogListener;
 import com.umeng.analytics.MobclickAgent;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.json.JSONTokener;
+
 import java.util.ArrayList;
+
 import peter.util.searcher.update.AsynWindowHandler;
 import peter.util.searcher.engine.EngineViewPagerFragment;
 import peter.util.searcher.R;
@@ -35,15 +53,17 @@ import peter.util.searcher.utils.UrlUtils;
 /**
  * Created by peter on 16/5/19.
  */
-public class EnterActivity extends BaseActivity implements DrawerLayoutAdapter.OnItemClickListener,View.OnClickListener{
+public class EnterActivity extends BaseActivity implements DrawerLayoutAdapter.OnItemClickListener, View.OnClickListener {
 
     private EditText search;
-    private ImageView clear;
+    private ImageView opt;
+    private int level = 0; // 0-voice 1-clear
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
     private static final String RECENT_SEARCH = "recent_search";
     public static final String ENGINE_LIST = "engine_list";
     private String currentFragmentTag = "";
+    private RecognizerDialog iatDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,7 +95,8 @@ public class EnterActivity extends BaseActivity implements DrawerLayoutAdapter.O
     }
 
     private void init() {
-        clear = (ImageView) findViewById(R.id.clear);
+        iatDialog = new RecognizerDialog(EnterActivity.this, mInitListener);
+        opt = (ImageView) findViewById(R.id.opt);
         search = (EditText) findViewById(R.id.search);
         search.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -147,10 +168,12 @@ public class EnterActivity extends BaseActivity implements DrawerLayoutAdapter.O
                 String content = s.toString();
                 if (TextUtils.isEmpty(content)) {
                     setEngineFragment(RECENT_SEARCH);
-                    clear.setVisibility(View.INVISIBLE);
+                    level = 0;
+                    opt.setImageResource(R.drawable.abc_ic_voice_search_api_mtrl_alpha);
                 } else if (!content.equals(temp)) {
                     setEngineFragment(ENGINE_LIST);
-                    clear.setVisibility(View.VISIBLE);
+                    level = 1;
+                    opt.setImageResource(R.drawable.abc_ic_clear_mtrl_alpha);
                 }
             }
         });
@@ -251,12 +274,83 @@ public class EnterActivity extends BaseActivity implements DrawerLayoutAdapter.O
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.clear:
-                search.requestFocus();
-                search.setText("");
-                openBoard();
+            case R.id.opt:
+                switch (level) {
+                    case 1://clear
+                        search.requestFocus();
+                        search.setText("");
+                        openBoard();
+                        break;
+                    case 0://voice
+                        SpeechUtility.createUtility(EnterActivity.this, SpeechConstant.APPID + "=5775fcb4");
+                        //语音初始化和设置组件
+                        SpeechRecognizer mIat = SpeechRecognizer.createRecognizer(EnterActivity.this, null);
+                        mIat.setParameter(SpeechConstant.LANGUAGE, "zh_cn");
+                        mIat.setParameter(SpeechConstant.ACCENT, "mandarin ");
+                        mIat.setParameter(SpeechConstant.ASR_PTT, "0");
+                        iatDialog.setListener(recognizerDialogListener);
+                        iatDialog.show();
+                        break;
+                }
+
+
                 break;
         }
+    }
+
+    //Listener for dialog
+    private InitListener mInitListener = new InitListener() {
+
+        @Override
+        public void onInit(int code) {
+            Log.d("peter123", "SpeechRecognizer init() code = " + code);
+            if (code != ErrorCode.SUCCESS) {
+                Toast.makeText(EnterActivity.this, code + "  error !!!", Toast.LENGTH_SHORT).show();
+            }
+        }
+    };
+
+    /**
+     * Dialog监听器
+     */
+    private RecognizerDialogListener recognizerDialogListener = new RecognizerDialogListener() {
+        @Override
+        public void onResult(com.iflytek.cloud.RecognizerResult recognizerResult, boolean b) {
+
+            if (recognizerResult != null) {
+                String json = recognizerResult.getResultString();
+                if (!TextUtils.isEmpty(json)) {
+                    String result = parseIatResult(json);
+                    setSearchWord(result);
+                    iatDialog.dismiss();
+                }
+            }
+
+        }
+
+        @Override
+        public void onError(SpeechError speechError) {
+
+        }
+    };
+
+    private String parseIatResult(String json) {
+        StringBuffer ret = new StringBuffer();
+        try {
+            JSONTokener tokener = new JSONTokener(json);
+            JSONObject joResult = new JSONObject(tokener);
+
+            JSONArray words = joResult.getJSONArray("ws");
+            for (int i = 0; i < words.length(); i++) {
+                // 转写结果词，默认使用第一个结果
+                JSONArray items = words.getJSONObject(i).getJSONArray("cw");
+                JSONObject obj = items.getJSONObject(0);
+                ret.append(obj.getString("w"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return ret.toString();
     }
 
 }

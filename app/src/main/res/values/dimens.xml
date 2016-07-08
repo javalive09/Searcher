@@ -8,6 +8,7 @@
     <dimen name="setting_item_txt_size">15sp</dimen>
     <dimen name="setting_item_h">47dp</dimen>
     <dimen name="item_height">45dp</dimen>
+    <dimen name="opt_cell">40dp</dimen>
 
     <dimen name="drawable_padding">5dp</dimen>
     <dimen name="item_padding">7dp</dimen>
