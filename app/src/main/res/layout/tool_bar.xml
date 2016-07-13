@@ -15,7 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:hint="@string/search"
-            android:imeOptions="actionSearch"
+            android:imeOptions="actionDone"
             android:paddingRight="@dimen/search_padding_right"
             android:singleLine="true"
             android:textColor="@color/edit_text_color"
@@ -29,7 +29,8 @@
             android:layout_gravity="right|center_vertical"
             android:layout_marginRight="@dimen/clear_txt_margin_right"
             android:onClick="onClick"
-            android:src="@drawable/abc_ic_clear_mtrl_alpha" />
+            android:src="@drawable/abc_ic_clear_mtrl_alpha"
+            android:visibility="gone"/>
 
         <TextView
             android:id="@+id/title"

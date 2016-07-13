@@ -84,22 +84,22 @@ public class EnterActivity extends BaseActivity implements DrawerLayoutAdapter.O
     private void init() {
         opt = (ImageView) findViewById(R.id.opt);
         search = (EditText) findViewById(R.id.search);
-        search.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                    String searchWord = getSearchWord();
-                    if (!TextUtils.isEmpty(searchWord)) {
-                        String engineUrl = getString(R.string.default_engine_url);
-                        String url = UrlUtils.smartUrlFilter(searchWord, true, engineUrl);
-                        startBrowser(url, searchWord);
-                    }
-                    search.requestFocus();
-                    return true;
-                }
-                return false;
-            }
-        });
+//        search.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+//            @Override
+//            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+//                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+//                    String searchWord = getSearchWord();
+//                    if (!TextUtils.isEmpty(searchWord)) {
+//                        String engineUrl = getString(R.string.default_engine_url);
+//                        String url = UrlUtils.smartUrlFilter(searchWord, true, engineUrl);
+//                        startBrowser(url, searchWord);
+//                    }
+//                    search.requestFocus();
+//                    return true;
+//                }
+//                return false;
+//            }
+//        });
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         RecyclerView mDrawerList = (RecyclerView) findViewById(R.id.left_drawer);
         mDrawerList.setHasFixedSize(true);

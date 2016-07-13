@@ -35,7 +35,7 @@ import peter.util.searcher.utils.UrlUtils;
  */
 public class EngineViewPagerFragment extends Fragment implements View.OnClickListener {
 
-    String url = "http://7xoxmg.com1.z0.glb.clouddn.com/engines.json";
+    String url = "http://7xoxmg.com1.z0.glb.clouddn.com/engines0713.json";
     private SlidingTabLayout mSlidingTabLayout;
     private ViewPager mViewPager;
     View rootView;

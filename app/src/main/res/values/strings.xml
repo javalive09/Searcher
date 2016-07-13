@@ -52,7 +52,7 @@
     <string name="app_url">http://7xoxmg.com1.z0.glb.clouddn.com/searcher_10.apk</string>
     <string name="share_title">分享应用给小伙伴</string>
     <string name="share_link_title">分享链接</string>
-    <string name="default_engine_url">http://m5.baidu.com/s?word=%s</string>
+    <string name="default_engine_url">https://m.baidu.com/s?word=%s</string>
 
     <string name="title_sign_in">登录</string>
     <string name="hint_username">用户名</string>
