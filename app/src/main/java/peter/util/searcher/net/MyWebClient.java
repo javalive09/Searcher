@@ -1,6 +1,5 @@
 package peter.util.searcher.net;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
@@ -18,23 +17,17 @@ import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.webkit.HttpAuthHandler;
 import android.webkit.SslErrorHandler;
-import android.webkit.WebResourceRequest;
-import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-
-import java.io.ByteArrayInputStream;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
-
 import peter.util.searcher.R;
 import peter.util.searcher.db.SqliteHelper;
 import peter.util.searcher.activity.MainActivity;
 import peter.util.searcher.bean.Bean;
-import peter.util.searcher.utils.AdBlock;
 import peter.util.searcher.utils.IntentUtils;
 import peter.util.searcher.utils.Utils;
 
@@ -44,22 +37,10 @@ import peter.util.searcher.utils.Utils;
 public class MyWebClient extends WebViewClient {
     private MainActivity mainActivity;
     IntentUtils mIntentUtils;
-    AdBlock mAdBlock;
 
     public MyWebClient(MainActivity activity) {
         this.mainActivity = activity;
         mIntentUtils = new IntentUtils(mainActivity);
-        mAdBlock = AdBlock.instance(mainActivity);
-    }
-
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    @Override
-    public WebResourceResponse shouldInterceptRequest(WebView view, @NonNull WebResourceRequest request) {
-        if (mAdBlock.isAd(request.getUrl().toString())) {
-            ByteArrayInputStream EMPTY = new ByteArrayInputStream("".getBytes());
-            return new WebResourceResponse("text/plain", "utf-8", EMPTY);
-        }
-        return super.shouldInterceptRequest(view, request);
     }
 
     @Override

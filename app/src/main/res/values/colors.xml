@@ -11,8 +11,7 @@
     <color name="item_normal">#ffffff</color>
     <color name="item_press">#88cccccc</color>
 
-    <color name="transparent">#00000000</color>w
+    <color name="transparent">#00000000</color>
     <color name="back_press">#cccccc</color>
-    <color name="white">#dfdfdf</color>
 
 </resources>

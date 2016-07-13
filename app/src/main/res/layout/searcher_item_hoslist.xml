@@ -1,28 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/hot_list"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/enter_item_selector2"
-    android:orientation="vertical">
+    android:layout_gravity="center"
+    android:padding="@dimen/enter_item_margin"
+    android:background="@drawable/enter_item_selector"
+    android:gravity="center"
+    android:theme="@style/ThemeOverlay.AppCompat.Dark"
+    android:text="@string/history_today_title">
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1px"
-        android:background="@android:color/darker_gray" />
-
-    <TextView
-        android:id="@+id/hot_list_content"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/host_list_margin_left"
-        android:drawableLeft="@drawable/history_icon"
-        android:drawablePadding="@dimen/host_list_padding"
-        android:gravity="center"
-        android:padding="@dimen/enter_item_margin"
-        android:text="@string/history_today_title"
-        android:textSize="15sp">
-
-    </TextView>
-</LinearLayout>
+</TextView>

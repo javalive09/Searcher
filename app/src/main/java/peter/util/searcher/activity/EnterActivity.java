@@ -1,35 +1,26 @@
 package peter.util.searcher.activity;
 
-import android.Manifest;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 import com.umeng.analytics.MobclickAgent;
 import java.util.ArrayList;
 import peter.util.searcher.update.AsynWindowHandler;
@@ -37,7 +28,6 @@ import peter.util.searcher.engine.EngineViewPagerFragment;
 import peter.util.searcher.R;
 import peter.util.searcher.engine.RecentSearchFragment;
 import peter.util.searcher.update.UpdateController;
-import peter.util.searcher.utils.UrlUtils;
 
 /**
  * Created by peter on 16/5/19.
@@ -84,22 +74,6 @@ public class EnterActivity extends BaseActivity implements DrawerLayoutAdapter.O
     private void init() {
         opt = (ImageView) findViewById(R.id.opt);
         search = (EditText) findViewById(R.id.search);
-//        search.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-//            @Override
-//            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-//                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-//                    String searchWord = getSearchWord();
-//                    if (!TextUtils.isEmpty(searchWord)) {
-//                        String engineUrl = getString(R.string.default_engine_url);
-//                        String url = UrlUtils.smartUrlFilter(searchWord, true, engineUrl);
-//                        startBrowser(url, searchWord);
-//                    }
-//                    search.requestFocus();
-//                    return true;
-//                }
-//                return false;
-//            }
-//        });
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         RecyclerView mDrawerList = (RecyclerView) findViewById(R.id.left_drawer);
         mDrawerList.setHasFixedSize(true);

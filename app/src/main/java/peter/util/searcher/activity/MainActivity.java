@@ -55,8 +55,18 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        init();
+        Intent intent = getIntent();
+        if (intent != null) {
+            Set<String> category = intent.getCategories();
+            if (category != null && category.contains(Intent.CATEGORY_LAUNCHER)) {//launcher invoke
+                startActivity(new Intent(MainActivity.this, EnterActivity.class));
+                finish();
+            } else {
+                setContentView(R.layout.activity_main);
+                init();
+                checkIntentData(intent);
+            }
+        }
     }
 
     public String getWebViewTitle() {
@@ -72,16 +82,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         webview = (WebView) findViewById(R.id.wv);
         progressBar = findViewById(R.id.status);
         bottomBar = findViewById(R.id.bottom_bar);
-        Intent intent = getIntent();
-        if (intent != null) {
-            Set<String> category = intent.getCategories();
-            if (category != null && category.contains(Intent.CATEGORY_LAUNCHER)) {//launcher invoke
-                startActivity(new Intent(MainActivity.this, EnterActivity.class));
-                finish();
-            } else {
-                checkIntentData(intent);
-            }
-        }
         initWebView(webview);
         initializeSettings(webview);
     }

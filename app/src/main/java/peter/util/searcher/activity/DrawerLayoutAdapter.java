@@ -1,11 +1,9 @@
 package peter.util.searcher.activity;
 
-import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import java.util.List;
 
@@ -18,8 +16,7 @@ public class DrawerLayoutAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     static final int VERSION = 0;
     static final int HOT_LIST = 1;
     static final int CUSTOM = 2;
-//    private OnItemClickListener mListener;
-    private EnterActivity activity;
+    private OnItemClickListener mListener;
     List<TypeBean> list;
 
     /**
@@ -43,18 +40,16 @@ public class DrawerLayoutAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
      * Custom hotList view holder.
      */
     public static class HotListViewHolder extends RecyclerView.ViewHolder {
-        View item;
         TextView hotList;
-        public HotListViewHolder(View item) {
-            super(item);
-            this.item = item;
-            hotList = (TextView) item.findViewById(R.id.hot_list_content);
+        public HotListViewHolder(TextView hotList) {
+            super(hotList);
+            this.hotList = hotList;
         }
     }
 
-    public DrawerLayoutAdapter(List<TypeBean> list, EnterActivity activity) {
+    public DrawerLayoutAdapter(List<TypeBean> list, OnItemClickListener listener) {
         this.list = list;
-        this.activity = activity;
+        mListener = listener;
     }
 
     @Override
@@ -70,7 +65,8 @@ public class DrawerLayoutAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             case CUSTOM:
             case HOT_LIST:
                 v = vi.inflate(R.layout.searcher_item_hoslist, parent, false);
-                holder = new HotListViewHolder(v);
+                TextView hotList = (TextView) v.findViewById(R.id.hot_list);
+                holder = new HotListViewHolder(hotList);
                 break;
         }
         return holder;
@@ -85,30 +81,12 @@ public class DrawerLayoutAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
         if(holder instanceof HotListViewHolder){
             ((HotListViewHolder)holder).hotList.setText(list.get(position).content);
-            ((HotListViewHolder)holder).item.setOnClickListener(new View.OnClickListener() {
+            ((HotListViewHolder)holder).hotList.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    activity.onClick(view, list.get(holder.getAdapterPosition()));
+                    mListener.onClick(view, list.get(holder.getAdapterPosition()));
                 }
             });
-            TypeBean bean = list.get(position);
-            Drawable drawable = null;
-            if(bean.content.equals(activity.getString(R.string.action_collection))) {
-                drawable = activity.getResources().getDrawable(R.drawable.fav_icon);
-            }else if(bean.content.equals(activity.getString(R.string.action_history))){
-                drawable = activity.getResources().getDrawable(R.drawable.history_icon);
-            }else if(bean.content.equals(activity.getString(R.string.action_url_history))) {
-                drawable = activity.getResources().getDrawable(R.drawable.history_icon);
-            }else if(bean.content.equals(activity.getString(R.string.setting_title))) {
-                drawable = activity.getResources().getDrawable(R.drawable.settings_icon);
-            }
-            if(drawable != null) {
-                drawable.setBounds(0, 0, drawable.getMinimumWidth(), drawable.getMinimumHeight());
-                ((HotListViewHolder) holder).hotList.setCompoundDrawables(drawable, null, null, null);
-//                ((HotListViewHolder) holder).hotList.setCompoundDrawablePadding(
-//                        activity.getResources().getDimensionPixelOffset(R.dimen.host_list_padding));
-            }
-
         }
     }
 

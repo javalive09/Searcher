@@ -24,7 +24,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="left"
-            android:background="@color/white"
+            android:background="@color/drawer_layout_bg"
             android:choiceMode="singleChoice"
             android:divider="@null"
             android:scrollbars="vertical" />
