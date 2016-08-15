@@ -1,5 +1,6 @@
 package peter.util.searcher.activity;
 
+import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.SearchManager;
@@ -21,12 +22,14 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.webkit.CookieManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.PopupMenu;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.umeng.analytics.MobclickAgent;
@@ -41,6 +44,7 @@ import peter.util.searcher.R;
 import peter.util.searcher.db.SqliteHelper;
 import peter.util.searcher.utils.UrlUtils;
 import peter.util.searcher.download.MyDownloadListener;
+import peter.util.searcher.view.ObservableWebView;
 
 /**
  * Created by peter on 16/5/9.
@@ -49,7 +53,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private static final int API = Build.VERSION.SDK_INT;
     private View bottomBar;
-    private WebView webview;
+    private ObservableWebView webview;
     private View progressBar;
 
     @Override
@@ -74,12 +78,66 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         if (webview != null) {
             title = webview.getTitle();
             title = TextUtils.isEmpty(title) ? webview.getUrl() : title;
+            final int edge = getResources().getDimensionPixelOffset(R.dimen.bottom_h);
+            final View bottomBar = findViewById(R.id.bottom_bar);
+            webview.setOnScrollChangedCallback(new ObservableWebView.OnScrollChangedCallback() {
+                @Override
+                public void onScroll(int l, int t, int oldl, int oldt) {
+
+                    if(t > oldt) {// up
+                        ViewGroup.LayoutParams params = bottomBar.getLayoutParams();
+                        params.height = bottomBar.getMeasuredHeight();
+                        if(params.height != 0) {
+                            params.height = params.height + (oldt - t);
+                            if(params.height < 0 ) {
+                                params.height = 0;
+                            }
+                            bottomBar.setLayoutParams(params);
+                        }
+                    }else { // down
+                        ViewGroup.LayoutParams params = bottomBar.getLayoutParams();
+                        params.height = bottomBar.getMeasuredHeight();
+                        if(params.height != edge) {
+                            params.height = params.height + (oldt - t);
+                            if(params.height > edge) {
+                                params.height = edge;
+                            }
+                            bottomBar.setLayoutParams(params);
+                        }
+                    }
+
+                    Log.i("peter", "top = " + t);
+
+                }
+
+                @Override
+                public void ActionUp() {
+                    int height = bottomBar.getMeasuredHeight();
+                    if(height != 0 || height != edge) {
+                        ValueAnimator animator;
+                        if (height > edge / 2) {
+                            animator = ValueAnimator.ofInt(height, edge);
+                        } else {
+                            animator = ValueAnimator.ofInt(height, 0);
+                        }
+                        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                            @Override
+                            public void onAnimationUpdate(ValueAnimator animation) {
+                                ViewGroup.LayoutParams params = bottomBar.getLayoutParams();
+                                params.height = (int) animation.getAnimatedValue();
+                                bottomBar.setLayoutParams(params);
+                            }
+                        });
+                        animator.start();
+                    }
+                }
+            });
         }
         return title;
     }
 
     private void init() {
-        webview = (WebView) findViewById(R.id.wv);
+        webview = (ObservableWebView) findViewById(R.id.wv);
         progressBar = findViewById(R.id.status);
         bottomBar = findViewById(R.id.bottom_bar);
         initWebView(webview);
@@ -169,28 +227,28 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
     }
 
-    public void setMainColor(Bitmap favicon) {
-        Palette.from(favicon).generate(new Palette.PaletteAsyncListener() {
-
-            @Override
-            public void onGenerated(Palette palette) {
-                int defaultColor = getResources().getColor(R.color.colorPrimary);
-                int mainColor = getSearchBarColor(palette.getVibrantColor(defaultColor));//real main color
-                refreshStatusColor(mainColor);
-            }
-        });
-    }
+//    public void setMainColor(Bitmap favicon) {
+//        Palette.from(favicon).generate(new Palette.PaletteAsyncListener() {
+//
+//            @Override
+//            public void onGenerated(Palette palette) {
+//                int defaultColor = getResources().getColor(R.color.colorPrimary);
+//                int mainColor = getSearchBarColor(palette.getVibrantColor(defaultColor));//real main color
+//                refreshStatusColor(mainColor);
+//            }
+//        });
+//    }
 
     private int getSearchBarColor(int requestedColor) {
         return DrawableUtils.mixColor(0.25f, requestedColor, Color.WHITE);
     }
 
-    private void refreshStatusColor(int animColor) {
-        setBottomBarColor(animColor);
-        if (API >= 21) {
-            setStatusColor(animColor);
-        }
-    }
+//    private void refreshStatusColor(int animColor) {
+//        setBottomBarColor(animColor);
+//        if (API >= 21) {
+//            setStatusColor(animColor);
+//        }
+//    }
 
     public void setBottomBarColor(int animColor) {
         bottomBar.setBackgroundColor(animColor);
@@ -232,16 +290,16 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         checkIntentData(intent);
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public void setStatusColor(int color) {
-        Window window = getWindow();
-        // clear FLAG_TRANSLUCENT_STATUS flag:
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        // add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        // finally change the color
-        window.setStatusBarColor(color);
-    }
+//    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+//    public void setStatusColor(int color) {
+//        Window window = getWindow();
+//        // clear FLAG_TRANSLUCENT_STATUS flag:
+//        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+//        // add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
+//        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+//        // finally change the color
+//        window.setStatusBarColor(color);
+//    }
 
     private void checkIntentData(Intent intent) {
         if (intent != null) {
@@ -368,7 +426,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         if (!TextUtils.isEmpty(webview.getUrl())) {
                             Bean bean = new Bean();
                             bean.name = webview.getTitle();
-                            if(TextUtils.isEmpty(bean.name)) {
+                            if (TextUtils.isEmpty(bean.name)) {
                                 bean.name = webview.getUrl();
                             }
                             bean.url = webview.getUrl();

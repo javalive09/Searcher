@@ -1,14 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/colorPrimary_"
-    android:theme="@style/ThemeOverlay.AppCompat.Dark">
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+    android:layout_height="match_parent">
 
         <EditText
             android:id="@+id/search"
@@ -18,9 +11,9 @@
             android:imeOptions="actionDone"
             android:paddingRight="@dimen/search_padding_right"
             android:singleLine="true"
-            android:textColor="@color/edit_text_color"
+            android:textColor="@color/lighter_gray"
             android:textColorHint="@color/lighter_gray"
-            android:theme="@style/MyEditText" />
+            android:background="@color/drawer_layout_bg"/>
 
         <ImageView
             android:id="@+id/opt"
@@ -32,13 +25,5 @@
             android:src="@drawable/abc_ic_clear_mtrl_alpha"
             android:visibility="gone"/>
 
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/title_bg"
-            android:text="速搜"
-            android:textSize="17sp"
-            android:visibility="gone" />
-    </FrameLayout>
-</android.support.v7.widget.Toolbar>
+
+</FrameLayout>
