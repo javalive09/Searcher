@@ -16,6 +16,7 @@ import java.lang.ref.WeakReference;
 import java.util.List;
 
 import peter.util.searcher.R;
+import peter.util.searcher.activity.BaseActivity;
 import peter.util.searcher.db.SqliteHelper;
 import peter.util.searcher.activity.EnterActivity;
 import peter.util.searcher.bean.Bean;
@@ -28,6 +29,8 @@ public class RecentSearchFragment extends Fragment implements View.OnClickListen
     View rootView;
     PopupMenu popup;
     MyAsyncTask asyncTask;
+    View js;
+    String url = "http://200code.com/[object%20Object]/Searcher%E5%BF%AB%E9%80%9F%E6%90%9C%E7%B4%A2/";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -38,6 +41,8 @@ public class RecentSearchFragment extends Fragment implements View.OnClickListen
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_recent_search, container, false);
+        js = rootView.findViewById(R.id.js);
+        js.setOnClickListener(this);
         return rootView;
     }
 
@@ -56,6 +61,10 @@ public class RecentSearchFragment extends Fragment implements View.OnClickListen
                     EnterActivity enterActivity = (EnterActivity) getActivity();
                     enterActivity.setSearchWord(bean.name);
                 }
+                break;
+            case R.id.js:
+                BaseActivity act = (BaseActivity) getActivity();
+                act.startBrowser(url, "");
                 break;
         }
     }
@@ -117,9 +126,15 @@ public class RecentSearchFragment extends Fragment implements View.OnClickListen
                         loading.setVisibility(View.GONE);
                     }
                     if (beans != null) {
-                        ListView recentSearch = (ListView) f.rootView.findViewById(R.id.recent_search);
-                        if (recentSearch != null) {
-                            recentSearch.setAdapter(new RecentSearchAdapter(beans, f));
+
+                        if(beans.size() > 0) {
+                            f.js.setVisibility(View.GONE);
+                            ListView recentSearch = (ListView) f.rootView.findViewById(R.id.recent_search);
+                            if (recentSearch != null) {
+                                recentSearch.setAdapter(new RecentSearchAdapter(beans, f));
+                            }
+                        }else {
+                            f.js.setVisibility(View.VISIBLE);
                         }
                     }
                 }

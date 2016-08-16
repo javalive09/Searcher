@@ -80,58 +80,58 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             title = TextUtils.isEmpty(title) ? webview.getUrl() : title;
             final int edge = getResources().getDimensionPixelOffset(R.dimen.bottom_h);
             final View bottomBar = findViewById(R.id.bottom_bar);
-            webview.setOnScrollChangedCallback(new ObservableWebView.OnScrollChangedCallback() {
-                @Override
-                public void onScroll(int l, int t, int oldl, int oldt) {
-
-                    if(t > oldt) {// up
-                        ViewGroup.LayoutParams params = bottomBar.getLayoutParams();
-                        params.height = bottomBar.getMeasuredHeight();
-                        if(params.height != 0) {
-                            params.height = params.height + (oldt - t);
-                            if(params.height < 0 ) {
-                                params.height = 0;
-                            }
-                            bottomBar.setLayoutParams(params);
-                        }
-                    }else { // down
-                        ViewGroup.LayoutParams params = bottomBar.getLayoutParams();
-                        params.height = bottomBar.getMeasuredHeight();
-                        if(params.height != edge) {
-                            params.height = params.height + (oldt - t);
-                            if(params.height > edge) {
-                                params.height = edge;
-                            }
-                            bottomBar.setLayoutParams(params);
-                        }
-                    }
-
-                    Log.i("peter", "top = " + t);
-
-                }
-
-                @Override
-                public void ActionUp() {
-                    int height = bottomBar.getMeasuredHeight();
-                    if(height != 0 || height != edge) {
-                        ValueAnimator animator;
-                        if (height > edge / 2) {
-                            animator = ValueAnimator.ofInt(height, edge);
-                        } else {
-                            animator = ValueAnimator.ofInt(height, 0);
-                        }
-                        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                            @Override
-                            public void onAnimationUpdate(ValueAnimator animation) {
-                                ViewGroup.LayoutParams params = bottomBar.getLayoutParams();
-                                params.height = (int) animation.getAnimatedValue();
-                                bottomBar.setLayoutParams(params);
-                            }
-                        });
-                        animator.start();
-                    }
-                }
-            });
+//            webview.setOnScrollChangedCallback(new ObservableWebView.OnScrollChangedCallback() {
+//                @Override
+//                public void onScroll(int l, int t, int oldl, int oldt) {
+//
+//                    if(t > oldt) {// up
+//                        ViewGroup.LayoutParams params = bottomBar.getLayoutParams();
+//                        params.height = bottomBar.getMeasuredHeight();
+//                        if(params.height != 0) {
+//                            params.height = params.height + (oldt - t);
+//                            if(params.height < 0 ) {
+//                                params.height = 0;
+//                            }
+//                            bottomBar.setLayoutParams(params);
+//                        }
+//                    }else { // down
+//                        ViewGroup.LayoutParams params = bottomBar.getLayoutParams();
+//                        params.height = bottomBar.getMeasuredHeight();
+//                        if(params.height != edge) {
+//                            params.height = params.height + (oldt - t);
+//                            if(params.height > edge) {
+//                                params.height = edge;
+//                            }
+//                            bottomBar.setLayoutParams(params);
+//                        }
+//                    }
+//
+//                    Log.i("peter", "top = " + t);
+//
+//                }
+//
+//                @Override
+//                public void ActionUp() {
+//                    int height = bottomBar.getMeasuredHeight();
+//                    if(height != 0 || height != edge) {
+//                        ValueAnimator animator;
+//                        if (height > edge / 2) {
+//                            animator = ValueAnimator.ofInt(height, edge);
+//                        } else {
+//                            animator = ValueAnimator.ofInt(height, 0);
+//                        }
+//                        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+//                            @Override
+//                            public void onAnimationUpdate(ValueAnimator animation) {
+//                                ViewGroup.LayoutParams params = bottomBar.getLayoutParams();
+//                                params.height = (int) animation.getAnimatedValue();
+//                                bottomBar.setLayoutParams(params);
+//                            }
+//                        });
+//                        animator.start();
+//                    }
+//                }
+//            });
         }
         return title;
     }

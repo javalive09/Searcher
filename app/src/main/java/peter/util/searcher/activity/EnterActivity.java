@@ -41,6 +41,10 @@ public class EnterActivity extends BaseActivity implements DrawerLayoutAdapter.O
     private static final String RECENT_SEARCH = "recent_search";
     public static final String ENGINE_LIST = "engine_list";
     private String currentFragmentTag = "";
+    private static final String WEATHER_URL = "http://e.weather.com.cn/d/index/101010100.shtml";
+    private static final String HISTORY_TODAY_URL = "http://wap.lssdjt.com/";
+    private static final String NEWS_URL = "http://3g.163.com/touch/news";
+    private static final String NAV_URL = "http://3g.hao123.com/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -167,7 +171,12 @@ public class EnterActivity extends BaseActivity implements DrawerLayoutAdapter.O
 
     private ArrayList<DrawerLayoutAdapter.TypeBean> getData() {
         ArrayList<DrawerLayoutAdapter.TypeBean> list = new ArrayList<>();
+
         list.add(new DrawerLayoutAdapter.TypeBean(DrawerLayoutAdapter.VERSION));
+        list.add(new DrawerLayoutAdapter.TypeBean(DrawerLayoutAdapter.HOT_LIST, R.id.hot_list_history_today, getString(R.string.history_today_title), HISTORY_TODAY_URL));
+        list.add(new DrawerLayoutAdapter.TypeBean(DrawerLayoutAdapter.HOT_LIST, R.id.news_163, getString(R.string.news_163), NEWS_URL));
+        list.add(new DrawerLayoutAdapter.TypeBean(DrawerLayoutAdapter.HOT_LIST, R.id.hot_list_id_week_weather, getString(R.string.weeks_weather), WEATHER_URL));
+        list.add(new DrawerLayoutAdapter.TypeBean(DrawerLayoutAdapter.HOT_LIST, R.id.nav, getString(R.string.web_guide), NAV_URL));
         list.add(new DrawerLayoutAdapter.TypeBean(DrawerLayoutAdapter.CUSTOM, R.id.hot_list_favorite, getString(R.string.action_collection), ""));
         list.add(new DrawerLayoutAdapter.TypeBean(DrawerLayoutAdapter.CUSTOM, R.id.hot_list_history, getString(R.string.action_history), ""));
         list.add(new DrawerLayoutAdapter.TypeBean(DrawerLayoutAdapter.CUSTOM, R.id.hot_list_url_history, getString(R.string.action_url_history), ""));
@@ -212,6 +221,20 @@ public class EnterActivity extends BaseActivity implements DrawerLayoutAdapter.O
                 }
                 break;
             case DrawerLayoutAdapter.HOT_LIST:
+                switch(bean.id) {
+                    case R.id.news_163:
+                        startBrowser(bean.url, "");
+                        break;
+                    case R.id.hot_list_history_today:
+                        startBrowser(bean.url, "");
+                        break;
+                    case R.id.hot_list_id_week_weather:
+                        startBrowser(bean.url, "");
+                        break;
+                    case R.id.nav:
+                        startBrowser(bean.url, "");
+                        break;
+                }
                 break;
             case DrawerLayoutAdapter.VERSION:
                 break;

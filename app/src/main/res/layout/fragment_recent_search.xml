@@ -9,15 +9,28 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-<!--
-    <ImageView
-        android:id="@+id/voice"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:src="@drawable/voice_click" />
--->
+    <TextView
+        android:id="@+id/js"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/item_height"
+        android:background="@drawable/list_item_selector"
+        android:drawableLeft="@drawable/web_site_icon"
+        android:drawablePadding="@dimen/drawable_padding"
+        android:gravity="center_vertical"
+        android:paddingLeft="@dimen/item_padding"
+        android:paddingRight="@dimen/item_padding"
+        android:text="@string/app_js"
+        android:singleLine="true"/>
+
+    <!--
+        <ImageView
+            android:id="@+id/voice"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/voice_click" />
+    -->
 
     <ProgressBar
         android:id="@+id/loading"
