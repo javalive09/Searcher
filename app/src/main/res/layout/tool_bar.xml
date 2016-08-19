@@ -23,11 +23,11 @@
             android:id="@+id/opt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingLeft="10dp"
             android:layout_gravity="right|center_vertical"
             android:layout_marginRight="@dimen/clear_txt_margin_right"
             android:onClick="onClick"
-            android:src="@drawable/abc_ic_clear_mtrl_alpha"
-            android:visibility="gone"/>
+            android:src="@drawable/opt_level"/>
 
         <TextView
             android:id="@+id/title"
