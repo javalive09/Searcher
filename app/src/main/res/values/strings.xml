@@ -13,6 +13,8 @@
     <string name="setting_about">使用引擎分类搜索的方式,提供简单畅快的搜索体验。简单快速，干净省电。
     </string>
     <string name="setting_clear">缓存和cookies已经清理</string>
+    <string name="record_audio_permission">使用语音输入功能需要此权限</string>
+    <string name="wr_sdcard_permission">下载文件到存储卡需要此权限</string>
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
     <string name="dialog_download">您是否需要下载此文件？</string>

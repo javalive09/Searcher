@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.webkit.URLUtil;
+import android.widget.Toast;
 
 import com.anthonycr.grant.PermissionsManager;
 import com.anthonycr.grant.PermissionsResultAction;
@@ -61,7 +62,7 @@ public class MyDownloadListener implements android.webkit.DownloadListener {
 
                     @Override
                     public void onDenied(String permission) {
-                        //TODO show message
+                        Toast.makeText(mActivity, R.string.wr_sdcard_permission, Toast.LENGTH_LONG).show();
                     }
                 });
     }

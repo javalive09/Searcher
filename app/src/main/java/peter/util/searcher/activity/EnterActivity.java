@@ -1,12 +1,12 @@
 package peter.util.searcher.activity;
 
+import android.Manifest;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.drawable.LevelListDrawable;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -24,6 +24,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.anthonycr.grant.PermissionsManager;
+import com.anthonycr.grant.PermissionsResultAction;
 import com.iflytek.cloud.ErrorCode;
 import com.iflytek.cloud.InitListener;
 import com.iflytek.cloud.SpeechConstant;
@@ -38,6 +40,8 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import java.util.ArrayList;
+
+import peter.util.searcher.download.DownloadHandler;
 import peter.util.searcher.update.AsynWindowHandler;
 import peter.util.searcher.engine.EngineViewPagerFragment;
 import peter.util.searcher.R;
@@ -76,6 +80,24 @@ public class EnterActivity extends BaseActivity implements DrawerLayoutAdapter.O
     public void onResume() {
         super.onResume();
         MobclickAgent.onResume(this);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        String searchWord = getSearchWord();
+        if(!TextUtils.isEmpty(searchWord)) {
+            outState.putString("searchWord", searchWord);
+        }
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        String searchWord = savedInstanceState.getString("searchWord");
+        if(!TextUtils.isEmpty(searchWord)) {
+            setSearchWord(searchWord);
+        }
     }
 
     public void onPause() {
@@ -246,7 +268,7 @@ public class EnterActivity extends BaseActivity implements DrawerLayoutAdapter.O
                 }
                 break;
             case DrawerLayoutAdapter.HOT_LIST:
-                switch(bean.id) {
+                switch (bean.id) {
                     case R.id.news_163:
                         startBrowser(bean.url, "");
                         break;
@@ -283,7 +305,7 @@ public class EnterActivity extends BaseActivity implements DrawerLayoutAdapter.O
 
                 switch (opt.getDrawable().getLevel()) {
                     case 0:
-                        mIatDialog.show();
+                        showVoiceDialog();
                         break;
                     case 1:
                         search.requestFocus();
@@ -293,6 +315,22 @@ public class EnterActivity extends BaseActivity implements DrawerLayoutAdapter.O
                 }
                 break;
         }
+    }
+
+    private void showVoiceDialog() {
+        PermissionsManager.getInstance().requestPermissionsIfNecessaryForResult(EnterActivity.this,
+                new String[]{Manifest.permission.RECORD_AUDIO},
+                new PermissionsResultAction() {
+                    @Override
+                    public void onGranted() {
+                        mIatDialog.show();
+                    }
+
+                    @Override
+                    public void onDenied(String permission) {
+                        Toast.makeText(EnterActivity.this, R.string.record_audio_permission, Toast.LENGTH_LONG).show();
+                    }
+                });
     }
 
     //Listener for dialog
@@ -330,6 +368,7 @@ public class EnterActivity extends BaseActivity implements DrawerLayoutAdapter.O
         mIat.setParameter(SpeechConstant.ASR_PTT, "0");
 
     }
+
     /**
      * Dialog监听器
      */
@@ -341,7 +380,7 @@ public class EnterActivity extends BaseActivity implements DrawerLayoutAdapter.O
                 String json = recognizerResult.getResultString();
                 if (!TextUtils.isEmpty(json)) {
                     String result = parseIatResult(json);
-                    if(!TextUtils.isEmpty(result)) {
+                    if (!TextUtils.isEmpty(result)) {
                         setSearchWord(result);
                     }
                 }
