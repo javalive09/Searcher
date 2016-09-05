@@ -1,6 +1,5 @@
 package peter.util.searcher.activity;
 
-import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.SearchManager;
@@ -9,27 +8,23 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.LevelListDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.graphics.Palette;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.webkit.CookieManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.PopupMenu;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.umeng.analytics.MobclickAgent;
@@ -160,9 +155,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         webview.setScrollbarFadingEnabled(true);
         webview.setSaveEnabled(true);
         webview.setNetworkAvailable(true);
-        webview.setWebChromeClient(new MyWebChromeClient(this));
-        webview.setWebViewClient(new MyWebClient(this));
-        webview.setDownloadListener(new MyDownloadListener(this));
+//        webview.setWebChromeClient(new MyWebChromeClient(this));
+//        webview.setWebViewClient(new MyWebClient(this));
+//        webview.setDownloadListener(new MyDownloadListener(this));
         setUserAgent(MainActivity.this);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             CookieManager.getInstance().setAcceptThirdPartyCookies(webview, true);

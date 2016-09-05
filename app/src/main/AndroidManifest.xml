@@ -54,10 +54,14 @@
             android:name=".activity.HistoryURLActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".activity.SearchActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".activity.EnterActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden"
             android:launchMode="singleTask"/>
+
     </application>
 
 </manifest>

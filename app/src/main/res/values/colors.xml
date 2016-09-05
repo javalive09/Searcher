@@ -4,6 +4,7 @@
     <!--<color name="colorPrimary">#0d3c6e</color>-->
     <!--<color name="colorPrimary">#028ce6</color>-->
     <color name="colorPrimary_">#2b2c30</color>
+    <color name="color_top_grap">#c0c0c1</color>
     <color name="status_bar">#242528</color>
     <color name="drawer_layout_bg">#393a3f</color>
     <color name="edit_text_color">#b4ddf8</color>

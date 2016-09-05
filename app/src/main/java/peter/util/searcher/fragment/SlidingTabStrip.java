@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package peter.util.searcher.engine;
+package peter.util.searcher.fragment;
 
 import android.R;
 import android.content.Context;

@@ -28,6 +28,7 @@ import peter.util.searcher.R;
 import peter.util.searcher.db.SqliteHelper;
 import peter.util.searcher.activity.MainActivity;
 import peter.util.searcher.bean.Bean;
+import peter.util.searcher.fragment.WebViewFragment;
 import peter.util.searcher.utils.IntentUtils;
 import peter.util.searcher.utils.Utils;
 
@@ -35,12 +36,12 @@ import peter.util.searcher.utils.Utils;
  * Created by peter on 16/6/6.
  */
 public class MyWebClient extends WebViewClient {
-    private MainActivity mainActivity;
+    private WebViewFragment fragment;
     IntentUtils mIntentUtils;
 
-    public MyWebClient(MainActivity activity) {
-        this.mainActivity = activity;
-        mIntentUtils = new IntentUtils(mainActivity);
+    public MyWebClient(WebViewFragment fragment) {
+        this.fragment = fragment;
+        mIntentUtils = new IntentUtils(fragment.getActivity());
     }
 
     @Override
@@ -48,15 +49,13 @@ public class MyWebClient extends WebViewClient {
         if(view.isShown()) {
             view.postInvalidate();
         }
-        mainActivity.refreshOptStatus();
-        mainActivity.setStatusLevel(0);
-        saveUrlData(mainActivity.getWebViewTitle(), url);
+        fragment.setStatusLevel(0);
+        saveUrlData(fragment.getWebViewTitle(), url);
     }
 
     @Override
     public void onPageStarted(WebView view, String url, Bitmap favicon) {
-        mainActivity.refreshOptStatus();
-        mainActivity.setStatusLevel(1);
+        fragment.setStatusLevel(1);
         Log.i("peter", "url=" + url);
     }
 
@@ -68,7 +67,7 @@ public class MyWebClient extends WebViewClient {
                 search.name = TextUtils.isEmpty(title) ? url : title;
                 search.time = System.currentTimeMillis();
                 search.url = url;
-                SqliteHelper.instance(mainActivity).insertHistoryURL(search);
+                SqliteHelper.instance(fragment.getActivity()).insertHistoryURL(search);
                 return null;
             }
         }.execute();
@@ -78,7 +77,7 @@ public class MyWebClient extends WebViewClient {
     public void onReceivedHttpAuthRequest(final WebView view, @NonNull final HttpAuthHandler handler,
                                           final String host, final String realm) {
 
-        Activity mActivity = mainActivity;
+        Activity mActivity = fragment.getActivity();
         if(mActivity != null) {
             AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
             final EditText name = new EditText(mActivity);
@@ -123,16 +122,16 @@ public class MyWebClient extends WebViewClient {
     @Override
     public void onReceivedSslError(WebView view, @NonNull final SslErrorHandler handler, @NonNull SslError error) {
         List<Integer> errorCodeMessageCodes = getAllSslErrorMessageCodes(error);
-        Activity mActivity = mainActivity;
+        Activity mActivity = fragment.getActivity();
         if(mActivity != null) {
             StringBuilder stringBuilder = new StringBuilder();
             for (Integer messageCode : errorCodeMessageCodes) {
-                stringBuilder.append(" - ").append(mainActivity.getString(messageCode)).append('\n');
+                stringBuilder.append(" - ").append(fragment.getString(messageCode)).append('\n');
             }
             String alertMessage =
                     mActivity.getString(R.string.message_insecure_connection, stringBuilder.toString());
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(mainActivity);
+            AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
             builder.setTitle(mActivity.getString(R.string.title_warning));
             builder.setMessage(alertMessage)
                     .setCancelable(true)
@@ -190,7 +189,7 @@ public class MyWebClient extends WebViewClient {
             MailTo mailTo = MailTo.parse(url);
             Intent i = Utils.newEmailIntent(mailTo.getTo(), mailTo.getSubject(),
                     mailTo.getBody(), mailTo.getCc());
-            mainActivity.startActivity(i);
+            fragment.startActivity(i);
             view.reload();
             return true;
         } else if (url.startsWith("intent://")) {
@@ -207,7 +206,7 @@ public class MyWebClient extends WebViewClient {
                     intent.setSelector(null);
                 }
                 try {
-                    mainActivity.startActivity(intent);
+                    fragment.startActivity(intent);
                 } catch (ActivityNotFoundException e) {
                     e.printStackTrace();
                 }

@@ -13,16 +13,17 @@ import android.widget.Toast;
 import com.anthonycr.grant.PermissionsManager;
 import com.anthonycr.grant.PermissionsResultAction;
 
+import peter.util.searcher.activity.EnterActivity;
 import peter.util.searcher.activity.MainActivity;
 import peter.util.searcher.R;
 
 
 public class MyDownloadListener implements android.webkit.DownloadListener {
 
-    private MainActivity mActivity;
+    private EnterActivity mActivity;
     private static final String TAG = MyDownloadListener.class.getSimpleName();
 
-    public MyDownloadListener(MainActivity mainActivity) {
+    public MyDownloadListener(EnterActivity mainActivity) {
         this.mActivity = mainActivity;
     }
 

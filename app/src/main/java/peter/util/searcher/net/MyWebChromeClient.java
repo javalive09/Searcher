@@ -1,5 +1,6 @@
 package peter.util.searcher.net;
 
+import android.app.Activity;
 import android.graphics.Bitmap;
 import android.media.MediaPlayer;
 import android.os.Message;
@@ -13,6 +14,7 @@ import android.widget.FrameLayout;
 import android.widget.VideoView;
 
 import peter.util.searcher.activity.MainActivity;
+import peter.util.searcher.fragment.WebViewFragment;
 
 /**
  * Created by peter on 16/6/6.
@@ -26,10 +28,10 @@ public class MyWebChromeClient extends WebChromeClient {
     private VideoView mVideoView;
     private View mCustomView;
     private WebChromeClient.CustomViewCallback mCustomViewCallback;
-    private MainActivity mainActivity;
+    private WebViewFragment fragment;
 
-    public MyWebChromeClient(MainActivity activity) {
-        this.mainActivity = activity;
+    public MyWebChromeClient(WebViewFragment fragment) {
+        this.fragment = fragment;
     }
 
     @Override
@@ -50,7 +52,7 @@ public class MyWebChromeClient extends WebChromeClient {
 
     @Override
     public void onShowCustomView(View view, CustomViewCallback callback) {
-        int requestedOrientation = mOriginalOrientation = mainActivity.getRequestedOrientation();
+        int requestedOrientation = mOriginalOrientation = fragment.getActivity().getRequestedOrientation();
         showCustomView(view, callback, requestedOrientation);
         Log.i("peter", "onShowCustomView 2");
     }
@@ -88,7 +90,7 @@ public class MyWebChromeClient extends WebChromeClient {
         } catch (SecurityException e) {
             Log.e(TAG, "WebView is not allowed to keep the screen on");
         }
-        mainActivity.setFullscreen(false, false);
+        fragment.setFullscreen(false, false);
         if (mFullscreenContainer != null) {
             ViewGroup parent = (ViewGroup) mFullscreenContainer.getParent();
             if (parent != null) {
@@ -114,7 +116,7 @@ public class MyWebChromeClient extends WebChromeClient {
             }
         }
         mCustomViewCallback = null;
-        mainActivity.setRequestedOrientation(mOriginalOrientation);
+        fragment.getActivity().setRequestedOrientation(mOriginalOrientation);
     }
 
     public synchronized void showCustomView(final View view, WebChromeClient.CustomViewCallback callback, int requestedOrientation) {
@@ -128,37 +130,40 @@ public class MyWebChromeClient extends WebChromeClient {
             }
             return;
         }
-        try {
-            view.setKeepScreenOn(true);
-        } catch (SecurityException e) {
-            Log.e(TAG, "WebView is not allowed to keep the screen on");
-        }
-        mOriginalOrientation = mainActivity.getRequestedOrientation();
-        mCustomViewCallback = callback;
-        mCustomView = view;
+        Activity mainActivity = fragment.getActivity();
+        if(mainActivity != null) {
+            try {
+                view.setKeepScreenOn(true);
+            } catch (SecurityException e) {
+                Log.e(TAG, "WebView is not allowed to keep the screen on");
+            }
+            mOriginalOrientation = mainActivity.getRequestedOrientation();
+            mCustomViewCallback = callback;
+            mCustomView = view;
 
-        mainActivity.setRequestedOrientation(requestedOrientation);
-        final FrameLayout decorView = (FrameLayout) mainActivity.getWindow().getDecorView();
+            mainActivity.setRequestedOrientation(requestedOrientation);
+            final FrameLayout decorView = (FrameLayout) mainActivity.getWindow().getDecorView();
 
-        mFullscreenContainer = new FrameLayout(mainActivity);
-        mFullscreenContainer.setBackgroundColor(ContextCompat.getColor(mainActivity, android.R.color.black));
-        if (view instanceof FrameLayout) {
-            if (((FrameLayout) view).getFocusedChild() instanceof VideoView) {
-                mVideoView = (VideoView) ((FrameLayout) view).getFocusedChild();
+            mFullscreenContainer = new FrameLayout(mainActivity);
+            mFullscreenContainer.setBackgroundColor(ContextCompat.getColor(mainActivity, android.R.color.black));
+            if (view instanceof FrameLayout) {
+                if (((FrameLayout) view).getFocusedChild() instanceof VideoView) {
+                    mVideoView = (VideoView) ((FrameLayout) view).getFocusedChild();
+                    mVideoView.setOnErrorListener(new VideoCompletionListener());
+                    mVideoView.setOnCompletionListener(new VideoCompletionListener());
+                }
+            } else if (view instanceof VideoView) {
+                mVideoView = (VideoView) view;
                 mVideoView.setOnErrorListener(new VideoCompletionListener());
                 mVideoView.setOnCompletionListener(new VideoCompletionListener());
             }
-        } else if (view instanceof VideoView) {
-            mVideoView = (VideoView) view;
-            mVideoView.setOnErrorListener(new VideoCompletionListener());
-            mVideoView.setOnCompletionListener(new VideoCompletionListener());
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            decorView.addView(mFullscreenContainer, params);
+            mFullscreenContainer.addView(mCustomView, params);
+            decorView.requestLayout();
+            fragment.setFullscreen(true, true);
         }
-        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        decorView.addView(mFullscreenContainer, params);
-        mFullscreenContainer.addView(mCustomView, params);
-        decorView.requestLayout();
-        mainActivity.setFullscreen(true, true);
     }
 
     private class VideoCompletionListener implements MediaPlayer.OnCompletionListener,
