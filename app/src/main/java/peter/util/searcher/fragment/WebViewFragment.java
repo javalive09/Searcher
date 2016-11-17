@@ -181,9 +181,9 @@ public class WebViewFragment extends BaseFragment implements View.OnClickListene
         webview.setScrollbarFadingEnabled(true);
         webview.setSaveEnabled(true);
         webview.setNetworkAvailable(true);
-        webview.setWebChromeClient(new MyWebChromeClient(WebViewFragment.this));
-        webview.setWebViewClient(new MyWebClient(WebViewFragment.this));
-        webview.setDownloadListener(new MyDownloadListener((EnterActivity) getActivity()));
+//        webview.setWebChromeClient(new MyWebChromeClient(WebViewFragment.this));
+//        webview.setWebViewClient(new MyWebClient(WebViewFragment.this));
+//        webview.setDownloadListener(new MyDownloadListener((EnterActivity) getActivity()));
         setUserAgent(getActivity());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             CookieManager.getInstance().setAcceptThirdPartyCookies(webview, true);

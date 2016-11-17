@@ -20,10 +20,10 @@ import peter.util.searcher.R;
 
 public class MyDownloadListener implements android.webkit.DownloadListener {
 
-    private EnterActivity mActivity;
+    private MainActivity mActivity;
     private static final String TAG = MyDownloadListener.class.getSimpleName();
 
-    public MyDownloadListener(EnterActivity mainActivity) {
+    public MyDownloadListener(MainActivity mainActivity) {
         this.mActivity = mainActivity;
     }
 
