@@ -2,6 +2,9 @@ package peter.util.searcher.activity;
 
 import java.util.ArrayList;
 
+import peter.util.searcher.tab.SearcherTab;
+import peter.util.searcher.tab.Tab;
+
 /**
  *
  * Created by peter on 2016/11/17.
@@ -11,7 +14,7 @@ import java.util.ArrayList;
 public class TabManager {
 
     private static final int MAX_TAB = 15;
-    private ArrayList<Tab> tabArrayList = new ArrayList<>(MAX_TAB);
+    private ArrayList<SearcherTab> tabArrayList = new ArrayList<>(MAX_TAB);
     private MainActivity mainActivity;
     private int mCurrentTabIndex;
 
@@ -28,7 +31,7 @@ public class TabManager {
             newTab = false;
         }
         if (newTab) {
-            Tab tab = new Tab(mainActivity);
+            SearcherTab tab = new SearcherTab(mainActivity);
             tabArrayList.add(tab);
             setCurrentTab(tabArrayList.size() - 1);
         }

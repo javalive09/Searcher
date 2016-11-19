@@ -16,7 +16,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.webkit.WebView;
 import android.widget.FrameLayout;
 import android.widget.PopupMenu;
 import android.widget.Toast;
@@ -26,6 +25,7 @@ import com.umeng.analytics.MobclickAgent;
 import peter.util.searcher.bean.Bean;
 import peter.util.searcher.R;
 import peter.util.searcher.db.SqliteHelper;
+import peter.util.searcher.tab.Tab;
 import peter.util.searcher.utils.UrlUtils;
 
 /**
@@ -66,9 +66,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
     }
 
-    public void setWebView(WebView webView) {
+    public void setCurrentView(View view) {
         mContainer.removeAllViews();
-        mContainer.addView(webView);
+        mContainer.addView(view);
+    }
+
+    public void setCurrentView(int viewId) {
+        mContainer.removeAllViews();
+        View.inflate(MainActivity.this, viewId, mContainer);
     }
 
     @Override

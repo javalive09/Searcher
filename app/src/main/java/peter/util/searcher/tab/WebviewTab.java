@@ -1,7 +1,6 @@
-package peter.util.searcher.activity;
+package peter.util.searcher.tab;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -10,6 +9,9 @@ import android.util.Log;
 import android.webkit.CookieManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+
+import peter.util.searcher.R;
+import peter.util.searcher.activity.MainActivity;
 import peter.util.searcher.bean.Bean;
 import peter.util.searcher.db.SqliteHelper;
 import peter.util.searcher.download.MyDownloadListener;
@@ -22,17 +24,21 @@ import peter.util.searcher.net.MyWebClient;
  *
  */
 
-public class Tab {
+public class WebviewTab extends SearcherTab{
 
     private static final int API = Build.VERSION.SDK_INT;
-    private MainActivity mainActivity;
     private WebView mWebView;
 
-    public Tab(MainActivity activity) {
+    public WebviewTab(MainActivity activity) {
+        super(activity);
         mWebView = new WebView(activity);
-        mainActivity = activity;
         initmWebView();
         initializeSettings();
+    }
+
+    @Override
+    public int onCreateViewResId() {
+        return R.layout.tab_webview;
     }
 
     public void loadUrl(String url, String searchWord, boolean newTab) {
@@ -43,7 +49,8 @@ public class Tab {
                 saveData(searchWord, url);
             }
             if(newTab) {
-                mainActivity.setWebView(mWebView);
+                int viewId = onCreateViewResId();
+                mainActivity.setCurrentView(viewId);
             }
         }
     }
