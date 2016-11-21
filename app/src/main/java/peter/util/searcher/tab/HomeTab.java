@@ -1,5 +1,6 @@
 package peter.util.searcher.tab;
 
+import peter.util.searcher.R;
 import peter.util.searcher.activity.MainActivity;
 
 /**
@@ -10,15 +11,28 @@ import peter.util.searcher.activity.MainActivity;
 
 public class HomeTab extends LocalViewTab {
 
-    public static final String URL = "local://home";
-
     public HomeTab(MainActivity activity) {
         super(activity);
     }
 
     @Override
     public int onCreateViewResId() {
-        return 0;
+        return R.layout.tab_home;
+    }
+
+    @Override
+    public void onCreate() {
+
+    }
+
+    @Override
+    public void onDestory() {
+
+    }
+
+    @Override
+    public String getSearchWord() {
+        return null;
     }
 
     @Override
@@ -28,7 +42,8 @@ public class HomeTab extends LocalViewTab {
 
     @Override
     public String getUrl() {
-        return URL;
+        return URL_HOME;
     }
+
 
 }

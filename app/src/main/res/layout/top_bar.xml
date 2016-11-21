@@ -8,14 +8,13 @@
         android:id="@+id/search"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:hint="@string/search"
+        android:hint="@string/search_hint"
         android:imeOptions="actionDone"
-        android:textColorHint="@color/edit_text_no_focus"
-        android:textColor="@android:color/white"
+        android:background="@drawable/input_bg"
+        android:layout_marginBottom="@dimen/input_margin"
         android:paddingLeft="@dimen/drawable_padding"
         android:paddingRight="@dimen/search_padding_right"
         android:drawablePadding="@dimen/drawable_padding"
-        android:drawableLeft="@drawable/search_icon"
         android:singleLine="true" />
 
     <ImageView

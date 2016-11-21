@@ -8,9 +8,11 @@ import peter.util.searcher.activity.MainActivity;
  *
  */
 
-public class SearcherTab implements Tab {
+public abstract class SearcherTab implements Tab {
 
     protected MainActivity mainActivity;
+
+    protected String mSearchWord;
 
     public SearcherTab(MainActivity activity) {
         mainActivity = activity;
@@ -20,35 +22,33 @@ public class SearcherTab implements Tab {
         return 0;
     }
 
-    public String getTitle() {
-        return null;
-    }
-
-    public String getUrl() {
-        return null;
-    }
-
-    public void loadUrl(String url, String searchWord, boolean newTab) {
-    }
-
-    public void reload() {
-    }
-
-    public boolean canGoBack() {
-        return false;
-    }
-
-    public void goBack() {
+    public void onCreate() {
 
     }
 
-    public boolean canGoForward() {
-        return false;
-    }
-
-    public void goForward() {
+    public void onDestory() {
 
     }
+
+    public String getSearchWord() {
+        return mSearchWord;
+    }
+
+    public abstract String getTitle();
+
+    public abstract String getUrl();
+
+    public abstract void loadUrl(String url, String searchWord);
+
+    public abstract void reload();
+
+    public abstract boolean canGoBack();
+
+    public abstract void goBack();
+
+    public abstract boolean canGoForward();
+
+    public abstract void goForward();
 
 
 }

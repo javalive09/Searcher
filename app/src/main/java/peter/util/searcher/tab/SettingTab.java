@@ -10,8 +10,6 @@ import peter.util.searcher.activity.MainActivity;
 
 public class SettingTab extends LocalViewTab {
 
-    public static final String URL = "local://setting";
-
     public SettingTab(MainActivity activity) {
         super(activity);
     }
@@ -22,13 +20,28 @@ public class SettingTab extends LocalViewTab {
     }
 
     @Override
+    public void onCreate() {
+
+    }
+
+    @Override
+    public void onDestory() {
+
+    }
+
+    @Override
+    public String getSearchWord() {
+        return null;
+    }
+
+    @Override
     public String getTitle() {
         return "home";
     }
 
     @Override
     public String getUrl() {
-        return URL;
+        return URL_SETTING;
     }
 
 }

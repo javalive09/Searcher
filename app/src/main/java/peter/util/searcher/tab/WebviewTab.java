@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
 import android.webkit.CookieManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -31,9 +32,16 @@ public class WebviewTab extends SearcherTab{
 
     public WebviewTab(MainActivity activity) {
         super(activity);
-        mWebView = new WebView(activity);
+    }
+
+    public void onCreate() {
         initmWebView();
         initializeSettings();
+    }
+
+    @Override
+    public void onDestory() {
+
     }
 
     @Override
@@ -41,16 +49,23 @@ public class WebviewTab extends SearcherTab{
         return R.layout.tab_webview;
     }
 
-    public void loadUrl(String url, String searchWord, boolean newTab) {
+    public void loadUrl(String url, String searchWord) {
         if (!TextUtils.isEmpty(url)) {
             Log.i("peter", "url=" + url);
-            mWebView.loadUrl(url);
-            if (!TextUtils.isEmpty(searchWord)) {
-                saveData(searchWord, url);
+            if(mWebView == null) {
+                int resId = onCreateViewResId();
+                mWebView = (WebView) mainActivity.setCurrentView(resId);
+                onCreate();
+                mWebView.loadUrl(url);
+            }else {
+                if(!getUrl().equals(url)) {
+                    mWebView.loadUrl(url);
+                }
+                mainActivity.setCurrentView(mWebView);
             }
-            if(newTab) {
-                int viewId = onCreateViewResId();
-                mainActivity.setCurrentView(viewId);
+            if (!TextUtils.isEmpty(searchWord)) {
+                mSearchWord = searchWord;
+                saveData(searchWord, url);
             }
         }
     }

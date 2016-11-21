@@ -2,14 +2,21 @@ package peter.util.searcher.tab;
 
 
 /**
+ *
  * Created by peter on 2016/11/17.
  */
 
 public interface Tab {
 
-    void loadUrl(String url, String searchWord, boolean newTab);
+    String LOCAL_SCHEMA = "local://";
+    String URL_HOME = LOCAL_SCHEMA + "home";
+    String URL_SETTING = LOCAL_SCHEMA + "setting";
+
+    void loadUrl(String url, String searchWord);
 
     String getUrl();
+
+    String getSearchWord();
 
     void reload();
 

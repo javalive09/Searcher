@@ -12,19 +12,25 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.PopupMenu;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.umeng.analytics.MobclickAgent;
 
+import java.util.HashMap;
+
 import peter.util.searcher.bean.Bean;
 import peter.util.searcher.R;
 import peter.util.searcher.db.SqliteHelper;
+import peter.util.searcher.tab.HomeTab;
+import peter.util.searcher.tab.SettingTab;
 import peter.util.searcher.tab.Tab;
 import peter.util.searcher.utils.UrlUtils;
 
@@ -35,11 +41,12 @@ import peter.util.searcher.utils.UrlUtils;
  */
 public class MainActivity extends BaseActivity implements View.OnClickListener {
 
-    private static final int API = Build.VERSION.SDK_INT;
     private View bottomBar;
     private TabManager manager;
+    private TextView multiWindow;
     private View progressBar;
     private FrameLayout mContainer;
+    private HashMap<String, Class> router = new HashMap<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -56,7 +63,18 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         progressBar = findViewById(R.id.status);
         bottomBar = findViewById(R.id.bottom_bar);
         mContainer = (FrameLayout) findViewById(R.id.container);
+        multiWindow = (TextView) findViewById(R.id.multi_btn);
         manager = new TabManager(MainActivity.this);
+        installLocalTabRounter();
+    }
+
+    private void installLocalTabRounter() {
+        router.put(Tab.URL_HOME, HomeTab.class);
+        router.put(Tab.URL_SETTING, SettingTab.class);
+    }
+
+    public Class getRounterClass(String url) {
+        return router.get(url);
     }
 
     public void setStatusLevel(int level) {
@@ -71,9 +89,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         mContainer.addView(view);
     }
 
-    public void setCurrentView(int viewId) {
+    public View setCurrentView(int viewId) {
         mContainer.removeAllViews();
-        View.inflate(MainActivity.this, viewId, mContainer);
+        LayoutInflater factory = LayoutInflater.from(MainActivity.this);
+        View mView = factory.inflate(viewId, mContainer, false);
+        mContainer.addView(mView);
+        return mView;
     }
 
     @Override
@@ -89,22 +110,31 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 String url = (String) intent.getSerializableExtra(NAME_URL);
                 if (!TextUtils.isEmpty(url)) {
                     String searchWord = intent.getStringExtra(NAME_WORD);
-                    manager.loadUrl(url, searchWord, false);
+                    loadUrl(url, searchWord, false);
                 }
             } else if (Intent.ACTION_VIEW.equals(action)) { // outside invoke
                 String url = intent.getDataString();
                 if (!TextUtils.isEmpty(url)) {
-                    manager.loadUrl(url, true);
+                    loadUrl(url, true);
                 }
             } else if (Intent.ACTION_WEB_SEARCH.equals(action)) {
                 String searchWord = intent.getStringExtra(SearchManager.QUERY);
                 String engineUrl = getString(R.string.default_engine_url);
                 String url = UrlUtils.smartUrlFilter(searchWord, true, engineUrl);
-                manager.loadUrl(url, searchWord, true);
+                loadUrl(url, searchWord, true);
             } else if(Intent.ACTION_MAIN.equals(action)) {
-                manager.loadUrl("http://m.2345.com/websitesNavigation.htm", true);
+//                loadUrl("http://m.2345.com/websitesNavigation.htm", true);
+                loadUrl(Tab.URL_HOME, true);
             }
         }
+    }
+
+    public void loadUrl(String url, String searchWord, boolean newTab) {
+        manager.loadUrl(url, searchWord, newTab);
+    }
+
+    public void loadUrl(String url, boolean newTab) {
+        manager.loadUrl(url, newTab);
     }
 
     @Override
@@ -130,6 +160,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         MobclickAgent.onPause(this);
     }
 
+    public void refreshMultiTab() {
+        int count = manager.getTabCount();
+        multiWindow.setText(count + "");
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -151,9 +186,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 }
                 break;
             case R.id.home:
-                startActivity(new Intent(MainActivity.this, EnterActivity.class));
+                startActivity(new Intent(MainActivity.this, SearchActivity.class));
                 break;
-            case R.id.refresh:
+            case R.id.multi_btn:
                 manager.getCurrentTab().reload();
                 break;
             case R.id.menu:

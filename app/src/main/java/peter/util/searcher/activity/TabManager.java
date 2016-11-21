@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import peter.util.searcher.tab.SearcherTab;
 import peter.util.searcher.tab.Tab;
+import peter.util.searcher.tab.TabGroup;
 
 /**
  *
@@ -13,7 +14,7 @@ import peter.util.searcher.tab.Tab;
 
 public class TabManager {
 
-    private static final int MAX_TAB = 15;
+    private static final int MAX_TAB = 20;
     private ArrayList<SearcherTab> tabArrayList = new ArrayList<>(MAX_TAB);
     private MainActivity mainActivity;
     private int mCurrentTabIndex;
@@ -27,16 +28,17 @@ public class TabManager {
     }
 
     public void loadUrl(String url, String searchWord, boolean newTab) {
-        if(tabArrayList.size() == 15) {
+        if(tabArrayList.size() == MAX_TAB) {
             newTab = false;
         }
         if (newTab) {
-            SearcherTab tab = new SearcherTab(mainActivity);
+            SearcherTab tab = new TabGroup(mainActivity);
             tabArrayList.add(tab);
             setCurrentTab(tabArrayList.size() - 1);
         }
         Tab tab = getCurrentTab();
-        tab.loadUrl(url, searchWord, newTab);
+        tab.loadUrl(url, searchWord);
+        mainActivity.refreshMultiTab();
     }
 
     public void setCurrentTab(int index) {
@@ -45,6 +47,10 @@ public class TabManager {
 
     public Tab getCurrentTab() {
         return tabArrayList.get(mCurrentTabIndex);
+    }
+
+    public int getTabCount() {
+        return tabArrayList.size();
     }
 
 }

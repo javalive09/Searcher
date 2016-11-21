@@ -1,6 +1,9 @@
 package peter.util.searcher.tab;
 
 import android.text.TextUtils;
+import android.view.LayoutInflater;
+import android.view.View;
+
 import peter.util.searcher.activity.MainActivity;
 
 /**
@@ -9,25 +12,37 @@ import peter.util.searcher.activity.MainActivity;
  *
  */
 
-public abstract class LocalViewTab implements Tab{
+public abstract class LocalViewTab extends SearcherTab{
 
-    protected MainActivity mainActivity;
+    protected View mView;
 
     public LocalViewTab(MainActivity activity) {
-        mainActivity = activity;
+        super(activity);
     }
 
     public abstract int onCreateViewResId();
+
+    public abstract void onCreate();
+
+    public abstract void onDestory();
 
     public abstract String getTitle();
 
     public abstract String getUrl();
 
-
-    public void loadUrl(String url, String searchWord, boolean newTab) {
+    public void loadUrl(String url, String searchWord) {
         if (!TextUtils.isEmpty(url)) {
-            int viewResId = onCreateViewResId();
-            mainActivity.setCurrentView(viewResId);
+            if(mView == null) {
+                int viewResId = onCreateViewResId();
+                mView = mainActivity.setCurrentView(viewResId);
+                onCreate();
+            }else {
+                mainActivity.setCurrentView(mView);
+            }
+
+            if (!TextUtils.isEmpty(searchWord)) {
+                mSearchWord = searchWord;
+            }
         }
     }
 
