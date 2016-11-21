@@ -2,7 +2,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="@dimen/search_h"
-    android:background="@color/colorPrimary_">
+    android:background="@android:color/white">
 
     <EditText
         android:id="@+id/search"
@@ -11,10 +11,12 @@
         android:hint="@string/search_hint"
         android:imeOptions="actionDone"
         android:background="@drawable/input_bg"
-        android:layout_marginBottom="@dimen/input_margin"
         android:paddingLeft="@dimen/drawable_padding"
         android:paddingRight="@dimen/search_padding_right"
         android:drawablePadding="@dimen/drawable_padding"
+        android:layout_marginLeft="@dimen/input_margin"
+        android:layout_marginRight="@dimen/input_margin"
+        android:layout_marginTop="@dimen/input_margin"
         android:singleLine="true" />
 
     <ImageView

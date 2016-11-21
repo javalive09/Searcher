@@ -16,5 +16,6 @@
 
     <color name="transparent">#00000000</color>
     <color name="back_press">#cccccc</color>
+    <color name="line_color">#626262</color>
 
 </resources>
