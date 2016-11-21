@@ -38,7 +38,7 @@ public class TabManager {
         }
         Tab tab = getCurrentTab();
         tab.loadUrl(url, searchWord);
-        mainActivity.refreshMultiTab();
+        mainActivity.refreshBottomBar();
     }
 
     public void setCurrentTab(int index) {

@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:background="@android:color/white"
+              android:background="@color/chrome_top_color"
               android:orientation="horizontal">
 
     <!--<ImageView-->
@@ -52,10 +52,11 @@
         android:id="@+id/home"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_margin="@dimen/input_margin"
+        android:layout_margin="4dp"
         android:layout_weight="2.3"
-        android:background="@drawable/input_bg"
+        android:background="@drawable/input_bg_gray"
         android:hint="@string/search_hint"
+        android:textColorHint="@color/multi_text_color_gray"
         android:gravity="center"
         android:onClick="onClick"
         android:singleLine="true"
@@ -67,7 +68,7 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:textColor="@android:color/white"
+        android:textColor="@color/chrome_txt_color"
         android:background="@drawable/opt_multi_selector"
         android:gravity="center"
         android:textSize="10sp"
@@ -85,7 +86,7 @@
         android:background="@drawable/menu_selector"
         android:onClick="onClick"
         android:scaleType="center"
-        android:src="@drawable/bottom_menu"/>
+        android:src="@drawable/bottom_menu_chrome_color"/>
 
 
 </LinearLayout>

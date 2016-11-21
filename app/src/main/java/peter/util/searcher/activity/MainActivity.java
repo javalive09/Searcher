@@ -35,9 +35,7 @@ import peter.util.searcher.tab.Tab;
 import peter.util.searcher.utils.UrlUtils;
 
 /**
- *
  * Created by peter on 16/5/9.
- *
  */
 public class MainActivity extends BaseActivity implements View.OnClickListener {
 
@@ -122,9 +120,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 String engineUrl = getString(R.string.default_engine_url);
                 String url = UrlUtils.smartUrlFilter(searchWord, true, engineUrl);
                 loadUrl(url, searchWord, true);
-            } else if(Intent.ACTION_MAIN.equals(action)) {
-//                loadUrl("http://m.2345.com/websitesNavigation.htm", true);
-                loadUrl(Tab.URL_HOME, true);
+            } else if (Intent.ACTION_MAIN.equals(action)) {
+                if (manager.getTabCount() == 0) {
+                    loadUrl(Tab.URL_HOME, true);
+//                    loadUrl("http://m.2345.com/websitesNavigation.htm", true);
+                }
             }
         }
     }
@@ -160,9 +160,33 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         MobclickAgent.onPause(this);
     }
 
-    public void refreshMultiTab() {
+    public void refreshBottomBar() {
+        //multi button
         int count = manager.getTabCount();
         multiWindow.setText(count + "");
+
+        //back button
+        final View back = findViewById(R.id.back);
+        if(manager.getCurrentTab().canGoBack()) {
+            if (back != null && !back.isEnabled()) {
+                back.setEnabled(true);
+            }
+        }else {
+            if (back != null && back.isEnabled()) {
+                back.setEnabled(false);
+            }
+        }
+        //go button
+        final View go = findViewById(R.id.go);
+        if(manager.getCurrentTab().canGoForward()) {
+            if (go != null && !go.isEnabled()) {
+                go.setEnabled(true);
+            }
+        }else {
+            if (go != null && go.isEnabled()) {
+                go.setEnabled(false);
+            }
+        }
     }
 
     @Override

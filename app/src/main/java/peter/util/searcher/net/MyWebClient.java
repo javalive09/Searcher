@@ -52,7 +52,7 @@ public class MyWebClient extends WebViewClient {
             view.postInvalidate();
         }
         mainActivity.setStatusLevel(0);
-
+        mainActivity.refreshBottomBar();
         saveUrlData(view.getTitle(), url);
     }
 

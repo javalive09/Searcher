@@ -28,7 +28,7 @@
             android:layout_height="@dimen/multi_h"
             android:layout_gravity="right|center_vertical"
             android:gravity="center"
-            android:textColor="@color/color_top_grap"
+            android:textColor="@color/color_top_gray"
             android:layout_marginRight="@dimen/multi_padding"
             android:textSize="10sp"
             android:textStyle="bold"
