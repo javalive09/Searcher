@@ -38,7 +38,6 @@ public class TabManager {
         }
         Tab tab = getCurrentTab();
         tab.loadUrl(url, searchWord);
-        mainActivity.refreshBottomBar();
     }
 
     public void setCurrentTab(int index) {

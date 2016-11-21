@@ -52,6 +52,7 @@ public class TabGroup extends SearcherTab {
             mCurrentTabIndex = index;
         }
         currentTab.loadUrl(url, searchWord);
+        mainActivity.refreshBottomBar();
     }
 
     private SearcherTab newTabByUrl(String url) {
@@ -119,6 +120,7 @@ public class TabGroup extends SearcherTab {
                 setCurrentTab(mCurrentTabIndex - 1);
             }
         }
+        mainActivity.refreshBottomBar();
     }
 
     public boolean canGoForward() {
@@ -149,6 +151,7 @@ public class TabGroup extends SearcherTab {
         }else {
             setCurrentTab(mCurrentTabIndex + 1);
         }
+        mainActivity.refreshBottomBar();
     }
 
 

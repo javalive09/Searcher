@@ -166,26 +166,16 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         multiWindow.setText(count + "");
 
         //back button
-        final View back = findViewById(R.id.back);
         if(manager.getCurrentTab().canGoBack()) {
-            if (back != null && !back.isEnabled()) {
-                back.setEnabled(true);
-            }
+            findViewById(R.id.back).setEnabled(true);
         }else {
-            if (back != null && back.isEnabled()) {
-                back.setEnabled(false);
-            }
+            findViewById(R.id.back).setEnabled(false);
         }
         //go button
-        final View go = findViewById(R.id.go);
         if(manager.getCurrentTab().canGoForward()) {
-            if (go != null && !go.isEnabled()) {
-                go.setEnabled(true);
-            }
+            findViewById(R.id.go).setEnabled(true);
         }else {
-            if (go != null && go.isEnabled()) {
-                go.setEnabled(false);
-            }
+            findViewById(R.id.go).setEnabled(false);
         }
     }
 
