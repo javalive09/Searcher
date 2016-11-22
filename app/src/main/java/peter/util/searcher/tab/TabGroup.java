@@ -1,12 +1,12 @@
 package peter.util.searcher.tab;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
 import peter.util.searcher.activity.MainActivity;
 
 /**
- *
  * Created by peter on 2016/11/20.
  */
 
@@ -30,48 +30,47 @@ public class TabGroup extends SearcherTab {
 
     public void loadUrl(String url, String searchWord) {
         SearcherTab currentTab = getCurrentTab();
-        if(currentTab == null) {
+        if (currentTab == null) {//head tab
             currentTab = newTabByUrl(url);
             tabArrayList.add(currentTab);
             mCurrentTabIndex = tabArrayList.size() - 1;
-        }else {
-            if(!url.startsWith(LOCAL_SCHEMA)) {//web url
-                if(currentTab instanceof WebviewTab) {//web tab
-                    currentTab.loadUrl(url, searchWord);
-                    return;
-                }else {//local tab
-                    try {
-                        currentTab = newTabByUrl(url);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
+        } else {//body tab
+            if (url.startsWith(LOCAL_SCHEMA) || //local url
+                    currentTab instanceof LocalViewTab) {//current local tab
+                currentTab = newLocalTab(url);
+                int index = mCurrentTabIndex + 1;
+                tabArrayList.add(index, currentTab);
+                removeTabFromIndeoToEnd(index + 1);
             }
-            int index = mCurrentTabIndex + 1;
-            tabArrayList.add(index, currentTab);
-            mCurrentTabIndex = index;
         }
         currentTab.loadUrl(url, searchWord);
         mainActivity.refreshBottomBar();
     }
 
+    private void removeTabFromIndeoToEnd(int index) {
+        for (int i = index, size = tabArrayList.size(); i < size; i++) {
+            tabArrayList.remove(index);
+        }
+    }
+
     private SearcherTab newTabByUrl(String url) {
         if (url.startsWith(LOCAL_SCHEMA)) {
-            try {
-                return newLocalTab(url);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            return newLocalTab(url);
         } else {
             return new WebviewTab(mainActivity);
         }
-        return null;
     }
 
-    private LocalViewTab newLocalTab(String url) throws Exception {
+    private LocalViewTab newLocalTab(String url) {
         Class clazz = mainActivity.getRounterClass(url);
-        Constructor localConstructor = clazz.getConstructor(new Class[]{MainActivity.class});
-        return (LocalViewTab) localConstructor.newInstance(new Object[]{mainActivity});
+        LocalViewTab tab = null;
+        try {
+            Constructor localConstructor = clazz.getConstructor(new Class[]{MainActivity.class});
+            tab = (LocalViewTab) localConstructor.newInstance(new Object[]{mainActivity});
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return tab;
     }
 
 
@@ -82,9 +81,9 @@ public class TabGroup extends SearcherTab {
     }
 
     public SearcherTab getCurrentTab() {
-        if(tabArrayList.size() > 0) {
+        if (tabArrayList.size() > 0) {
             return tabArrayList.get(mCurrentTabIndex);
-        }else {
+        } else {
             return null;
         }
     }
@@ -96,13 +95,13 @@ public class TabGroup extends SearcherTab {
 
     public boolean canGoBack() {
         Tab currentTab = getCurrentTab();
-        if(currentTab instanceof LocalViewTab) {
+        if (currentTab instanceof LocalViewTab) {
             return mCurrentTabIndex > 0;
-        }else {
+        } else {
             boolean webTabCanGoBack = currentTab.canGoBack();
-            if(webTabCanGoBack) {
+            if (webTabCanGoBack) {
                 return true;
-            }else {
+            } else {
                 return mCurrentTabIndex > 0;
             }
         }
@@ -110,13 +109,13 @@ public class TabGroup extends SearcherTab {
 
     public void goBack() {
         Tab currentTab = getCurrentTab();
-        if(currentTab instanceof LocalViewTab) {
+        if (currentTab instanceof LocalViewTab) {
             setCurrentTab(mCurrentTabIndex - 1);
-        }else {
+        } else {
             boolean webTabCanGoBack = currentTab.canGoBack();
-            if(webTabCanGoBack) {
+            if (webTabCanGoBack) {
                 currentTab.goBack();
-            }else if(mCurrentTabIndex > 0){
+            } else if (mCurrentTabIndex > 0) {
                 setCurrentTab(mCurrentTabIndex - 1);
             }
         }
@@ -125,30 +124,30 @@ public class TabGroup extends SearcherTab {
 
     public boolean canGoForward() {
         Tab currentTab = getCurrentTab();
-        if(currentTab instanceof WebviewTab) {
+        if (currentTab instanceof WebviewTab) {
             boolean webTabCanGoForward = currentTab.canGoForward();
-            if(webTabCanGoForward) {
+            if (webTabCanGoForward) {
                 return true;
-            }else if(mCurrentTabIndex < tabArrayList.size() - 1){
+            } else if (mCurrentTabIndex < tabArrayList.size() - 1) {
                 return true;
-            }else {
+            } else {
                 return false;
             }
-        }else {
+        } else {
             return mCurrentTabIndex < tabArrayList.size() - 1;
         }
     }
 
     public void goForward() {
         Tab currentTab = getCurrentTab();
-        if(currentTab instanceof WebviewTab) {
+        if (currentTab instanceof WebviewTab) {
             boolean webTabCanGoForward = currentTab.canGoForward();
-            if(webTabCanGoForward) {
+            if (webTabCanGoForward) {
                 currentTab.goForward();
-            }else if(mCurrentTabIndex < tabArrayList.size() - 1){
+            } else if (mCurrentTabIndex < tabArrayList.size() - 1) {
                 setCurrentTab(mCurrentTabIndex + 1);
             }
-        }else {
+        } else {
             setCurrentTab(mCurrentTabIndex + 1);
         }
         mainActivity.refreshBottomBar();
