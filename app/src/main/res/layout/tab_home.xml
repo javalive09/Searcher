@@ -1,14 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <TextView
+        android:id="@+id/searcher_button"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/app_name"
+        android:layout_height="@dimen/search_h"
+        android:layout_centerInParent="true"
+        android:layout_margin="20dp"
+        android:background="@drawable/input_bg_gray"
         android:gravity="center"
-        android:textSize="@dimen/setting_item_txt_size"
-        android:textColor="@android:color/black" />
+        android:hint="@string/search_hint"
+        android:maxLines="1"
+        android:scaleType="center"
+        android:textColorHint="@color/multi_text_color_gray"
+        android:visibility="visible" />
 
-</LinearLayout>
+    <ImageView
+        android:id="@+id/version"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_above="@+id/searcher_button"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/icon"
+        android:gravity="center" />
+
+
+</RelativeLayout>

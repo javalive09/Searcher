@@ -35,6 +35,7 @@ import peter.util.searcher.tab.Tab;
 import peter.util.searcher.utils.UrlUtils;
 
 /**
+ *
  * Created by peter on 16/5/9.
  */
 public class MainActivity extends BaseActivity implements View.OnClickListener {
@@ -45,6 +46,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private View progressBar;
     private FrameLayout mContainer;
     private HashMap<String, Class> router = new HashMap<>();
+    public static final String URL_INFO = "url_info";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -177,6 +179,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }else {
             findViewById(R.id.go).setEnabled(false);
         }
+
+        //bottom search btn
+        TextView bottomSearch = (TextView) findViewById(R.id.bottom_search_btn);
+        String title = manager.getCurrentTab().getTitle();
+        bottomSearch.setHint(title);
     }
 
     @Override
@@ -199,8 +206,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     tab.goForward();
                 }
                 break;
-            case R.id.home:
-                startActivity(new Intent(MainActivity.this, SearchActivity.class));
+            case R.id.bottom_search_btn:
+                startSearcheActivity();
                 break;
             case R.id.multi_btn:
                 manager.getCurrentTab().reload();
@@ -209,6 +216,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 popupMenu(v);
                 break;
         }
+    }
+
+    public void startSearcheActivity() {
+        Intent intent = new Intent(MainActivity.this, SearchActivity.class);
+        intent.putExtra(URL_INFO, manager.getCurrentTab().getUrl());
+        startActivity(intent);
     }
 
     private void popupMenu(View menu) {

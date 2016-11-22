@@ -1,5 +1,6 @@
 package peter.util.searcher.tab;
 
+import android.view.View;
 import peter.util.searcher.R;
 import peter.util.searcher.activity.MainActivity;
 
@@ -22,7 +23,13 @@ public class HomeTab extends LocalViewTab {
 
     @Override
     public void onCreate() {
-
+        mainActivity.findViewById(R.id.searcher_button)
+                .setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mainActivity.startSearcheActivity();
+            }
+        });
     }
 
     @Override

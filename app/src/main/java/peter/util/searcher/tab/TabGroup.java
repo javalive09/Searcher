@@ -21,11 +21,11 @@ public class TabGroup extends SearcherTab {
     }
 
     public String getTitle() {
-        return null;
+        return getCurrentTab().getTitle();
     }
 
     public String getUrl() {
-        return null;
+        return getCurrentTab().getUrl();
     }
 
     public void loadUrl(String url, String searchWord) {
@@ -37,10 +37,11 @@ public class TabGroup extends SearcherTab {
         } else {//body tab
             if (url.startsWith(LOCAL_SCHEMA) || //local url
                     currentTab instanceof LocalViewTab) {//current local tab
-                currentTab = newLocalTab(url);
+                currentTab = newTabByUrl(url);
                 int index = mCurrentTabIndex + 1;
                 tabArrayList.add(index, currentTab);
                 removeTabFromIndeoToEnd(index + 1);
+                mCurrentTabIndex = tabArrayList.size() - 1;
             }
         }
         currentTab.loadUrl(url, searchWord);

@@ -45,15 +45,18 @@ import java.util.ArrayList;
 import peter.util.searcher.R;
 import peter.util.searcher.fragment.EngineViewPagerFragment;
 import peter.util.searcher.fragment.RecentSearchFragment;
+import peter.util.searcher.tab.Tab;
 import peter.util.searcher.update.AsynWindowHandler;
 import peter.util.searcher.update.UpdateController;
+import peter.util.searcher.utils.UrlUtils;
+import peter.util.searcher.view.ObservableEditText;
 
 /**
  * Created by peter on 16/5/19.
  */
 public class SearchActivity extends BaseActivity implements View.OnClickListener {
 
-    private EditText search;
+    private ObservableEditText search;
     private ImageView opt;
     private static final String RECENT_SEARCH = "recent_search";
     public static final String ENGINE_LIST = "engine_list";
@@ -74,6 +77,13 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
     public void onResume() {
         super.onResume();
         MobclickAgent.onResume(this);
+    }
+
+    private void checkData(Intent intent) {
+        String url = intent.getStringExtra(MainActivity.URL_INFO);
+        if(!TextUtils.isEmpty(url)) {
+            search.setText(url);
+        }
     }
 
     @Override
@@ -99,6 +109,12 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
         }
     }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        checkData(intent);
+    }
+
     public void onPause() {
         super.onPause();
         MobclickAgent.onPause(this);
@@ -120,8 +136,15 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
         setParam();
 
         opt = (ImageView) findViewById(R.id.opt);
-        search = (EditText) findViewById(R.id.search);
-
+        search = (ObservableEditText) findViewById(R.id.search);
+        checkData(getIntent());
+        search.setBackPressCallBack(new ObservableEditText.BackPressCallBack() {
+            @Override
+            public void backPress() {
+                closeIME();
+                finish();
+            }
+        });
         search.addTextChangedListener(new TextWatcher() {
             String temp;
 
@@ -157,6 +180,13 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
         }
     }
 
+    private void closeIME() {
+        View view = this.getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+    }
 
     public void setEngineFragment(String tag) {
         if (!currentFragmentTag.equals(tag)) {
