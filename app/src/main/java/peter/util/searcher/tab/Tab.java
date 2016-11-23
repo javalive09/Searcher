@@ -11,6 +11,8 @@ public interface Tab {
     String LOCAL_SCHEMA = "local://";
     String URL_HOME = LOCAL_SCHEMA + "home";
     String URL_SETTING = LOCAL_SCHEMA + "setting";
+    String URL_FAVORITE = LOCAL_SCHEMA + "favorite";
+    String URL_HISTORY = LOCAL_SCHEMA + "history";
 
     void loadUrl(String url, String searchWord);
 

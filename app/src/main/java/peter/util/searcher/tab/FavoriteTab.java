@@ -9,15 +9,15 @@ import peter.util.searcher.activity.MainActivity;
  *
  */
 
-public class SettingTab extends LocalViewTab {
+public class FavoriteTab extends LocalViewTab {
 
-    public SettingTab(MainActivity activity) {
+    public FavoriteTab(MainActivity activity) {
         super(activity);
     }
 
     @Override
     public int onCreateViewResId() {
-        return R.layout.tab_setting;
+        return R.layout.tab_favorite;
     }
 
     @Override
@@ -37,12 +37,12 @@ public class SettingTab extends LocalViewTab {
 
     @Override
     public String getTitle() {
-        return mainActivity.getString(R.string.fast_enter_setting);
+        return mainActivity.getString(R.string.fast_enter_favorite);
     }
 
     @Override
     public String getUrl() {
-        return URL_SETTING;
+        return URL_FAVORITE;
     }
 
 }

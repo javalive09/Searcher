@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/searcher_button"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/search_h"
+        android:layout_centerInParent="true"
+        android:layout_margin="20dp"
+        android:gravity="center"
+        android:hint="@string/fast_enter_history"
+        android:maxLines="1"
+        android:scaleType="center"
+        android:textColorHint="@color/multi_text_color_gray"
+        android:visibility="visible"/>
+
+
+</RelativeLayout>

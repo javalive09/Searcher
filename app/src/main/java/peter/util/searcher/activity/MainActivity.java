@@ -6,8 +6,6 @@ import android.content.ClipboardManager;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.drawable.LevelListDrawable;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -29,6 +27,8 @@ import java.util.HashMap;
 import peter.util.searcher.bean.Bean;
 import peter.util.searcher.R;
 import peter.util.searcher.db.SqliteHelper;
+import peter.util.searcher.tab.FavoriteTab;
+import peter.util.searcher.tab.HistoryTab;
 import peter.util.searcher.tab.HomeTab;
 import peter.util.searcher.tab.SettingTab;
 import peter.util.searcher.tab.Tab;
@@ -71,6 +71,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private void installLocalTabRounter() {
         router.put(Tab.URL_HOME, HomeTab.class);
         router.put(Tab.URL_SETTING, SettingTab.class);
+        router.put(Tab.URL_FAVORITE, FavoriteTab.class);
+        router.put(Tab.URL_HISTORY, HistoryTab.class);
     }
 
     public Class getRounterClass(String url) {
@@ -207,7 +209,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 }
                 break;
             case R.id.bottom_search_btn:
-                startSearcheActivity();
+                startSearcheActivity(manager.getCurrentTab().getUrl());
                 break;
             case R.id.multi_btn:
                 manager.getCurrentTab().reload();
@@ -218,9 +220,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
     }
 
-    public void startSearcheActivity() {
+    public void startSearcheActivity(String url) {
         Intent intent = new Intent(MainActivity.this, SearchActivity.class);
-        intent.putExtra(URL_INFO, manager.getCurrentTab().getUrl());
+        intent.putExtra(URL_INFO, url);
         startActivity(intent);
     }
 
@@ -230,16 +232,16 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
-                    case R.id.action_browser:
-                        String url = manager.getCurrentTab().getUrl();
-                        Intent intent = new Intent();
-                        intent.setAction("android.intent.action.VIEW");
-                        Uri content_url = Uri.parse(url);
-                        intent.setData(content_url);
-                        startActivity(intent);
-                        break;
+//                    case R.id.action_browser:
+//                        String url = manager.getCurrentTab().getUrl();
+//                        Intent intent = new Intent();
+//                        intent.setAction("android.intent.action.VIEW");
+//                        Uri content_url = Uri.parse(url);
+//                        intent.setData(content_url);
+//                        startActivity(intent);
+//                        break;
                     case R.id.action_share:
-                        url = manager.getCurrentTab().getUrl();
+                        String url = manager.getCurrentTab().getUrl();
                         Intent sendIntent = new Intent();
                         sendIntent.setAction(Intent.ACTION_SEND);
                         sendIntent.putExtra(Intent.EXTRA_TEXT, url);

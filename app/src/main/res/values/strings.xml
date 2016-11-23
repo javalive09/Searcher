@@ -75,6 +75,12 @@
     <string name="action_yes">确认</string>
     <string name="action_no">取消</string>
     <string name="recent_search_rec">最近搜索记录</string>
+    <string name="fast_enter_navigation">网址导航</string>
+    <string name="fast_enter_navigation_url">http://tpms.mb.qq.com</string>
+    <string name="fast_enter_history">历史</string>
+    <string name="fast_enter_favorite">收藏夹</string>
+    <string name="fast_enter_setting">设置</string>
+    <string name="home">主页</string>
 
     <string-array name="settings_name">
         <item>分享APP</item>

@@ -37,6 +37,9 @@ public class TabGroup extends SearcherTab {
         } else {//body tab
             if (url.startsWith(LOCAL_SCHEMA) || //local url
                     currentTab instanceof LocalViewTab) {//current local tab
+                if(currentTab.getUrl().equals(url)) {//same local url
+                    return;
+                }
                 currentTab = newTabByUrl(url);
                 int index = mCurrentTabIndex + 1;
                 tabArrayList.add(index, currentTab);

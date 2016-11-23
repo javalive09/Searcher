@@ -81,9 +81,7 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
 
     private void checkData(Intent intent) {
         String url = intent.getStringExtra(MainActivity.URL_INFO);
-        if(!TextUtils.isEmpty(url)) {
-            search.setText(url);
-        }
+        setSearchWord(url);
     }
 
     @Override
@@ -137,7 +135,6 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
 
         opt = (ImageView) findViewById(R.id.opt);
         search = (ObservableEditText) findViewById(R.id.search);
-        checkData(getIntent());
         search.setBackPressCallBack(new ObservableEditText.BackPressCallBack() {
             @Override
             public void backPress() {
@@ -176,6 +173,8 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
             String searchWord = intent.getStringExtra(NAME_WORD);
             if(!TextUtils.isEmpty(searchWord)) {
                 setSearchWord(searchWord);
+            }else {
+                checkData(intent);
             }
         }
     }

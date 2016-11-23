@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:id="@+id/fast_enter"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:gravity="center"
+              android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/fast_enter_icon"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center"/>
+
+    <TextView
+        android:id="@+id/fast_enter_title"
+        android:layout_gravity="center"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/input_bg_gray"
+        android:gravity="center"
+        android:hint="@string/search_hint"
+        android:maxLines="1"
+        android:scaleType="center"
+        android:textColorHint="@color/multi_text_color_gray"
+        android:visibility="visible"/>
+
+</LinearLayout>
