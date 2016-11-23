@@ -30,11 +30,14 @@
         android:id="@+id/fast_enter"
         android:layout_below="@+id/searcher_button"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
-        android:columnWidth="90dp"
-        android:numColumns="3"
+        android:gravity="center"
+        android:listSelector="@color/transparent"
+        android:divider="@color/transparent"
+        android:columnWidth="70dp"
+        android:numColumns="4"
         android:stretchMode="columnWidth"/>
 
 

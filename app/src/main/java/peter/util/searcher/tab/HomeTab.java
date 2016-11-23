@@ -5,6 +5,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
+import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -17,7 +20,7 @@ import peter.util.searcher.activity.MainActivity;
  *
  */
 
-public class HomeTab extends LocalViewTab {
+public class HomeTab extends LocalViewTab implements View.OnClickListener{
 
     public HomeTab(MainActivity activity) {
         super(activity);
@@ -62,7 +65,7 @@ public class HomeTab extends LocalViewTab {
 
         iconItems.add(navigation);
         iconItems.add(favorite);
-        iconItems.add(setting);
+        iconItems.add(history);
         iconItems.add(setting);
 
         FastEnterAdapter fastEnterAdapter = new FastEnterAdapter(iconItems);
@@ -87,6 +90,12 @@ public class HomeTab extends LocalViewTab {
     @Override
     public String getUrl() {
         return URL_HOME;
+    }
+
+    @Override
+    public void onClick(View v) {
+        IconItem iconItem = (IconItem) v.getTag();
+        mainActivity.loadUrl(iconItem.url, false);
     }
 
     private class FastEnterAdapter extends BaseAdapter {
@@ -120,7 +129,9 @@ public class HomeTab extends LocalViewTab {
             }
             IconItem iconItem = getItem(position);
             convertView.findViewById(R.id.fast_enter_icon).setBackgroundResource(iconItem.iconResId);
-
+            ((TextView)convertView.findViewById(R.id.fast_enter_title)).setText(iconItem.iconName);
+            convertView.setOnClickListener(HomeTab.this);
+            convertView.setTag(iconItem);
             return convertView;
         }
     }

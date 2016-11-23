@@ -76,7 +76,7 @@
     <string name="action_no">取消</string>
     <string name="recent_search_rec">最近搜索记录</string>
     <string name="fast_enter_navigation">网址导航</string>
-    <string name="fast_enter_navigation_url">http://tpms.mb.qq.com</string>
+    <string name="fast_enter_navigation_url">http://tpms.mb.qq.com/?aid=site_navigation&amp;cid=site_navigation_cache_direct</string>
     <string name="fast_enter_history">历史</string>
     <string name="fast_enter_favorite">收藏夹</string>
     <string name="fast_enter_setting">设置</string>
