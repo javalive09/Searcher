@@ -44,6 +44,7 @@ import java.util.ArrayList;
 
 import peter.util.searcher.R;
 import peter.util.searcher.fragment.EngineViewPagerFragment;
+import peter.util.searcher.fragment.OperateUrlFragment;
 import peter.util.searcher.fragment.RecentSearchFragment;
 import peter.util.searcher.tab.Tab;
 import peter.util.searcher.update.AsynWindowHandler;
@@ -60,6 +61,7 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
     private ImageView opt;
     private static final String RECENT_SEARCH = "recent_search";
     public static final String ENGINE_LIST = "engine_list";
+    public static final String OPERATE_URL = "operate_url";
     private String currentFragmentTag = "";
 
     // 语音听写对象
@@ -143,11 +145,9 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
             }
         });
         search.addTextChangedListener(new TextWatcher() {
-            String temp;
 
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                temp = s.toString();
             }
 
             @Override
@@ -160,9 +160,13 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
                 if (TextUtils.isEmpty(content)) {
                     setEngineFragment(RECENT_SEARCH);
                     opt.getDrawable().setLevel(0);
-                } else if (!content.equals(temp)) {
-                    setEngineFragment(ENGINE_LIST);
+                } else {
                     opt.getDrawable().setLevel(1);
+                    if (UrlUtils.isUrl(content)) {
+                        setEngineFragment(OPERATE_URL);
+                    }else {
+                        setEngineFragment(ENGINE_LIST);
+                    }
                 }
             }
         });
@@ -195,6 +199,8 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
                 fragment = new RecentSearchFragment();
             } else if (tag.equals(ENGINE_LIST)) {
                 fragment = new EngineViewPagerFragment();
+            } else if(tag.equals(OPERATE_URL)) {
+                fragment = new OperateUrlFragment();
             }
             FragmentManager fragmentManager = getFragmentManager();
             FragmentTransaction ft = fragmentManager.beginTransaction();

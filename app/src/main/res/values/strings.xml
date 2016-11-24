@@ -3,6 +3,10 @@
     <string name="app_name">速搜</string>
     <string name="search_hint">搜索或输入网址</string>
     <string name="app_js">速搜能用来干什么?</string>
+    <string name="operate_url_copy">复制网址</string>
+    <string name="operate_url_share">分享网址</string>
+    <string name="operate_url_enter">进入网址</string>
+    <string name="operate_url_paste">从剪切板粘贴</string>
     <string name="news_163">网易新闻</string>
     <string name="history_today_title">历史.今天</string>
     <string name="weeks_weather">天气预报</string>

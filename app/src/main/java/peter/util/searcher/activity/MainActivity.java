@@ -125,7 +125,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 String url = UrlUtils.smartUrlFilter(searchWord, true, engineUrl);
                 loadUrl(url, searchWord, true);
             } else if (Intent.ACTION_MAIN.equals(action)) {
-                if (manager.getTabCount() == 0) {
+                if (manager.getTabGroupCount() == 0) {
                     loadUrl(Tab.URL_HOME, true);
 //                    loadUrl("http://m.2345.com/websitesNavigation.htm", true);
                 }
@@ -144,7 +144,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if ((keyCode == KeyEvent.KEYCODE_BACK)) {
-            Tab tab = manager.getCurrentTab();
+            Tab tab = manager.getCurrentTabGroup();
             if (tab.canGoBack()) {
                 tab.goBack();
                 return true;
@@ -166,17 +166,17 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     public void refreshBottomBar() {
         //multi button
-        int count = manager.getTabCount();
+        int count = manager.getTabGroupCount();
         multiWindow.setText(count + "");
 
         //back button
-        if(manager.getCurrentTab().canGoBack()) {
+        if(manager.getCurrentTabGroup().canGoBack()) {
             findViewById(R.id.back).setEnabled(true);
         }else {
             findViewById(R.id.back).setEnabled(false);
         }
         //go button
-        if(manager.getCurrentTab().canGoForward()) {
+        if(manager.getCurrentTabGroup().canGoForward()) {
             findViewById(R.id.go).setEnabled(true);
         }else {
             findViewById(R.id.go).setEnabled(false);
@@ -184,7 +184,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         //bottom search btn
         TextView bottomSearch = (TextView) findViewById(R.id.bottom_search_btn);
-        String title = manager.getCurrentTab().getTitle();
+        String title = manager.getCurrentTabGroup().getTitle();
         bottomSearch.setHint(title);
     }
 
@@ -197,22 +197,26 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.back:
-                Tab tab = manager.getCurrentTab();
+                Tab tab = manager.getCurrentTabGroup();
                 if (tab.canGoBack()) {
                     tab.goBack();
                 }
                 break;
             case R.id.go:
-                tab = manager.getCurrentTab();
+                tab = manager.getCurrentTabGroup();
                 if (tab.canGoForward()) {
                     tab.goForward();
                 }
                 break;
             case R.id.bottom_search_btn:
-                startSearcheActivity(manager.getCurrentTab().getUrl());
+                String content = manager.getCurrentTabGroup().getCurrentTab().getSearchWord();
+                if(TextUtils.isEmpty(content)) {
+                    content = manager.getCurrentTabGroup().getCurrentTab().getUrl();
+                }
+                startSearcheActivity(content);
                 break;
             case R.id.multi_btn:
-                manager.getCurrentTab().reload();
+                manager.getCurrentTabGroup().reload();
                 break;
             case R.id.menu:
                 popupMenu(v);
@@ -233,7 +237,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
 //                    case R.id.action_browser:
-//                        String url = manager.getCurrentTab().getUrl();
+//                        String url = manager.getCurrentTabGroup().getUrl();
 //                        Intent intent = new Intent();
 //                        intent.setAction("android.intent.action.VIEW");
 //                        Uri content_url = Uri.parse(url);
@@ -241,7 +245,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 //                        startActivity(intent);
 //                        break;
                     case R.id.action_share:
-                        String url = manager.getCurrentTab().getUrl();
+                        String url = manager.getCurrentTabGroup().getUrl();
                         Intent sendIntent = new Intent();
                         sendIntent.setAction(Intent.ACTION_SEND);
                         sendIntent.putExtra(Intent.EXTRA_TEXT, url);
@@ -249,21 +253,21 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         startActivity(Intent.createChooser(sendIntent, getString(R.string.share_link_title)));
                         break;
                     case R.id.action_collect:
-                        if (!TextUtils.isEmpty(manager.getCurrentTab().getUrl())) {
+                        if (!TextUtils.isEmpty(manager.getCurrentTabGroup().getUrl())) {
                             Bean bean = new Bean();
-                            bean.name = manager.getCurrentTab().getTitle();
+                            bean.name = manager.getCurrentTabGroup().getTitle();
                             if (TextUtils.isEmpty(bean.name)) {
-                                bean.name = manager.getCurrentTab().getUrl();
+                                bean.name = manager.getCurrentTabGroup().getUrl();
                             }
-                            bean.url = manager.getCurrentTab().getUrl();
+                            bean.url = manager.getCurrentTabGroup().getUrl();
                             bean.time = System.currentTimeMillis();
                             SqliteHelper.instance(MainActivity.this).insertFav(bean);
                             Toast.makeText(MainActivity.this, R.string.favorite_txt, Toast.LENGTH_SHORT).show();
                         }
                         break;
                     case R.id.action_copy_link:
-                        url = manager.getCurrentTab().getUrl();
-                        String title = manager.getCurrentTab().getTitle();
+                        url = manager.getCurrentTabGroup().getUrl();
+                        String title = manager.getCurrentTabGroup().getTitle();
                         ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
                         ClipData clip = ClipData.newPlainText(title, url);
                         clipboard.setPrimaryClip(clip);

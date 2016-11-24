@@ -2,7 +2,6 @@ package peter.util.searcher.activity;
 
 import java.util.ArrayList;
 
-import peter.util.searcher.tab.SearcherTab;
 import peter.util.searcher.tab.Tab;
 import peter.util.searcher.tab.TabGroup;
 
@@ -15,7 +14,7 @@ import peter.util.searcher.tab.TabGroup;
 public class TabManager {
 
     private static final int MAX_TAB = 20;
-    private ArrayList<SearcherTab> tabArrayList = new ArrayList<>(MAX_TAB);
+    private ArrayList<TabGroup> tabArrayList = new ArrayList<>(MAX_TAB);
     private MainActivity mainActivity;
     private int mCurrentTabIndex;
 
@@ -32,23 +31,23 @@ public class TabManager {
             newTab = false;
         }
         if (newTab) {
-            SearcherTab tab = new TabGroup(mainActivity);
+            TabGroup tab = new TabGroup(mainActivity);
             tabArrayList.add(tab);
-            setCurrentTab(tabArrayList.size() - 1);
+            setCurrentTabGroup(tabArrayList.size() - 1);
         }
-        Tab tab = getCurrentTab();
+        Tab tab = getCurrentTabGroup();
         tab.loadUrl(url, searchWord);
     }
 
-    public void setCurrentTab(int index) {
+    public void setCurrentTabGroup(int index) {
         mCurrentTabIndex = index;
     }
 
-    public Tab getCurrentTab() {
+    public TabGroup getCurrentTabGroup() {
         return tabArrayList.get(mCurrentTabIndex);
     }
 
-    public int getTabCount() {
+    public int getTabGroupCount() {
         return tabArrayList.size();
     }
 
