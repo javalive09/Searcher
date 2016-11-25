@@ -27,6 +27,7 @@ public class SettingActivity extends BaseActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         if(toolbar != null) {
             setSupportActionBar(toolbar);
+            getSupportActionBar().setDisplayShowHomeEnabled(false);
             toolbar.setNavigationOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

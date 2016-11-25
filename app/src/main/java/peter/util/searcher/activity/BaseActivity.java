@@ -64,7 +64,7 @@ public class BaseActivity extends AppCompatActivity{
         startActivity(intent);
     }
 
-    protected int clearCacheFolder(final File dir, final int numDays) {
+    public int clearCacheFolder(final File dir, final int numDays) {
         int deletedFiles = 0;
         if (dir != null && dir.isDirectory()) {
             try {
@@ -91,7 +91,7 @@ public class BaseActivity extends AppCompatActivity{
     }
 
     @SuppressWarnings("deprecation")
-    protected void ClearCookies(Context context) {
+    public void ClearCookies(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
             CookieManager.getInstance().removeAllCookies(null);
             CookieManager.getInstance().flush();
@@ -106,7 +106,7 @@ public class BaseActivity extends AppCompatActivity{
         }
     }
 
-    protected void sendMailByIntent() {
+    public void sendMailByIntent() {
         Intent data=new Intent(Intent.ACTION_SENDTO);
         data.setData(Uri.parse(getString(R.string.setting_feedback_address)));
         data.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.setting_feedback));
@@ -114,7 +114,7 @@ public class BaseActivity extends AppCompatActivity{
         startActivity(data);
     }
 
-    protected AlertDialog showAlertDialog(String title, String content) {
+    public AlertDialog showAlertDialog(String title, String content) {
         AlertDialog dialog = new AlertDialog.Builder(BaseActivity.this).create();
         dialog.setCanceledOnTouchOutside(true);
         dialog.setTitle(title);

@@ -4,17 +4,18 @@
                 android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/searcher_button"
+        android:id="@+id/title"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/search_h"
-        android:layout_centerInParent="true"
-        android:layout_margin="20dp"
+        android:layout_height="60dp"
+        android:background="@color/colorPrimary_"
+        android:text="@string/setting_title"
         android:gravity="center"
-        android:hint="@string/fast_enter_setting"
-        android:maxLines="1"
-        android:scaleType="center"
-        android:textColorHint="@color/multi_text_color_gray"
-        android:visibility="visible"/>
+        android:textSize="16sp"
+        android:textColor="@android:color/white"/>
 
-
+    <ListView
+        android:id="@+id/setting_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/title"/>
 </RelativeLayout>

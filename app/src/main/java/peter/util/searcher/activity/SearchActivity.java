@@ -159,6 +159,7 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
                 String content = s.toString();
                 if (TextUtils.isEmpty(content)) {
                     setEngineFragment(RECENT_SEARCH);
+                    openIME();
                     opt.getDrawable().setLevel(0);
                 } else {
                     opt.getDrawable().setLevel(1);
@@ -189,6 +190,14 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
             InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
+    }
+
+    private void openIME() {
+        InputMethodManager inputMethodManager =
+                (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputMethodManager.toggleSoftInputFromWindow(
+                search.getApplicationWindowToken(),
+                InputMethodManager.SHOW_FORCED, 0);
     }
 
     public void setEngineFragment(String tag) {
