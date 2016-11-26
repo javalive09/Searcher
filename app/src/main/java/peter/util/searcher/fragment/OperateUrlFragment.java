@@ -12,6 +12,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import peter.util.searcher.R;
 import peter.util.searcher.activity.SearchActivity;
+import peter.util.searcher.utils.UrlUtils;
 
 
 /**
@@ -52,13 +53,14 @@ public class OperateUrlFragment extends BaseFragment implements View.OnClickList
     public void onClick(View v) {
         IconItem iconItem = (IconItem) v.getTag();
         SearchActivity searchActivity = (SearchActivity) getActivity();
-        String url = searchActivity.getSearchWord();
+        String url = UrlUtils.getGuessUrl(searchActivity.getSearchWord());
         switch (iconItem.iconResId) {
             case R.drawable.copy:
                 ClipboardManager cmb = (ClipboardManager)getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
                 cmb.setText(url.trim());
                 break;
             case R.drawable.enter:
+                searchActivity.closeIME();
                 searchActivity.startBrowser(url, "");
                 break;
         }

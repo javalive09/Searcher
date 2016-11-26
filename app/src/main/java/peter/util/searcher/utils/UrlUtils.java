@@ -106,6 +106,22 @@ public class UrlUtils {
         return "";
     }
 
+    public static boolean guessUrl(String url) {
+        String inUrl = url.trim();
+        if (Patterns.WEB_URL.matcher(inUrl).matches()) {
+            String guessUrl = URLUtil.guessUrl(inUrl);
+            return isUrl(guessUrl);
+        }else if(url.startsWith("local://")){
+            return true;
+        }
+        return false;
+    }
+
+    public static String getGuessUrl(String url) {
+        String inUrl = url.trim();
+        return URLUtil.guessUrl(inUrl);
+    }
+
     public static boolean isUrl(String url) {
         String inUrl = url.trim();
         Matcher matcher = ACCEPTED_URI_SCHEMA.matcher(inUrl);
