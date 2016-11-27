@@ -47,6 +47,15 @@ public class TabManager {
         return tabArrayList.get(mCurrentTabIndex);
     }
 
+    public void setCurrentTabGroup(TabGroup tabGroup) {
+        int index = tabArrayList.indexOf(tabGroup);
+        setCurrentTabGroup(index);
+    }
+
+    public void removeTabGroup(TabGroup tabGroup) {
+        tabArrayList.remove(tabGroup);
+    }
+
     public ArrayList<TabGroup> getList() {
         return tabArrayList;
     }

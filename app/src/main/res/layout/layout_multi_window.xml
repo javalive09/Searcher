@@ -1,19 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/multi_window_container"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="match_parent">
 
-    <ListView
+    <peter.util.searcher.view.MultiWindowListView
         android:id="@+id/multi_window"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:divider="@color/colorPrimary_"
+        android:layout_above="@+id/add"
         android:stackFromBottom="true" />
+
+
+    <TextView
+        android:id="@+id/add"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/multi_window_item_h"
+        android:text="@string/multi_window_add"
+        android:layout_above="@+id/back"
+        android:background="@drawable/multi_item_selector"
+        android:gravity="center"
+        android:singleLine="true" />
 
     <ImageView
         android:id="@+id/back"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/bottom_h"
-        android:layout_below="@+id/multi_window"
-        android:background="@drawable/list_item_selector"/>
+        android:layout_height="@dimen/multi_window_item_h"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/list_item_selector"
+        android:scaleType="centerInside"
+        android:src="@drawable/multi_back" />
 
 </RelativeLayout>

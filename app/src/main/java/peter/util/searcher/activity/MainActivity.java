@@ -46,6 +46,7 @@ import peter.util.searcher.tab.SettingTab;
 import peter.util.searcher.tab.Tab;
 import peter.util.searcher.tab.TabGroup;
 import peter.util.searcher.utils.UrlUtils;
+import peter.util.searcher.view.MultiWindowListView;
 
 /**
  * Created by peter on 16/5/9.
@@ -278,7 +279,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 popupMenu(v);
                 break;
             case R.id.close_tab:
-
+                TabGroup tabGroup = (TabGroup) v.getTag();
+                manager.removeTabGroup(tabGroup);
+                updateMultiWindow();
+                break;
+            case R.id.multi_window_item:
+                tabGroup = (TabGroup) v.getTag(R.id.multi_window_item_tag);
+                manager.setCurrentTabGroup(tabGroup);
+                multiTabPopupWindow.dismiss();
+                break;
 
         }
     }
@@ -390,15 +399,36 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             View root = getLayoutInflater().inflate(R.layout.layout_multi_window, null, false);
             multiTabPopupWindow = new PopupWindow(root, ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT, true);
-            multiTabPopupWindow.setAnimationStyle(R.style.multiwindow_style);
-            multiTabPopupWindow.setOutsideTouchable(true);
+            // Closes the popup window when touch outside.
             multiTabPopupWindow.setFocusable(true);
             // Removes default background.
             multiTabPopupWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
-            ListView multiTabListView = (ListView) root.findViewById(R.id.multi_window);
+            multiTabPopupWindow.setAnimationStyle(R.style.multiwindow_style);
+            MultiWindowListView multiTabListView = (MultiWindowListView) root.findViewById(R.id.multi_window);
             multiWindowAdapter = new MultiWindowAdapter();
             multiTabListView.setAdapter(multiWindowAdapter);
+            root.findViewById(R.id.back).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    multiTabPopupWindow.dismiss();
+                }
+            });
+
+            root.findViewById(R.id.add).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    multiTabPopupWindow.dismiss();
+                    manager.loadUrl(Tab.URL_HOME, true);
+                }
+            });
+
+            multiTabListView.setOutSideTouchItemCallBack(new MultiWindowListView.OutSideTouchItemCallBack() {
+                @Override
+                public void outside() {
+                    multiTabPopupWindow.dismiss();
+                }
+            });
+
         }
     }
 
@@ -447,9 +477,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            if (getCount() == 0) {
-                return null;
-            }
 
             Holder holder = null;
             if (convertView == null) {
@@ -473,6 +500,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     holder.icon.setBackground(icon);
                 }
                 holder.close.setOnClickListener(mainActivity);
+                holder.close.setTag(tabGroup);
+                convertView.setOnClickListener(mainActivity);
+                convertView.setTag(R.id.multi_window_item_tag, tabGroup);
+
             }
             return convertView;
         }

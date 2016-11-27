@@ -85,6 +85,7 @@
     <string name="fast_enter_favorite">收藏夹</string>
     <string name="fast_enter_setting">设置</string>
     <string name="home">主页</string>
+    <string name="multi_window_add">新建</string>
 
     <string-array name="settings_name">
         <item>分享APP</item>
