@@ -494,6 +494,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
             TabGroup tabGroup = getItem(position);
             if (tabGroup != null) {
+                if(mainActivity.manager.getCurrentTabGroup() == tabGroup) {
+                    convertView.setActivated(true);
+                }else {
+                    convertView.setActivated(false);
+                }
                 holder.title.setText(tabGroup.getCurrentTab().getTitle());
                 Drawable icon = tabGroup.getCurrentTab().getIconDrawable();
                 if (icon != null) {

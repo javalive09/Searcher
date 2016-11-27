@@ -2,6 +2,7 @@ package peter.util.searcher.activity;
 
 import java.util.ArrayList;
 
+import peter.util.searcher.tab.SearcherTab;
 import peter.util.searcher.tab.Tab;
 import peter.util.searcher.tab.TabGroup;
 
@@ -33,7 +34,7 @@ public class TabManager {
         if (newTab) {
             TabGroup tab = new TabGroup(mainActivity);
             tabArrayList.add(tab);
-            setCurrentTabGroup(tabArrayList.size() - 1);
+            mCurrentTabIndex = tabArrayList.size() - 1;
         }
         Tab tab = getCurrentTabGroup();
         tab.loadUrl(url, searchWord);
@@ -41,6 +42,8 @@ public class TabManager {
 
     public void setCurrentTabGroup(int index) {
         mCurrentTabIndex = index;
+        SearcherTab tab = getCurrentTabGroup().getCurrentTab();
+        getCurrentTabGroup().loadUrl(tab.getUrl(),tab.getSearchWord());
     }
 
     public TabGroup getCurrentTabGroup() {
