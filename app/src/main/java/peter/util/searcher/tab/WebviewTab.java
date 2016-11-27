@@ -25,12 +25,13 @@ import peter.util.searcher.net.MyWebClient;
  *
  */
 
-public class WebviewTab extends SearcherTab{
+public class WebViewTab extends SearcherTab{
 
     private static final int API = Build.VERSION.SDK_INT;
+    protected String mSearchWord;
     private WebView mWebView;
 
-    public WebviewTab(MainActivity activity) {
+    public WebViewTab(MainActivity activity) {
         super(activity);
     }
 
@@ -72,6 +73,11 @@ public class WebviewTab extends SearcherTab{
 
     public String getUrl() {
         return mWebView.getUrl();
+    }
+
+    @Override
+    public String getSearchWord() {
+        return mSearchWord;
     }
 
     public void reload() {
@@ -128,7 +134,7 @@ public class WebviewTab extends SearcherTab{
         mWebView.setScrollbarFadingEnabled(true);
         mWebView.setSaveEnabled(true);
         mWebView.setNetworkAvailable(true);
-        mWebView.setWebChromeClient(new MyWebChromeClient(mainActivity));
+        mWebView.setWebChromeClient(new MyWebChromeClient(WebViewTab.this, mainActivity));
         mWebView.setWebViewClient(new MyWebClient(mainActivity));
         mWebView.setDownloadListener(new MyDownloadListener(mainActivity));
         String def = WebSettings.getDefaultUserAgent(mWebView.getContext());

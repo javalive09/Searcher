@@ -1,6 +1,10 @@
 package peter.util.searcher.net;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaPlayer;
 import android.os.Message;
 import android.support.v4.content.ContextCompat;
@@ -13,6 +17,7 @@ import android.widget.FrameLayout;
 import android.widget.VideoView;
 
 import peter.util.searcher.activity.MainActivity;
+import peter.util.searcher.tab.WebViewTab;
 
 /**
  *
@@ -29,8 +34,10 @@ public class MyWebChromeClient extends WebChromeClient {
     private View mCustomView;
     private WebChromeClient.CustomViewCallback mCustomViewCallback;
     private MainActivity mActivity;
+    private WebViewTab webViewTab;
 
-    public MyWebChromeClient(MainActivity activity) {
+    public MyWebChromeClient(WebViewTab webViewTab, MainActivity activity) {
+        this.webViewTab = webViewTab;
         this.mActivity = activity;
     }
 
@@ -47,6 +54,7 @@ public class MyWebChromeClient extends WebChromeClient {
     @Override
     public void onReceivedIcon(WebView view, Bitmap icon) {
         super.onReceivedIcon(view, icon);
+        webViewTab.setIconDrawable(new BitmapDrawable(mActivity.getResources(), icon));
     }
 
     @Override

@@ -1,5 +1,6 @@
 package peter.util.searcher.net;
 
+import android.animation.ObjectAnimator;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -14,6 +15,7 @@ import android.text.InputType;
 import android.text.TextUtils;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
+import android.view.View;
 import android.webkit.HttpAuthHandler;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebView;
@@ -51,9 +53,10 @@ public class MyWebClient extends WebViewClient {
         if (view.isShown()) {
             view.postInvalidate();
         }
+
         mainActivity.setStatusLevel(0);
         mainActivity.refreshBottomBar();
-        saveUrlData(view.getTitle(), url);
+//        saveUrlData(view.getTitle(), url);
     }
 
     @Override

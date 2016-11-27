@@ -1,5 +1,7 @@
 package peter.util.searcher.tab;
 
+import android.graphics.drawable.Drawable;
+
 import peter.util.searcher.activity.MainActivity;
 
 /**
@@ -12,7 +14,7 @@ public abstract class SearcherTab implements Tab {
 
     protected MainActivity mainActivity;
 
-    protected String mSearchWord;
+    protected Drawable iconDrawable;
 
     public SearcherTab(MainActivity activity) {
         mainActivity = activity;
@@ -26,12 +28,17 @@ public abstract class SearcherTab implements Tab {
 
     }
 
-    public void onDestory() {
-
+    public Drawable getIconDrawable() {
+        return iconDrawable;
     }
 
-    public String getSearchWord() {
-        return mSearchWord;
+    public void setIconDrawable(Drawable iconDrawable) {
+        this.iconDrawable = iconDrawable;
+        mainActivity.updateMultiWindow();
+    }
+
+    public void onDestory() {
+
     }
 
     public abstract String getTitle();

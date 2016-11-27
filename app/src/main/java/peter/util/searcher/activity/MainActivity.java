@@ -5,23 +5,35 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LevelListDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.PopupMenu;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.umeng.analytics.MobclickAgent;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import peter.util.searcher.bean.Bean;
@@ -32,10 +44,10 @@ import peter.util.searcher.tab.HistoryTab;
 import peter.util.searcher.tab.HomeTab;
 import peter.util.searcher.tab.SettingTab;
 import peter.util.searcher.tab.Tab;
+import peter.util.searcher.tab.TabGroup;
 import peter.util.searcher.utils.UrlUtils;
 
 /**
- *
  * Created by peter on 16/5/9.
  */
 public class MainActivity extends BaseActivity implements View.OnClickListener {
@@ -47,6 +59,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private FrameLayout mContainer;
     private HashMap<String, Class> router = new HashMap<>();
     public static final String URL_INFO = "url_info";
+    private PopupWindow multiTabPopupWindow;
+    private MultiWindowAdapter multiWindowAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -64,6 +78,48 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         bottomBar = findViewById(R.id.bottom_bar);
         mContainer = (FrameLayout) findViewById(R.id.container);
         multiWindow = (TextView) findViewById(R.id.multi_btn);
+        findViewById(R.id.bottom_search_btn_container).setOnTouchListener(new View.OnTouchListener() {
+
+            int mTouchSlop = 0;
+            int startX = 0;
+            boolean slide = false;
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_UP:
+                        if (!slide) {
+                            onClick(v);
+                        }
+
+                        break;
+                    case MotionEvent.ACTION_DOWN:
+                        if (mTouchSlop == 0) {
+                            ViewConfiguration configuration = android.view.ViewConfiguration.get(v.getContext());
+                            mTouchSlop = configuration.getScaledTouchSlop();
+                        }
+                        startX = (int) event.getX();
+                        slide = false;
+                        break;
+
+                    case MotionEvent.ACTION_MOVE:
+                        if (!slide) {
+                            if (Math.abs(startX - (int) event.getX()) > mTouchSlop) {//scroll x
+                                View child = ((FrameLayout) v).getChildAt(0);
+                                if (child != null) {
+                                    int childWidth = child.getWidth();
+                                    if (v.getWidth() < childWidth) {//can scroll
+                                        slide = true;
+                                    }
+                                }
+                            }
+                        }
+                        break;
+                }
+
+                return false;
+            }
+        });
         manager = new TabManager(MainActivity.this);
         installLocalTabRounter();
     }
@@ -170,15 +226,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         multiWindow.setText(count + "");
 
         //back button
-        if(manager.getCurrentTabGroup().canGoBack()) {
+        if (manager.getCurrentTabGroup().canGoBack()) {
             findViewById(R.id.back).setEnabled(true);
-        }else {
+        } else {
             findViewById(R.id.back).setEnabled(false);
         }
         //go button
-        if(manager.getCurrentTabGroup().canGoForward()) {
+        if (manager.getCurrentTabGroup().canGoForward()) {
             findViewById(R.id.go).setEnabled(true);
-        }else {
+        } else {
             findViewById(R.id.go).setEnabled(false);
         }
 
@@ -208,19 +264,22 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     tab.goForward();
                 }
                 break;
-            case R.id.bottom_search_btn:
+            case R.id.bottom_search_btn_container:
                 String content = manager.getCurrentTabGroup().getCurrentTab().getSearchWord();
-                if(TextUtils.isEmpty(content)) {
+                if (TextUtils.isEmpty(content)) {
                     content = manager.getCurrentTabGroup().getCurrentTab().getUrl();
                 }
                 startSearcheActivity(content);
                 break;
             case R.id.multi_btn:
-                manager.getCurrentTabGroup().reload();
+                showMultiTabWindow();
                 break;
             case R.id.menu:
                 popupMenu(v);
                 break;
+            case R.id.close_tab:
+
+
         }
     }
 
@@ -326,5 +385,103 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
     }
 
+    private void initMultiWindow() {
+        if (multiTabPopupWindow == null) {
+            View root = getLayoutInflater().inflate(R.layout.layout_multi_window, null, false);
+            multiTabPopupWindow = new PopupWindow(root, ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT, true);
+            multiTabPopupWindow.setAnimationStyle(R.style.multiwindow_style);
+            multiTabPopupWindow.setOutsideTouchable(true);
+            multiTabPopupWindow.setFocusable(true);
+            // Removes default background.
+            multiTabPopupWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+            ListView multiTabListView = (ListView) root.findViewById(R.id.multi_window);
+            multiWindowAdapter = new MultiWindowAdapter();
+            multiTabListView.setAdapter(multiWindowAdapter);
+        }
+    }
+
+    public void updateMultiWindow() {
+        multiWindowAdapter.update(MainActivity.this);
+    }
+
+    private void showMultiTabWindow() {
+        initMultiWindow();
+        updateMultiWindow();
+        multiTabPopupWindow.showAtLocation(findViewById(R.id.root), Gravity.BOTTOM, 0, 0);
+    }
+
+    private static class MultiWindowAdapter extends BaseAdapter {
+
+        private ArrayList<TabGroup> mList;
+
+        private MainActivity mainActivity;
+
+        public void update(MainActivity activity) {
+            mainActivity = activity;
+            mList = mainActivity.manager.getList();
+            notifyDataSetChanged();
+        }
+
+        @Override
+        public int getCount() {
+            if (mList != null) {
+                return mList.size();
+            }
+            return 0;
+        }
+
+        @Override
+        public TabGroup getItem(int position) {
+            if (mList != null) {
+                return mList.get(position);
+            }
+            return null;
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            if (getCount() == 0) {
+                return null;
+            }
+
+            Holder holder = null;
+            if (convertView == null) {
+                convertView = mainActivity.getLayoutInflater().inflate(R.layout.multiwindow_item, parent, false);
+                holder = new Holder();
+                holder.close = (ImageView) convertView.findViewById(R.id.close_tab);
+                holder.title = (TextView) convertView.findViewById(R.id.title);
+                holder.icon = (ImageView) convertView.findViewById(R.id.icon);
+                convertView.setTag(holder);
+            }
+
+            if (holder == null) {
+                holder = (Holder) convertView.getTag();
+            }
+
+            TabGroup tabGroup = getItem(position);
+            if (tabGroup != null) {
+                holder.title.setText(tabGroup.getCurrentTab().getTitle());
+                Drawable icon = tabGroup.getCurrentTab().getIconDrawable();
+                if (icon != null) {
+                    holder.icon.setBackground(icon);
+                }
+                holder.close.setOnClickListener(mainActivity);
+            }
+            return convertView;
+        }
+    }
+
+    private static class Holder {
+        ImageView icon;
+        TextView title;
+        ImageView close;
+    }
 
 }

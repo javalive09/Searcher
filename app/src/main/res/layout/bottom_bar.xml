@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:background="@color/chrome_top_color"
-              android:orientation="horizontal">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/chrome_top_color"
+    android:orientation="horizontal">
 
     <!--<ImageView-->
     <!--android:id="@+id/search"-->
@@ -34,7 +34,7 @@
         android:onClick="onClick"
         android:scaleType="center"
         android:src="@drawable/bar_back_selector"
-        android:visibility="visible"/>
+        android:visibility="visible" />
 
     <ImageView
         android:id="@+id/go"
@@ -45,38 +45,44 @@
         android:onClick="onClick"
         android:scaleType="center"
         android:src="@drawable/bar_forward_selector"
-        android:visibility="visible"/>
+        android:visibility="visible" />
 
-
-    <TextView
-        android:id="@+id/bottom_search_btn"
+    <HorizontalScrollView
+        android:id="@+id/bottom_search_btn_container"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_margin="4dp"
         android:layout_weight="2"
         android:background="@drawable/input_bg_gray"
-        android:hint="@string/search_hint"
-        android:textColorHint="@color/multi_text_color_gray"
-        android:gravity="center_vertical"
-        android:padding="5dp"
-        android:onClick="onClick"
-        android:singleLine="true"
-        android:scaleType="center"
-        android:visibility="visible"/>
+        android:scrollbars="none">
+
+        <TextView
+            android:id="@+id/bottom_search_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:ellipsize="none"
+            android:gravity="center_vertical"
+            android:hint="@string/search_hint"
+            android:padding="5dp"
+            android:scaleType="center"
+            android:singleLine="true"
+            android:textColorHint="@color/multi_text_color_gray"
+            android:visibility="visible" />
+    </HorizontalScrollView>
 
     <TextView
         android:id="@+id/multi_btn"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:textColor="@color/chrome_txt_color"
         android:background="@drawable/opt_multi_selector"
         android:gravity="center"
-        android:textSize="10sp"
-        android:textStyle="bold"
         android:onClick="onClick"
         android:scaleType="center"
-        android:visibility="visible"/>
+        android:textColor="@color/chrome_txt_color"
+        android:textSize="10sp"
+        android:textStyle="bold"
+        android:visibility="visible" />
 
 
     <ImageView
@@ -87,7 +93,7 @@
         android:background="@drawable/menu_selector"
         android:onClick="onClick"
         android:scaleType="center"
-        android:src="@drawable/bottom_menu_chrome_color"/>
+        android:src="@drawable/bottom_menu_chrome_color" />
 
 
 </LinearLayout>

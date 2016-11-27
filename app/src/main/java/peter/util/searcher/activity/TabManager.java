@@ -47,6 +47,10 @@ public class TabManager {
         return tabArrayList.get(mCurrentTabIndex);
     }
 
+    public ArrayList<TabGroup> getList() {
+        return tabArrayList;
+    }
+
     public int getTabGroupCount() {
         return tabArrayList.size();
     }

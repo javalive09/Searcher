@@ -40,9 +40,6 @@ public abstract class LocalViewTab extends SearcherTab{
                 mainActivity.setCurrentView(mView);
             }
 
-            if (!TextUtils.isEmpty(searchWord)) {
-                mSearchWord = searchWord;
-            }
         }
     }
 

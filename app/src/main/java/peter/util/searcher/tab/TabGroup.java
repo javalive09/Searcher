@@ -1,7 +1,6 @@
 package peter.util.searcher.tab;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
 import peter.util.searcher.activity.MainActivity;
@@ -26,6 +25,11 @@ public class TabGroup extends SearcherTab {
 
     public String getUrl() {
         return getCurrentTab().getUrl();
+    }
+
+    @Override
+    public String getSearchWord() {
+        return null;
     }
 
     public void loadUrl(String url, String searchWord) {
@@ -61,7 +65,7 @@ public class TabGroup extends SearcherTab {
         if (url.startsWith(LOCAL_SCHEMA)) {
             return newLocalTab(url);
         } else {
-            return new WebviewTab(mainActivity);
+            return new WebViewTab(mainActivity);
         }
     }
 
@@ -128,7 +132,7 @@ public class TabGroup extends SearcherTab {
 
     public boolean canGoForward() {
         Tab currentTab = getCurrentTab();
-        if (currentTab instanceof WebviewTab) {
+        if (currentTab instanceof WebViewTab) {
             boolean webTabCanGoForward = currentTab.canGoForward();
             if (webTabCanGoForward) {
                 return true;
@@ -144,7 +148,7 @@ public class TabGroup extends SearcherTab {
 
     public void goForward() {
         Tab currentTab = getCurrentTab();
-        if (currentTab instanceof WebviewTab) {
+        if (currentTab instanceof WebViewTab) {
             boolean webTabCanGoForward = currentTab.canGoForward();
             if (webTabCanGoForward) {
                 currentTab.goForward();
