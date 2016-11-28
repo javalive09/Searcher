@@ -55,6 +55,9 @@ public class TabManager {
 
     public void removeTabGroup(TabGroup tabGroup) {
         tabArrayList.remove(tabGroup);
+        int indexNext = tabArrayList.size() - 1;
+        TabGroup tabGroupNext = tabArrayList.get(indexNext);
+        switchTabGroup(tabGroupNext);
     }
 
     public ArrayList<TabGroup> getList() {

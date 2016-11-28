@@ -11,6 +11,8 @@ import android.webkit.CookieManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 
+import java.util.HashMap;
+
 import peter.util.searcher.R;
 import peter.util.searcher.activity.MainActivity;
 import peter.util.searcher.bean.Bean;
@@ -28,8 +30,8 @@ import peter.util.searcher.net.MyWebClient;
 public class WebViewTab extends SearcherTab{
 
     private static final int API = Build.VERSION.SDK_INT;
-    protected String mSearchWord;
     private WebView mWebView;
+    private HashMap<String, String> searchMap = new HashMap<>();
 
     public WebViewTab(MainActivity activity) {
         super(activity);
@@ -70,7 +72,7 @@ public class WebViewTab extends SearcherTab{
                 mainActivity.setCurrentView(mWebView);
             }
             if (!TextUtils.isEmpty(searchWord)) {
-                mSearchWord = searchWord;
+                searchMap.put(url, searchWord);
                 saveData(searchWord, url);
             }
         }
@@ -82,7 +84,7 @@ public class WebViewTab extends SearcherTab{
 
     @Override
     public String getSearchWord() {
-        return mSearchWord;
+        return searchMap.get(mWebView.getUrl());
     }
 
     public void reload() {
