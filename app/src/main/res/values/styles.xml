@@ -52,7 +52,11 @@
         <item name="android:windowNoTitle">true</item>
     </style>
 
-    <style name="multiwindow_style">
+    <style name="multiwindow_Dialog" parent="@android:style/Theme.Dialog">
+        <item name="android:windowAnimationStyle">@style/multiwindow_anim</item>
+    </style>
+
+    <style name="multiwindow_anim">
         <item name="android:windowEnterAnimation">@anim/multiwindow_show</item>
         <item name="android:windowExitAnimation">@anim/multiwindow_hide</item>
     </style>

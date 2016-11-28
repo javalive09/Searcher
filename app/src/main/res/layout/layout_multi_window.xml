@@ -18,6 +18,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/multi_window_item_h"
         android:text="@string/multi_window_add"
+        android:textColor="@android:color/black"
         android:layout_above="@+id/back"
         android:background="@drawable/multi_item_selector"
         android:gravity="center"
@@ -28,7 +29,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/multi_window_item_h"
         android:layout_alignParentBottom="true"
-        android:background="@drawable/list_item_selector"
+        android:background="@drawable/multi_item_selector"
         android:scaleType="centerInside"
         android:src="@drawable/multi_back" />
 

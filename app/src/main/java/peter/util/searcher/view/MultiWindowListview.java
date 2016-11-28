@@ -32,33 +32,11 @@ public class MultiWindowListView extends ListView {
     }
 
     @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        if(ev.getAction() == MotionEvent.ACTION_DOWN) {
-            intercept = false;
-        }
-
-        return super.dispatchTouchEvent(ev);
-    }
-
-    @Override
-    public boolean onInterceptTouchEvent(MotionEvent ev) {
-        boolean result = super.onInterceptTouchEvent(ev);
-        if(result) {
-            intercept = true;
-        }
-        return result;
-    }
-
-    boolean intercept = false;
-
-    @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_UP) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
             if (outSideTouchItemCallBack != null) {
-                if(!intercept) {
-                    outSideTouchItemCallBack.outside();
-                    Log.i("peter", "--");
-                }
+                outSideTouchItemCallBack.outside();
+                Log.i("peter", "--");
             }
         }
         return super.onTouchEvent(event);

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="@color/item_press">
+    <item>
+        <selector xmlns:android="http://schemas.android.com/apk/res/android">
+            <item
+                android:drawable="@drawable/multi_item_bg_select"
+                android:state_activated="true" />
+            <item
+                android:drawable="@drawable/multi_item_bg"
+                android:state_pressed="true" />
+            <item android:drawable="@drawable/multi_item_bg" />
+        </selector>
+
+    </item>
+</ripple>

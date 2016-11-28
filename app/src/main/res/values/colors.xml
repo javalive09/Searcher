@@ -15,6 +15,7 @@
     <color name="item_press">#88cccccc</color>
 
     <color name="transparent">#00000000</color>
+    <color name="half_transparent">#e0000000</color>
     <color name="back_press">#cccccc</color>
     <color name="line_color">#626262</color>
     <color name="multi_text_color_gray">#c0c0c0</color>
