@@ -1,6 +1,7 @@
 package peter.util.searcher.tab;
 
 import android.graphics.drawable.Drawable;
+import android.view.View;
 
 import peter.util.searcher.activity.MainActivity;
 
@@ -10,7 +11,7 @@ import peter.util.searcher.activity.MainActivity;
  *
  */
 
-public abstract class SearcherTab implements Tab {
+public abstract class SearcherTab<T extends View> implements Tab {
 
     protected MainActivity mainActivity;
 
@@ -27,6 +28,8 @@ public abstract class SearcherTab implements Tab {
     public void onCreate() {
 
     }
+
+    public abstract View getView();
 
     public Drawable getIconDrawable() {
         return iconDrawable;

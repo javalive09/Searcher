@@ -1,5 +1,7 @@
 package peter.util.searcher.activity;
 
+import android.view.View;
+
 import java.util.ArrayList;
 
 import peter.util.searcher.tab.SearcherTab;
@@ -40,19 +42,15 @@ public class TabManager {
         tab.loadUrl(url, searchWord);
     }
 
-    public void setCurrentTabGroup(int index) {
-        mCurrentTabIndex = index;
-        SearcherTab tab = getCurrentTabGroup().getCurrentTab();
-        getCurrentTabGroup().loadUrl(tab.getUrl(),tab.getSearchWord());
-    }
-
     public TabGroup getCurrentTabGroup() {
         return tabArrayList.get(mCurrentTabIndex);
     }
 
-    public void setCurrentTabGroup(TabGroup tabGroup) {
-        int index = tabArrayList.indexOf(tabGroup);
-        setCurrentTabGroup(index);
+    public void switchTabGroup(TabGroup tabGroup) {
+        mCurrentTabIndex = tabArrayList.indexOf(tabGroup);
+        View currentTabGroupView = tabGroup.getView();
+        mainActivity.setCurrentView(currentTabGroupView);
+        mainActivity.refreshBottomBar();
     }
 
     public void removeTabGroup(TabGroup tabGroup) {

@@ -41,6 +41,11 @@ public class WebViewTab extends SearcherTab{
     }
 
     @Override
+    public View getView() {
+        return mWebView;
+    }
+
+    @Override
     public void onDestory() {
 
     }

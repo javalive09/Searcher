@@ -43,6 +43,11 @@ public abstract class LocalViewTab extends SearcherTab{
         }
     }
 
+    @Override
+    public View getView() {
+        return mView;
+    }
+
     public void reload() {}
 
     public boolean canGoBack() {

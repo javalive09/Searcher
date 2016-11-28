@@ -285,7 +285,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 break;
             case R.id.multi_window_item:
                 tabGroup = (TabGroup) v.getTag(R.id.multi_window_item_tag);
-                manager.setCurrentTabGroup(tabGroup);
+                manager.switchTabGroup(tabGroup);
                 multiTabPopupWindow.dismiss();
                 break;
 

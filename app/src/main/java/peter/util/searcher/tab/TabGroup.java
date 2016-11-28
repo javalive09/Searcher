@@ -1,5 +1,7 @@
 package peter.util.searcher.tab;
 
+import android.view.View;
+
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 
@@ -17,6 +19,11 @@ public class TabGroup extends SearcherTab {
 
     public TabGroup(MainActivity activity) {
         super(activity);
+    }
+
+    @Override
+    public View getView() {
+        return getCurrentTab().getView();
     }
 
     public String getTitle() {
@@ -81,7 +88,6 @@ public class TabGroup extends SearcherTab {
         return tab;
     }
 
-
     public void setCurrentTab(int index) {
         mCurrentTabIndex = index;
         Tab tab = tabArrayList.get(index);
@@ -95,7 +101,6 @@ public class TabGroup extends SearcherTab {
             return null;
         }
     }
-
 
     public void reload() {
         setCurrentTab(mCurrentTabIndex);
