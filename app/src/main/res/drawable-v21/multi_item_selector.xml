@@ -4,12 +4,12 @@
     <item>
         <selector xmlns:android="http://schemas.android.com/apk/res/android">
             <item
-                android:drawable="@drawable/multi_item_bg_select"
+                android:drawable="@drawable/multi_item_bg"
                 android:state_activated="true" />
             <item
-                android:drawable="@drawable/multi_item_bg"
+                android:drawable="@drawable/multi_item_bg_select"
                 android:state_pressed="true" />
-            <item android:drawable="@drawable/multi_item_bg" />
+            <item android:drawable="@drawable/multi_item_bg_select" />
         </selector>
 
     </item>

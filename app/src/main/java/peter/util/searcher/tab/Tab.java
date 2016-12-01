@@ -9,6 +9,7 @@ package peter.util.searcher.tab;
 public interface Tab {
 
     String LOCAL_SCHEMA = "local://";
+    String NEW_WINDOW = "new_window";
     String URL_HOME = LOCAL_SCHEMA + "home";
     String URL_SETTING = LOCAL_SCHEMA + "setting";
     String URL_FAVORITE = LOCAL_SCHEMA + "favorite";

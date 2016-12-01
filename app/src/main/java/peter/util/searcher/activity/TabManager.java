@@ -17,7 +17,7 @@ import peter.util.searcher.tab.TabGroup;
 public class TabManager {
 
     private static final int MAX_TAB = 20;
-    private ArrayList<TabGroup> tabArrayList = new ArrayList<>(MAX_TAB);
+    private ArrayList<TabGroup> tabGroupArrayList = new ArrayList<>(MAX_TAB);
     private MainActivity mainActivity;
     private int mCurrentTabIndex;
 
@@ -30,42 +30,92 @@ public class TabManager {
     }
 
     public void loadUrl(String url, String searchWord, boolean newTab) {
-        if(tabArrayList.size() == MAX_TAB) {
+        if(tabGroupArrayList.size() == MAX_TAB) {
             newTab = false;
         }
         if (newTab) {
             TabGroup tab = new TabGroup(mainActivity);
-            tabArrayList.add(tab);
-            mCurrentTabIndex = tabArrayList.size() - 1;
+            tabGroupArrayList.add(tab);
+            mCurrentTabIndex = tabGroupArrayList.size() - 1;
         }
-        Tab tab = getCurrentTabGroup();
-        tab.loadUrl(url, searchWord);
+        TabGroup tabGroup = getCurrentTabGroup();
+        tabGroup.loadUrl(url, searchWord);
     }
 
     public TabGroup getCurrentTabGroup() {
-        return tabArrayList.get(mCurrentTabIndex);
+        return tabGroupArrayList.get(mCurrentTabIndex);
     }
 
     public void switchTabGroup(TabGroup tabGroup) {
-        mCurrentTabIndex = tabArrayList.indexOf(tabGroup);
+        mCurrentTabIndex = tabGroupArrayList.indexOf(tabGroup);
         View currentTabGroupView = tabGroup.getView();
+        pauseTabGroupExclude(tabGroup);
+        tabGroup.onResume();
         mainActivity.setCurrentView(currentTabGroupView);
         mainActivity.refreshBottomBar();
     }
 
+    public TabGroup getTabGroup(SearcherTab topTab) {
+        for(TabGroup tabGroup : tabGroupArrayList) {
+            if(tabGroup.containsTab(topTab)) {
+                return  tabGroup;
+            }
+        }
+        return null;
+    }
+
     public void removeTabGroup(TabGroup tabGroup) {
-        tabArrayList.remove(tabGroup);
-        int indexNext = tabArrayList.size() - 1;
-        TabGroup tabGroupNext = tabArrayList.get(indexNext);
-        switchTabGroup(tabGroupNext);
+        if(tabGroupArrayList.size() > 0) {
+            tabGroup.onDestory();
+            tabGroupArrayList.remove(tabGroup);
+            int indexNext = tabGroupArrayList.size() - 1;
+            TabGroup tabGroupNext = tabGroupArrayList.get(indexNext);
+            switchTabGroup(tabGroupNext);
+        }
+    }
+
+    public void resumeTabGroupExclude(TabGroup exTabGroup) {
+        for(TabGroup tabGroup : tabGroupArrayList) {
+            if(tabGroup != exTabGroup) {
+                tabGroup.onResume();
+            }
+        }
+    }
+
+    public void pauseTabGroupExclude(TabGroup exTabGroup) {
+        for(TabGroup tabGroup : tabGroupArrayList) {
+            if(tabGroup != exTabGroup) {
+                tabGroup.onPause();
+            }
+        }
     }
 
     public ArrayList<TabGroup> getList() {
-        return tabArrayList;
+        return tabGroupArrayList;
     }
 
     public int getTabGroupCount() {
-        return tabArrayList.size();
+        return tabGroupArrayList.size();
+    }
+
+    public boolean canGoBack() {
+        TabGroup currentTabGroup = getCurrentTabGroup();
+        if(currentTabGroup.canGoBack()) {
+            return true;
+        }else {
+            return mCurrentTabIndex > 0;
+        }
+    }
+
+    public void goBack() {
+        TabGroup currentTabGroup = getCurrentTabGroup();
+        if(currentTabGroup.canGoBack()) {
+            currentTabGroup.goBack();
+        }else {
+            if(mCurrentTabIndex > 0) {
+                removeTabGroup(getCurrentTabGroup());
+            }
+        }
     }
 
 }

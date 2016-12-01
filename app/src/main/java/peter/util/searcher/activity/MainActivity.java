@@ -1,13 +1,11 @@
 package peter.util.searcher.activity;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.SearchManager;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -15,8 +13,6 @@ import android.graphics.drawable.LevelListDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.ContextThemeWrapper;
-import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -29,9 +25,7 @@ import android.view.WindowManager;
 import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.PopupMenu;
-import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,6 +40,7 @@ import peter.util.searcher.db.SqliteHelper;
 import peter.util.searcher.tab.FavoriteTab;
 import peter.util.searcher.tab.HistoryTab;
 import peter.util.searcher.tab.HomeTab;
+import peter.util.searcher.tab.SearcherTab;
 import peter.util.searcher.tab.SettingTab;
 import peter.util.searcher.tab.Tab;
 import peter.util.searcher.tab.TabGroup;
@@ -63,7 +58,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private View progressBar;
     private FrameLayout mContainer;
     private HashMap<String, Class> router = new HashMap<>();
-    public static final String URL_INFO = "url_info";
     private MultiWindowAdapter multiWindowAdapter;
     private Dialog multiWindowDialog;
 
@@ -97,7 +91,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         if (!slide) {
                             int x = (int) event.getX() + mRect.left;
                             int y = (int) event.getY() + mRect.top;
-                            if(mRect.contains(x, y)) {
+                            if (mRect.contains(x, y)) {
                                 onClick(v);
                             }
                         }
@@ -211,23 +205,35 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if ((keyCode == KeyEvent.KEYCODE_BACK)) {
-            Tab tab = manager.getCurrentTabGroup();
-            if (tab.canGoBack()) {
-                tab.goBack();
+            if (manager.canGoBack()) {
+                manager.goBack();
                 return true;
             }
         }
         return super.onKeyDown(keyCode, event);
     }
 
+    public SearcherTab getCurrentTab() {
+        return manager.getCurrentTabGroup().getCurrentTab();
+    }
+
+    public void removeTabGroup(SearcherTab tab) {
+        TabGroup tabGroup = manager.getTabGroup(tab);
+        if (tabGroup != null) {
+            manager.removeTabGroup(tabGroup);
+        }
+    }
+
     protected void onResume() {
         super.onResume();
+        manager.resumeTabGroupExclude(null);
         MobclickAgent.onResume(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        manager.pauseTabGroupExclude(null);
         MobclickAgent.onPause(this);
     }
 
@@ -277,9 +283,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 break;
             case R.id.bottom_search_btn_container:
                 String content = manager.getCurrentTabGroup().getCurrentTab().getSearchWord();
-                if (TextUtils.isEmpty(content)) {
-                    content = manager.getCurrentTabGroup().getCurrentTab().getUrl();
-                }
                 startSearcheActivity(content);
                 break;
             case R.id.multi_btn:
@@ -301,9 +304,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
     }
 
-    public void startSearcheActivity(String url) {
+    public void startSearcheActivity(String word) {
         Intent intent = new Intent(MainActivity.this, SearchActivity.class);
-        intent.putExtra(URL_INFO, url);
+        intent.putExtra(NAME_WORD, word);
         startActivity(intent);
     }
 
@@ -418,6 +421,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             multiTabListView.setAdapter(multiWindowAdapter);
             multiWindowDialog.getWindow().getAttributes().windowAnimations = R.style.multiwindow_anim;
             multiWindowDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+            multiWindowDialog.findViewById(R.id.back).setActivated(true);
             multiWindowDialog.findViewById(R.id.back).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -432,6 +436,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 }
             });
 
+            multiWindowDialog.findViewById(R.id.add).setActivated(true);
             multiWindowDialog.findViewById(R.id.add).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

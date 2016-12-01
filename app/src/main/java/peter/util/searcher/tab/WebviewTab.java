@@ -20,14 +20,14 @@ import peter.util.searcher.db.SqliteHelper;
 import peter.util.searcher.download.MyDownloadListener;
 import peter.util.searcher.net.MyWebChromeClient;
 import peter.util.searcher.net.MyWebClient;
+import peter.util.searcher.utils.UrlUtils;
+import peter.util.searcher.utils.Utils;
 
 /**
- *
  * Created by peter on 2016/11/17.
- *
  */
 
-public class WebViewTab extends SearcherTab{
+public class WebViewTab extends SearcherTab {
 
     private static final int API = Build.VERSION.SDK_INT;
     private WebView mWebView;
@@ -49,7 +49,28 @@ public class WebViewTab extends SearcherTab{
 
     @Override
     public void onDestory() {
+        if(mWebView != null) {
+            mWebView.clearHistory();
+            mWebView.clearCache(true);
+            mWebView.loadUrl("about:blank");
+            mWebView.freeMemory();
+            mWebView.pauseTimers();
+            mWebView = null;
+        }
+    }
 
+    public void onResume() {
+        if(mWebView != null) {
+            mWebView.resumeTimers();
+            mWebView.onResume();
+        }
+    }
+
+    public void onPause() {
+        if(mWebView != null) {
+            mWebView.pauseTimers();
+            mWebView.onPause();
+        }
     }
 
     @Override
@@ -60,13 +81,16 @@ public class WebViewTab extends SearcherTab{
     public void loadUrl(String url, String searchWord) {
         if (!TextUtils.isEmpty(url)) {
             Log.i("peter", "url=" + url);
-            if(mWebView == null) {
+            if (mWebView == null) {
                 int resId = onCreateViewResId();
                 mWebView = (WebView) mainActivity.setCurrentView(resId);
                 onCreate();
-                mWebView.loadUrl(url);
-            }else {
-                if(!getUrl().equals(url)) {
+                if (!Tab.NEW_WINDOW.equals(url)) {
+                    mWebView.loadUrl(url);
+                }
+
+            } else {
+                if (!getUrl().equals(url)) {
                     mWebView.loadUrl(url);
                 }
                 mainActivity.setCurrentView(mWebView);
@@ -163,6 +187,7 @@ public class WebViewTab extends SearcherTab{
         settings.setJavaScriptEnabled(true);
         settings.setJavaScriptCanOpenWindowsAutomatically(true);
         settings.setLoadWithOverviewMode(true);
+        settings.setSupportMultipleWindows(true);
         settings.setUseWideViewPort(true);
         settings.setDomStorageEnabled(true);
         settings.setCacheMode(WebSettings.LOAD_DEFAULT);

@@ -11,7 +11,7 @@ import peter.util.searcher.activity.MainActivity;
  *
  */
 
-public abstract class SearcherTab<T extends View> implements Tab {
+public abstract class SearcherTab implements Tab {
 
     protected MainActivity mainActivity;
 
@@ -29,6 +29,10 @@ public abstract class SearcherTab<T extends View> implements Tab {
 
     }
 
+    public void onPause() {
+
+    }
+
     public abstract View getView();
 
     public Drawable getIconDrawable() {
@@ -38,6 +42,10 @@ public abstract class SearcherTab<T extends View> implements Tab {
     public void setIconDrawable(Drawable iconDrawable) {
         this.iconDrawable = iconDrawable;
         mainActivity.updateMultiWindow();
+    }
+
+    public void onResume() {
+
     }
 
     public void onDestory() {

@@ -82,15 +82,15 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
     }
 
     private void checkData(Intent intent) {
-        String url = intent.getStringExtra(MainActivity.URL_INFO);
-        setSearchWord(url);
+        String word = intent.getStringExtra(NAME_WORD);
+        setSearchWord(word);
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         String searchWord = getSearchWord();
-        if(!TextUtils.isEmpty(searchWord)) {
+        if (!TextUtils.isEmpty(searchWord)) {
             outState.putString(NAME_WORD, searchWord);
         }
     }
@@ -104,7 +104,7 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         String searchWord = savedInstanceState.getString(NAME_WORD);
-        if(!TextUtils.isEmpty(searchWord)) {
+        if (!TextUtils.isEmpty(searchWord)) {
             setSearchWord(searchWord);
         }
     }
@@ -162,22 +162,18 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
                     opt.getDrawable().setLevel(0);
                 } else {
                     opt.getDrawable().setLevel(1);
-                    if (UrlUtils.guessUrl(content)) {
-                        setEngineFragment(OPERATE_URL);
-                    }else {
-                        setEngineFragment(ENGINE_LIST);
-                    }
+                    setEngineFragment(ENGINE_LIST);
                 }
             }
         });
         setEngineFragment(RECENT_SEARCH);
 
         Intent intent = getIntent();
-        if(intent != null) {
+        if (intent != null) {
             String searchWord = intent.getStringExtra(NAME_WORD);
-            if(!TextUtils.isEmpty(searchWord)) {
+            if (!TextUtils.isEmpty(searchWord)) {
                 setSearchWord(searchWord);
-            }else {
+            } else {
                 checkData(intent);
             }
         }
@@ -186,7 +182,7 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
     public void closeIME() {
         View view = this.getCurrentFocus();
         if (view != null) {
-            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
@@ -204,7 +200,7 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
                 fragment = new RecentSearchFragment();
             } else if (tag.equals(ENGINE_LIST)) {
                 fragment = new EngineViewPagerFragment();
-            } else if(tag.equals(OPERATE_URL)) {
+            } else if (tag.equals(OPERATE_URL)) {
                 fragment = new OperateUrlFragment();
             }
             FragmentManager fragmentManager = getFragmentManager();

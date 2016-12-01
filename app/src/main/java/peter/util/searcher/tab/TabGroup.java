@@ -62,10 +62,23 @@ public class TabGroup extends SearcherTab {
         mainActivity.refreshBottomBar();
     }
 
+    @Override
+    public void onDestory() {
+        super.onDestory();
+        for(SearcherTab tab: tabArrayList) {
+            tab.onDestory();
+        }
+    }
+
     private void removeTabFromIndeoToEnd(int index) {
         for (int i = index, size = tabArrayList.size(); i < size; i++) {
-            tabArrayList.remove(index);
+            SearcherTab tab = tabArrayList.remove(index);
+            tab.onDestory();
         }
+    }
+
+    public boolean containsTab(SearcherTab tab) {
+        return tabArrayList.contains(tab);
     }
 
     private SearcherTab newTabByUrl(String url) {
@@ -73,6 +86,18 @@ public class TabGroup extends SearcherTab {
             return newLocalTab(url);
         } else {
             return new WebViewTab(mainActivity);
+        }
+    }
+
+    public void onResume() {
+        for(SearcherTab tab: tabArrayList) {
+            tab.onResume();
+        }
+    }
+
+    public void onPause() {
+        for(SearcherTab tab: tabArrayList) {
+            tab.onPause();
         }
     }
 
