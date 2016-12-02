@@ -124,7 +124,7 @@ public class BaseActivity extends AppCompatActivity{
     }
 
 
-    protected String getVersionName() {
+    public String getVersionName() {
         PackageManager packageManager = getPackageManager();
         PackageInfo packInfo = null;
         try {

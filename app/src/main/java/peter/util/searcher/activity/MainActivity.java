@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.LevelListDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -19,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.webkit.WebView;
 import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -45,7 +45,9 @@ import peter.util.searcher.utils.UrlUtils;
 import peter.util.searcher.view.MultiWindowListView;
 
 /**
+ *
  * Created by peter on 16/5/9.
+ *
  */
 public class MainActivity extends BaseActivity implements View.OnClickListener {
 
@@ -56,10 +58,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private HashMap<String, Class> router = new HashMap<>();
     private MultiWindowAdapter multiWindowAdapter;
     private Dialog multiWindowDialog;
+    private int[] searchDrawableRes = {R.drawable.abc_ic_search_api_mtrl_alpha, R.drawable.abc_ic_clear_mtrl_alpha};
+    private int searchDrawableLevel;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         Intent intent = getIntent();
         if (intent != null) {
             setContentView(R.layout.activity_main);
@@ -71,7 +76,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private void init() {
         bottomBar = findViewById(R.id.bottom_bar);
         mContainer = (FrameLayout) findViewById(R.id.container);
-        multiWindow = (TextView) findViewById(R.id.multi_btn);
+        multiWindow = (TextView) findViewById(R.id.multi_btn_txt);
         manager = new TabManager(MainActivity.this);
         installLocalTabRounter();
     }
@@ -88,11 +93,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     public void setStatusLevel(int level) {
-        ImageView goForward = (ImageView) bottomBar.findViewById(R.id.go_forward);
-        LevelListDrawable d = (LevelListDrawable) goForward.getDrawable();
-        if (d.getLevel() != level) {
-            d.setLevel(level);
-        }
+        ImageView search = (ImageView) findViewById(R.id.search);
+        search.setImageResource(searchDrawableRes[level]);
+        searchDrawableLevel = level;
     }
 
     public void setCurrentView(View view) {
@@ -190,13 +193,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         int count = manager.getTabGroupCount();
         multiWindow.setText(count + "");
 
-        //go forward button
-        if (manager.getCurrentTabGroup().canGoForward()) {
-            setStatusLevel(0);
-        } else {
-            setStatusLevel(1);
-        }
-
+        setStatusLevel(0);
     }
 
     @Override
@@ -213,15 +210,26 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     tab.goBack();
                 }
                 break;
-            case R.id.go_forward:
-                tab = manager.getCurrentTabGroup();
-                if (tab.canGoForward()) {
-                    tab.goForward();
-                }
-                break;
+//            case R.id.go_forward:
+//                tab = manager.getCurrentTabGroup();
+//                if (tab.canGoForward()) {
+//                    tab.goForward();
+//                }
+//                break;
             case R.id.search:
-                String content = manager.getCurrentTabGroup().getCurrentTab().getSearchWord();
-                startSearcheActivity(content);
+                switch (searchDrawableLevel) {
+                    case 0:
+                        String content = manager.getCurrentTabGroup().getCurrentTab().getSearchWord();
+                        startSearcheActivity(content);
+                        break;
+                    case 1:
+                        View view = manager.getCurrentTabGroup().getCurrentTab().getView();
+                        if (view instanceof WebView) {
+                            ((WebView) view).stopLoading();
+                        }
+                        break;
+                }
+
                 break;
             case R.id.multi_btn:
                 showAlertMultiTab();

@@ -59,7 +59,7 @@ public class MyWebClient extends WebViewClient {
 
     @Override
     public void onPageStarted(WebView view, String url, Bitmap favicon) {
-        mainActivity.setStatusLevel(2);
+        mainActivity.setStatusLevel(1);
         Log.i("peter", "url=" + url);
     }
 

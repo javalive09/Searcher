@@ -1,44 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-    <TextView
-        android:id="@+id/searcher_button"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/search_h"
-        android:layout_centerInParent="true"
-        android:layout_margin="20dp"
-        android:background="@drawable/input_bg_gray"
-        android:gravity="center"
-        android:hint="@string/search_hint"
-        android:maxLines="1"
-        android:scaleType="center"
-        android:textColorHint="@color/multi_text_color_gray"
-        android:visibility="visible"/>
-
-    <ImageView
-        android:id="@+id/version"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_above="@+id/searcher_button"
-        android:layout_centerHorizontal="true"
-        android:background="@drawable/icon"
-        android:gravity="center"/>
-
-    <GridView
-        android:id="@+id/fast_enter"
-        android:layout_below="@+id/searcher_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:gravity="center"
-        android:listSelector="@color/transparent"
-        android:divider="@color/transparent"
-        android:columnWidth="70dp"
-        android:numColumns="4"
-        android:stretchMode="columnWidth"/>
-
-
-</RelativeLayout>
+<GridView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/fast_enter"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="20dp"
+    android:columnWidth="70dp"
+    android:divider="@color/transparent"
+    android:gravity="center"
+    android:listSelector="@color/transparent"
+    android:numColumns="4"
+    android:stretchMode="columnWidth" />

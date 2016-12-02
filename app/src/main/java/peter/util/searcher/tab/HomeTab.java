@@ -33,13 +33,6 @@ public class HomeTab extends LocalViewTab implements View.OnClickListener{
 
     @Override
     public void onCreate() {
-        mainActivity.findViewById(R.id.searcher_button)
-                .setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mainActivity.startSearcheActivity("");
-            }
-        });
 
         GridView fastEnter = (GridView) mainActivity.findViewById(R.id.fast_enter);
         ArrayList<IconItem> iconItems = new ArrayList<>();

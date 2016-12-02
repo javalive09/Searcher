@@ -37,6 +37,8 @@ public class SettingTab extends LocalViewTab {
     @Override
     public void onCreate() {
         windowHandler = new AsynWindowHandler(mainActivity);
+        TextView version = (TextView) mainActivity.findViewById(R.id.version);
+        version.setText(mainActivity.getVersionName());
         ListView settings = (ListView) mainActivity.findViewById(R.id.setting_list);
         if(settings != null) {
             settings.setAdapter(new ArrayAdapter<>(mainActivity, R.layout.setting_item, mainActivity.getResources().getStringArray(R.array.settings_name)));

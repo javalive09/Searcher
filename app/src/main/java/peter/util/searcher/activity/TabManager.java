@@ -50,7 +50,6 @@ public class TabManager {
         mCurrentTabIndex = tabGroupArrayList.indexOf(tabGroup);
         View currentTabGroupView = tabGroup.getView();
         pauseTabGroupExclude(tabGroup);
-        tabGroup.onResume();
         mainActivity.setCurrentView(currentTabGroupView);
         mainActivity.refreshBottomBar();
     }
@@ -68,9 +67,13 @@ public class TabManager {
         if(tabGroupArrayList.size() > 0) {
             tabGroup.onDestory();
             tabGroupArrayList.remove(tabGroup);
-            int indexNext = tabGroupArrayList.size() - 1;
-            TabGroup tabGroupNext = tabGroupArrayList.get(indexNext);
-            switchTabGroup(tabGroupNext);
+            if(tabGroupArrayList.size() > 0) {
+                int indexNext = tabGroupArrayList.size() - 1;
+                TabGroup tabGroupNext = tabGroupArrayList.get(indexNext);
+                switchTabGroup(tabGroupNext);
+            }else {
+                mainActivity.finish();
+            }
         }
     }
 

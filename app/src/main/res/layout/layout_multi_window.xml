@@ -28,8 +28,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/multi_window_item_h"
         android:layout_alignParentBottom="true"
-        android:background="@drawable/multi_item_selector"
-        android:scaleType="centerInside"
-        android:src="@drawable/multi_back" />
+        android:background="@color/transparent"
+        android:scaleType="centerInside"/>
 
 </RelativeLayout>
