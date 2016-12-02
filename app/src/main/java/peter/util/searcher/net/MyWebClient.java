@@ -54,14 +54,12 @@ public class MyWebClient extends WebViewClient {
             view.postInvalidate();
         }
 
-        mainActivity.setStatusLevel(0);
         mainActivity.refreshBottomBar();
-//        saveUrlData(view.getTitle(), url);
     }
 
     @Override
     public void onPageStarted(WebView view, String url, Bitmap favicon) {
-        mainActivity.setStatusLevel(1);
+        mainActivity.setStatusLevel(2);
         Log.i("peter", "url=" + url);
     }
 

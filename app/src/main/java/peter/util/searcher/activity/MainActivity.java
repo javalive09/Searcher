@@ -6,7 +6,6 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LevelListDrawable;
@@ -16,9 +15,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
@@ -55,7 +52,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private View bottomBar;
     private TabManager manager;
     private TextView multiWindow;
-    private View progressBar;
     private FrameLayout mContainer;
     private HashMap<String, Class> router = new HashMap<>();
     private MultiWindowAdapter multiWindowAdapter;
@@ -73,58 +69,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     private void init() {
-        progressBar = findViewById(R.id.status);
         bottomBar = findViewById(R.id.bottom_bar);
         mContainer = (FrameLayout) findViewById(R.id.container);
         multiWindow = (TextView) findViewById(R.id.multi_btn);
-        findViewById(R.id.bottom_search_btn_container).setOnTouchListener(new View.OnTouchListener() {
-
-            int mTouchSlop = 0;
-            int startX = 0;
-            boolean slide = false;
-            Rect mRect = new Rect();
-
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_UP:
-                        if (!slide) {
-                            int x = (int) event.getX() + mRect.left;
-                            int y = (int) event.getY() + mRect.top;
-                            if (mRect.contains(x, y)) {
-                                onClick(v);
-                            }
-                        }
-
-                        break;
-                    case MotionEvent.ACTION_DOWN:
-                        if (mTouchSlop == 0) {
-                            ViewConfiguration configuration = android.view.ViewConfiguration.get(v.getContext());
-                            mTouchSlop = configuration.getScaledTouchSlop();
-                        }
-                        startX = (int) event.getX();
-                        slide = false;
-                        v.getHitRect(mRect);
-                        break;
-
-                    case MotionEvent.ACTION_MOVE:
-                        if (!slide) {
-                            if (Math.abs(startX - (int) event.getX()) > mTouchSlop) {//scroll x
-                                View child = ((FrameLayout) v).getChildAt(0);
-                                if (child != null) {
-                                    int childWidth = child.getWidth();
-                                    if (v.getWidth() < childWidth) {//can scroll
-                                        slide = true;
-                                    }
-                                }
-                            }
-                        }
-                        break;
-                }
-
-                return false;
-            }
-        });
         manager = new TabManager(MainActivity.this);
         installLocalTabRounter();
     }
@@ -141,7 +88,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     public void setStatusLevel(int level) {
-        LevelListDrawable d = (LevelListDrawable) progressBar.getBackground();
+        ImageView goForward = (ImageView) bottomBar.findViewById(R.id.go_forward);
+        LevelListDrawable d = (LevelListDrawable) goForward.getDrawable();
         if (d.getLevel() != level) {
             d.setLevel(level);
         }
@@ -242,23 +190,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         int count = manager.getTabGroupCount();
         multiWindow.setText(count + "");
 
-        //back button
-        if (manager.getCurrentTabGroup().canGoBack()) {
-            findViewById(R.id.back).setEnabled(true);
-        } else {
-            findViewById(R.id.back).setEnabled(false);
-        }
-        //go button
+        //go forward button
         if (manager.getCurrentTabGroup().canGoForward()) {
-            findViewById(R.id.go).setEnabled(true);
+            setStatusLevel(0);
         } else {
-            findViewById(R.id.go).setEnabled(false);
+            setStatusLevel(1);
         }
 
-        //bottom search btn
-        TextView bottomSearch = (TextView) findViewById(R.id.bottom_search_btn);
-        String title = manager.getCurrentTabGroup().getTitle();
-        bottomSearch.setHint(title);
     }
 
     @Override
@@ -275,13 +213,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     tab.goBack();
                 }
                 break;
-            case R.id.go:
+            case R.id.go_forward:
                 tab = manager.getCurrentTabGroup();
                 if (tab.canGoForward()) {
                     tab.goForward();
                 }
                 break;
-            case R.id.bottom_search_btn_container:
+            case R.id.search:
                 String content = manager.getCurrentTabGroup().getCurrentTab().getSearchWord();
                 startSearcheActivity(content);
                 break;
