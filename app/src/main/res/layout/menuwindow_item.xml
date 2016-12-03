@@ -4,7 +4,7 @@
     android:id="@+id/menu_window_item"
     android:layout_width="match_parent"
     android:layout_height="@dimen/multi_window_item_h"
-    android:background="@drawable/multi_item_selector"
+    android:background="@drawable/dialog_item_selector"
     android:orientation="horizontal">
 
     <ImageView
