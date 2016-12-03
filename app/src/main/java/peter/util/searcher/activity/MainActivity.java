@@ -7,7 +7,6 @@ import android.content.ClipboardManager;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -15,11 +14,9 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.webkit.WebView;
-import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
@@ -31,6 +28,8 @@ import com.umeng.analytics.MobclickAgent;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import peter.util.searcher.adapter.MenuWindowAdapter;
+import peter.util.searcher.adapter.MultiWindowAdapter;
 import peter.util.searcher.bean.Bean;
 import peter.util.searcher.R;
 import peter.util.searcher.db.SqliteHelper;
@@ -45,9 +44,7 @@ import peter.util.searcher.utils.UrlUtils;
 import peter.util.searcher.view.MultiWindowListView;
 
 /**
- *
  * Created by peter on 16/5/9.
- *
  */
 public class MainActivity extends BaseActivity implements View.OnClickListener {
 
@@ -56,10 +53,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private TextView multiWindow;
     private FrameLayout mContainer;
     private HashMap<String, Class> router = new HashMap<>();
-    private MultiWindowAdapter multiWindowAdapter;
-    private Dialog multiWindowDialog;
     private int[] searchDrawableRes = {R.drawable.abc_ic_search_api_mtrl_alpha, R.drawable.abc_ic_clear_mtrl_alpha};
     private int searchDrawableLevel;
+
+    private MenuWindowAdapter menuWindowAdapter;
+    private Dialog menuDialog;
+
+    private MultiWindowAdapter multiWindowAdapter;
+    private Dialog multiWindowdialog;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -79,6 +80,61 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         multiWindow = (TextView) findViewById(R.id.multi_btn_txt);
         manager = new TabManager(MainActivity.this);
         installLocalTabRounter();
+        initMenuDialog();
+        initMultiWindowDialog();
+    }
+
+    private void initMenuDialog() {
+        menuDialog = new Dialog(MainActivity.this, R.style.multiwindow_Dialog);
+        menuDialog.setContentView(R.layout.layout_menu_window);
+        MultiWindowListView menuList = (MultiWindowListView) menuDialog.findViewById(R.id.menu_window);
+        ArrayList<Integer> arrayList = new ArrayList<>();
+        arrayList.add(R.string.action_refresh);
+        arrayList.add(R.string.action_share);
+        arrayList.add(R.string.action_collect);
+        arrayList.add(R.string.action_copy_link);
+        arrayList.add(R.string.action_exit);
+        menuWindowAdapter = new MenuWindowAdapter(MainActivity.this, arrayList);
+        menuList.setAdapter(menuWindowAdapter);
+        menuDialog.getWindow().getAttributes().windowAnimations = R.style.multiwindow_anim;
+        menuDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        menuList.setOutSideTouchItemCallBack(new MultiWindowListView.OutSideTouchItemCallBack() {
+            @Override
+            public void outside() {
+                menuDialog.dismiss();
+            }
+        });
+    }
+
+    public void updateMultiwindow() {
+        if (multiWindowAdapter != null) {
+            multiWindowAdapter.update(MainActivity.this);
+        }
+    }
+
+    private void initMultiWindowDialog() {
+        multiWindowdialog = new Dialog(MainActivity.this, R.style.multiwindow_Dialog);
+        multiWindowdialog.setContentView(R.layout.layout_multi_window);
+        MultiWindowListView multiTabListView = (MultiWindowListView) multiWindowdialog.findViewById(R.id.multi_window);
+        multiWindowAdapter = new MultiWindowAdapter();
+        multiTabListView.setAdapter(multiWindowAdapter);
+        multiWindowdialog.getWindow().getAttributes().windowAnimations = R.style.multiwindow_anim;
+        multiWindowdialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        multiTabListView.setOutSideTouchItemCallBack(new MultiWindowListView.OutSideTouchItemCallBack() {
+            @Override
+            public void outside() {
+                multiWindowdialog.dismiss();
+            }
+        });
+
+        multiWindowdialog.findViewById(R.id.add).setActivated(true);
+        multiWindowdialog.findViewById(R.id.add).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                multiWindowdialog.dismiss();
+                loadUrl(Tab.URL_HOME, true);
+            }
+        });
     }
 
     private void installLocalTabRounter() {
@@ -109,6 +165,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         View mView = factory.inflate(viewId, mContainer, false);
         mContainer.addView(mView);
         return mView;
+    }
+
+    public TabManager getManager() {
+        return manager;
     }
 
     @Override
@@ -233,20 +293,63 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
                 break;
             case R.id.multi_btn:
-                showAlertMultiTab();
+                multiWindowdialog.show();
+                updateMultiwindow();
                 break;
             case R.id.menu:
-                popupMenu(v);
+//                popupMenu(v);
+                menuDialog.show();
                 break;
             case R.id.close_tab:
                 TabGroup tabGroup = (TabGroup) v.getTag();
                 manager.removeTabGroup(tabGroup);
-                updateMultiWindow();
+                updateMultiwindow();
                 break;
             case R.id.multi_window_item:
                 tabGroup = (TabGroup) v.getTag(R.id.multi_window_item_tag);
                 manager.switchTabGroup(tabGroup);
-                multiWindowDialog.dismiss();
+                multiWindowdialog.dismiss();
+                break;
+            case R.id.menu_window_item:
+                Integer itemRes = (Integer) v.getTag(R.id.menu_window_item_tag);
+                switch (itemRes) {
+                    case R.string.action_exit:
+                        exit();
+                        break;
+                    case R.string.action_copy_link:
+                        String url = getManager().getCurrentTabGroup().getUrl();
+                        String title = getManager().getCurrentTabGroup().getTitle();
+                        ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+                        ClipData clip = ClipData.newPlainText(title, url);
+                        clipboard.setPrimaryClip(clip);
+                        Toast.makeText(MainActivity.this, R.string.copy_link_txt, Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.string.action_collect:
+                        if (!TextUtils.isEmpty(getManager().getCurrentTabGroup().getUrl())) {
+                            Bean bean = new Bean();
+                            bean.name = getManager().getCurrentTabGroup().getTitle();
+                            if (TextUtils.isEmpty(bean.name)) {
+                                bean.name = getManager().getCurrentTabGroup().getUrl();
+                            }
+                            bean.url = getManager().getCurrentTabGroup().getUrl();
+                            bean.time = System.currentTimeMillis();
+                            SqliteHelper.instance(MainActivity.this).insertFav(bean);
+                            Toast.makeText(MainActivity.this, R.string.favorite_txt, Toast.LENGTH_SHORT).show();
+                        }
+                        break;
+                    case R.string.action_share:
+                        url = getManager().getCurrentTabGroup().getUrl();
+                        Intent sendIntent = new Intent();
+                        sendIntent.setAction(Intent.ACTION_SEND);
+                        sendIntent.putExtra(Intent.EXTRA_TEXT, url);
+                        sendIntent.setType("text/plain");
+                        startActivity(Intent.createChooser(sendIntent, getString(R.string.share_link_title)));
+                        break;
+                    case R.string.action_refresh:
+                        getManager().getCurrentTabGroup().reload();
+                        break;
+                }
+                menuDialog.dismiss();
                 break;
         }
     }
@@ -353,126 +456,5 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
     }
 
-    public void updateMultiWindow() {
-        if (multiWindowAdapter != null) {
-            multiWindowAdapter.update(MainActivity.this);
-        }
-    }
-
-    private void showAlertMultiTab() {
-        if (multiWindowDialog == null) {
-            multiWindowDialog = new Dialog(MainActivity.this, R.style.multiwindow_Dialog);
-            multiWindowDialog.setContentView(R.layout.layout_multi_window);
-            MultiWindowListView multiTabListView = (MultiWindowListView) multiWindowDialog.findViewById(R.id.multi_window);
-            multiWindowAdapter = new MultiWindowAdapter();
-            multiTabListView.setAdapter(multiWindowAdapter);
-            multiWindowDialog.getWindow().getAttributes().windowAnimations = R.style.multiwindow_anim;
-            multiWindowDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-            multiWindowDialog.findViewById(R.id.back).setActivated(true);
-            multiWindowDialog.findViewById(R.id.back).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    multiWindowDialog.dismiss();
-                }
-            });
-
-            multiTabListView.setOutSideTouchItemCallBack(new MultiWindowListView.OutSideTouchItemCallBack() {
-                @Override
-                public void outside() {
-                    multiWindowDialog.dismiss();
-                }
-            });
-
-            multiWindowDialog.findViewById(R.id.add).setActivated(true);
-            multiWindowDialog.findViewById(R.id.add).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    multiWindowDialog.dismiss();
-                    manager.loadUrl(Tab.URL_HOME, true);
-                }
-            });
-        }
-        multiWindowAdapter.update(MainActivity.this);
-        multiWindowDialog.show();
-    }
-
-    private static class MultiWindowAdapter extends BaseAdapter {
-
-        private ArrayList<TabGroup> mList;
-
-        private MainActivity mainActivity;
-
-        public void update(MainActivity activity) {
-            mainActivity = activity;
-            mList = mainActivity.manager.getList();
-            notifyDataSetChanged();
-        }
-
-        @Override
-        public int getCount() {
-            if (mList != null) {
-                return mList.size();
-            }
-            return 0;
-        }
-
-        @Override
-        public TabGroup getItem(int position) {
-            if (mList != null) {
-                return mList.get(position);
-            }
-            return null;
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-
-            Holder holder = null;
-            if (convertView == null) {
-                convertView = mainActivity.getLayoutInflater().inflate(R.layout.multiwindow_item, parent, false);
-                holder = new Holder();
-                holder.close = (ImageView) convertView.findViewById(R.id.close_tab);
-                holder.title = (TextView) convertView.findViewById(R.id.title);
-                holder.icon = (ImageView) convertView.findViewById(R.id.icon);
-                convertView.setTag(holder);
-            }
-
-            if (holder == null) {
-                holder = (Holder) convertView.getTag();
-            }
-
-            TabGroup tabGroup = getItem(position);
-            if (tabGroup != null) {
-                if (mainActivity.manager.getCurrentTabGroup() == tabGroup) {
-                    convertView.setActivated(true);
-                } else {
-                    convertView.setActivated(false);
-                }
-                holder.title.setText(tabGroup.getCurrentTab().getTitle());
-                Drawable icon = tabGroup.getCurrentTab().getIconDrawable();
-                if (icon != null) {
-                    holder.icon.setBackground(icon);
-                } else {
-                    holder.icon.setBackgroundResource(R.drawable.web_site_icon);
-                }
-                holder.close.setOnClickListener(mainActivity);
-                holder.close.setTag(tabGroup);
-                convertView.setOnClickListener(mainActivity);
-                convertView.setTag(R.id.multi_window_item_tag, tabGroup);
-            }
-            return convertView;
-        }
-    }
-
-    private static class Holder {
-        ImageView icon;
-        TextView title;
-        ImageView close;
-    }
 
 }

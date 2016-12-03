@@ -41,7 +41,7 @@ public abstract class SearcherTab implements Tab {
 
     public void setIconDrawable(Drawable iconDrawable) {
         this.iconDrawable = iconDrawable;
-        mainActivity.updateMultiWindow();
+        mainActivity.updateMultiwindow();
     }
 
     public void onResume() {

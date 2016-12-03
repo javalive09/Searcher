@@ -44,7 +44,7 @@ public class BaseActivity extends AppCompatActivity{
         LIST.remove(this);
     }
 
-    protected void exit() {
+    public void exit() {
         for(Activity act: LIST) {
             act.finish();
         }

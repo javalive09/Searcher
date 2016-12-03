@@ -21,6 +21,7 @@
         android:layout_above="@+id/back"
         android:background="@drawable/multi_item_selector"
         android:scaleType="centerInside"
+        android:layout_alignParentBottom="true"
         android:src="@drawable/multi_add" />
 
     <ImageView
@@ -28,7 +29,9 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/multi_window_item_h"
         android:layout_alignParentBottom="true"
-        android:background="@color/transparent"
-        android:scaleType="centerInside"/>
+        android:background="@drawable/multi_item_selector"
+        android:scaleType="centerInside"
+        android:visibility="gone"
+        android:src="@drawable/multi_back" />
 
 </RelativeLayout>
