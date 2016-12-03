@@ -226,6 +226,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         View view = manager.getCurrentTabGroup().getCurrentTab().getView();
                         if (view instanceof WebView) {
                             ((WebView) view).stopLoading();
+                            setStatusLevel(0);
                         }
                         break;
                 }

@@ -162,7 +162,11 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
                     opt.getDrawable().setLevel(0);
                 } else {
                     opt.getDrawable().setLevel(1);
-                    setEngineFragment(ENGINE_LIST);
+                    if (UrlUtils.guessUrl(content)) {
+                        setEngineFragment(OPERATE_URL);
+                    }else {
+                        setEngineFragment(ENGINE_LIST);
+                    }
                 }
             }
         });

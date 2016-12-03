@@ -51,6 +51,7 @@ public class TabManager {
         View currentTabGroupView = tabGroup.getView();
         pauseTabGroupExclude(tabGroup);
         mainActivity.setCurrentView(currentTabGroupView);
+        getCurrentTabGroup().onResume();
         mainActivity.refreshBottomBar();
     }
 

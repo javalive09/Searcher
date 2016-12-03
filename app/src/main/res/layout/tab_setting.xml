@@ -2,15 +2,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
-    <TextView
-        android:id="@+id/version"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:gravity="center"
-        android:drawableTop="@drawable/icon"
-        android:layout_margin="@dimen/setting_version_margin"/>
-
     <ListView
         android:id="@+id/setting_list"
         android:layout_below="@+id/version"

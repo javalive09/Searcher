@@ -34,6 +34,9 @@ public class HomeTab extends LocalViewTab implements View.OnClickListener{
     @Override
     public void onCreate() {
 
+        TextView version = (TextView) mainActivity.findViewById(R.id.version);
+        version.setText(mainActivity.getVersionName());
+
         GridView fastEnter = (GridView) mainActivity.findViewById(R.id.fast_enter);
         ArrayList<IconItem> iconItems = new ArrayList<>();
         IconItem navigation = new IconItem();
