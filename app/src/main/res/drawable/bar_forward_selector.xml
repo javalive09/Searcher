@@ -1,14 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<level-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-        android:drawable="@drawable/bar_forward_chrome_color"
-        android:maxLevel="0" />
-    <item
-        android:drawable="@drawable/bar_forward_gray"
-        android:maxLevel="1" />
-    <item
-        android:drawable="@drawable/clear_chrome_color"
-        android:maxLevel="2" />
-
-</level-list>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/clear_chrome_color" android:state_activated="true"/>
+    <item android:drawable="@drawable/bar_forward_chrome_color" android:state_enabled="true"/>
+    <item android:drawable="@drawable/bar_forward_gray" android:state_enabled="false"/>
+</selector>
 

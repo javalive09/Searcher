@@ -13,6 +13,7 @@
 
     <color name="item_normal">#ffffff</color>
     <color name="item_press">#88cccccc</color>
+    <color name="menu_press">#cccccccc</color>
 
     <color name="transparent">#00000000</color>
     <color name="half_transparent">#e0000000</color>

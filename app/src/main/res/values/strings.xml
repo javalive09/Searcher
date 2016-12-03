@@ -38,13 +38,13 @@
     <string name="action_cancel">取消</string>
     <string name="action_share">分享</string>
     <string name="action_refresh">刷新</string>
-    <string name="action_exit">退出程序</string>
+    <string name="action_exit">退出</string>
     <string name="favorite_txt">已经添加到收藏夹</string>
     <string name="copy_link_txt">已经复制链接</string>
     <string name="action_browser">在浏览器中打开</string>
     <string name="action_collect">收藏</string>
     <string name="action_collection">我的收藏</string>
-    <string name="action_copy_link">复制链接</string>
+    <string name="action_copy_link">复制url</string>
     <string name="action_history">搜索记录</string>
     <string name="action_history_url">浏览记录</string>
     <string name="action_url_history">浏览记录</string>

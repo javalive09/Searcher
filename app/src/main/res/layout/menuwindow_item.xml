@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/menu_window_item"
-    android:layout_width="match_parent"
-    android:layout_height="@dimen/multi_window_item_h"
-    android:background="@drawable/multi_item_selector"
-    android:orientation="horizontal">
+              android:id="@+id/menu_window_item"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="@drawable/menu_selector"
+              android:orientation="vertical"
+              android:padding="@dimen/menu_padding">
 
     <ImageView
         android:id="@+id/icon"
-        android:layout_width="@dimen/multi_window_item_icon_cell"
-        android:layout_height="@dimen/multi_window_item_icon_cell"
-        android:layout_gravity="center_vertical"
-        android:layout_marginLeft="@dimen/multi_window_icon_margin"
-        android:layout_marginRight="@dimen/multi_window_icon_margin"
-        android:background="@drawable/web_site_icon"
-        android:visibility="gone"/>
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+
+        android:src="@drawable/menu_copy"/>
 
     <TextView
         android:id="@+id/title"
-        android:layout_width="0px"
-        android:layout_height="@dimen/multi_window_item_h"
-        android:layout_gravity="center_vertical"
-        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
         android:gravity="center"
-        android:singleLine="true" />
+        android:paddingTop="@dimen/menu_padding"
+        android:singleLine="true"
+        android:text="@string/action_copy_link"/>
 
 </LinearLayout>
