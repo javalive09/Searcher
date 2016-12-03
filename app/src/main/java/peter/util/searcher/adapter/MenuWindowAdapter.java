@@ -59,7 +59,6 @@ public class MenuWindowAdapter extends BaseAdapter {
 
         Integer itemRes = getItem(position);
         if (itemRes != null) {
-            convertView.setActivated(true);
             holder.title.setText(itemRes);
             convertView.setOnClickListener(mainActivity);
             convertView.setTag(R.id.menu_window_item_tag, itemRes);

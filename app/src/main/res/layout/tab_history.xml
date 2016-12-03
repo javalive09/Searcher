@@ -4,8 +4,19 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/top_h"
+        android:textStyle="bold"
+        android:textSize="17sp"
+        android:text="@string/fast_enter_history"
+        android:gravity="center"/>
+
     <ListView
         android:id="@+id/history"
+        android:layout_below="@+id/title"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 

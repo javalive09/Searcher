@@ -127,7 +127,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             }
         });
 
-        multiWindowdialog.findViewById(R.id.add).setActivated(true);
         multiWindowdialog.findViewById(R.id.add).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -315,7 +314,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 switch (itemRes) {
                     case R.string.action_exit:
                         exit();
-                        break;
+                        return;
                     case R.string.action_copy_link:
                         String url = getManager().getCurrentTabGroup().getUrl();
                         String title = getManager().getCurrentTabGroup().getTitle();

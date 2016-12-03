@@ -2,9 +2,19 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/top_h"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:textSize="17sp"
+        android:text="@string/fast_enter_setting"/>
+
     <ListView
         android:id="@+id/setting_list"
-        android:layout_below="@+id/version"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:layout_below="@+id/title"/>
 </RelativeLayout>
