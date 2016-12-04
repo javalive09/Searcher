@@ -179,43 +179,40 @@ public class MyWebClient extends WebViewClient {
 
     @Override
     public boolean shouldOverrideUrlLoading(@NonNull WebView view, @NonNull String url) {
-        if (url.startsWith("about:") && Utils.doesSupportHeaders()) {
-            view.loadUrl(url);
-            return true;
-        }
-        if (url.startsWith("mailto:")) {
-            MailTo mailTo = MailTo.parse(url);
-            Intent i = Utils.newEmailIntent(mailTo.getTo(), mailTo.getSubject(),
-                    mailTo.getBody(), mailTo.getCc());
-            mainActivity.startActivity(i);
-            view.reload();
-            return true;
-        } else if (url.startsWith("intent://")) {
-            Intent intent;
-            try {
-                intent = Intent.parseUri(url, Intent.URI_INTENT_SCHEME);
-            } catch (URISyntaxException ignored) {
-                intent = null;
-            }
-            if (intent != null) {
-                intent.addCategory(Intent.CATEGORY_BROWSABLE);
-                intent.setComponent(null);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
-                    intent.setSelector(null);
-                }
-                try {
-                    mainActivity.startActivity(intent);
-                } catch (ActivityNotFoundException e) {
-                    e.printStackTrace();
-                }
-                return true;
-            }
-        }
-
-        if (Utils.doesSupportHeaders()) {
-            view.loadUrl(url, null);
-        }
-        return Utils.doesSupportHeaders() || super.shouldOverrideUrlLoading(view, url);
+//        if (url.startsWith("about:") && Utils.doesSupportHeaders()) {
+//            view.loadUrl(url);
+//            return true;
+//        }
+//        if (url.startsWith("mailto:")) {
+//            MailTo mailTo = MailTo.parse(url);
+//            Intent i = Utils.newEmailIntent(mailTo.getTo(), mailTo.getSubject(),
+//                    mailTo.getBody(), mailTo.getCc());
+//            mainActivity.startActivity(i);
+//            view.reload();
+//            return true;
+//        } else if (url.startsWith("intent://")) {
+//            Intent intent;
+//            try {
+//                intent = Intent.parseUri(url, Intent.URI_INTENT_SCHEME);
+//            } catch (URISyntaxException ignored) {
+//                intent = null;
+//            }
+//            if (intent != null) {
+//                intent.addCategory(Intent.CATEGORY_BROWSABLE);
+//                intent.setComponent(null);
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
+//                    intent.setSelector(null);
+//                }
+//                try {
+//                    mainActivity.startActivity(intent);
+//                } catch (ActivityNotFoundException e) {
+//                    e.printStackTrace();
+//                }
+//                return true;
+//            }
+//        }
+//        return mIntentUtils.startActivityForUrl(view, url);
+        return false;
     }
 
 }

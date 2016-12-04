@@ -284,7 +284,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         TextView searchBotton = (TextView) findViewById(R.id.search);
         String url = manager.getCurrentTabGroup().getCurrentTab().getUrl();
-        if(url.equals(Tab.URL_HOME)) {
+        if(Tab.URL_HOME.equals(url)) {
             searchBotton.setHint(R.string.search_hint);
         }else {
             String title = manager.getCurrentTabGroup().getCurrentTab().getTitle();
