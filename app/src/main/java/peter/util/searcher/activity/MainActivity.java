@@ -43,6 +43,8 @@ import peter.util.searcher.tab.SettingTab;
 import peter.util.searcher.tab.Tab;
 import peter.util.searcher.tab.TabGroup;
 import peter.util.searcher.utils.UrlUtils;
+import peter.util.searcher.view.DialogContainer;
+import peter.util.searcher.view.DialogContainerRoot;
 import peter.util.searcher.view.MenuWindowGridView;
 import peter.util.searcher.view.MultiWindowListView;
 
@@ -103,7 +105,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         menuList.setAdapter(menuWindowAdapter);
         menuDialog.getWindow().getAttributes().windowAnimations = R.style.multiwindow_anim;
         menuDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-        menuList.setOutSideTouchItemCallBack(new MenuWindowGridView.OutSideTouchItemCallBack() {
+        DialogContainer container = (DialogContainer) menuDialog.findViewById(R.id.menu_window_container);
+
+        container.setOutSideTouchItemCallBack(new DialogContainer.OutSideTouchItemCallBack() {
             @Override
             public void outside() {
                 menuDialog.dismiss();
@@ -125,7 +129,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         multiTabListView.setAdapter(multiWindowAdapter);
         multiWindowdialog.getWindow().getAttributes().windowAnimations = R.style.multiwindow_anim;
         multiWindowdialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-        multiTabListView.setOutSideTouchItemCallBack(new MultiWindowListView.OutSideTouchItemCallBack() {
+        DialogContainer container = (DialogContainer) multiWindowdialog.findViewById(R.id.multi_window_container);
+        container.setOutSideTouchItemCallBack(new DialogContainer.OutSideTouchItemCallBack() {
             @Override
             public void outside() {
                 multiWindowdialog.dismiss();
@@ -207,10 +212,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     public void loadHome() {
-//        loadUrl(Tab.URL_HOME, true);
+        loadUrl(Tab.URL_HOME, true);
 //        loadUrl("http://m.2345.com/websitesNavigation.htm", true);
 //        loadUrl(getString(R.string.fast_enter_navigation_url), true);
-        loadUrl("http://top.baidu.com/m#buzz/1", true);
+//        loadUrl("http://top.baidu.com/m#buzz/1", true);
     }
 
     public void loadUrl(String url, String searchWord, boolean newTab) {
@@ -276,6 +281,16 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             findViewById(R.id.go_forward).setEnabled(false);
             findViewById(R.id.go_forward).setActivated(false);
         }
+
+        TextView searchBotton = (TextView) findViewById(R.id.search);
+        String url = manager.getCurrentTabGroup().getCurrentTab().getUrl();
+        if(url.equals(Tab.URL_HOME)) {
+            searchBotton.setHint(R.string.search_hint);
+        }else {
+            String title = manager.getCurrentTabGroup().getCurrentTab().getTitle();
+            searchBotton.setHint(title);
+        }
+
     }
 
     @Override
@@ -312,8 +327,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
                 break;
             case R.id.multi_btn:
-                multiWindowdialog.show();
                 updateMultiwindow();
+                multiWindowdialog.show();
+
                 break;
             case R.id.menu:
                 menuDialog.show();

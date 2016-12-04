@@ -16,7 +16,7 @@ import peter.util.searcher.tab.TabGroup;
 
 public class TabManager {
 
-    private static final int MAX_TAB = 20;
+    private static final int MAX_TAB = 9;
     private ArrayList<TabGroup> tabGroupArrayList = new ArrayList<>(MAX_TAB);
     private MainActivity mainActivity;
     private int mCurrentTabIndex;

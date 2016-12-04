@@ -10,6 +10,7 @@
         android:gravity="center"
         android:textStyle="bold"
         android:textSize="17sp"
+        android:background="@color/chrome_top_color"
         android:text="@string/fast_enter_setting"/>
 
     <ListView

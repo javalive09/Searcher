@@ -13,8 +13,6 @@ import android.widget.RelativeLayout;
 
 public class MultiWindowListView extends ListView {
 
-    private OutSideTouchItemCallBack outSideTouchItemCallBack;
-
     public MultiWindowListView(Context context) {
         super(context);
     }
@@ -27,22 +25,8 @@ public class MultiWindowListView extends ListView {
         super(context, attrs, defStyleAttr);
     }
 
-    public void setOutSideTouchItemCallBack(OutSideTouchItemCallBack callBack) {
-        outSideTouchItemCallBack = callBack;
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            if (outSideTouchItemCallBack != null) {
-                outSideTouchItemCallBack.outside();
-                Log.i("peter", "--");
-            }
-        }
-        return super.onTouchEvent(event);
-    }
-
-    public interface OutSideTouchItemCallBack {
-        void outside();
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        int expandSpec = MeasureSpec.makeMeasureSpec(Integer.MAX_VALUE / 2 , MeasureSpec.AT_MOST);
+        super.onMeasure(widthMeasureSpec, expandSpec);
     }
 }
