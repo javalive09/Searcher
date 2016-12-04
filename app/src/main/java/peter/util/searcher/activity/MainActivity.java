@@ -298,8 +298,17 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         super.onDestroy();
     }
 
+    public void exit() {
+        super.exit();
+        menuDialog.dismiss();
+        multiWindowdialog.dismiss();
+        menuDialog = null;
+        multiWindowdialog = null;
+    }
+
     @Override
     public void onClick(View v) {
+
         switch (v.getId()) {
             case R.id.go_back:
                 Tab tab = manager.getCurrentTabGroup();
@@ -327,20 +336,28 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
                 break;
             case R.id.multi_btn:
-                updateMultiwindow();
-                multiWindowdialog.show();
+                if(multiWindowdialog != null) {
+                    multiWindowdialog.show();
+                    updateMultiwindow();
+                }
 
                 break;
             case R.id.menu:
-                menuDialog.show();
+                if(menuDialog != null) {
+                    menuDialog.show();
+                }
                 break;
             case R.id.close_tab:
-                TabGroup tabGroup = (TabGroup) v.getTag();
-                manager.removeTabGroup(tabGroup);
-                updateMultiwindow();
+                if(manager.getTabGroupCount() == 1) {
+                    exit();
+                }else {
+                    TabGroup tabGroup = (TabGroup) v.getTag();
+                    manager.removeTabGroup(tabGroup);
+                    updateMultiwindow();
+                }
                 break;
             case R.id.multi_window_item:
-                tabGroup = (TabGroup) v.getTag(R.id.multi_window_item_tag);
+                TabGroup tabGroup = (TabGroup) v.getTag(R.id.multi_window_item_tag);
                 manager.switchTabGroup(tabGroup);
                 multiWindowdialog.dismiss();
                 break;

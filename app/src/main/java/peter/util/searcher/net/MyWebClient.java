@@ -37,7 +37,7 @@ import peter.util.searcher.utils.Utils;
 /**
  *
  * Created by peter on 16/6/6.
- * 
+ *
  */
 public class MyWebClient extends WebViewClient {
     private MainActivity mainActivity;
@@ -211,7 +211,11 @@ public class MyWebClient extends WebViewClient {
                 return true;
             }
         }
-        return mIntentUtils.startActivityForUrl(view, url);
+
+        if (Utils.doesSupportHeaders()) {
+            view.loadUrl(url, null);
+        }
+        return Utils.doesSupportHeaders() || super.shouldOverrideUrlLoading(view, url);
     }
 
 }

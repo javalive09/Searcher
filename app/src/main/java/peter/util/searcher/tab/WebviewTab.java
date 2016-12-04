@@ -50,11 +50,9 @@ public class WebViewTab extends SearcherTab {
     @Override
     public void onDestory() {
         if(mWebView != null) {
-            mWebView.clearHistory();
             mWebView.clearCache(true);
             mWebView.loadUrl("about:blank");
-            mWebView.freeMemory();
-            mWebView.pauseTimers();
+            mWebView.destroy();
             mWebView = null;
         }
     }
@@ -199,8 +197,8 @@ public class WebViewTab extends SearcherTab {
         settings.setAllowFileAccess(true);
         settings.setAllowFileAccessFromFileURLs(false);
         settings.setAllowUniversalAccessFromFileURLs(false);
-        settings.setSavePassword(true);
-        settings.setSaveFormData(true);
+//        settings.setSavePassword(true);
+//        settings.setSaveFormData(true);
         settings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.TEXT_AUTOSIZING);
     }
 

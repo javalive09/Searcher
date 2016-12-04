@@ -72,8 +72,6 @@ public class TabManager {
                 int indexNext = tabGroupArrayList.size() - 1;
                 TabGroup tabGroupNext = tabGroupArrayList.get(indexNext);
                 switchTabGroup(tabGroupNext);
-            }else {
-                mainActivity.finish();
             }
         }
     }

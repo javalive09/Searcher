@@ -27,11 +27,11 @@
 
     <ImageView
         android:id="@+id/close_tab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/multi_window_item_h"
+        android:layout_height="@dimen/multi_window_item_h"
         android:layout_gravity="center_vertical"
-        android:layout_marginLeft="@dimen/multi_window_icon_margin"
-        android:layout_marginRight="@dimen/multi_window_icon_margin"
-        android:background="@drawable/clear" />
+        android:scaleType="center"
+        android:src="@drawable/clear"
+        android:background="@drawable/list_item_selector" />
 
 </LinearLayout>
