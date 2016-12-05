@@ -1,287 +1,181 @@
 package peter.util.searcher.activity;
 
-import android.animation.ValueAnimator;
-import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
+import android.app.Dialog;
 import android.app.SearchManager;
 import android.content.ClipData;
 import android.content.ClipboardManager;
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.Bitmap;
-import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LevelListDrawable;
-import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.graphics.Palette;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.webkit.CookieManager;
-import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.PopupMenu;
-import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.umeng.analytics.MobclickAgent;
 
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.HashMap;
 
+import peter.util.searcher.adapter.MenuWindowAdapter;
+import peter.util.searcher.adapter.MultiWindowAdapter;
 import peter.util.searcher.bean.Bean;
-import peter.util.searcher.utils.DrawableUtils;
-import peter.util.searcher.net.MyWebChromeClient;
-import peter.util.searcher.net.MyWebClient;
 import peter.util.searcher.R;
 import peter.util.searcher.db.SqliteHelper;
+import peter.util.searcher.tab.FavoriteTab;
+import peter.util.searcher.tab.HistoryTab;
+import peter.util.searcher.tab.HomeTab;
+import peter.util.searcher.tab.SearcherTab;
+import peter.util.searcher.tab.SettingTab;
+import peter.util.searcher.tab.Tab;
+import peter.util.searcher.tab.TabGroup;
 import peter.util.searcher.utils.UrlUtils;
-import peter.util.searcher.download.MyDownloadListener;
-import peter.util.searcher.view.ObservableWebView;
+import peter.util.searcher.view.DialogContainer;
+import peter.util.searcher.view.DialogContainerRoot;
+import peter.util.searcher.view.MenuWindowGridView;
+import peter.util.searcher.view.MultiWindowListView;
 
 /**
  * Created by peter on 16/5/9.
  */
 public class MainActivity extends BaseActivity implements View.OnClickListener {
 
-    private static final int API = Build.VERSION.SDK_INT;
     private View bottomBar;
-    private ObservableWebView webview;
-    private View progressBar;
+    private TabManager manager;
+    private TextView multiWindow;
+    private FrameLayout mContainer;
+    private HashMap<String, Class> router = new HashMap<>();
+
+    private MenuWindowAdapter menuWindowAdapter;
+    private Dialog menuDialog;
+
+    private MultiWindowAdapter multiWindowAdapter;
+    private Dialog multiWindowdialog;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         Intent intent = getIntent();
         if (intent != null) {
-            Set<String> category = intent.getCategories();
-            if (category != null && category.contains(Intent.CATEGORY_LAUNCHER)) {//launcher invoke
-                startActivity(new Intent(MainActivity.this, EnterActivity.class));
-                finish();
-            } else {
-                setContentView(R.layout.activity_main);
-                init();
-                checkIntentData(intent);
-            }
+            setContentView(R.layout.activity_main);
+            init();
+            checkIntentData(intent);
         }
-    }
-
-    public String getWebViewTitle() {
-        String title = "";
-        if (webview != null) {
-            title = webview.getTitle();
-            title = TextUtils.isEmpty(title) ? webview.getUrl() : title;
-            final int edge = getResources().getDimensionPixelOffset(R.dimen.bottom_h);
-            final View bottomBar = findViewById(R.id.bottom_bar);
-//            webview.setOnScrollChangedCallback(new ObservableWebView.OnScrollChangedCallback() {
-//                @Override
-//                public void onScroll(int l, int t, int oldl, int oldt) {
-//
-//                    if(t > oldt) {// up
-//                        ViewGroup.LayoutParams params = bottomBar.getLayoutParams();
-//                        params.height = bottomBar.getMeasuredHeight();
-//                        if(params.height != 0) {
-//                            params.height = params.height + (oldt - t);
-//                            if(params.height < 0 ) {
-//                                params.height = 0;
-//                            }
-//                            bottomBar.setLayoutParams(params);
-//                        }
-//                    }else { // down
-//                        ViewGroup.LayoutParams params = bottomBar.getLayoutParams();
-//                        params.height = bottomBar.getMeasuredHeight();
-//                        if(params.height != edge) {
-//                            params.height = params.height + (oldt - t);
-//                            if(params.height > edge) {
-//                                params.height = edge;
-//                            }
-//                            bottomBar.setLayoutParams(params);
-//                        }
-//                    }
-//
-//                    Log.i("peter", "top = " + t);
-//
-//                }
-//
-//                @Override
-//                public void ActionUp() {
-//                    int height = bottomBar.getMeasuredHeight();
-//                    if(height != 0 || height != edge) {
-//                        ValueAnimator animator;
-//                        if (height > edge / 2) {
-//                            animator = ValueAnimator.ofInt(height, edge);
-//                        } else {
-//                            animator = ValueAnimator.ofInt(height, 0);
-//                        }
-//                        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-//                            @Override
-//                            public void onAnimationUpdate(ValueAnimator animation) {
-//                                ViewGroup.LayoutParams params = bottomBar.getLayoutParams();
-//                                params.height = (int) animation.getAnimatedValue();
-//                                bottomBar.setLayoutParams(params);
-//                            }
-//                        });
-//                        animator.start();
-//                    }
-//                }
-//            });
-        }
-        return title;
     }
 
     private void init() {
-        webview = (ObservableWebView) findViewById(R.id.wv);
-        progressBar = findViewById(R.id.status);
         bottomBar = findViewById(R.id.bottom_bar);
-        initWebView(webview);
-        initializeSettings(webview);
+        mContainer = (FrameLayout) findViewById(R.id.container);
+        multiWindow = (TextView) findViewById(R.id.multi_btn_txt);
+        manager = new TabManager(MainActivity.this);
+        installLocalTabRounter();
+        initMenuDialog();
+        initMultiWindowDialog();
     }
 
-    private void initWebView(WebView webview) {
-        webview.setDrawingCacheBackgroundColor(Color.WHITE);
-        webview.setFocusableInTouchMode(true);
-        webview.setFocusable(true);
-        webview.setDrawingCacheEnabled(false);
-        webview.setWillNotCacheDrawing(true);
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP_MR1) {
-            //noinspection deprecation
-            webview.setAnimationCacheEnabled(false);
-            //noinspection deprecation
-            webview.setAlwaysDrawnWithCacheEnabled(false);
-        }
-        webview.setBackgroundColor(Color.WHITE);
-        webview.setScrollbarFadingEnabled(true);
-        webview.setSaveEnabled(true);
-        webview.setNetworkAvailable(true);
-        webview.setWebChromeClient(new MyWebChromeClient(this));
-        webview.setWebViewClient(new MyWebClient(this));
-        webview.setDownloadListener(new MyDownloadListener(this));
-        setUserAgent(MainActivity.this);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            CookieManager.getInstance().setAcceptThirdPartyCookies(webview, true);
-        }
-    }
+    private void initMenuDialog() {
+        menuDialog = new Dialog(MainActivity.this, R.style.multiwindow_Dialog);
+        menuDialog.setContentView(R.layout.layout_menu_window);
+        MenuWindowGridView menuList = (MenuWindowGridView) menuDialog.findViewById(R.id.menu_window);
+        ArrayList<MenuWindowAdapter.MenuItem> arrayList = new ArrayList<>();
 
-    /**
-     * Initialize the settings of the WebView that are intrinsic to Lightning and cannot
-     * be altered by the user. Distinguish between Incognito and Regular tabs here.
-     */
-    @SuppressLint("NewApi")
-    private void initializeSettings(WebView webview) {
-        if (webview == null) {
-            return;
-        }
-        final WebSettings settings = webview.getSettings();
-        if (API < Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            //noinspection deprecation
-            settings.setAppCacheMaxSize(Long.MAX_VALUE);
-        }
-        if (API < Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            //noinspection deprecation
-            settings.setEnableSmoothTransition(true);
-        }
-        if (API > Build.VERSION_CODES.JELLY_BEAN) {
-            settings.setMediaPlaybackRequiresUserGesture(true);
-        }
-        if (API >= Build.VERSION_CODES.LOLLIPOP) {
-            // We're in Incognito mode, reject
-            settings.setMixedContentMode(WebSettings.MIXED_CONTENT_NEVER_ALLOW);
-        }
-        settings.setJavaScriptEnabled(true);
-        settings.setJavaScriptCanOpenWindowsAutomatically(true);
-        settings.setLoadWithOverviewMode(true);
-        settings.setUseWideViewPort(true);
-        settings.setDomStorageEnabled(true);
-        settings.setCacheMode(WebSettings.LOAD_DEFAULT);
-        settings.setDatabaseEnabled(true);
-        settings.setSupportZoom(true);
-        settings.setBuiltInZoomControls(true);
-        settings.setDisplayZoomControls(false);
-        settings.setAllowContentAccess(true);
-        settings.setAllowFileAccess(true);
-        if (API >= Build.VERSION_CODES.JELLY_BEAN) {
-            settings.setAllowFileAccessFromFileURLs(false);
-            settings.setAllowUniversalAccessFromFileURLs(false);
-        }
-        settings.setSavePassword(true);
-        settings.setSaveFormData(true);
-        settings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.TEXT_AUTOSIZING);
-    }
+        arrayList.add(new MenuWindowAdapter.MenuItem(R.drawable.menu_favorite_plus, R.string.action_collect));
+        arrayList.add(new MenuWindowAdapter.MenuItem(R.drawable.menu_share, R.string.action_share));
+        arrayList.add(new MenuWindowAdapter.MenuItem(R.drawable.menu_copy, R.string.action_copy_link));
+        arrayList.add(new MenuWindowAdapter.MenuItem(R.drawable.menu_refresh, R.string.action_refresh));
+        arrayList.add(new MenuWindowAdapter.MenuItem(R.drawable.menu_favorite_folder, R.string.fast_enter_favorite));
+        arrayList.add(new MenuWindowAdapter.MenuItem(R.drawable.menu_history, R.string.fast_enter_history));
+        arrayList.add(new MenuWindowAdapter.MenuItem(R.drawable.menu_setting, R.string.fast_enter_setting));
+        arrayList.add(new MenuWindowAdapter.MenuItem(R.drawable.menu_power, R.string.action_exit));
+        menuWindowAdapter = new MenuWindowAdapter(MainActivity.this, arrayList);
+        menuList.setAdapter(menuWindowAdapter);
+        menuDialog.getWindow().getAttributes().windowAnimations = R.style.multiwindow_anim;
+        menuDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        DialogContainer container = (DialogContainer) menuDialog.findViewById(R.id.menu_window_container);
 
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
-    private void setUserAgent(Context context) {
-        if (webview == null) return;
-        WebSettings settings = webview.getSettings();
-        if (API >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            String def = WebSettings.getDefaultUserAgent(context);
-            settings.setUserAgentString(def);
-        } else {
-            settings.setUserAgentString(settings.getUserAgentString());
-        }
-    }
-
-//    public void setMainColor(Bitmap favicon) {
-//        Palette.from(favicon).generate(new Palette.PaletteAsyncListener() {
-//
-//            @Override
-//            public void onGenerated(Palette palette) {
-//                int defaultColor = getResources().getColor(R.color.colorPrimary);
-//                int mainColor = getSearchBarColor(palette.getVibrantColor(defaultColor));//real main color
-//                refreshStatusColor(mainColor);
-//            }
-//        });
-//    }
-
-    private int getSearchBarColor(int requestedColor) {
-        return DrawableUtils.mixColor(0.25f, requestedColor, Color.WHITE);
-    }
-
-//    private void refreshStatusColor(int animColor) {
-//        setBottomBarColor(animColor);
-//        if (API >= 21) {
-//            setStatusColor(animColor);
-//        }
-//    }
-
-    public void setBottomBarColor(int animColor) {
-        bottomBar.setBackgroundColor(animColor);
-    }
-
-    public void setStatusLevel(int level) {
-        LevelListDrawable d = (LevelListDrawable) progressBar.getBackground();
-        if (d.getLevel() != level) {
-            d.setLevel(level);
-        }
-    }
-
-    public void refreshOptStatus() {
-        final View back = findViewById(R.id.back);
-        if (webview.canGoBack()) {
-            if (back != null && !back.isEnabled()) {
-                back.setEnabled(true);
+        container.setOutSideTouchItemCallBack(new DialogContainer.OutSideTouchItemCallBack() {
+            @Override
+            public void outside() {
+                menuDialog.dismiss();
             }
-        } else {
-            if (back != null && back.isEnabled()) {
-                back.setEnabled(false);
-            }
+        });
+    }
+
+    public void updateMultiwindow() {
+        if (multiWindowAdapter != null) {
+            multiWindowAdapter.update(MainActivity.this);
         }
-        final View go = findViewById(R.id.go);
-        if (webview.canGoForward()) {
-            if (go != null && !go.isEnabled()) {
-                go.setEnabled(true);
+    }
+
+    private void initMultiWindowDialog() {
+        multiWindowdialog = new Dialog(MainActivity.this, R.style.multiwindow_Dialog);
+        multiWindowdialog.setContentView(R.layout.layout_multi_window);
+        MultiWindowListView multiTabListView = (MultiWindowListView) multiWindowdialog.findViewById(R.id.multi_window);
+        multiWindowAdapter = new MultiWindowAdapter();
+        multiTabListView.setAdapter(multiWindowAdapter);
+        multiWindowdialog.getWindow().getAttributes().windowAnimations = R.style.multiwindow_anim;
+        multiWindowdialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        DialogContainer container = (DialogContainer) multiWindowdialog.findViewById(R.id.multi_window_container);
+        container.setOutSideTouchItemCallBack(new DialogContainer.OutSideTouchItemCallBack() {
+            @Override
+            public void outside() {
+                multiWindowdialog.dismiss();
             }
-        } else {
-            if (go != null && go.isEnabled()) {
-                go.setEnabled(false);
+        });
+
+        multiWindowdialog.findViewById(R.id.add).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                multiWindowdialog.dismiss();
+                loadHome();
             }
-        }
+        });
+    }
+
+    private void installLocalTabRounter() {
+        router.put(Tab.URL_HOME, HomeTab.class);
+        router.put(Tab.URL_SETTING, SettingTab.class);
+        router.put(Tab.URL_FAVORITE, FavoriteTab.class);
+        router.put(Tab.URL_HISTORY, HistoryTab.class);
+    }
+
+    public Class getRounterClass(String url) {
+        return router.get(url);
+    }
+
+    public void setStatusLoading() {
+        findViewById(R.id.go_forward).setActivated(true);
+    }
+
+    public void setCurrentView(View view) {
+        mContainer.removeAllViews();
+        mContainer.addView(view);
+    }
+
+    public View setCurrentView(int viewId) {
+        mContainer.removeAllViews();
+        LayoutInflater factory = LayoutInflater.from(MainActivity.this);
+        View mView = factory.inflate(viewId, mContainer, false);
+        mContainer.addView(mView);
+        return mView;
+    }
+
+    public TabManager getManager() {
+        return manager;
     }
 
     @Override
@@ -290,17 +184,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         checkIntentData(intent);
     }
 
-//    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-//    public void setStatusColor(int color) {
-//        Window window = getWindow();
-//        // clear FLAG_TRANSLUCENT_STATUS flag:
-//        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-//        // add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
-//        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-//        // finally change the color
-//        window.setStatusBarColor(color);
-//    }
-
     private void checkIntentData(Intent intent) {
         if (intent != null) {
             String action = intent.getAction();
@@ -308,66 +191,106 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 String url = (String) intent.getSerializableExtra(NAME_URL);
                 if (!TextUtils.isEmpty(url)) {
                     String searchWord = intent.getStringExtra(NAME_WORD);
-                    loadUrl(url, searchWord);
+                    loadUrl(url, searchWord, false);
                 }
             } else if (Intent.ACTION_VIEW.equals(action)) { // outside invoke
                 String url = intent.getDataString();
                 if (!TextUtils.isEmpty(url)) {
-                    loadUrl(url, "");
+                    loadUrl(url, true);
                 }
             } else if (Intent.ACTION_WEB_SEARCH.equals(action)) {
                 String searchWord = intent.getStringExtra(SearchManager.QUERY);
                 String engineUrl = getString(R.string.default_engine_url);
                 String url = UrlUtils.smartUrlFilter(searchWord, true, engineUrl);
-                loadUrl(url, searchWord);
+                loadUrl(url, searchWord, true);
+            } else if (Intent.ACTION_MAIN.equals(action)) {
+                if (manager.getTabGroupCount() == 0) {
+                    loadHome();
+                }
             }
         }
+    }
+
+    public void loadHome() {
+        loadUrl(Tab.URL_HOME, true);
+//        loadUrl("http://m.2345.com/websitesNavigation.htm", true);
+//        loadUrl(getString(R.string.fast_enter_navigation_url), true);
+//        loadUrl("http://top.baidu.com/m#buzz/1", true);
+    }
+
+    public void loadUrl(String url, String searchWord, boolean newTab) {
+        manager.loadUrl(url, searchWord, newTab);
+    }
+
+    public void loadUrl(String url, boolean newTab) {
+        manager.loadUrl(url, newTab);
     }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if ((keyCode == KeyEvent.KEYCODE_BACK)) {
-            if (webview != null && webview.canGoBack()) {
-                webview.goBack();
+            if (manager.canGoBack()) {
+                manager.goBack();
                 return true;
             }
         }
         return super.onKeyDown(keyCode, event);
     }
 
-    private void loadUrl(String url, String searchWord) {
-        if (!TextUtils.isEmpty(url)) {
-            Log.i("peter", "url=" + url);
-            webview.loadUrl(url);
-            if (!TextUtils.isEmpty(searchWord)) {
-                saveData(searchWord, url);
-            }
-        }
+    public SearcherTab getCurrentTab() {
+        return manager.getCurrentTabGroup().getCurrentTab();
     }
 
-    private void saveData(final String word, final String url) {
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... params) {
-                Bean search = new Bean();
-                search.name = word;
-                search.time = System.currentTimeMillis();
-                search.url = url;
-                SqliteHelper.instance(getApplicationContext()).insertHistory(search);
-                return null;
-            }
-        }.execute();
+    public void removeTabGroup(SearcherTab tab) {
+        TabGroup tabGroup = manager.getTabGroup(tab);
+        if (tabGroup != null) {
+            manager.removeTabGroup(tabGroup);
+        }
     }
 
     protected void onResume() {
         super.onResume();
+        manager.resumeTabGroupExclude(null);
         MobclickAgent.onResume(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        manager.pauseTabGroupExclude(null);
         MobclickAgent.onPause(this);
+    }
+
+    public void refreshBottomBar() {
+        //multi button
+        int count = manager.getTabGroupCount();
+        multiWindow.setText(count + "");
+
+        //go back
+        if (manager.getCurrentTabGroup().canGoBack()) {
+            findViewById(R.id.go_back).setEnabled(true);
+        } else {
+            findViewById(R.id.go_back).setEnabled(false);
+        }
+
+        //go forward
+        if (manager.getCurrentTabGroup().canGoForward()) {
+            findViewById(R.id.go_forward).setEnabled(true);
+            findViewById(R.id.go_forward).setActivated(false);
+        } else {
+            findViewById(R.id.go_forward).setEnabled(false);
+            findViewById(R.id.go_forward).setActivated(false);
+        }
+
+        TextView searchBotton = (TextView) findViewById(R.id.search);
+        String url = manager.getCurrentTabGroup().getCurrentTab().getUrl();
+        if(Tab.URL_HOME.equals(url)) {
+            searchBotton.setHint(R.string.search_hint);
+        }else {
+            String title = manager.getCurrentTabGroup().getCurrentTab().getTitle();
+            searchBotton.setHint(title);
+        }
+
     }
 
     @Override
@@ -375,82 +298,126 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         super.onDestroy();
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.back:
-                if (webview.canGoBack()) {
-                    webview.goBack();
-                }
-                break;
-            case R.id.go:
-                if (webview.canGoForward()) {
-                    webview.goForward();
-                }
-                break;
-            case R.id.home:
-                startActivity(new Intent(MainActivity.this, EnterActivity.class));
-                break;
-            case R.id.refresh:
-                webview.reload();
-                break;
-            case R.id.menu:
-                popupMenu(v);
-                break;
-        }
+    public void exit() {
+        super.exit();
+        menuDialog.dismiss();
+        multiWindowdialog.dismiss();
+        menuDialog = null;
+        multiWindowdialog = null;
     }
 
-    private void popupMenu(View menu) {
-        PopupMenu popup = new PopupMenu(this, menu);
-        popup.getMenuInflater().inflate(R.menu.web, popup.getMenu());
-        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.action_browser:
-                        String url = webview.getUrl();
-                        Intent intent = new Intent();
-                        intent.setAction("android.intent.action.VIEW");
-                        Uri content_url = Uri.parse(url);
-                        intent.setData(content_url);
-                        startActivity(intent);
+    @Override
+    public void onClick(View v) {
+
+        switch (v.getId()) {
+            case R.id.go_back:
+                Tab tab = manager.getCurrentTabGroup();
+                if (tab.canGoBack()) {
+                    tab.goBack();
+                }
+                break;
+            case R.id.go_forward:
+                if (v.isActivated()) {
+                    View view = manager.getCurrentTabGroup().getCurrentTab().getView();
+                    if (view instanceof WebView) {
+                        ((WebView) view).stopLoading();
+                        refreshBottomBar();
+                    }
+                } else if (v.isEnabled()) {
+                    tab = manager.getCurrentTabGroup();
+                    if (tab.canGoForward()) {
+                        tab.goForward();
+                    }
+                }
+                break;
+            case R.id.search:
+                String content = manager.getCurrentTabGroup().getCurrentTab().getSearchWord();
+                startSearcheActivity(content);
+
+                break;
+            case R.id.multi_btn:
+                if(multiWindowdialog != null) {
+                    multiWindowdialog.show();
+                    updateMultiwindow();
+                }
+
+                break;
+            case R.id.menu:
+                if(menuDialog != null) {
+                    menuDialog.show();
+                }
+                break;
+            case R.id.close_tab:
+                if(manager.getTabGroupCount() == 1) {
+                    exit();
+                }else {
+                    TabGroup tabGroup = (TabGroup) v.getTag();
+                    manager.removeTabGroup(tabGroup);
+                    updateMultiwindow();
+                }
+                break;
+            case R.id.multi_window_item:
+                TabGroup tabGroup = (TabGroup) v.getTag(R.id.multi_window_item_tag);
+                manager.switchTabGroup(tabGroup);
+                multiWindowdialog.dismiss();
+                break;
+            case R.id.menu_window_item:
+                MenuWindowAdapter.MenuItem itemRes = (MenuWindowAdapter.MenuItem) v.getTag(R.id.menu_window_item_tag);
+                switch (itemRes.titleRes) {
+                    case R.string.action_exit:
+                        exit();
+                        return;
+                    case R.string.action_copy_link:
+                        String url = getManager().getCurrentTabGroup().getUrl();
+                        String title = getManager().getCurrentTabGroup().getTitle();
+                        ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+                        ClipData clip = ClipData.newPlainText(title, url);
+                        clipboard.setPrimaryClip(clip);
+                        Toast.makeText(MainActivity.this, R.string.copy_link_txt, Toast.LENGTH_SHORT).show();
                         break;
-                    case R.id.action_share:
-                        url = webview.getUrl();
+                    case R.string.action_collect:
+                        if (!TextUtils.isEmpty(getManager().getCurrentTabGroup().getUrl())) {
+                            Bean bean = new Bean();
+                            bean.name = getManager().getCurrentTabGroup().getTitle();
+                            if (TextUtils.isEmpty(bean.name)) {
+                                bean.name = getManager().getCurrentTabGroup().getUrl();
+                            }
+                            bean.url = getManager().getCurrentTabGroup().getUrl();
+                            bean.time = System.currentTimeMillis();
+                            SqliteHelper.instance(MainActivity.this).insertFav(bean);
+                            Toast.makeText(MainActivity.this, R.string.favorite_txt, Toast.LENGTH_SHORT).show();
+                        }
+                        break;
+                    case R.string.action_share:
+                        url = getManager().getCurrentTabGroup().getUrl();
                         Intent sendIntent = new Intent();
                         sendIntent.setAction(Intent.ACTION_SEND);
                         sendIntent.putExtra(Intent.EXTRA_TEXT, url);
                         sendIntent.setType("text/plain");
                         startActivity(Intent.createChooser(sendIntent, getString(R.string.share_link_title)));
                         break;
-                    case R.id.action_collect:
-                        if (!TextUtils.isEmpty(webview.getUrl())) {
-                            Bean bean = new Bean();
-                            bean.name = webview.getTitle();
-                            if (TextUtils.isEmpty(bean.name)) {
-                                bean.name = webview.getUrl();
-                            }
-                            bean.url = webview.getUrl();
-                            bean.time = System.currentTimeMillis();
-                            SqliteHelper.instance(MainActivity.this).insertFav(bean);
-                            Toast.makeText(MainActivity.this, R.string.favorite_txt, Toast.LENGTH_SHORT).show();
-                        }
+                    case R.string.action_refresh:
+                        getManager().getCurrentTabGroup().reload();
                         break;
-                    case R.id.action_copy_link:
-                        url = webview.getUrl();
-                        String title = webview.getTitle();
-                        ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-                        ClipData clip = ClipData.newPlainText(title, url);
-                        clipboard.setPrimaryClip(clip);
-                        Toast.makeText(MainActivity.this, R.string.copy_link_txt, Toast.LENGTH_SHORT).show();
+                    case R.string.fast_enter_favorite:
+                        loadUrl(Tab.URL_FAVORITE, false);
                         break;
-                    case R.id.action_exit:
-                        exit();
+                    case R.string.fast_enter_history:
+                        loadUrl(Tab.URL_HISTORY, false);
+                        break;
+                    case R.string.fast_enter_setting:
+                        loadUrl(Tab.URL_SETTING, false);
                         break;
                 }
-                return true;
-            }
-        });
-        popup.show();
+                menuDialog.dismiss();
+                break;
+        }
+    }
+
+    public void startSearcheActivity(String word) {
+        Intent intent = new Intent(MainActivity.this, SearchActivity.class);
+        intent.putExtra(NAME_WORD, word);
+        startActivity(intent);
     }
 
     @Override

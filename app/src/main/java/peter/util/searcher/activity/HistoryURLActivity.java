@@ -87,9 +87,9 @@ public class HistoryURLActivity extends BaseActivity implements View.OnClickList
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.back:
-                finish();
-                break;
+//            case R.id.back:
+//                finish();
+//                break;
             case R.id.history_item:
                 Bean bean = (Bean) v.getTag();
                 if (bean != null) {

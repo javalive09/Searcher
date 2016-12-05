@@ -77,9 +77,9 @@ public class FavoriteActivity extends BaseActivity implements View.OnClickListen
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.back:
-                finish();
-                break;
+//            case R.id.back:
+//                finish();
+//                break;
             case R.id.favorite_item:
                 Bean bean = (Bean) v.getTag();
                 if(bean != null) {

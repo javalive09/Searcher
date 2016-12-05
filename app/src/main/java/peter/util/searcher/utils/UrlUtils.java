@@ -30,7 +30,7 @@ public class UrlUtils {
     private static final Pattern ACCEPTED_URI_SCHEMA = Pattern.compile(
             "(?i)" + // switch on case insensitive matching
                     '(' +    // begin group for schema
-                    "(?:http|https|file)://" +
+                    "(?:http|https|file|local)://" +
                     "|(?:inline|data|about|javascript):" +
                     "|(?:.*:.*@)" +
                     ')' +
@@ -104,6 +104,22 @@ public class UrlUtils {
                     searchUrl, QUERY_PLACE_HOLDER);
         }
         return "";
+    }
+
+    public static boolean guessUrl(String url) {
+        String inUrl = url.trim();
+        if (Patterns.WEB_URL.matcher(inUrl).matches()) {
+            String guessUrl = URLUtil.guessUrl(inUrl);
+            return isUrl(guessUrl);
+        }else if(url.startsWith("local://")){
+            return true;
+        }
+        return false;
+    }
+
+    public static String getGuessUrl(String url) {
+        String inUrl = url.trim();
+        return URLUtil.guessUrl(inUrl);
     }
 
     public static boolean isUrl(String url) {

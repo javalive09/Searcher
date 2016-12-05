@@ -1,4 +1,4 @@
-package peter.util.searcher.engine;
+package peter.util.searcher.fragment;
 
 import android.app.Fragment;
 import android.os.AsyncTask;
@@ -24,13 +24,11 @@ import peter.util.searcher.bean.Bean;
 /**
  * Created by peter on 16/5/9.
  */
-public class RecentSearchFragment extends Fragment implements View.OnClickListener, View.OnLongClickListener {
+public class RecentSearchFragment extends BaseFragment implements View.OnClickListener, View.OnLongClickListener {
 
     View rootView;
     PopupMenu popup;
     MyAsyncTask asyncTask;
-    View js;
-    String url = "http://200code.com/[object%20Object]/Searcher%E5%BF%AB%E9%80%9F%E6%90%9C%E7%B4%A2/";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -41,8 +39,6 @@ public class RecentSearchFragment extends Fragment implements View.OnClickListen
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_recent_search, container, false);
-        js = rootView.findViewById(R.id.js);
-        js.setOnClickListener(this);
         return rootView;
     }
 
@@ -58,17 +54,13 @@ public class RecentSearchFragment extends Fragment implements View.OnClickListen
         switch (v.getId()) {
             case R.id.recent_search_item:
                 if (bean != null) {
-                    EnterActivity enterActivity = (EnterActivity) getActivity();
-                    enterActivity.setSearchWord(bean.name);
+                    BaseActivity activity = (BaseActivity) getActivity();
+                    activity.setSearchWord(bean.name);
+
                 }
-                break;
-            case R.id.js:
-                BaseActivity act = (BaseActivity) getActivity();
-                act.startBrowser(url, "");
                 break;
         }
     }
-
 
     private void refreshData() {
         cancelAsyncTask();
@@ -127,14 +119,11 @@ public class RecentSearchFragment extends Fragment implements View.OnClickListen
                     }
                     if (beans != null) {
 
-                        if(beans.size() > 0) {
-                            f.js.setVisibility(View.GONE);
+                        if (beans.size() > 0) {
                             ListView recentSearch = (ListView) f.rootView.findViewById(R.id.recent_search);
                             if (recentSearch != null) {
                                 recentSearch.setAdapter(new RecentSearchAdapter(beans, f));
                             }
-                        }else {
-                            f.js.setVisibility(View.VISIBLE);
                         }
                     }
                 }

@@ -1,7 +1,12 @@
 <resources>
     <string name="search">输入网址或搜索</string>
     <string name="app_name">速搜</string>
+    <string name="search_hint">搜索或输入网址</string>
     <string name="app_js">速搜能用来干什么?</string>
+    <string name="operate_url_copy">复制网址</string>
+    <string name="operate_url_share">分享网址</string>
+    <string name="operate_url_enter">进入网址</string>
+    <string name="operate_url_paste">从剪切板粘贴</string>
     <string name="news_163">网易新闻</string>
     <string name="history_today_title">历史.今天</string>
     <string name="weeks_weather">天气预报</string>
@@ -32,13 +37,14 @@
 
     <string name="action_cancel">取消</string>
     <string name="action_share">分享</string>
-    <string name="action_exit">退出程序</string>
+    <string name="action_refresh">刷新</string>
+    <string name="action_exit">退出</string>
     <string name="favorite_txt">已经添加到收藏夹</string>
     <string name="copy_link_txt">已经复制链接</string>
     <string name="action_browser">在浏览器中打开</string>
     <string name="action_collect">收藏</string>
     <string name="action_collection">我的收藏</string>
-    <string name="action_copy_link">复制链接</string>
+    <string name="action_copy_link">复制url</string>
     <string name="action_history">搜索记录</string>
     <string name="action_history_url">浏览记录</string>
     <string name="action_url_history">浏览记录</string>
@@ -74,6 +80,14 @@
     <string name="action_yes">确认</string>
     <string name="action_no">取消</string>
     <string name="recent_search_rec">最近搜索记录</string>
+    <string name="fast_enter_navigation">网址导航</string>
+    <!--<string name="fast_enter_navigation_url">http://tpms.mb.qq.com/?aid=site_navigation&amp;cid=site_navigation_cache_direct</string>-->
+    <string name="fast_enter_navigation_url">http://h5.mse.360.cn/navi.html</string>
+    <string name="fast_enter_history">历史</string>
+    <string name="fast_enter_favorite">收藏夹</string>
+    <string name="fast_enter_setting">设置</string>
+    <string name="home">主页</string>
+    <string name="multi_window_add">新建</string>
 
     <string-array name="settings_name">
         <item>分享APP</item>

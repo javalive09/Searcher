@@ -16,25 +16,33 @@
             android:layout_height="match_parent"
             android:hint="@string/search"
             android:imeOptions="actionDone"
-            android:paddingRight="@dimen/search_padding_right"
+            android:layout_marginRight="@dimen/search_padding_right"
+            android:cursorVisible="false"
+            android:textColor="@color/edit_text_no_focus"
+            android:focusable="false"
             android:singleLine="true"/>
 
-        <ImageView
-            android:id="@+id/opt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="10dp"
+        <TextView
+            android:id="@+id/opt_multi"
+            android:layout_width="@dimen/multi_h"
+            android:layout_height="@dimen/multi_h"
             android:layout_gravity="right|center_vertical"
-            android:layout_marginRight="@dimen/clear_txt_margin_right"
+            android:gravity="center"
+            android:textColor="@color/color_top_gray"
+            android:layout_marginRight="@dimen/multi_padding"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            android:text="1"
             android:onClick="onClick"
-            android:src="@drawable/opt_level"/>
+            android:background="@drawable/opt_multi_selector"/>
 
         <TextView
             android:id="@+id/title"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="@dimen/top_h"
             android:background="@color/title_bg"
             android:text="速搜"
+            android:gravity="center_vertical"
             android:textSize="17sp"
             android:visibility="gone" />
     </FrameLayout>

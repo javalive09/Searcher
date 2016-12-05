@@ -1,6 +1,5 @@
-package peter.util.searcher.engine;
+package peter.util.searcher.fragment;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
@@ -23,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import peter.util.searcher.R;
-import peter.util.searcher.activity.EnterActivity;
+import peter.util.searcher.activity.BaseActivity;
 import peter.util.searcher.bean.Engine;
 import peter.util.searcher.bean.TypeEngines;
 import peter.util.searcher.net.GsonRequest;
@@ -33,7 +32,7 @@ import peter.util.searcher.utils.UrlUtils;
 /**
  * Created by peter on 16/5/9.
  */
-public class EngineViewPagerFragment extends Fragment implements View.OnClickListener {
+public class EngineViewPagerFragment extends BaseFragment implements View.OnClickListener {
 
     String url = "http://7xoxmg.com1.z0.glb.clouddn.com/engines0713.json";
     private SlidingTabLayout mSlidingTabLayout;
@@ -82,14 +81,12 @@ public class EngineViewPagerFragment extends Fragment implements View.OnClickLis
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.engine_item:
-                Activity act = getActivity();
-                String searchWord;
-                EnterActivity enterActivity = (EnterActivity) act;
-                searchWord = enterActivity.getSearchWord();
+                BaseActivity act = (BaseActivity) getActivity();
+                String searchWord = act.getSearchWord();
                 if (!TextUtils.isEmpty(searchWord)) {
                     Engine engine = (Engine) v.getTag(R.id.grid_view_item);
                     String url = UrlUtils.smartUrlFilter(searchWord, true, engine.url);
-                    enterActivity.startBrowser(url, searchWord);
+                    act.startBrowser(url, searchWord);
                 }
                 break;
             default:

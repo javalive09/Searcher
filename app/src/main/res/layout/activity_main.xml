@@ -11,16 +11,10 @@
         android:layout_height="@dimen/bottom_h"
         android:layout_alignParentBottom="true" />
 
-    <peter.util.searcher.view.ObservableWebView
-        android:id="@+id/wv"
+    <FrameLayout
+        android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/bottom_bar"/>
-
-    <View
-        android:id="@+id/status"
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="@drawable/status" />
+        android:layout_above="@+id/bottom_bar" />
 
 </RelativeLayout>

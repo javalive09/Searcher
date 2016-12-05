@@ -4,6 +4,7 @@
     <!--<color name="colorPrimary">#0d3c6e</color>-->
     <!--<color name="colorPrimary">#028ce6</color>-->
     <color name="colorPrimary_">#2b2c30</color>
+    <color name="color_top_gray">#c0c0c1</color>
     <color name="status_bar">#242528</color>
     <color name="drawer_layout_bg">#393a3f</color>
     <color name="edit_text_color">#b4ddf8</color>
@@ -12,8 +13,14 @@
 
     <color name="item_normal">#ffffff</color>
     <color name="item_press">#88cccccc</color>
+    <color name="menu_press">#cccccccc</color>
 
     <color name="transparent">#00000000</color>
+    <color name="half_transparent">#e0000000</color>
     <color name="back_press">#cccccc</color>
+    <color name="line_color">#626262</color>
+    <color name="multi_text_color_gray">#c0c0c0</color>
+    <color name="chrome_txt_color">#5a5a5a</color>
+    <color name="chrome_top_color">#f2f2f2</color>
 
 </resources>

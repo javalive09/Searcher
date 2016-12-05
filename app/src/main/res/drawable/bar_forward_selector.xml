@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@drawable/bar_forward_" android:state_enabled="false"/>
-    <item android:drawable="@drawable/bar_forward"/>
+    <item android:drawable="@drawable/clear_chrome_color" android:state_activated="true"/>
+    <item android:drawable="@drawable/bar_forward_chrome_color" android:state_enabled="true"/>
+    <item android:drawable="@drawable/bar_forward_gray" android:state_enabled="false"/>
 </selector>
+

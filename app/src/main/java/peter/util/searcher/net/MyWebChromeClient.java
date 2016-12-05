@@ -1,6 +1,10 @@
 package peter.util.searcher.net;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaPlayer;
 import android.os.Message;
 import android.support.v4.content.ContextCompat;
@@ -13,9 +17,15 @@ import android.widget.FrameLayout;
 import android.widget.VideoView;
 
 import peter.util.searcher.activity.MainActivity;
+import peter.util.searcher.activity.TabManager;
+import peter.util.searcher.tab.SearcherTab;
+import peter.util.searcher.tab.Tab;
+import peter.util.searcher.tab.WebViewTab;
 
 /**
+ *
  * Created by peter on 16/6/6.
+ *
  */
 public class MyWebChromeClient extends WebChromeClient {
 
@@ -26,10 +36,12 @@ public class MyWebChromeClient extends WebChromeClient {
     private VideoView mVideoView;
     private View mCustomView;
     private WebChromeClient.CustomViewCallback mCustomViewCallback;
-    private MainActivity mainActivity;
+    private MainActivity mActivity;
+    private WebViewTab webViewTab;
 
-    public MyWebChromeClient(MainActivity activity) {
-        this.mainActivity = activity;
+    public MyWebChromeClient(WebViewTab webViewTab, MainActivity activity) {
+        this.webViewTab = webViewTab;
+        this.mActivity = activity;
     }
 
     @Override
@@ -45,12 +57,12 @@ public class MyWebChromeClient extends WebChromeClient {
     @Override
     public void onReceivedIcon(WebView view, Bitmap icon) {
         super.onReceivedIcon(view, icon);
-//        mainActivity.setMainColor(icon);
+        webViewTab.setIconDrawable(new BitmapDrawable(mActivity.getResources(), icon));
     }
 
     @Override
     public void onShowCustomView(View view, CustomViewCallback callback) {
-        int requestedOrientation = mOriginalOrientation = mainActivity.getRequestedOrientation();
+        int requestedOrientation = mOriginalOrientation = mActivity.getRequestedOrientation();
         showCustomView(view, callback, requestedOrientation);
         Log.i("peter", "onShowCustomView 2");
     }
@@ -64,10 +76,24 @@ public class MyWebChromeClient extends WebChromeClient {
 
     @Override
     public boolean onCreateWindow(WebView view, boolean isDialog, boolean isUserGesture, Message resultMsg) {
-        WebView.WebViewTransport transport = (WebView.WebViewTransport) resultMsg.obj;
-        transport.setWebView(new WebView(view.getContext()));    //此webview可以是一般新创建的
-        resultMsg.sendToTarget();
+        if (resultMsg != null) {
+            mActivity.loadUrl(Tab.NEW_WINDOW, "", true);
+            SearcherTab tab = mActivity.getCurrentTab();
+            View tabView = tab.getView();
+            if (tabView != null && tabView instanceof WebView) {
+                WebView webView = (WebView) tabView;
+                WebView.WebViewTransport transport = (WebView.WebViewTransport) resultMsg.obj;
+                transport.setWebView(webView);
+                resultMsg.sendToTarget();
+            }
+        }
         return true;
+    }
+
+    @Override
+    public void onCloseWindow(WebView window) {
+        Log.i("onCloseWindow", window.toString());
+        mActivity.removeTabGroup(webViewTab);
     }
 
     public void hideCustomView() {
@@ -88,7 +114,7 @@ public class MyWebChromeClient extends WebChromeClient {
         } catch (SecurityException e) {
             Log.e(TAG, "WebView is not allowed to keep the screen on");
         }
-        mainActivity.setFullscreen(false, false);
+        mActivity.setFullscreen(false, false);
         if (mFullscreenContainer != null) {
             ViewGroup parent = (ViewGroup) mFullscreenContainer.getParent();
             if (parent != null) {
@@ -114,7 +140,7 @@ public class MyWebChromeClient extends WebChromeClient {
             }
         }
         mCustomViewCallback = null;
-        mainActivity.setRequestedOrientation(mOriginalOrientation);
+        mActivity.setRequestedOrientation(mOriginalOrientation);
     }
 
     public synchronized void showCustomView(final View view, WebChromeClient.CustomViewCallback callback, int requestedOrientation) {
@@ -133,15 +159,15 @@ public class MyWebChromeClient extends WebChromeClient {
         } catch (SecurityException e) {
             Log.e(TAG, "WebView is not allowed to keep the screen on");
         }
-        mOriginalOrientation = mainActivity.getRequestedOrientation();
+        mOriginalOrientation = mActivity.getRequestedOrientation();
         mCustomViewCallback = callback;
         mCustomView = view;
 
-        mainActivity.setRequestedOrientation(requestedOrientation);
-        final FrameLayout decorView = (FrameLayout) mainActivity.getWindow().getDecorView();
+        mActivity.setRequestedOrientation(requestedOrientation);
+        final FrameLayout decorView = (FrameLayout) mActivity.getWindow().getDecorView();
 
-        mFullscreenContainer = new FrameLayout(mainActivity);
-        mFullscreenContainer.setBackgroundColor(ContextCompat.getColor(mainActivity, android.R.color.black));
+        mFullscreenContainer = new FrameLayout(mActivity);
+        mFullscreenContainer.setBackgroundColor(ContextCompat.getColor(mActivity, android.R.color.black));
         if (view instanceof FrameLayout) {
             if (((FrameLayout) view).getFocusedChild() instanceof VideoView) {
                 mVideoView = (VideoView) ((FrameLayout) view).getFocusedChild();
@@ -158,7 +184,8 @@ public class MyWebChromeClient extends WebChromeClient {
         decorView.addView(mFullscreenContainer, params);
         mFullscreenContainer.addView(mCustomView, params);
         decorView.requestLayout();
-        mainActivity.setFullscreen(true, true);
+        mActivity.setFullscreen(true, true);
+
     }
 
     private class VideoCompletionListener implements MediaPlayer.OnCompletionListener,

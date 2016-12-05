@@ -1,12 +1,13 @@
 package peter.util.searcher.activity;
 
-import android.Manifest;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -16,37 +17,30 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Toast;
 
-import com.anthonycr.grant.PermissionsManager;
-import com.anthonycr.grant.PermissionsResultAction;
-import com.iflytek.cloud.ErrorCode;
-import com.iflytek.cloud.InitListener;
-import com.iflytek.cloud.SpeechConstant;
-import com.iflytek.cloud.SpeechError;
-import com.iflytek.cloud.SpeechRecognizer;
-import com.iflytek.cloud.ui.RecognizerDialog;
-import com.iflytek.cloud.ui.RecognizerDialogListener;
 import com.umeng.analytics.MobclickAgent;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.json.JSONTokener;
 
 import java.util.ArrayList;
 
-import peter.util.searcher.download.DownloadHandler;
+import peter.util.searcher.bean.Bean;
+import peter.util.searcher.db.SqliteHelper;
+import peter.util.searcher.fragment.BaseFragment;
+import peter.util.searcher.fragment.EnterFragment;
+import peter.util.searcher.fragment.WebViewFragment;
 import peter.util.searcher.update.AsynWindowHandler;
-import peter.util.searcher.engine.EngineViewPagerFragment;
+import peter.util.searcher.fragment.EngineViewPagerFragment;
 import peter.util.searcher.R;
-import peter.util.searcher.engine.RecentSearchFragment;
+import peter.util.searcher.fragment.RecentSearchFragment;
 import peter.util.searcher.update.UpdateController;
+import peter.util.searcher.utils.UrlUtils;
 
 /**
  * Created by peter on 16/5/19.
@@ -54,27 +48,22 @@ import peter.util.searcher.update.UpdateController;
 public class EnterActivity extends BaseActivity implements DrawerLayoutAdapter.OnItemClickListener, View.OnClickListener {
 
     private EditText search;
-    private ImageView opt;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
-    private static final String RECENT_SEARCH = "recent_search";
-    public static final String ENGINE_LIST = "engine_list";
+    public static final String WEBVIEW = "webview";
+    public static final String ENTER = "enter";
     private String currentFragmentTag = "";
     private static final String WEATHER_URL = "http://e.weather.com.cn/d/index/101010100.shtml";
     private static final String HISTORY_TODAY_URL = "http://wap.lssdjt.com/";
     private static final String NEWS_URL = "http://3g.163.com/touch/news";
     private static final String NAV_URL = "http://3g.hao123.com/";
 
-    // 语音听写对象
-    private SpeechRecognizer mIat;
-    // 语音听写UI
-    private RecognizerDialog mIatDialog;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_enter);
         init();
+        checkIntentData(getIntent());
     }
 
     public void onResume() {
@@ -83,20 +72,34 @@ public class EnterActivity extends BaseActivity implements DrawerLayoutAdapter.O
     }
 
     @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        checkIntentData(intent);
+    }
+
+    @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        String searchWord = getSearchWord();
-        if(!TextUtils.isEmpty(searchWord)) {
-            outState.putString("searchWord", searchWord);
+        if (currentFragmentTag.equals(WEBVIEW)) {
+            FragmentManager fragmentManager = getFragmentManager();
+            WebViewFragment fragment = (WebViewFragment) fragmentManager.findFragmentByTag(WEBVIEW);
+            String url = fragment.getUrl();
+            String searchWord = getSearchWord();
+            outState.putString(NAME_URL, url);
+            if (!TextUtils.isEmpty(searchWord)) {
+                outState.putString(NAME_WORD, searchWord);
+            }
         }
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        String searchWord = savedInstanceState.getString("searchWord");
-        if(!TextUtils.isEmpty(searchWord)) {
+        String url = savedInstanceState.getString(NAME_URL);
+        if (!TextUtils.isEmpty(url)) {
+            String searchWord = savedInstanceState.getString(NAME_WORD);
             setSearchWord(searchWord);
+            startFragment(WEBVIEW, savedInstanceState);
         }
     }
 
@@ -105,26 +108,29 @@ public class EnterActivity extends BaseActivity implements DrawerLayoutAdapter.O
         MobclickAgent.onPause(this);
     }
 
+    @Override
     public void setSearchWord(String word) {
         search.setText(word);
-        if (!TextUtils.isEmpty(word)) {
-            int position = word.length();
-            search.setSelection(position);
-        }
     }
 
+    @Override
     public String getSearchWord() {
         return search.getText().toString().trim();
     }
 
     private void init() {
-        mIat = SpeechRecognizer.createRecognizer(EnterActivity.this, mInitListener);
-        mIatDialog = new RecognizerDialog(EnterActivity.this, mInitListener);
-        mIatDialog.setListener(mRecognizerDialogListener);
-        setParam();
-
-        opt = (ImageView) findViewById(R.id.opt);
         search = (EditText) findViewById(R.id.search);
+        search.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    Intent intent = new Intent(EnterActivity.this, SearchActivity.class);
+                    intent.putExtra(NAME_WORD, getSearchWord());
+                    startActivity(intent);
+                }
+                return true;
+            }
+        });
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         RecyclerView mDrawerList = (RecyclerView) findViewById(R.id.left_drawer);
         mDrawerList.setHasFixedSize(true);
@@ -162,41 +168,74 @@ public class EnterActivity extends BaseActivity implements DrawerLayoutAdapter.O
                 UpdateController.instance(getApplicationContext()).autoCheckVersion(new AsynWindowHandler(EnterActivity.this));
             }
         }, 200);
-        search.addTextChangedListener(new TextWatcher() {
-            String temp;
 
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                temp = s.toString();
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                String content = s.toString();
-                if (TextUtils.isEmpty(content)) {
-                    setEngineFragment(RECENT_SEARCH);
-                    opt.getDrawable().setLevel(0);
-                } else if (!content.equals(temp)) {
-                    setEngineFragment(ENGINE_LIST);
-                    opt.getDrawable().setLevel(1);
-                }
-            }
-        });
-        setEngineFragment(RECENT_SEARCH);
     }
 
-    public void setEngineFragment(String tag) {
-        if (!currentFragmentTag.equals(tag)) {
-            currentFragmentTag = tag;
-            Fragment fragment = null;
-            if (tag.equals(RECENT_SEARCH)) {
-                fragment = new RecentSearchFragment();
-            } else if (tag.equals(ENGINE_LIST)) {
-                fragment = new EngineViewPagerFragment();
+    private void switchWebViewFrag(String url, String searchWord) {
+        Bundle bundle = new Bundle();
+        bundle.putString(BaseActivity.NAME_URL, url);
+        bundle.putString(BaseActivity.NAME_WORD, searchWord);
+        startFragment(WEBVIEW, bundle);
+    }
+
+    private void checkIntentData(Intent intent) {
+        if (intent != null) {
+            String action = intent.getAction();
+            if (ACTION_INNER_BROWSE.equals(action)) { // inner invoke
+                String url = (String) intent.getSerializableExtra(NAME_URL);
+                if (!TextUtils.isEmpty(url)) {
+                    String searchWord = intent.getStringExtra(NAME_WORD);
+                    switchWebViewFrag(url, searchWord);
+                    setSearchWord(searchWord);
+                }
+            } else if (Intent.ACTION_VIEW.equals(action)) { // outside invoke
+                String url = intent.getDataString();
+                if (!TextUtils.isEmpty(url)) {
+                    switchWebViewFrag(url, "");
+                }
+            } else if (Intent.ACTION_WEB_SEARCH.equals(action)) {
+                String searchWord = intent.getStringExtra(SearchManager.QUERY);
+                String engineUrl = getString(R.string.default_engine_url);
+                String url = UrlUtils.smartUrlFilter(searchWord, true, engineUrl);
+                switchWebViewFrag(url, searchWord);
+                setSearchWord(searchWord);
+            } else {
+                startFragment(ENTER, null);
+            }
+        }
+    }
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        if (currentFragmentTag.equals(WEBVIEW)) {
+            if (event.getAction() == KeyEvent.ACTION_UP) {
+                if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
+                    FragmentManager fragmentManager = getFragmentManager();
+                    BaseFragment fragment = (BaseFragment) fragmentManager.findFragmentByTag(WEBVIEW);
+                    if (fragment.canGoBack()) {
+                        fragment.GoBack();
+                        return true;
+                    } else if (currentFragmentTag.equals(WEBVIEW)) {
+                        startFragment(ENTER, null);
+                        return true;
+                    }
+                }
+            }
+        }
+        return super.dispatchKeyEvent(event);
+    }
+
+    public void startFragment(String tag, Bundle args) {
+        currentFragmentTag = tag;
+        Fragment fragment = null;
+        if (tag.equals(WEBVIEW)) {
+            fragment = new WebViewFragment();
+        } else if (tag.equals(ENTER)) {
+            fragment = new EnterFragment();
+        }
+        if (fragment != null) {
+            if (args != null) {
+                fragment.setArguments(args);
             }
             FragmentManager fragmentManager = getFragmentManager();
             FragmentTransaction ft = fragmentManager.beginTransaction();
@@ -288,10 +327,10 @@ public class EnterActivity extends BaseActivity implements DrawerLayoutAdapter.O
         }
     }
 
-    private void openBoard() {
-        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.showSoftInput(search, InputMethodManager.SHOW_IMPLICIT);
-    }
+//    private void openBoard() {
+//        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+//        imm.showSoftInput(search, InputMethodManager.SHOW_IMPLICIT);
+//    }
 
     private void hideBoard() {
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -303,112 +342,20 @@ public class EnterActivity extends BaseActivity implements DrawerLayoutAdapter.O
         switch (v.getId()) {
             case R.id.opt:
 
-                switch (opt.getDrawable().getLevel()) {
-                    case 0:
-                        showVoiceDialog();
-                        break;
-                    case 1:
-                        search.requestFocus();
-                        search.setText("");
-                        openBoard();
-                        break;
-                }
+//                switch (opt.getDrawable().getLevel()) {
+//                    case 0:
+//
+//                        break;
+//                    case 1:
+//                        search.requestFocus();
+//                        search.setText("");
+//                        openBoard();
+//                        break;
+//                }
+                break;
+            case R.id.opt_multi:
                 break;
         }
     }
 
-    private void showVoiceDialog() {
-        PermissionsManager.getInstance().requestPermissionsIfNecessaryForResult(EnterActivity.this,
-                new String[]{Manifest.permission.RECORD_AUDIO},
-                new PermissionsResultAction() {
-                    @Override
-                    public void onGranted() {
-                        mIatDialog.show();
-                    }
-
-                    @Override
-                    public void onDenied(String permission) {
-                        Toast.makeText(EnterActivity.this, R.string.record_audio_permission, Toast.LENGTH_LONG).show();
-                    }
-                });
-    }
-
-    //Listener for dialog
-    private InitListener mInitListener = new InitListener() {
-
-        @Override
-        public void onInit(int code) {
-            if (code != ErrorCode.SUCCESS) {
-                Toast.makeText(EnterActivity.this, "error code " + code, Toast.LENGTH_SHORT).show();
-            }
-        }
-    };
-
-
-    private void setParam() {
-        mIat.setParameter(SpeechConstant.PARAMS, null);
-
-        // 设置听写引擎
-        mIat.setParameter(SpeechConstant.ENGINE_TYPE, SpeechConstant.TYPE_CLOUD);
-        // 设置返回结果格式
-        mIat.setParameter(SpeechConstant.RESULT_TYPE, "json");
-
-        // 设置语言
-        mIat.setParameter(SpeechConstant.LANGUAGE, "zh_cn");
-        // 设置语言区域
-        mIat.setParameter(SpeechConstant.ACCENT, "mandarin");
-
-        // 设置语音前端点:静音超时时间，即用户多长时间不说话则当做超时处理
-        mIat.setParameter(SpeechConstant.VAD_BOS, "4000");
-
-        // 设置语音后端点:后端点静音检测时间，即用户停止说话多长时间内即认为不再输入， 自动停止录音
-        mIat.setParameter(SpeechConstant.VAD_EOS, "1000");
-
-        // 设置标点符号,设置为"0"返回结果无标点,设置为"1"返回结果有标点
-        mIat.setParameter(SpeechConstant.ASR_PTT, "0");
-
-    }
-
-    /**
-     * Dialog监听器
-     */
-    private RecognizerDialogListener mRecognizerDialogListener = new RecognizerDialogListener() {
-        @Override
-        public void onResult(com.iflytek.cloud.RecognizerResult recognizerResult, boolean isLast) {
-
-            if (recognizerResult != null) {
-                String json = recognizerResult.getResultString();
-                if (!TextUtils.isEmpty(json)) {
-                    String result = parseIatResult(json);
-                    if (!TextUtils.isEmpty(result)) {
-                        setSearchWord(result);
-                    }
-                }
-            }
-        }
-
-        @Override
-        public void onError(SpeechError speechError) {
-
-        }
-    };
-
-    private String parseIatResult(String json) {
-        StringBuffer ret = new StringBuffer();
-        try {
-            JSONTokener tokener = new JSONTokener(json);
-            JSONObject joResult = new JSONObject(tokener);
-
-            JSONArray words = joResult.getJSONArray("ws");
-            for (int i = 0; i < words.length(); i++) {
-                // 转写结果词，默认使用第一个结果
-                JSONArray items = words.getJSONObject(i).getJSONArray("cw");
-                JSONObject obj = items.getJSONObject(0);
-                ret.append(obj.getString("w"));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return ret.toString();
-    }
 }
