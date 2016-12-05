@@ -1,7 +1,8 @@
 <resources>
     <string name="search">输入网址或搜索</string>
     <string name="app_name">速搜</string>
-    <string name="search_hint">搜索或输入网址</string>
+    <string name="search_hint">输入网址或搜索</string>
+    <string name="search_icon_hint">输入...</string>
     <string name="app_js">速搜能用来干什么?</string>
     <string name="operate_url_copy">复制网址</string>
     <string name="operate_url_share">分享网址</string>

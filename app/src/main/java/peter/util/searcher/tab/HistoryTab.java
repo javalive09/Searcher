@@ -68,7 +68,7 @@ public class HistoryTab extends LocalViewTab implements View.OnClickListener, Vi
 
     @Override
     public String getUrl() {
-        return URL_FAVORITE;
+        return URL_HISTORY;
     }
 
     private class HistoryAdapter extends BaseAdapter {

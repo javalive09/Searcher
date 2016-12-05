@@ -275,8 +275,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         //go forward
         if (manager.getCurrentTabGroup().canGoForward()) {
+            findViewById(R.id.go_forward).setActivated(true);
             findViewById(R.id.go_forward).setEnabled(true);
-            findViewById(R.id.go_forward).setActivated(false);
         } else {
             findViewById(R.id.go_forward).setEnabled(false);
             findViewById(R.id.go_forward).setActivated(false);
