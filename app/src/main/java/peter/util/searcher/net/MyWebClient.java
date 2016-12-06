@@ -53,13 +53,12 @@ public class MyWebClient extends WebViewClient {
         if (view.isShown()) {
             view.postInvalidate();
         }
-
-        mainActivity.refreshBottomBar();
+        mainActivity.refresLevel(false);
     }
 
     @Override
     public void onPageStarted(WebView view, String url, Bitmap favicon) {
-        mainActivity.setStatusLoading();
+        mainActivity.refresLevel(true);
         Log.i("peter", "url=" + url);
     }
 

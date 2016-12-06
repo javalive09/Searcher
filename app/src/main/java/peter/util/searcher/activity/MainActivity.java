@@ -157,9 +157,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         return router.get(url);
     }
 
-    public void setStatusLoading() {
-        findViewById(R.id.go_forward).setActivated(true);
-    }
 
     public void setCurrentView(View view) {
         mContainer.removeAllViews();
@@ -273,24 +270,39 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             findViewById(R.id.go_back).setEnabled(false);
         }
 
-        //go forward
-        if (manager.getCurrentTabGroup().canGoForward()) {
-            findViewById(R.id.go_forward).setActivated(true);
-            findViewById(R.id.go_forward).setEnabled(true);
-        } else {
-            findViewById(R.id.go_forward).setEnabled(false);
-            findViewById(R.id.go_forward).setActivated(false);
-        }
+//        //go forward
+//        if (manager.getCurrentTabGroup().canGoForward()) {
+//            findViewById(R.id.go_forward).setEnabled(true);
+//            findViewById(R.id.go_forward).setActivated(false);
+//        } else {
+//            findViewById(R.id.go_forward).setEnabled(false);
+//            findViewById(R.id.go_forward).setActivated(false);
+//        }
+
+        refresLevel(false);
 
         TextView searchBotton = (TextView) findViewById(R.id.search);
         String url = manager.getCurrentTabGroup().getCurrentTab().getUrl();
         if(Tab.URL_HOME.equals(url)) {
-            searchBotton.setHint(R.string.search_hint);
+            searchBotton.setHint(R.string.search_icon_hint);
         }else {
             String title = manager.getCurrentTabGroup().getCurrentTab().getTitle();
             searchBotton.setHint(title);
         }
 
+    }
+
+    public void refresLevel(boolean isActivate) {
+        if(isActivate) {
+            findViewById(R.id.go_forward).setActivated(true);
+        }else {
+            findViewById(R.id.go_forward).setActivated(true);
+            if (manager.getCurrentTabGroup().canGoForward()) {
+                findViewById(R.id.go_forward).setEnabled(true);
+            } else {
+                findViewById(R.id.go_forward).setEnabled(false);
+            }
+        }
     }
 
     @Override
@@ -321,7 +333,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     View view = manager.getCurrentTabGroup().getCurrentTab().getView();
                     if (view instanceof WebView) {
                         ((WebView) view).stopLoading();
-                        refreshBottomBar();
+                        refresLevel(false);
                     }
                 } else if (v.isEnabled()) {
                     tab = manager.getCurrentTabGroup();
