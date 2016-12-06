@@ -20,6 +20,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.webkit.WebView;
 import android.widget.FrameLayout;
+import android.widget.HorizontalScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -78,7 +79,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         bottomBar = findViewById(R.id.bottom_bar);
         mContainer = (FrameLayout) findViewById(R.id.container);
         multiWindow = (TextView) findViewById(R.id.multi_btn_txt);
-        findViewById(R.id.bottom_search_btn_container).setOnTouchListener(new View.OnTouchListener() {
+        HorizontalScrollView scrollView = (HorizontalScrollView) findViewById(R.id.bottom_search_btn_container);
+        scrollView.setOverScrollMode(View.OVER_SCROLL_NEVER);
+        scrollView.setOnTouchListener(new View.OnTouchListener() {
 
             int mTouchSlop = 0;
             int startX = 0;
@@ -111,12 +114,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     case MotionEvent.ACTION_MOVE:
                         if (!slide) {
                             if (Math.abs(startX - (int) event.getX()) > mTouchSlop) {//scroll x
-                                View child = ((FrameLayout) v).getChildAt(0);
-                                if (child != null) {
-                                    int childWidth = child.getWidth();
-                                    if (v.getWidth() < childWidth) {//can scroll
-                                        slide = true;
-                                    }
+                                if( v.canScrollHorizontally(1) ||
+                                v.canScrollHorizontally(-1)) {
+                                    slide = true;
                                 }
                             }
                         }
@@ -315,29 +315,24 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             findViewById(R.id.go_back).setEnabled(false);
         }
 
-//        //go forward
-//        if (manager.getCurrentTabGroup().canGoForward()) {
-//            findViewById(R.id.go_forward).setEnabled(true);
-//            findViewById(R.id.go_forward).setActivated(false);
-//        } else {
-//            findViewById(R.id.go_forward).setEnabled(false);
-//            findViewById(R.id.go_forward).setActivated(false);
-//        }
+        refreshGoForward(false);
 
-        refreshLevel(false);
-
-        TextView searchBotton = (TextView) findViewById(R.id.search);
         String url = manager.getCurrentTabGroup().getCurrentTab().getUrl();
         if(Tab.URL_HOME.equals(url)) {
-            searchBotton.setHint(R.string.search_icon_hint);
+            refreshBottomText(getString(R.string.search_icon_hint));
         }else {
             String title = manager.getCurrentTabGroup().getCurrentTab().getTitle();
-            searchBotton.setHint(title);
+            refreshBottomText(title);
         }
 
     }
 
-    public void refreshLevel(boolean isActivate) {
+    public void refreshBottomText(String text) {
+        TextView searchBotton = (TextView) findViewById(R.id.search);
+        searchBotton.setHint(text);
+    }
+
+    public void refreshGoForward(boolean isActivate) {
         if(isActivate) {
             findViewById(R.id.go_forward).setActivated(true);
         }else {
@@ -378,7 +373,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     View view = manager.getCurrentTabGroup().getCurrentTab().getView();
                     if (view instanceof WebView) {
                         ((WebView) view).stopLoading();
-                        refreshLevel(false);
+                        refreshGoForward(false);
                     }
                 } else if (v.isEnabled()) {
                     tab = manager.getCurrentTabGroup();

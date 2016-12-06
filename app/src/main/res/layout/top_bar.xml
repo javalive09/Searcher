@@ -2,21 +2,18 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="@dimen/search_h"
-    android:background="@android:color/white">
+    android:background="@color/chrome_top_color">
 
     <peter.util.searcher.view.ObservableEditText
         android:id="@+id/search"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="@dimen/input_margin"
-        android:layout_marginRight="@dimen/input_margin"
-        android:layout_marginTop="@dimen/input_margin"
-        android:background="@drawable/input_bg"
-        android:drawablePadding="@dimen/drawable_padding"
+        android:layout_margin="@dimen/input_margin"
+        android:background="@drawable/search_bg_tt"
         android:hint="@string/search_hint"
         android:imeOptions="actionDone"
         android:singleLine="true"
-        android:paddingLeft="@dimen/drawable_padding"
+        android:paddingLeft="15dp"
         android:selectAllOnFocus="true"
         android:paddingRight="@dimen/search_padding_right" />
 
@@ -25,9 +22,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="right|center_vertical"
-        android:layout_marginRight="@dimen/clear_txt_margin_right"
+        android:layout_marginRight="15dp"
         android:onClick="onClick"
-        android:paddingLeft="10dp"
+        android:background="@drawable/list_item_selector"
+        android:padding="3dp"
         android:src="@drawable/opt_level" />
 
     <TextView
