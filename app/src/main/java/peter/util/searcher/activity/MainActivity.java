@@ -37,6 +37,7 @@ import peter.util.searcher.db.SqliteHelper;
 import peter.util.searcher.tab.FavoriteTab;
 import peter.util.searcher.tab.HistoryTab;
 import peter.util.searcher.tab.HomeTab;
+import peter.util.searcher.tab.HomeTab2;
 import peter.util.searcher.tab.SearcherTab;
 import peter.util.searcher.tab.SettingTab;
 import peter.util.searcher.tab.Tab;
@@ -193,6 +194,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private void installLocalTabRounter() {
         router.put(Tab.URL_HOME, HomeTab.class);
+        router.put(Tab.URL_HOME2, HomeTab2.class);
         router.put(Tab.URL_SETTING, SettingTab.class);
         router.put(Tab.URL_FAVORITE, FavoriteTab.class);
         router.put(Tab.URL_HISTORY, HistoryTab.class);
@@ -254,7 +256,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     public void loadHome() {
-        loadUrl(Tab.URL_HOME, true);
+        loadUrl(Tab.URL_HOME2, true);
+//        loadUrl(Tab.URL_HOME, true);
 //        loadUrl("http://m.2345.com/websitesNavigation.htm", true);
 //        loadUrl(getString(R.string.fast_enter_navigation_url), true);
 //        loadUrl("http://top.baidu.com/m#buzz/1", true);
