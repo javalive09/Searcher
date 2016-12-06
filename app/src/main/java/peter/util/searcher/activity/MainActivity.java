@@ -6,22 +6,20 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.LevelListDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.Window;
 import android.view.WindowManager;
 import android.webkit.WebView;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,7 +42,6 @@ import peter.util.searcher.tab.Tab;
 import peter.util.searcher.tab.TabGroup;
 import peter.util.searcher.utils.UrlUtils;
 import peter.util.searcher.view.DialogContainer;
-import peter.util.searcher.view.DialogContainerRoot;
 import peter.util.searcher.view.MenuWindowGridView;
 import peter.util.searcher.view.MultiWindowListView;
 
@@ -81,6 +78,54 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         bottomBar = findViewById(R.id.bottom_bar);
         mContainer = (FrameLayout) findViewById(R.id.container);
         multiWindow = (TextView) findViewById(R.id.multi_btn_txt);
+        findViewById(R.id.bottom_search_btn_container).setOnTouchListener(new View.OnTouchListener() {
+
+            int mTouchSlop = 0;
+            int startX = 0;
+            boolean slide = false;
+            Rect mRect = new Rect();
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_UP:
+                        if (!slide) {
+                            int x = (int) event.getX() + mRect.left;
+                            int y = (int) event.getY() + mRect.top;
+                            if (mRect.contains(x, y)) {
+                                onClick(v);
+                            }
+                        }
+
+                        break;
+                    case MotionEvent.ACTION_DOWN:
+                        if (mTouchSlop == 0) {
+                            ViewConfiguration configuration = android.view.ViewConfiguration.get(v.getContext());
+                            mTouchSlop = configuration.getScaledTouchSlop();
+                        }
+                        startX = (int) event.getX();
+                        slide = false;
+                        v.getHitRect(mRect);
+                        break;
+
+                    case MotionEvent.ACTION_MOVE:
+                        if (!slide) {
+                            if (Math.abs(startX - (int) event.getX()) > mTouchSlop) {//scroll x
+                                View child = ((FrameLayout) v).getChildAt(0);
+                                if (child != null) {
+                                    int childWidth = child.getWidth();
+                                    if (v.getWidth() < childWidth) {//can scroll
+                                        slide = true;
+                                    }
+                                }
+                            }
+                        }
+                        break;
+                }
+
+                return false;
+            }
+        });
         manager = new TabManager(MainActivity.this);
         installLocalTabRounter();
         initMenuDialog();
@@ -279,7 +324,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 //            findViewById(R.id.go_forward).setActivated(false);
 //        }
 
-        refresLevel(false);
+        refreshLevel(false);
 
         TextView searchBotton = (TextView) findViewById(R.id.search);
         String url = manager.getCurrentTabGroup().getCurrentTab().getUrl();
@@ -292,11 +337,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     }
 
-    public void refresLevel(boolean isActivate) {
+    public void refreshLevel(boolean isActivate) {
         if(isActivate) {
             findViewById(R.id.go_forward).setActivated(true);
         }else {
-            findViewById(R.id.go_forward).setActivated(true);
+            findViewById(R.id.go_forward).setActivated(false);
             if (manager.getCurrentTabGroup().canGoForward()) {
                 findViewById(R.id.go_forward).setEnabled(true);
             } else {
@@ -333,7 +378,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     View view = manager.getCurrentTabGroup().getCurrentTab().getView();
                     if (view instanceof WebView) {
                         ((WebView) view).stopLoading();
-                        refresLevel(false);
+                        refreshLevel(false);
                     }
                 } else if (v.isEnabled()) {
                     tab = manager.getCurrentTabGroup();
@@ -342,7 +387,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     }
                 }
                 break;
-            case R.id.search:
+            case R.id.bottom_search_btn_container:
                 String content = manager.getCurrentTabGroup().getCurrentTab().getSearchWord();
                 startSearcheActivity(content);
 

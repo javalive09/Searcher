@@ -1,21 +1,15 @@
 package peter.util.searcher.net;
 
-import android.animation.ObjectAnimator;
-import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Bitmap;
-import android.net.MailTo;
 import android.net.http.SslError;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
-import android.view.View;
 import android.webkit.HttpAuthHandler;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebView;
@@ -23,7 +17,6 @@ import android.webkit.WebViewClient;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +25,6 @@ import peter.util.searcher.db.SqliteHelper;
 import peter.util.searcher.activity.MainActivity;
 import peter.util.searcher.bean.Bean;
 import peter.util.searcher.utils.IntentUtils;
-import peter.util.searcher.utils.Utils;
 
 /**
  *
@@ -53,12 +45,12 @@ public class MyWebClient extends WebViewClient {
         if (view.isShown()) {
             view.postInvalidate();
         }
-        mainActivity.refresLevel(false);
+        mainActivity.refreshLevel(false);
     }
 
     @Override
     public void onPageStarted(WebView view, String url, Bitmap favicon) {
-        mainActivity.refresLevel(true);
+        mainActivity.refreshLevel(true);
         Log.i("peter", "url=" + url);
     }
 
