@@ -376,8 +376,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     View view = manager.getCurrentTabGroup().getCurrentTab().getView();
                     if (view instanceof WebView) {
                         ((WebView) view).stopLoading();
-                        refreshGoForward(false);
                     }
+                    refreshGoForward(false);
                 } else if (v.isEnabled()) {
                     tab = manager.getCurrentTabGroup();
                     if (tab.canGoForward()) {
@@ -452,7 +452,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         startActivity(Intent.createChooser(sendIntent, getString(R.string.share_link_title)));
                         break;
                     case R.string.action_refresh:
-                        getManager().getCurrentTabGroup().reload();
+                        getManager().getCurrentTabGroup().getCurrentTab().reload();
                         break;
                     case R.string.fast_enter_favorite:
                         loadUrl(Tab.URL_FAVORITE, false);
