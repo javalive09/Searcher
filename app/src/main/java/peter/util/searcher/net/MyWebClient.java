@@ -180,27 +180,35 @@ public class MyWebClient extends WebViewClient {
             view.loadUrl(url);
             return true;
         }
-        if (url.startsWith("mailto:")
-                || url.startsWith("intent://")) {
+        if (url.startsWith("mailto:")) {
+            MailTo mailTo = MailTo.parse(url);
+            Intent i = Utils.newEmailIntent(mailTo.getTo(), mailTo.getSubject(),
+                    mailTo.getBody(), mailTo.getCc());
+            mainActivity.startActivity(i);
             view.reload();
             return true;
-        }
-
-        Intent intent;
-        try {
-            intent = Intent.parseUri(url, Intent.URI_INTENT_SCHEME);
-        } catch (URISyntaxException ex) {
-            Log.w("Browser", "Bad URI " + url + ": " + ex.getMessage());
-            return false;
-        }
-
-        if(mainActivity.getPackageManager().resolveActivity(intent, 0) == null) {
-            String packagename = intent.getPackage();
-            if(packagename != null) {
+        } else if (url.startsWith("intent://")) {
+            Intent intent;
+            try {
+                intent = Intent.parseUri(url, Intent.URI_INTENT_SCHEME);
+            } catch (URISyntaxException ignored) {
+                intent = null;
+            }
+            if (intent != null) {
+                intent.addCategory(Intent.CATEGORY_BROWSABLE);
+                intent.setComponent(null);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
+                    intent.setSelector(null);
+                }
+                try {
+                    mainActivity.startActivity(intent);
+                } catch (ActivityNotFoundException e) {
+                    e.printStackTrace();
+                }
                 return true;
             }
         }
-        return false;
+        return mIntentUtils.startActivityForUrl(view, url);
     }
 
 }
