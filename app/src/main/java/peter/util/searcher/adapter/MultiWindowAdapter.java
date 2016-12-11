@@ -21,7 +21,7 @@ public class MultiWindowAdapter extends BaseAdapter {
 
     public void update(MainActivity activity) {
         mainActivity = activity;
-        mList = mainActivity.getManager().getList();
+        mList = mainActivity.getTabManager().getList();
         notifyDataSetChanged();
     }
 
@@ -65,7 +65,7 @@ public class MultiWindowAdapter extends BaseAdapter {
 
         TabGroup tabGroup = getItem(position);
         if (tabGroup != null) {
-            if (mainActivity.getManager().getCurrentTabGroup() == tabGroup) {
+            if (mainActivity.getTabManager().getCurrentTabGroup() == tabGroup) {
                 convertView.setActivated(true);
             } else {
                 convertView.setActivated(false);

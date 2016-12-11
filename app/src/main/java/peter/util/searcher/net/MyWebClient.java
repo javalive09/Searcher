@@ -1,9 +1,13 @@
 package peter.util.searcher.net;
 
+import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.MailTo;
 import android.net.http.SslError;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
@@ -17,6 +21,7 @@ import android.webkit.WebViewClient;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +30,7 @@ import peter.util.searcher.db.SqliteHelper;
 import peter.util.searcher.activity.MainActivity;
 import peter.util.searcher.bean.Bean;
 import peter.util.searcher.utils.IntentUtils;
+import peter.util.searcher.utils.Utils;
 
 /**
  *
@@ -170,39 +176,30 @@ public class MyWebClient extends WebViewClient {
 
     @Override
     public boolean shouldOverrideUrlLoading(@NonNull WebView view, @NonNull String url) {
-//        if (url.startsWith("about:") && Utils.doesSupportHeaders()) {
-//            view.loadUrl(url);
-//            return true;
-//        }
-//        if (url.startsWith("mailto:")) {
-//            MailTo mailTo = MailTo.parse(url);
-//            Intent i = Utils.newEmailIntent(mailTo.getTo(), mailTo.getSubject(),
-//                    mailTo.getBody(), mailTo.getCc());
-//            mainActivity.startActivity(i);
-//            view.reload();
-//            return true;
-//        } else if (url.startsWith("intent://")) {
-//            Intent intent;
-//            try {
-//                intent = Intent.parseUri(url, Intent.URI_INTENT_SCHEME);
-//            } catch (URISyntaxException ignored) {
-//                intent = null;
-//            }
-//            if (intent != null) {
-//                intent.addCategory(Intent.CATEGORY_BROWSABLE);
-//                intent.setComponent(null);
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
-//                    intent.setSelector(null);
-//                }
-//                try {
-//                    mainActivity.startActivity(intent);
-//                } catch (ActivityNotFoundException e) {
-//                    e.printStackTrace();
-//                }
-//                return true;
-//            }
-//        }
-//        return mIntentUtils.startActivityForUrl(view, url);
+        if (url.startsWith("about:") && Utils.doesSupportHeaders()) {
+            view.loadUrl(url);
+            return true;
+        }
+        if (url.startsWith("mailto:")
+                || url.startsWith("intent://")) {
+            view.reload();
+            return true;
+        }
+
+        Intent intent;
+        try {
+            intent = Intent.parseUri(url, Intent.URI_INTENT_SCHEME);
+        } catch (URISyntaxException ex) {
+            Log.w("Browser", "Bad URI " + url + ": " + ex.getMessage());
+            return false;
+        }
+
+        if(mainActivity.getPackageManager().resolveActivity(intent, 0) == null) {
+            String packagename = intent.getPackage();
+            if(packagename != null) {
+                return true;
+            }
+        }
         return false;
     }
 

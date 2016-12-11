@@ -76,6 +76,12 @@ public class TabManager {
         }
     }
 
+    public void removeIndex(TabGroup tabGroup) {
+        if(tabGroupArrayList.size() > 0) {
+            tabGroupArrayList.remove(tabGroup);
+        }
+    }
+
     public void resumeTabGroupExclude(TabGroup exTabGroup) {
         for(TabGroup tabGroup : tabGroupArrayList) {
             if(tabGroup != exTabGroup) {
@@ -100,24 +106,24 @@ public class TabManager {
         return tabGroupArrayList.size();
     }
 
-    public boolean canGoBack() {
-        TabGroup currentTabGroup = getCurrentTabGroup();
-        if(currentTabGroup.canGoBack()) {
-            return true;
-        }else {
-            return mCurrentTabIndex > 0;
-        }
-    }
+//    public boolean canGoBack() {
+//        TabGroup currentTabGroup = getCurrentTabGroup();
+//        if(currentTabGroup.canGoBack()) {
+//            return true;
+//        }else {
+//            return mCurrentTabIndex > 0;
+//        }
+//    }
 
-    public void goBack() {
-        TabGroup currentTabGroup = getCurrentTabGroup();
-        if(currentTabGroup.canGoBack()) {
-            currentTabGroup.goBack();
-        }else {
-            if(mCurrentTabIndex > 0) {
-                removeTabGroup(getCurrentTabGroup());
-            }
-        }
-    }
+//    public void goBack() {
+//        TabGroup currentTabGroup = getCurrentTabGroup();
+//        if(currentTabGroup.canGoBack()) {
+//            currentTabGroup.goBack();
+//        }else {
+//            if(mCurrentTabIndex > 0) {
+//                removeTabGroup(getCurrentTabGroup());
+//            }
+//        }
+//    }
 
 }
