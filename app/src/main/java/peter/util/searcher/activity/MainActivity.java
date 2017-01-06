@@ -340,8 +340,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 }
 
                 if(multiWindow != null) {
-                    multiWindow.show();
-                    updateMultiwindow();
+                    if(multiWindow.getVisibility() == View.INVISIBLE) {
+                        multiWindow.show();
+                        updateMultiwindow();
+                    }else {
+                        multiWindow.hide();
+                    }
                 }
 
                 break;
@@ -351,7 +355,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 }
 
                 if(menu != null) {
-                    menu.show();
+                    if(menu.getVisibility() == View.INVISIBLE) {
+                        menu.show();
+                    }else {
+                        menu.hide();
+                    }
                 }
                 break;
             case R.id.close_tab:
