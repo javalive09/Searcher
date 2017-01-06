@@ -1,26 +1,20 @@
 package peter.util.searcher.activity;
 
-import android.app.Dialog;
 import android.app.SearchManager;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.Rect;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewConfiguration;
 import android.view.Window;
 import android.view.WindowManager;
 import android.webkit.WebView;
 import android.widget.FrameLayout;
-import android.widget.HorizontalScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,7 +32,6 @@ import peter.util.searcher.tab.FavoriteTab;
 import peter.util.searcher.tab.HistoryTab;
 import peter.util.searcher.tab.HomeTab;
 import peter.util.searcher.tab.HomeTab2;
-import peter.util.searcher.tab.SearcherTab;
 import peter.util.searcher.tab.SettingTab;
 import peter.util.searcher.tab.Tab;
 import peter.util.searcher.tab.TabGroup;
@@ -46,28 +39,28 @@ import peter.util.searcher.utils.UrlUtils;
 import peter.util.searcher.view.DialogContainer;
 import peter.util.searcher.view.MenuWindowGridView;
 import peter.util.searcher.view.MultiWindowListView;
+import peter.util.searcher.view.WebViewContainer;
 
 /**
+ *
  * Created by peter on 16/5/9.
  */
 public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private View bottomBar;
     private TabManager tabManager;
-    private TextView multiWindow;
-    private FrameLayout mContainer;
+    private TextView multiWindowBtn;
     private HashMap<String, Class> router = new HashMap<>();
 
-    private MenuWindowAdapter menuWindowAdapter;
-    private Dialog menuDialog;
-
+    private DialogContainer menu;
+    private DialogContainer multiWindow;
     private MultiWindowAdapter multiWindowAdapter;
-    private Dialog multiWindowDialog;
+    private WebViewContainer webViewContainer;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        setContentView(R.layout.tab_home2);
         Intent intent = getIntent();
         if (intent != null) {
             setContentView(R.layout.activity_main);
@@ -78,67 +71,18 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private void init() {
         bottomBar = findViewById(R.id.bottom_bar);
-        mContainer = (FrameLayout) findViewById(R.id.container);
-        multiWindow = (TextView) findViewById(R.id.multi_btn_txt);
-        HorizontalScrollView scrollView = (HorizontalScrollView) findViewById(R.id.bottom_search_btn_container);
-        scrollView.setOverScrollMode(View.OVER_SCROLL_NEVER);
-        scrollView.setOnTouchListener(new View.OnTouchListener() {
-
-            int mTouchSlop = 0;
-            int startX = 0;
-            boolean slide = false;
-            Rect mRect = new Rect();
-
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_UP:
-                        if (!slide) {
-                            int x = (int) event.getX() + mRect.left;
-                            int y = (int) event.getY() + mRect.top;
-                            if (mRect.contains(x, y)) {
-                                onClick(v);
-                            }
-                        }
-
-                        break;
-                    case MotionEvent.ACTION_DOWN:
-                        if (mTouchSlop == 0) {
-                            ViewConfiguration configuration = android.view.ViewConfiguration.get(v.getContext());
-                            mTouchSlop = configuration.getScaledTouchSlop();
-                        }
-                        startX = (int) event.getX();
-                        slide = false;
-                        v.getHitRect(mRect);
-                        break;
-
-                    case MotionEvent.ACTION_MOVE:
-                        if (!slide) {
-                            if (Math.abs(startX - (int) event.getX()) > mTouchSlop) {//scroll x
-                                if( v.canScrollHorizontally(1) ||
-                                v.canScrollHorizontally(-1)) {
-                                    slide = true;
-                                }
-                            }
-                        }
-                        break;
-                }
-
-                return false;
-            }
-        });
+        multiWindowBtn = (TextView) findViewById(R.id.multi_btn_txt);
+        webViewContainer = (WebViewContainer) findViewById(R.id.webview_container);
         tabManager = new TabManager(MainActivity.this);
         installLocalTabRounter();
-        initMenuDialog();
-        initMultiWindowDialog();
+        initMenu();
+        initMultiWindow();
     }
 
-    private void initMenuDialog() {
-        menuDialog = new Dialog(MainActivity.this, R.style.multiwindow_Dialog);
-        menuDialog.setContentView(R.layout.layout_menu_window);
-        MenuWindowGridView menuList = (MenuWindowGridView) menuDialog.findViewById(R.id.menu_window);
+    private void initMenu() {
+        menu = (DialogContainer) findViewById(R.id.menu_window_container);
+        MenuWindowGridView menuList = (MenuWindowGridView) menu.findViewById(R.id.menu_window);
         ArrayList<MenuWindowAdapter.MenuItem> arrayList = new ArrayList<>();
-
         arrayList.add(new MenuWindowAdapter.MenuItem(R.drawable.menu_favorite_plus, R.string.action_collect));
         arrayList.add(new MenuWindowAdapter.MenuItem(R.drawable.menu_share, R.string.action_share));
         arrayList.add(new MenuWindowAdapter.MenuItem(R.drawable.menu_copy, R.string.action_copy_link));
@@ -147,16 +91,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         arrayList.add(new MenuWindowAdapter.MenuItem(R.drawable.menu_history, R.string.fast_enter_history));
         arrayList.add(new MenuWindowAdapter.MenuItem(R.drawable.menu_setting, R.string.fast_enter_setting));
         arrayList.add(new MenuWindowAdapter.MenuItem(R.drawable.menu_power, R.string.action_exit));
-        menuWindowAdapter = new MenuWindowAdapter(MainActivity.this, arrayList);
+        MenuWindowAdapter menuWindowAdapter = new MenuWindowAdapter(MainActivity.this, arrayList);
         menuList.setAdapter(menuWindowAdapter);
-        menuDialog.getWindow().getAttributes().windowAnimations = R.style.multiwindow_anim;
-        menuDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-        DialogContainer container = (DialogContainer) menuDialog.findViewById(R.id.menu_window_container);
-
-        container.setOutSideTouchItemCallBack(new DialogContainer.OutSideTouchItemCallBack() {
+        menu.setOutSideTouchItemCallBack(new DialogContainer.OutSideTouchItemCallBack() {
             @Override
             public void outside() {
-                menuDialog.dismiss();
+                menu.hide();
             }
         });
     }
@@ -167,26 +107,23 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
     }
 
-    private void initMultiWindowDialog() {
-        multiWindowDialog = new Dialog(MainActivity.this, R.style.multiwindow_Dialog);
-        multiWindowDialog.setContentView(R.layout.layout_multi_window);
-        MultiWindowListView multiTabListView = (MultiWindowListView) multiWindowDialog.findViewById(R.id.multi_window);
+    private void initMultiWindow() {
+        multiWindow = (DialogContainer) findViewById(R.id.multi_window_container);
+        MultiWindowListView multiTabListView = (MultiWindowListView) multiWindow.findViewById(R.id.multi_window);
         multiWindowAdapter = new MultiWindowAdapter();
         multiTabListView.setAdapter(multiWindowAdapter);
-        multiWindowDialog.getWindow().getAttributes().windowAnimations = R.style.multiwindow_anim;
-        multiWindowDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-        DialogContainer container = (DialogContainer) multiWindowDialog.findViewById(R.id.multi_window_container);
+        DialogContainer container = (DialogContainer) multiWindow.findViewById(R.id.multi_window_container);
         container.setOutSideTouchItemCallBack(new DialogContainer.OutSideTouchItemCallBack() {
             @Override
             public void outside() {
-                multiWindowDialog.dismiss();
+                multiWindow.hide();
             }
         });
 
-        multiWindowDialog.findViewById(R.id.add).setOnClickListener(new View.OnClickListener() {
+        multiWindow.findViewById(R.id.add).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                multiWindowDialog.dismiss();
+                multiWindow.hide();
                 loadHome();
             }
         });
@@ -206,16 +143,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
 
     public void setCurrentView(View view) {
-        mContainer.removeAllViews();
-        mContainer.addView(view);
+        webViewContainer.setCurrentView(view);
     }
 
     public View setCurrentView(int viewId) {
-        mContainer.removeAllViews();
-        LayoutInflater factory = LayoutInflater.from(MainActivity.this);
-        View mView = factory.inflate(viewId, mContainer, false);
-        mContainer.addView(mView);
-        return mView;
+        return webViewContainer.setCurrentView(viewId);
     }
 
     public TabManager getTabManager() {
@@ -263,14 +195,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 //        loadUrl("http://top.baidu.com/m#buzz/1", true);
     }
 
-//    public void loadUrl(String url, String searchWord, boolean newTab) {
-//        tabManager.loadUrl(url, searchWord, newTab);
-//    }
-//
-//    public void loadUrl(String url, boolean newTab) {
-//        tabManager.loadUrl(url, newTab);
-//    }
-
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if ((keyCode == KeyEvent.KEYCODE_BACK)) {
@@ -310,7 +234,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     public void refreshBottomBar() {
         //multi button
         int count = tabManager.getTabGroupCount();
-        multiWindow.setText(count + "");
+        multiWindowBtn.setText(count + "");
 
         //go back
         if (tabManager.getCurrentTabGroup().canGoBack()) {
@@ -332,8 +256,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     public void refreshBottomText(String text) {
-        TextView searchBotton = (TextView) findViewById(R.id.search);
-        searchBotton.setHint(text);
+
     }
 
     public void refreshGoForward(boolean isActivate) {
@@ -357,10 +280,26 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     public void exit() {
         super.exit();
-        menuDialog.dismiss();
-        multiWindowDialog.dismiss();
-        menuDialog = null;
-        multiWindowDialog = null;
+        menu.hide();
+        multiWindow.hide();
+    }
+
+    private void closeDialog() {
+        if(multiWindow != null) {
+            multiWindow.hide();
+        }
+        if(menu != null) {
+            menu.hide();
+        }
+    }
+
+    private void closeDialogJustNow() {
+        if(multiWindow != null) {
+            multiWindow.setVisibility(View.INVISIBLE);
+        }
+        if(menu != null) {
+            menu.setVisibility(View.INVISIBLE);
+        }
     }
 
     @Override
@@ -371,6 +310,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 Tab tab = tabManager.getCurrentTabGroup();
                 if (tab.canGoBack()) {
                     tab.goBack();
+                    closeDialog();
                 }
                 break;
             case R.id.go_forward:
@@ -378,30 +318,40 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     View view = tabManager.getCurrentTabGroup().getCurrentTab().getView();
                     if (view instanceof WebView) {
                         ((WebView) view).stopLoading();
+                        closeDialog();
                     }
                     refreshGoForward(false);
                 } else if (v.isEnabled()) {
                     tab = tabManager.getCurrentTabGroup();
                     if (tab.canGoForward()) {
                         tab.goForward();
+                        closeDialog();
                     }
                 }
                 break;
-            case R.id.bottom_search_btn_container:
+            case R.id.search:
                 String content = tabManager.getCurrentTabGroup().getCurrentTab().getSearchWord();
                 startSearcheActivity(content);
-
+                closeDialogJustNow();
                 break;
             case R.id.multi_btn:
-                if(multiWindowDialog != null) {
-                    multiWindowDialog.show();
+                if(menu != null) {
+                    menu.hide();
+                }
+
+                if(multiWindow != null) {
+                    multiWindow.show();
                     updateMultiwindow();
                 }
 
                 break;
             case R.id.menu:
-                if(menuDialog != null) {
-                    menuDialog.show();
+                if(multiWindow != null) {
+                    multiWindow.hide();
+                }
+
+                if(menu != null) {
+                    menu.show();
                 }
                 break;
             case R.id.close_tab:
@@ -416,7 +366,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             case R.id.multi_window_item:
                 TabGroup tabGroup = (TabGroup) v.getTag(R.id.multi_window_item_tag);
                 tabManager.switchTabGroup(tabGroup);
-                multiWindowDialog.dismiss();
+                if(multiWindow != null) {
+                    multiWindow.hide();
+                }
                 break;
             case R.id.menu_window_item:
                 MenuWindowAdapter.MenuItem itemRes = (MenuWindowAdapter.MenuItem) v.getTag(R.id.menu_window_item_tag);
@@ -466,7 +418,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         tabManager.loadUrl(Tab.URL_SETTING, false);
                         break;
                 }
-                menuDialog.dismiss();
+                if(menu != null) {
+                    menu.hide();
+                }
                 break;
         }
     }

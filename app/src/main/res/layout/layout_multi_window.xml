@@ -1,28 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <peter.util.searcher.view.DialogContainer xmlns:android="http://schemas.android.com/apk/res/android"
-                                          android:id="@+id/multi_window_container"
-                                          android:layout_width="match_parent"
-                                          android:layout_height="match_parent"
-                                          android:layout_marginBottom="15dp">
+    android:id="@+id/multi_window_container"
+    android:visibility="invisible"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <peter.util.searcher.view.MultiWindowListView
-        android:id="@+id/multi_window"
+    <View
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/add"
-        android:divider="@color/colorPrimary_"
-        android:stackFromBottom="true"/>
+        android:layout_height="match_parent"
+        android:background="@color/half_transparent" />
 
-
-    <ImageView
-        android:id="@+id/add"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/multi_window_item_h"
-        android:layout_alignParentBottom="true"
-        android:background="@drawable/multi_item_selector"
-        android:scaleType="centerInside"
-        android:src="@drawable/multi_add"
-        android:textColor="@android:color/black"/>
+        android:layout_height="match_parent">
+
+        <peter.util.searcher.view.MultiWindowListView
+            android:id="@+id/multi_window"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/add"
+            android:divider="@color/colorPrimary_"
+            android:stackFromBottom="true" />
+
+        <ImageView
+            android:id="@+id/add"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/multi_window_item_h"
+            android:layout_alignParentBottom="true"
+            android:background="@drawable/multi_item_selector"
+            android:scaleType="centerInside"
+            android:src="@drawable/multi_add"
+            android:textColor="@android:color/black" />
+
+    </RelativeLayout>
 
 
 </peter.util.searcher.view.DialogContainer>

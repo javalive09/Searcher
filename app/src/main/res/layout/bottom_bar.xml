@@ -25,29 +25,16 @@
         android:scaleType="center"
         android:src="@drawable/bar_forward_selector" />
 
-    <HorizontalScrollView
-        android:id="@+id/bottom_search_btn_container"
+    <ImageView
+        android:id="@+id/search"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_margin="4dp"
-        android:layout_weight="2"
-        android:fadingEdge="vertical"
-        android:fadingEdgeLength="0dp"
-        android:background="@drawable/search_bg_tt"
-        android:scrollbars="none">
-
-        <TextView
-            android:id="@+id/search"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical"
-            android:hint="@string/search_icon_hint"
-            android:scaleType="center"
-            android:clickable="false"
-            android:paddingLeft="5dp"
-            android:singleLine="true"
-            android:visibility="visible" />
-    </HorizontalScrollView>
+        android:layout_weight="1"
+        android:background="@drawable/bottom_bar_selector"
+        android:onClick="onClick"
+        android:scaleType="center"
+        android:src="@drawable/abc_ic_search_api_mtrl_alpha"
+        android:visibility="visible"/>
 
     <FrameLayout
         android:id="@+id/multi_btn"
