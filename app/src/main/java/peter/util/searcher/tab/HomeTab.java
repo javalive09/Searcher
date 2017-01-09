@@ -91,7 +91,7 @@ public class HomeTab extends LocalViewTab implements View.OnClickListener{
     @Override
     public void onClick(View v) {
         IconItem iconItem = (IconItem) v.getTag();
-        mainActivity.loadUrl(iconItem.url, false);
+        mainActivity.getTabManager().loadUrl(iconItem.url, false);
     }
 
     private class FastEnterAdapter extends BaseAdapter {

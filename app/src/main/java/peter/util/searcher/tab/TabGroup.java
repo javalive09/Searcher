@@ -16,6 +16,7 @@ public class TabGroup extends SearcherTab {
     private static final int MAX_TAB = 50;
     private ArrayList<SearcherTab> tabArrayList = new ArrayList<>(MAX_TAB);
     private int mCurrentTabIndex;
+    private TabGroup parent;
 
     public TabGroup(MainActivity activity) {
         super(activity);
@@ -30,8 +31,21 @@ public class TabGroup extends SearcherTab {
         return getCurrentTab().getTitle();
     }
 
+    @Override
+    public String getHost() {
+        return null;
+    }
+
     public String getUrl() {
         return getCurrentTab().getUrl();
+    }
+
+    public TabGroup getParent() {
+        return parent;
+    }
+
+    public void setParent(TabGroup parent) {
+        this.parent = parent;
     }
 
     @Override

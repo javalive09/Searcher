@@ -13,7 +13,7 @@
         android:background="@drawable/bottom_bar_selector"
         android:onClick="onClick"
         android:scaleType="center"
-        android:src="@drawable/bar_back_selector" />
+        android:src="@drawable/btn_left_selector" />
 
     <ImageView
         android:id="@+id/go_forward"
@@ -23,31 +23,18 @@
         android:background="@drawable/bottom_bar_selector"
         android:onClick="onClick"
         android:scaleType="center"
-        android:src="@drawable/bar_forward_selector" />
+        android:src="@drawable/btn_right_selector" />
 
-    <HorizontalScrollView
-        android:id="@+id/bottom_search_btn_container"
+    <ImageView
+        android:id="@+id/home"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_margin="4dp"
-        android:layout_weight="2"
-        android:fadingEdge="vertical"
-        android:fadingEdgeLength="0dp"
-        android:background="@drawable/search_bg_tt"
-        android:scrollbars="none">
-
-        <TextView
-            android:id="@+id/search"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical"
-            android:hint="@string/search_icon_hint"
-            android:scaleType="center"
-            android:clickable="false"
-            android:paddingLeft="5dp"
-            android:singleLine="true"
-            android:visibility="visible" />
-    </HorizontalScrollView>
+        android:layout_weight="1"
+        android:background="@drawable/bottom_bar_selector"
+        android:onClick="onClick"
+        android:scaleType="center"
+        android:src="@drawable/btn_toolbar_home"
+        android:visibility="visible"/>
 
     <FrameLayout
         android:id="@+id/multi_btn"
@@ -61,19 +48,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:src="@drawable/abc_ic_menu_copy_mtrl_am_alpha" />
+            android:src="@drawable/btn_tabswitcher" />
 
         <TextView
             android:id="@+id/multi_btn_txt"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginLeft="3dp"
-            android:layout_marginTop="3dp"
             android:gravity="center"
             android:scaleType="center"
             android:text="11"
-            android:textColor="@color/chrome_txt_color"
-            android:textSize="10sp"
+            android:textColor="@android:color/black"
+            android:textSize="11sp"
             android:textStyle="bold"
             android:visibility="visible" />
 
@@ -88,7 +73,7 @@
         android:background="@drawable/bottom_bar_selector"
         android:onClick="onClick"
         android:scaleType="center"
-        android:src="@drawable/abc_ic_menu_moreoverflow_mtrl_alpha" />
+        android:src="@drawable/btn_menu" />
 
 
 </LinearLayout>

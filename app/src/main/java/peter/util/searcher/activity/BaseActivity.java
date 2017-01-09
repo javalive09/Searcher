@@ -23,6 +23,7 @@ import java.util.Date;
 import peter.util.searcher.R;
 
 /**
+ *
  * Created by peter on 16/5/9.
  */
 public class BaseActivity extends AppCompatActivity{

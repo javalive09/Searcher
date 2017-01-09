@@ -20,6 +20,7 @@ import peter.util.searcher.activity.MainActivity;
 import peter.util.searcher.activity.TabManager;
 import peter.util.searcher.tab.SearcherTab;
 import peter.util.searcher.tab.Tab;
+import peter.util.searcher.tab.TabGroup;
 import peter.util.searcher.tab.WebViewTab;
 
 /**
@@ -51,10 +52,7 @@ public class MyWebChromeClient extends WebChromeClient {
     }
 
     public void onProgressChanged(WebView view, int newProgress) {
-        mActivity.refreshBottomText(newProgress + " %");
-        if(newProgress >= 100) {
-            mActivity.refreshBottomBar();
-        }
+        mActivity.refreshProgress(newProgress);
     }
 
     @Override
@@ -80,8 +78,10 @@ public class MyWebChromeClient extends WebChromeClient {
     @Override
     public boolean onCreateWindow(WebView view, boolean isDialog, boolean isUserGesture, Message resultMsg) {
         if (resultMsg != null) {
-            mActivity.loadUrl(Tab.NEW_WINDOW, "", true);
-            SearcherTab tab = mActivity.getCurrentTab();
+            TabGroup parentTabGroup = mActivity.getTabManager().getCurrentTabGroup();
+            mActivity.getTabManager().loadUrl(Tab.NEW_WINDOW, true);
+            mActivity.getTabManager().getCurrentTabGroup().setParent(parentTabGroup);
+            SearcherTab tab = mActivity.getTabManager().getCurrentTabGroup().getCurrentTab();
             View tabView = tab.getView();
             if (tabView != null && tabView instanceof WebView) {
                 WebView webView = (WebView) tabView;
@@ -96,7 +96,10 @@ public class MyWebChromeClient extends WebChromeClient {
     @Override
     public void onCloseWindow(WebView window) {
         Log.i("onCloseWindow", window.toString());
-        mActivity.removeTabGroup(webViewTab);
+        TabGroup tabGroup = mActivity.getTabManager().getTabGroup(webViewTab);
+        if (tabGroup != null) {
+            mActivity.getTabManager().removeTabGroup(tabGroup);
+        }
     }
 
     public void hideCustomView() {
