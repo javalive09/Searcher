@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import java.util.ArrayList;
 import peter.util.searcher.R;
 import peter.util.searcher.activity.SearchActivity;
@@ -58,6 +60,7 @@ public class OperateUrlFragment extends BaseFragment implements View.OnClickList
             case R.drawable.copy:
                 ClipboardManager cmb = (ClipboardManager)getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
                 cmb.setText(url.trim());
+                Toast.makeText(getActivity(), R.string.copy_board, Toast.LENGTH_SHORT).show();
                 break;
             case R.drawable.enter:
                 searchActivity.closeIME();

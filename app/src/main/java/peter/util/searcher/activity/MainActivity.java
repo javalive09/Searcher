@@ -122,7 +122,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             @Override
             public void onClick(View v) {
                 multiWindow.hide();
-                loadHome();
+                loadHome(true);
             }
         });
     }
@@ -179,24 +179,25 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 tabManager.loadUrl(url, searchWord, true);
             } else if (Intent.ACTION_MAIN.equals(action)) {
                 if (tabManager.getTabGroupCount() == 0) {
-                    loadHome();
+                    loadHome(true);
                 }
             }
         }
     }
 
-    public void loadHome() {
-        tabManager.loadUrl(Tab.URL_HOME2, true);
-//        loadUrl(Tab.URL_HOME, true);
-//        loadUrl("http://m.2345.com/websitesNavigation.htm", true);
-//        loadUrl(getString(R.string.fast_enter_navigation_url), true);
-//        loadUrl("http://top.baidu.com/m#buzz/1", true);
+    public void loadHome(boolean newTab) {
+        tabManager.loadUrl(Tab.URL_HOME2, newTab);
+//        loadUrl(Tab.URL_HOME, newTab);
+//        loadUrl("http://m.2345.com/websitesNavigation.htm", newTab);
+//        loadUrl(getString(R.string.fast_enter_navigation_url), newTab);
+//        loadUrl("http://top.baidu.com/m#buzz/1", newTab);
     }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if ((keyCode == KeyEvent.KEYCODE_BACK)) {
             if(isDialogShow()) {
+                closeDialog();
                 return true;
             }
 
@@ -257,15 +258,19 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     public void refreshProgress(int progress) {
-        ProgressBar bar = (ProgressBar) findViewById(R.id.progress);
+       final ProgressBar bar = (ProgressBar) findViewById(R.id.progress);
         bar.setProgress(progress);
-        if (progress < 100) {
-            if (bar.getVisibility() == View.INVISIBLE) {
-                bar.setVisibility(View.VISIBLE);
-            }
+        if (progress == 100) {
+            bar.post(new Runnable() {
+                @Override
+                public void run() {
+                    bar.setVisibility(View.INVISIBLE);
+                }
+            });
         } else {
-            bar.setVisibility(View.INVISIBLE);
+            bar.setVisibility(View.VISIBLE);
         }
+
     }
 
     public void refreshGoForward(boolean isActivate) {
@@ -346,6 +351,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 String content = tabManager.getCurrentTabGroup().getCurrentTab().getUrl();
                 startSearcheActivity(content);
                 closeDialogFast();
+                break;
+            case R.id.home:
+                loadHome(false);
+                closeDialog();
                 break;
             case R.id.search:
                 content = tabManager.getCurrentTabGroup().getCurrentTab().getSearchWord();

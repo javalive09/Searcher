@@ -18,7 +18,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:drawableLeft="@drawable/ic_search"
+            android:layout_margin="3dp"
             android:gravity="center"
+            android:textSize="13sp"
             android:text="baidu.com"
             android:textColor="@color/chrome_txt_color" />
 
@@ -27,6 +29,7 @@
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
             android:layout_height="3dp"
+            android:layout_gravity="bottom"
             android:max="100"
             android:visibility="invisible" />
     </FrameLayout>
