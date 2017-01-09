@@ -62,5 +62,8 @@ public abstract class LocalViewTab extends SearcherTab{
 
     public void goForward() {}
 
-
+    @Override
+    public String getHost() {
+        return getTitle();
+    }
 }

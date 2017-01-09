@@ -34,4 +34,6 @@ public interface Tab {
 
     String getTitle();
 
+    String getHost();
+
 }

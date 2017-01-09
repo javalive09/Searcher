@@ -31,6 +31,11 @@ public class TabGroup extends SearcherTab {
         return getCurrentTab().getTitle();
     }
 
+    @Override
+    public String getHost() {
+        return null;
+    }
+
     public String getUrl() {
         return getCurrentTab().getUrl();
     }

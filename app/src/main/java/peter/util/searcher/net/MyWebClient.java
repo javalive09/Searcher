@@ -52,6 +52,7 @@ public class MyWebClient extends WebViewClient {
             view.postInvalidate();
         }
         mainActivity.refreshBottomBar();
+        mainActivity.refreshProgress(100);
     }
 
     @Override

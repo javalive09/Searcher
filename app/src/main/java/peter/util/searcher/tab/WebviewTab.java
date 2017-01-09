@@ -11,6 +11,8 @@ import android.webkit.CookieManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 
 import peter.util.searcher.R;
@@ -204,4 +206,21 @@ public class WebViewTab extends SearcherTab {
         settings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.TEXT_AUTOSIZING);
     }
 
+    @Override
+    public String getHost() {
+        String url = getUrl();
+        if(!TextUtils.isEmpty(url)) {
+            URI uri = null;
+            try {
+                uri = new URI(url);
+            } catch (URISyntaxException e) {
+                e.printStackTrace();
+            }
+            if(uri != null) {
+                String domain = uri.getHost();
+                return domain.startsWith("www.") ? domain.substring(4) : domain;
+            }
+        }
+        return null;
+    }
 }

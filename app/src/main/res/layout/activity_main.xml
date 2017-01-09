@@ -4,6 +4,33 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+
+    <FrameLayout
+        android:id="@+id/top_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/chrome_top_color"
+        android:onClick="onClick">
+
+        <TextView
+            android:id="@+id/top_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:drawableLeft="@drawable/ic_search"
+            android:gravity="center"
+            android:text="baidu.com"
+            android:textColor="@color/chrome_txt_color" />
+
+        <ProgressBar
+            android:id="@+id/progress"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:max="100"
+            android:visibility="invisible" />
+    </FrameLayout>
+
     <include
         android:id="@+id/bottom_bar"
         layout="@layout/bottom_bar"
@@ -15,7 +42,8 @@
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/bottom_bar">
+        android:layout_above="@+id/bottom_bar"
+        android:layout_below="@id/top_bar">
 
         <peter.util.searcher.view.WebViewContainer
             android:id="@+id/webview_container"
@@ -33,5 +61,6 @@
             android:layout_height="match_parent" />
 
     </FrameLayout>
+
 
 </RelativeLayout>

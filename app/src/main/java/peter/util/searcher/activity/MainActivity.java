@@ -9,12 +9,11 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.webkit.WebView;
-import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,7 +41,6 @@ import peter.util.searcher.view.MultiWindowListView;
 import peter.util.searcher.view.WebViewContainer;
 
 /**
- *
  * Created by peter on 16/5/9.
  */
 public class MainActivity extends BaseActivity implements View.OnClickListener {
@@ -198,13 +196,17 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if ((keyCode == KeyEvent.KEYCODE_BACK)) {
+            if(isDialogShow()) {
+                return true;
+            }
+
             TabGroup tabGroup = tabManager.getCurrentTabGroup();
             if (tabGroup.canGoBack()) {
                 tabGroup.goBack();
                 return true;
-            }else {
+            } else {
                 TabGroup parentTabGroup = tabGroup.getParent();
-                if(parentTabGroup != null) {
+                if (parentTabGroup != null) {
                     tabManager.removeIndex(tabGroup);
                     tabManager.switchTabGroup(parentTabGroup);
                     return true;
@@ -213,10 +215,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
         return super.onKeyDown(keyCode, event);
     }
-
-//    public SearcherTab getCurrentTab() {
-//        return tabManager.getCurrentTabGroup().getCurrentTab();
-//    }
 
     protected void onResume() {
         super.onResume();
@@ -244,26 +242,37 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
 
         refreshGoForward(false);
-
-        String url = tabManager.getCurrentTabGroup().getCurrentTab().getUrl();
-        if(Tab.URL_HOME.equals(url)) {
-            refreshBottomText(getString(R.string.search_icon_hint));
-        }else {
-            String title = tabManager.getCurrentTabGroup().getCurrentTab().getTitle();
-            refreshBottomText(title);
-        }
+        String host = tabManager.getCurrentTabGroup().getCurrentTab().getHost();
+        refreshTopText(host);
 
     }
 
-    public void refreshBottomText(String text) {
+    public void refreshTopText(String text) {
+        TextView top = (TextView) findViewById(R.id.top_txt);
+        if (TextUtils.isEmpty(text)) {
+            top.setText("...");
+        } else {
+            top.setText(text);
+        }
+    }
 
+    public void refreshProgress(int progress) {
+        ProgressBar bar = (ProgressBar) findViewById(R.id.progress);
+        bar.setProgress(progress);
+        if (progress < 100) {
+            if (bar.getVisibility() == View.INVISIBLE) {
+                bar.setVisibility(View.VISIBLE);
+            }
+        } else {
+            bar.setVisibility(View.INVISIBLE);
+        }
     }
 
     public void refreshGoForward(boolean isActivate) {
-        if(isActivate) {
+        if (isActivate) {
             findViewById(R.id.go_forward).setActivated(true);
             findViewById(R.id.go_forward).setEnabled(true);
-        }else {
+        } else {
             findViewById(R.id.go_forward).setActivated(false);
             if (tabManager.getCurrentTabGroup().canGoForward()) {
                 findViewById(R.id.go_forward).setEnabled(true);
@@ -285,21 +294,25 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     private void closeDialog() {
-        if(multiWindow != null) {
+        if (multiWindow != null) {
             multiWindow.hide();
         }
-        if(menu != null) {
+        if (menu != null) {
             menu.hide();
         }
     }
 
-    private void closeDialogJustNow() {
-        if(multiWindow != null) {
+    private void closeDialogFast() {
+        if (multiWindow != null) {
             multiWindow.setVisibility(View.INVISIBLE);
         }
-        if(menu != null) {
+        if (menu != null) {
             menu.setVisibility(View.INVISIBLE);
         }
+    }
+
+    private boolean isDialogShow() {
+        return multiWindow.getVisibility() == View.VISIBLE || menu.getVisibility() == View.VISIBLE;
     }
 
     @Override
@@ -329,43 +342,48 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     }
                 }
                 break;
-            case R.id.search:
-                String content = tabManager.getCurrentTabGroup().getCurrentTab().getSearchWord();
+            case R.id.top_bar:
+                String content = tabManager.getCurrentTabGroup().getCurrentTab().getUrl();
                 startSearcheActivity(content);
-                closeDialogJustNow();
+                closeDialogFast();
+                break;
+            case R.id.search:
+                content = tabManager.getCurrentTabGroup().getCurrentTab().getSearchWord();
+                startSearcheActivity(content);
+                closeDialogFast();
                 break;
             case R.id.multi_btn:
-                if(menu != null) {
+                if (menu != null) {
                     menu.hide();
                 }
 
-                if(multiWindow != null) {
-                    if(multiWindow.getVisibility() == View.INVISIBLE) {
+                if (multiWindow != null) {
+                    if (multiWindow.getVisibility() == View.INVISIBLE) {
                         multiWindow.show();
                         updateMultiwindow();
-                    }else {
+                    } else {
                         multiWindow.hide();
                     }
                 }
 
                 break;
             case R.id.menu:
-                if(multiWindow != null) {
+                if (multiWindow != null) {
                     multiWindow.hide();
                 }
 
-                if(menu != null) {
-                    if(menu.getVisibility() == View.INVISIBLE) {
+                if (menu != null) {
+                    if (menu.getVisibility() == View.INVISIBLE) {
                         menu.show();
-                    }else {
+                    } else {
                         menu.hide();
                     }
                 }
                 break;
             case R.id.close_tab:
-                if(tabManager.getTabGroupCount() == 1) {
+                if (tabManager.getTabGroupCount() == 1) {
                     exit();
-                }else {
+                } else {
                     TabGroup tabGroup = (TabGroup) v.getTag();
                     tabManager.removeTabGroup(tabGroup);
                     updateMultiwindow();
@@ -374,7 +392,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             case R.id.multi_window_item:
                 TabGroup tabGroup = (TabGroup) v.getTag(R.id.multi_window_item_tag);
                 tabManager.switchTabGroup(tabGroup);
-                if(multiWindow != null) {
+                if (multiWindow != null) {
                     multiWindow.hide();
                 }
                 break;
@@ -426,16 +444,16 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         tabManager.loadUrl(Tab.URL_SETTING, false);
                         break;
                 }
-                if(menu != null) {
+                if (menu != null) {
                     menu.hide();
                 }
                 break;
         }
     }
 
-    public void startSearcheActivity(String word) {
+    public void startSearcheActivity(String url) {
         Intent intent = new Intent(MainActivity.this, SearchActivity.class);
-        intent.putExtra(NAME_WORD, word);
+        intent.putExtra(NAME_URL, url);
         startActivity(intent);
     }
 

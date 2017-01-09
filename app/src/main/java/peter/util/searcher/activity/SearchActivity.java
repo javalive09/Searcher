@@ -82,8 +82,10 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
     }
 
     private void checkData(Intent intent) {
-        String word = intent.getStringExtra(NAME_WORD);
-        setSearchWord(word);
+        String url = intent.getStringExtra(NAME_URL);
+        if(!url.contains(Tab.LOCAL_SCHEMA)) {
+            setSearchWord(url);
+        }
     }
 
     @Override

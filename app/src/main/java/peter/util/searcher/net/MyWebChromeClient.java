@@ -52,10 +52,7 @@ public class MyWebChromeClient extends WebChromeClient {
     }
 
     public void onProgressChanged(WebView view, int newProgress) {
-        mActivity.refreshBottomText(newProgress + " %");
-        if(newProgress >= 100) {
-            mActivity.refreshBottomBar();
-        }
+        mActivity.refreshProgress(newProgress);
     }
 
     @Override
