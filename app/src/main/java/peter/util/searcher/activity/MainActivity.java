@@ -4,7 +4,10 @@ import android.app.SearchManager;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.content.res.Configuration;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -259,6 +262,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     public void refreshProgress(int progress) {
        final ProgressBar bar = (ProgressBar) findViewById(R.id.progress);
+        int color = getResources().getColor(R.color.progress_color);
+        bar.getIndeterminateDrawable().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
         bar.setProgress(progress);
         if (progress == 100) {
             bar.post(new Runnable() {
