@@ -31,4 +31,13 @@
         android:padding="3dp"
         android:src="@drawable/chrome_btn_mic" />
 
+    <ProgressBar
+        android:id="@+id/progress"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:layout_gravity="bottom"
+        android:max="100"
+        android:visibility="invisible" />
+
 </FrameLayout>

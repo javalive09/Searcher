@@ -64,6 +64,8 @@ public class OperateUrlFragment extends BaseFragment implements View.OnClickList
                 break;
             case R.drawable.enter:
                 searchActivity.closeIME();
+                searchActivity.finish();
+                searchActivity.overridePendingTransition(0, 0);
                 searchActivity.startBrowser(url, "");
                 break;
         }

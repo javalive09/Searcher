@@ -86,6 +86,8 @@ public class EngineViewPagerFragment extends BaseFragment implements View.OnClic
                 if (!TextUtils.isEmpty(searchWord)) {
                     Engine engine = (Engine) v.getTag(R.id.grid_view_item);
                     String url = UrlUtils.smartUrlFilter(searchWord, true, engine.url);
+                    act.finish();
+                    act.overridePendingTransition(0, 0);
                     act.startBrowser(url, searchWord);
                 }
                 break;

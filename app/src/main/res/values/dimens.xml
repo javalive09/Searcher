@@ -21,7 +21,7 @@
     <dimen name="input_margin">5dp</dimen>
     <dimen name="button_w">60dp</dimen>
     <dimen name="multi_window_icon_margin">10dp</dimen>
-    <dimen name="multi_window_item_h">50dp</dimen>
+    <dimen name="multi_window_item_h">55dp</dimen>
     <dimen name="multi_window_item_icon_cell">20dp</dimen>
     <dimen name="menu_padding">10dp</dimen>
 </resources>

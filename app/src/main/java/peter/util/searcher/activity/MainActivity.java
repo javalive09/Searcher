@@ -274,12 +274,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         refreshGoForward(false);
         String host = tabManager.getCurrentTabGroup().getCurrentTab().getHost();
         refreshTopText(host);
-
     }
 
     public void refreshTopText(String text) {
         EditText top = (EditText) findViewById(R.id.top_txt);
         if (TextUtils.isEmpty(text)) {
+            top.setText("");
             top.setHint(R.string.search_hint);
         } else {
             top.setText(text);
