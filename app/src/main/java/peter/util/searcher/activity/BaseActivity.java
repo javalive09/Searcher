@@ -58,7 +58,9 @@ public class BaseActivity extends AppCompatActivity{
     public void setSearchWord(String word) {}
 
     public void startBrowser(String url, String word) {
+        finish();
         Intent intent = new Intent(BaseActivity.this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
         intent.setAction(ACTION_INNER_BROWSE);
         intent.putExtra(NAME_URL, url);
         intent.putExtra(NAME_WORD, word);

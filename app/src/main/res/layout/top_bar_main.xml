@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/search_h"
+    android:background="@color/chrome_top_color">
+
+    <peter.util.searcher.view.ObservableEditText
+        android:id="@+id/top_txt"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/chrome_bg_find_toolbar_popup"
+        android:hint="@string/search_hint"
+        android:drawableLeft="@drawable/ic_search"
+        android:imeOptions="actionDone"
+        android:singleLine="true"
+        android:paddingLeft="15dp"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:onClick="onClick"
+        android:paddingRight="@dimen/search_padding_right" />
+
+    <ImageView
+        android:id="@+id/opt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right|center_vertical"
+        android:layout_marginBottom="3dp"
+        android:layout_marginRight="15dp"
+        android:onClick="onClick"
+        android:background="@drawable/list_item_selector"
+        android:padding="3dp"
+        android:src="@drawable/chrome_btn_mic" />
+
+</FrameLayout>

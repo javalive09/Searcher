@@ -138,4 +138,8 @@ public class HomeTab extends LocalViewTab implements View.OnClickListener{
         String url;
     }
 
+    public String getHost() {
+        return "";
+    }
+
 }

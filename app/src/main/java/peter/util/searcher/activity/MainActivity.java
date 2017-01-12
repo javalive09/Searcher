@@ -4,9 +4,7 @@ import android.app.SearchManager;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.content.res.Configuration;
-import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -16,15 +14,19 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.webkit.WebView;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.iflytek.cloud.SpeechError;
+import com.iflytek.cloud.ui.RecognizerDialogListener;
 import com.umeng.analytics.MobclickAgent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import peter.util.searcher.VoiceRecognizer;
 import peter.util.searcher.adapter.MenuWindowAdapter;
 import peter.util.searcher.adapter.MultiWindowAdapter;
 import peter.util.searcher.bean.Bean;
@@ -199,7 +201,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if ((keyCode == KeyEvent.KEYCODE_BACK)) {
-            if(isDialogShow()) {
+            if (isDialogShow()) {
                 closeDialog();
                 return true;
             }
@@ -225,6 +227,30 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         tabManager.resumeTabGroupExclude(null);
         MobclickAgent.onResume(this);
     }
+
+    /**
+     * Dialog监听器
+     */
+    private RecognizerDialogListener mRecognizerDialogListener = new RecognizerDialogListener() {
+        @Override
+        public void onResult(com.iflytek.cloud.RecognizerResult recognizerResult, boolean isLast) {
+
+            if (recognizerResult != null) {
+                String json = recognizerResult.getResultString();
+                if (!TextUtils.isEmpty(json)) {
+                    String result = VoiceRecognizer.instance().parseIatResult(json);
+                    if (!TextUtils.isEmpty(result)) {
+                        startSearchActivity(result);
+                    }
+                }
+            }
+        }
+
+        @Override
+        public void onError(SpeechError speechError) {
+
+        }
+    };
 
     @Override
     protected void onPause() {
@@ -252,16 +278,16 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     public void refreshTopText(String text) {
-        TextView top = (TextView) findViewById(R.id.top_txt);
+        EditText top = (EditText) findViewById(R.id.top_txt);
         if (TextUtils.isEmpty(text)) {
-            top.setText("...");
+            top.setHint(R.string.search_hint);
         } else {
             top.setText(text);
         }
     }
 
     public void refreshProgress(int progress) {
-       final ProgressBar bar = (ProgressBar) findViewById(R.id.progress);
+        final ProgressBar bar = (ProgressBar) findViewById(R.id.progress);
         int color = getResources().getColor(R.color.progress_color);
         bar.getIndeterminateDrawable().setColorFilter(color, PorterDuff.Mode.MULTIPLY);
         bar.setProgress(progress);
@@ -275,7 +301,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         } else {
             bar.setVisibility(View.VISIBLE);
         }
-
     }
 
     public void refreshGoForward(boolean isActivate) {
@@ -327,8 +352,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-
         switch (v.getId()) {
+            case R.id.opt:
+                VoiceRecognizer.instance().showVoiceDialog(MainActivity.this, mRecognizerDialogListener);
+                break;
             case R.id.go_back:
                 Tab tab = tabManager.getCurrentTabGroup();
                 if (tab.canGoBack()) {
@@ -352,9 +379,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     }
                 }
                 break;
-            case R.id.top_bar:
+            case R.id.top_txt:
                 String content = tabManager.getCurrentTabGroup().getCurrentTab().getUrl();
-                startSearcheActivity(content);
+                startSearchActivity(content);
                 closeDialogFast();
                 break;
             case R.id.home:
@@ -363,7 +390,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 break;
             case R.id.search:
                 content = tabManager.getCurrentTabGroup().getCurrentTab().getSearchWord();
-                startSearcheActivity(content);
+                startSearchActivity(content);
                 closeDialogFast();
                 break;
             case R.id.multi_btn:
@@ -465,9 +492,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
     }
 
-    public void startSearcheActivity(String url) {
+    public void startSearchActivity(String word) {
         Intent intent = new Intent(MainActivity.this, SearchActivity.class);
-        intent.putExtra(NAME_URL, url);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        intent.putExtra(NAME_WORD, word);
         startActivity(intent);
     }
 
