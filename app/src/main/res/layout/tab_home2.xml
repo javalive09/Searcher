@@ -11,7 +11,7 @@
         android:layout_marginBottom="80dp"
         android:layout_marginTop="80dp"
         android:drawablePadding="15dp"
-        android:drawableTop="@drawable/icon"
+        android:drawableTop="@drawable/web_icon_512"
         android:gravity="center"/>
 
     <TextView
