@@ -13,6 +13,7 @@
         android:drawableLeft="@drawable/ic_search"
         android:imeOptions="actionDone"
         android:singleLine="true"
+        android:layout_marginTop="5dp"
         android:paddingLeft="15dp"
         android:selectAllOnFocus="true"
         android:paddingRight="@dimen/search_padding_right" />
