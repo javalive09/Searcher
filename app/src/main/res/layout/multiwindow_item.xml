@@ -31,7 +31,6 @@
         android:layout_height="@dimen/multi_window_item_h"
         android:layout_gravity="center_vertical"
         android:scaleType="center"
-        android:src="@drawable/clear"
-        android:background="@drawable/list_item_selector" />
+        android:src="@drawable/clear_selector" />
 
 </LinearLayout>

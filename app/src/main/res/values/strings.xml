@@ -90,6 +90,9 @@
     <string name="home">主页</string>
     <string name="multi_window_add">新建</string>
     <string name="copy_board">已经复制到剪切板</string>
+    <string name="copy_txt">复制</string>
+    <string name="paste_txt">粘贴</string>
+    <string name="enter_txt">进入</string>
 
     <string-array name="settings_name">
         <item>分享APP</item>

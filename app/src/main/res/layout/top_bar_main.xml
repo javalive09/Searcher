@@ -8,7 +8,7 @@
         android:id="@+id/top_txt"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="4dp"
         android:background="@drawable/chrome_bg_find_toolbar_popup"
         android:drawableLeft="@drawable/ic_search"
         android:focusable="false"
@@ -25,11 +25,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="right|center_vertical"
-        android:layout_marginBottom="3dp"
-        android:layout_marginRight="15dp"
+        android:layout_marginRight="7dp"
         android:background="@drawable/list_item_selector"
         android:onClick="onClick"
-        android:padding="3dp"
+        android:padding="7dp"
         android:src="@drawable/chrome_btn_mic" />
 
     <ProgressBar

@@ -13,7 +13,7 @@
         android:drawableLeft="@drawable/ic_search"
         android:imeOptions="actionDone"
         android:singleLine="true"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="4dp"
         android:paddingLeft="15dp"
         android:selectAllOnFocus="true"
         android:paddingRight="@dimen/search_padding_right" />
@@ -23,11 +23,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="right|center_vertical"
-        android:layout_marginBottom="3dp"
-        android:layout_marginRight="15dp"
-        android:onClick="onClick"
+        android:layout_marginRight="7dp"
         android:background="@drawable/list_item_selector"
-        android:padding="3dp"
+        android:onClick="onClick"
+        android:padding="7dp"
         android:src="@drawable/opt_level" />
 
 </FrameLayout>

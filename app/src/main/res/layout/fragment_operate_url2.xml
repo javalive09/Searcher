@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
-    android:orientation="vertical">
+    android:orientation="horizontal">
 
     <include
         android:id="@+id/operate_url"
@@ -17,19 +17,5 @@
         android:layout_height="1px"
         android:layout_below="@+id/operate_url"
         android:background="@color/line_color" />
-
-    <ListView
-        android:id="@+id/recent_search"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/line" />
-
-    <ProgressBar
-        android:id="@+id/loading"
-        style="@style/MyProgressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:visibility="visible" />
 
 </RelativeLayout>

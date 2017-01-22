@@ -21,6 +21,7 @@ import peter.util.searcher.R;
 import peter.util.searcher.VoiceRecognizer;
 import peter.util.searcher.fragment.EngineViewPagerFragment;
 import peter.util.searcher.fragment.OperateUrlFragment;
+import peter.util.searcher.fragment.OperateUrlFragment2;
 import peter.util.searcher.fragment.RecentSearchFragment;
 import peter.util.searcher.tab.Tab;
 import peter.util.searcher.utils.UrlUtils;
@@ -170,7 +171,7 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
             } else if (tag.equals(ENGINE_LIST)) {
                 fragment = new EngineViewPagerFragment();
             } else if (tag.equals(OPERATE_URL)) {
-                fragment = new OperateUrlFragment();
+                fragment = new OperateUrlFragment2();
             }
             FragmentManager fragmentManager = getFragmentManager();
             FragmentTransaction ft = fragmentManager.beginTransaction();

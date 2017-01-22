@@ -1,8 +1,11 @@
 package peter.util.searcher.fragment;
 
 import android.app.Fragment;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,6 +20,7 @@ import java.util.List;
 
 import peter.util.searcher.R;
 import peter.util.searcher.activity.BaseActivity;
+import peter.util.searcher.activity.SearchActivity;
 import peter.util.searcher.db.SqliteHelper;
 import peter.util.searcher.activity.EnterActivity;
 import peter.util.searcher.bean.Bean;
@@ -29,6 +33,7 @@ public class RecentSearchFragment extends BaseFragment implements View.OnClickLi
     View rootView;
     PopupMenu popup;
     MyAsyncTask asyncTask;
+    CharSequence word;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -38,7 +43,11 @@ public class RecentSearchFragment extends BaseFragment implements View.OnClickLi
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         rootView = inflater.inflate(R.layout.fragment_recent_search, container, false);
+        rootView.findViewById(R.id.paste).setOnClickListener(RecentSearchFragment.this);
+        rootView.findViewById(R.id.copy).setEnabled(false);
+        rootView.findViewById(R.id.enter).setEnabled(false);
         return rootView;
     }
 
@@ -46,6 +55,13 @@ public class RecentSearchFragment extends BaseFragment implements View.OnClickLi
     public void onResume() {
         super.onResume();
         refreshData();
+        ClipboardManager cmb = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+        word = cmb.getText();
+        if (TextUtils.isEmpty(word)) {
+            rootView.findViewById(R.id.paste).setEnabled(false);
+        } else {
+            rootView.findViewById(R.id.paste).setEnabled(true);
+        }
     }
 
     @Override
@@ -56,8 +72,11 @@ public class RecentSearchFragment extends BaseFragment implements View.OnClickLi
                 if (bean != null) {
                     BaseActivity activity = (BaseActivity) getActivity();
                     activity.setSearchWord(bean.name);
-
                 }
+                break;
+            case R.id.paste:
+                SearchActivity searchActivity = (SearchActivity) getActivity();
+                searchActivity.setSearchWord(word.toString());
                 break;
         }
     }

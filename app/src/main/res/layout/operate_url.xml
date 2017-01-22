@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+
+    <TextView
+        android:id="@+id/copy"
+        android:layout_width="0px"
+        android:layout_height="@dimen/top_h"
+        android:layout_weight="1"
+        android:background="@drawable/list_item_selector"
+        android:gravity="center"
+        android:text="@string/copy_txt" />
+
+    <TextView
+        android:id="@+id/paste"
+        android:layout_width="0px"
+        android:layout_height="@dimen/top_h"
+        android:layout_weight="1"
+        android:background="@drawable/list_item_selector"
+        android:gravity="center"
+        android:text="@string/paste_txt" />
+
+    <TextView
+        android:id="@+id/enter"
+        android:layout_width="0px"
+        android:layout_height="@dimen/top_h"
+        android:layout_weight="1"
+        android:background="@drawable/list_item_selector"
+        android:gravity="center"
+        android:text="@string/enter_txt" />
+</LinearLayout>

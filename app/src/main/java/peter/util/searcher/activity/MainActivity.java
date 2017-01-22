@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -63,13 +64,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.tab_home2);
-        Intent intent = getIntent();
-        if (intent != null) {
-            setContentView(R.layout.activity_main);
-            init();
-            checkIntentData(intent);
-        }
+        setContentView(R.layout.activity_main);
+        init();
+        checkIntentData(getIntent());
     }
 
     private void init() {
@@ -78,22 +75,38 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         webViewContainer = (WebViewContainer) findViewById(R.id.webview_container);
         tabManager = new TabManager(MainActivity.this);
         installLocalTabRounter();
+        initTopBar();
         initMenu();
         initMultiWindow();
+    }
+
+    private void initTopBar() {
+        findViewById(R.id.top_txt).setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    String content = tabManager.getCurrentTabGroup().getCurrentTab().getUrl();
+                    startSearchActivity(content);
+                    closeDialogFast();
+                    return true;
+                }
+                return false;
+            }
+        });
     }
 
     private void initMenu() {
         menu = (DialogContainer) findViewById(R.id.menu_window_container);
         MenuWindowGridView menuList = (MenuWindowGridView) menu.findViewById(R.id.menu_window);
         ArrayList<MenuWindowAdapter.MenuItem> arrayList = new ArrayList<>();
-        arrayList.add(new MenuWindowAdapter.MenuItem(R.drawable.menu_favorite_plus, R.string.action_collect));
-        arrayList.add(new MenuWindowAdapter.MenuItem(R.drawable.menu_share, R.string.action_share));
-        arrayList.add(new MenuWindowAdapter.MenuItem(R.drawable.menu_copy, R.string.action_copy_link));
-        arrayList.add(new MenuWindowAdapter.MenuItem(R.drawable.menu_refresh, R.string.action_refresh));
-        arrayList.add(new MenuWindowAdapter.MenuItem(R.drawable.menu_favorite_folder, R.string.fast_enter_favorite));
-        arrayList.add(new MenuWindowAdapter.MenuItem(R.drawable.menu_history, R.string.fast_enter_history));
-        arrayList.add(new MenuWindowAdapter.MenuItem(R.drawable.menu_setting, R.string.fast_enter_setting));
-        arrayList.add(new MenuWindowAdapter.MenuItem(R.drawable.menu_power, R.string.action_exit));
+        arrayList.add(new MenuWindowAdapter.MenuItem(R.drawable.ic_file_download, R.string.action_download));
+        arrayList.add(new MenuWindowAdapter.MenuItem(R.drawable.ic_star_border, R.string.action_collect));
+        arrayList.add(new MenuWindowAdapter.MenuItem(R.drawable.ic_share, R.string.action_share));
+        arrayList.add(new MenuWindowAdapter.MenuItem(R.drawable.ic_refresh, R.string.action_refresh));
+        arrayList.add(new MenuWindowAdapter.MenuItem(R.drawable.ic_folder_special, R.string.fast_enter_favorite));
+        arrayList.add(new MenuWindowAdapter.MenuItem(R.drawable.ic_history, R.string.fast_enter_history));
+        arrayList.add(new MenuWindowAdapter.MenuItem(R.drawable.ic_settings, R.string.fast_enter_setting));
+        arrayList.add(new MenuWindowAdapter.MenuItem(R.drawable.ic_power_settings_new, R.string.action_exit));
         MenuWindowAdapter menuWindowAdapter = new MenuWindowAdapter(MainActivity.this, arrayList);
         menuList.setAdapter(menuWindowAdapter);
         menu.setOutSideTouchItemCallBack(new DialogContainer.OutSideTouchItemCallBack() {
@@ -379,17 +392,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     }
                 }
                 break;
-            case R.id.top_txt:
-                String content = tabManager.getCurrentTabGroup().getCurrentTab().getUrl();
-                startSearchActivity(content);
-                closeDialogFast();
-                break;
             case R.id.home:
                 loadHome(false);
                 closeDialog();
                 break;
             case R.id.search:
-                content = tabManager.getCurrentTabGroup().getCurrentTab().getSearchWord();
+                String content = tabManager.getCurrentTabGroup().getCurrentTab().getSearchWord();
                 startSearchActivity(content);
                 closeDialogFast();
                 break;
@@ -483,6 +491,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         break;
                     case R.string.fast_enter_setting:
                         tabManager.loadUrl(Tab.URL_SETTING, false);
+                        break;
+                    case R.string.action_download:
+
                         break;
                 }
                 if (menu != null) {
