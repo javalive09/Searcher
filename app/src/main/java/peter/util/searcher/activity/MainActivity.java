@@ -6,6 +6,7 @@ import android.content.ClipboardManager;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.PorterDuff;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -37,6 +38,7 @@ import peter.util.searcher.tab.FavoriteTab;
 import peter.util.searcher.tab.HistoryTab;
 import peter.util.searcher.tab.HomeTab;
 import peter.util.searcher.tab.HomeTab2;
+import peter.util.searcher.tab.LocalViewTab;
 import peter.util.searcher.tab.SettingTab;
 import peter.util.searcher.tab.Tab;
 import peter.util.searcher.tab.TabGroup;
@@ -460,16 +462,28 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         Toast.makeText(MainActivity.this, R.string.copy_link_txt, Toast.LENGTH_SHORT).show();
                         break;
                     case R.string.action_collect:
-                        if (!TextUtils.isEmpty(tabManager.getCurrentTabGroup().getUrl())) {
-                            Bean bean = new Bean();
-                            bean.name = tabManager.getCurrentTabGroup().getTitle();
+                        url = tabManager.getCurrentTabGroup().getCurrentTab().getUrl();
+                        if (!TextUtils.isEmpty(url) && !url.startsWith(Tab.LOCAL_SCHEMA)) {
+                            final Bean bean = new Bean();
+                            bean.name = tabManager.getCurrentTabGroup().getCurrentTab().getTitle();
                             if (TextUtils.isEmpty(bean.name)) {
-                                bean.name = tabManager.getCurrentTabGroup().getUrl();
+                                bean.name = tabManager.getCurrentTabGroup().getCurrentTab().getUrl();
                             }
-                            bean.url = tabManager.getCurrentTabGroup().getUrl();
+                            bean.url = url;
                             bean.time = System.currentTimeMillis();
-                            SqliteHelper.instance(MainActivity.this).insertFav(bean);
-                            Toast.makeText(MainActivity.this, R.string.favorite_txt, Toast.LENGTH_SHORT).show();
+                            new AsyncTask<Void, Void, Boolean>() {
+                                @Override
+                                protected Boolean doInBackground(Void... params) {
+                                    return SqliteHelper.instance(MainActivity.this).insertFav(bean);
+                                }
+
+                                @Override
+                                protected void onPostExecute(Boolean suc) {
+                                    if(suc) {
+                                        Toast.makeText(MainActivity.this, R.string.favorite_txt, Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            }.execute();
                         }
                         break;
                     case R.string.action_share:
