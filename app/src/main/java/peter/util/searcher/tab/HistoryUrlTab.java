@@ -11,12 +11,9 @@ import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
-import java.lang.ref.WeakReference;
 import java.util.List;
 
 import peter.util.searcher.R;
-import peter.util.searcher.activity.BaseActivity;
-import peter.util.searcher.activity.HistoryActivity;
 import peter.util.searcher.activity.MainActivity;
 import peter.util.searcher.bean.Bean;
 import peter.util.searcher.db.SqliteHelper;
@@ -25,12 +22,12 @@ import peter.util.searcher.db.SqliteHelper;
  * Created by peter on 2016/11/18.
  */
 
-public class HistoryTab extends LocalViewTab implements View.OnClickListener, View.OnLongClickListener {
+public class HistoryUrlTab extends LocalViewTab implements View.OnClickListener, View.OnLongClickListener {
 
     PopupMenu popup;
     MyAsyncTask asyncTask;
 
-    public HistoryTab(MainActivity activity) {
+    public HistoryUrlTab(MainActivity activity) {
         super(activity);
     }
 
@@ -63,12 +60,12 @@ public class HistoryTab extends LocalViewTab implements View.OnClickListener, Vi
 
     @Override
     public String getTitle() {
-        return mainActivity.getString(R.string.fast_enter_history);
+        return mainActivity.getString(R.string.action_url_history);
     }
 
     @Override
     public String getUrl() {
-        return URL_HISTORY;
+        return URL_HISTORY_URL;
     }
 
     private class HistoryAdapter extends BaseAdapter {
@@ -113,8 +110,8 @@ public class HistoryTab extends LocalViewTab implements View.OnClickListener, Vi
 
             Bean search = getItem(position);
             view.setText(search.name);
-            view.setOnClickListener(HistoryTab.this);
-            view.setOnLongClickListener(HistoryTab.this);
+            view.setOnClickListener(HistoryUrlTab.this);
+            view.setOnLongClickListener(HistoryUrlTab.this);
             view.setTag(search);
             return view;
         }
@@ -127,7 +124,7 @@ public class HistoryTab extends LocalViewTab implements View.OnClickListener, Vi
         protected List<Bean> doInBackground(Void... params) {
             List<Bean> searches = null;
             try {
-                searches = SqliteHelper.instance(mainActivity).queryAllHistory();
+                searches = SqliteHelper.instance(mainActivity).queryAllHistoryURL();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -187,7 +184,7 @@ public class HistoryTab extends LocalViewTab implements View.OnClickListener, Vi
                 switch (item.getItemId()) {
                     case R.id.action_delete:
                         Bean bean = (Bean) view.getTag();
-                        SqliteHelper.instance(mainActivity).deleteHistory(bean);
+                        SqliteHelper.instance(mainActivity).deleteHistoryURL(bean);
                         refreshData();
                         break;
                 }

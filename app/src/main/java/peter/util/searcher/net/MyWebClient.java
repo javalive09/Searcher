@@ -53,6 +53,7 @@ public class MyWebClient extends WebViewClient {
         }
         mainActivity.refreshBottomBar();
         mainActivity.refreshProgress(100);
+        saveUrlData(view.getTitle(), url);
     }
 
     @Override

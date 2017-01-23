@@ -7,8 +7,6 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 
 import peter.util.searcher.R;
@@ -52,7 +50,7 @@ public class HomeTab extends LocalViewTab implements View.OnClickListener{
         IconItem history = new IconItem();
         history.iconResId = R.drawable.history;
         history.iconName = mainActivity.getString(R.string.fast_enter_history);
-        history.url = Tab.URL_HISTORY;
+        history.url = Tab.URL_HISTORY_SEARCH;
 
         IconItem setting = new IconItem();
         setting.iconResId = R.drawable.setting;

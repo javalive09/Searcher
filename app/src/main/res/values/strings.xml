@@ -46,8 +46,7 @@
     <string name="action_collect">收藏</string>
     <string name="action_collection">我的收藏</string>
     <string name="action_copy_link">复制url</string>
-    <string name="action_history">搜索记录</string>
-    <string name="action_history_url">浏览记录</string>
+    <string name="action_search_history">搜索记录</string>
     <string name="action_url_history">浏览记录</string>
     <string name="action_about">关于速搜</string>
     <string name="action_delete">删除</string>
@@ -93,6 +92,7 @@
     <string name="copy_txt">复制</string>
     <string name="paste_txt">粘贴</string>
     <string name="enter_txt">进入</string>
+    <string name="exit_hint">再次点击退出程序</string>
 
     <string-array name="settings_name">
         <item>分享APP</item>

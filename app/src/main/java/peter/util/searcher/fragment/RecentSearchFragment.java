@@ -47,7 +47,9 @@ public class RecentSearchFragment extends BaseFragment implements View.OnClickLi
         rootView = inflater.inflate(R.layout.fragment_recent_search, container, false);
         rootView.findViewById(R.id.paste).setOnClickListener(RecentSearchFragment.this);
         rootView.findViewById(R.id.copy).setEnabled(false);
+        rootView.findViewById(R.id.copy_txt).setEnabled(false);
         rootView.findViewById(R.id.enter).setEnabled(false);
+        rootView.findViewById(R.id.enter_txt).setEnabled(false);
         return rootView;
     }
 

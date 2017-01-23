@@ -8,6 +8,8 @@ import android.content.res.Configuration;
 import android.graphics.PorterDuff;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -35,10 +37,10 @@ import peter.util.searcher.bean.Bean;
 import peter.util.searcher.R;
 import peter.util.searcher.db.SqliteHelper;
 import peter.util.searcher.tab.FavoriteTab;
-import peter.util.searcher.tab.HistoryTab;
+import peter.util.searcher.tab.HistorySearchTab;
+import peter.util.searcher.tab.HistoryUrlTab;
 import peter.util.searcher.tab.HomeTab;
 import peter.util.searcher.tab.HomeTab2;
-import peter.util.searcher.tab.LocalViewTab;
 import peter.util.searcher.tab.SettingTab;
 import peter.util.searcher.tab.Tab;
 import peter.util.searcher.tab.TabGroup;
@@ -101,12 +103,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         menu = (DialogContainer) findViewById(R.id.menu_window_container);
         MenuWindowGridView menuList = (MenuWindowGridView) menu.findViewById(R.id.menu_window);
         ArrayList<MenuWindowAdapter.MenuItem> arrayList = new ArrayList<>();
-        arrayList.add(new MenuWindowAdapter.MenuItem(R.drawable.ic_file_download, R.string.action_download));
+        arrayList.add(new MenuWindowAdapter.MenuItem(R.drawable.ic_folder_special, R.string.fast_enter_favorite));
         arrayList.add(new MenuWindowAdapter.MenuItem(R.drawable.ic_star_border, R.string.action_collect));
         arrayList.add(new MenuWindowAdapter.MenuItem(R.drawable.ic_share, R.string.action_share));
         arrayList.add(new MenuWindowAdapter.MenuItem(R.drawable.ic_refresh, R.string.action_refresh));
-        arrayList.add(new MenuWindowAdapter.MenuItem(R.drawable.ic_folder_special, R.string.fast_enter_favorite));
-        arrayList.add(new MenuWindowAdapter.MenuItem(R.drawable.ic_history, R.string.fast_enter_history));
+        arrayList.add(new MenuWindowAdapter.MenuItem(R.drawable.ic_url_history, R.string.action_url_history));
+        arrayList.add(new MenuWindowAdapter.MenuItem(R.drawable.ic_search_history, R.string.fast_enter_history));
         arrayList.add(new MenuWindowAdapter.MenuItem(R.drawable.ic_settings, R.string.fast_enter_setting));
         arrayList.add(new MenuWindowAdapter.MenuItem(R.drawable.ic_power_settings_new, R.string.action_exit));
         MenuWindowAdapter menuWindowAdapter = new MenuWindowAdapter(MainActivity.this, arrayList);
@@ -152,7 +154,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         router.put(Tab.URL_HOME2, HomeTab2.class);
         router.put(Tab.URL_SETTING, SettingTab.class);
         router.put(Tab.URL_FAVORITE, FavoriteTab.class);
-        router.put(Tab.URL_HISTORY, HistoryTab.class);
+        router.put(Tab.URL_HISTORY_SEARCH, HistorySearchTab.class);
+        router.put(Tab.URL_HISTORY_URL, HistoryUrlTab.class);
     }
 
     public Class getRounterClass(String url) {
@@ -213,11 +216,25 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 //        loadUrl("http://top.baidu.com/m#buzz/1", newTab);
     }
 
+    boolean realBack = false;
+
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if ((keyCode == KeyEvent.KEYCODE_BACK)) {
             if (isDialogShow()) {
                 closeDialog();
+                return true;
+            }
+
+            if(!realBack) {
+                realBack = true;
+                Toast.makeText(MainActivity.this, R.string.exit_hint, Toast.LENGTH_SHORT).show();
+                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                       realBack = false;
+                    }
+                }, 1000);
                 return true;
             }
 
@@ -501,13 +518,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         tabManager.loadUrl(Tab.URL_FAVORITE, false);
                         break;
                     case R.string.fast_enter_history:
-                        tabManager.loadUrl(Tab.URL_HISTORY, false);
+                        tabManager.loadUrl(Tab.URL_HISTORY_SEARCH, false);
                         break;
                     case R.string.fast_enter_setting:
                         tabManager.loadUrl(Tab.URL_SETTING, false);
                         break;
-                    case R.string.action_download:
-
+                    case R.string.action_url_history:
+                        tabManager.loadUrl(Tab.URL_HISTORY_URL, false);
                         break;
                 }
                 if (menu != null) {

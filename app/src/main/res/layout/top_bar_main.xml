@@ -11,6 +11,7 @@
         android:layout_marginTop="4dp"
         android:background="@drawable/chrome_bg_find_toolbar_popup"
         android:drawableLeft="@drawable/ic_search"
+        android:drawablePadding="5dp"
         android:focusable="false"
         android:focusableInTouchMode="false"
         android:hint="@string/search_hint"

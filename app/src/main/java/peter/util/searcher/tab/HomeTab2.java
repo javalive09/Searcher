@@ -44,7 +44,7 @@ public class HomeTab2 extends LocalViewTab {
 
     @Override
     public String getUrl() {
-        return URL_HOME;
+        return URL_HOME2;
     }
 
     public String getHost() {
