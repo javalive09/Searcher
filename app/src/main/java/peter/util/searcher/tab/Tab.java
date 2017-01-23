@@ -12,6 +12,7 @@ public interface Tab {
     String NEW_WINDOW = "new_window";
     String URL_HOME = LOCAL_SCHEMA + "home";
     String URL_HOME2 = LOCAL_SCHEMA + "home2";
+    String URL_HOME3 = LOCAL_SCHEMA + "home3";
     String URL_SETTING = LOCAL_SCHEMA + "setting";
     String URL_FAVORITE = LOCAL_SCHEMA + "favorite";
     String URL_HISTORY_SEARCH = LOCAL_SCHEMA + "history_search";

@@ -226,18 +226,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 return true;
             }
 
-            if(!realBack) {
-                realBack = true;
-                Toast.makeText(MainActivity.this, R.string.exit_hint, Toast.LENGTH_SHORT).show();
-                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                       realBack = false;
-                    }
-                }, 1000);
-                return true;
-            }
-
             TabGroup tabGroup = tabManager.getCurrentTabGroup();
             if (tabGroup.canGoBack()) {
                 tabGroup.goBack();
@@ -249,6 +237,18 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     tabManager.switchTabGroup(parentTabGroup);
                     return true;
                 }
+            }
+
+            if(!realBack) {
+                realBack = true;
+                Toast.makeText(MainActivity.this, R.string.exit_hint, Toast.LENGTH_SHORT).show();
+                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        realBack = false;
+                    }
+                }, 1000);
+                return true;
             }
         }
         return super.onKeyDown(keyCode, event);
