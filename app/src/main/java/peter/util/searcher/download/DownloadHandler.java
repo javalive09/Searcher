@@ -5,8 +5,10 @@ package peter.util.searcher.download;
 
 import android.app.DownloadManager;
 import android.content.ActivityNotFoundException;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
@@ -19,6 +21,7 @@ import android.support.v7.appcompat.BuildConfig;
 import android.text.TextUtils;
 import android.util.Log;
 import android.webkit.CookieManager;
+import android.webkit.MimeTypeMap;
 import android.webkit.URLUtil;
 import android.widget.Toast;
 
@@ -205,7 +208,9 @@ public class DownloadHandler {
 
             return;
         }
-        request.setDestinationUri(Uri.parse(FILE + location + filename));
+        //
+        final Uri customUri = Uri.parse(FILE + location + filename);
+        request.setDestinationUri(customUri);//如没有自定义uri，则通过getUriForDownloadedFile可获取默认uri
         // let this downloaded file be scanned by MediaScanner - so that it can
         // show up in Gallery app, for example.
         request.setVisibleInDownloadsUi(true);
@@ -230,6 +235,13 @@ public class DownloadHandler {
                     .getSystemService(Context.DOWNLOAD_SERVICE);
             try {
                 manager.enqueue(request);
+                context.registerReceiver(new BroadcastReceiver() {
+                    public void onReceive(Context ctxt, Intent intent) {
+                        openFile(customUri, context);
+                        context.unregisterReceiver(this);
+                    }
+                }, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+
             } catch (IllegalArgumentException e) {
                 // Probably got a bad URL or something
                 Log.e(TAG, "Unable to enqueue request", e);
@@ -243,6 +255,22 @@ public class DownloadHandler {
             Toast.makeText(context, context.getString(R.string.download_pending) + ' ' + filename, Toast.LENGTH_LONG).show();
         }
 
+    }
+
+    public static void openFile(Uri uri, Context context) {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setDataAndType(uri, getMimeType(uri.getPath()));
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
+    }
+
+    public static String getMimeType(String url) {
+        String type = null;
+        String extension = MimeTypeMap.getFileExtensionFromUrl(url);
+        if (extension != null) {
+            type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+        }
+        return type;
     }
 
     private static final String sFileName = "test";

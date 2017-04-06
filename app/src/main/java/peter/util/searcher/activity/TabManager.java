@@ -43,7 +43,7 @@ public class TabManager {
     }
 
     public TabGroup getCurrentTabGroup() {
-        return tabGroupArrayList.get(mCurrentTabIndex);
+        return tabGroupArrayList.size() > 0 ? tabGroupArrayList.get(mCurrentTabIndex) : null;
     }
 
     public void switchTabGroup(TabGroup tabGroup) {

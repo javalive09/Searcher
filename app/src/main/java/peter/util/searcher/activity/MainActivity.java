@@ -6,8 +6,10 @@ import android.content.ClipboardManager;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.PorterDuff;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
@@ -27,6 +29,7 @@ import com.iflytek.cloud.SpeechError;
 import com.iflytek.cloud.ui.RecognizerDialogListener;
 import com.umeng.analytics.MobclickAgent;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -36,11 +39,13 @@ import peter.util.searcher.adapter.MultiWindowAdapter;
 import peter.util.searcher.bean.Bean;
 import peter.util.searcher.R;
 import peter.util.searcher.db.SqliteHelper;
+import peter.util.searcher.tab.DownloadTab;
 import peter.util.searcher.tab.FavoriteTab;
 import peter.util.searcher.tab.HistorySearchTab;
 import peter.util.searcher.tab.HistoryUrlTab;
 import peter.util.searcher.tab.HomeTab;
 import peter.util.searcher.tab.HomeTab2;
+import peter.util.searcher.tab.SearcherTab;
 import peter.util.searcher.tab.SettingTab;
 import peter.util.searcher.tab.Tab;
 import peter.util.searcher.tab.TabGroup;
@@ -89,14 +94,18 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    String content = tabManager.getCurrentTabGroup().getCurrentTab().getUrl();
-                    startSearchActivity(content);
-                    closeDialogFast();
+                    touchSearch();
                     return true;
                 }
                 return false;
             }
         });
+    }
+
+    private void touchSearch() {
+        String content = tabManager.getCurrentTabGroup().getCurrentTab().getUrl();
+        startSearchActivity(content);
+        closeDialogFast();
     }
 
     private void initMenu() {
@@ -106,7 +115,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         arrayList.add(new MenuWindowAdapter.MenuItem(R.drawable.ic_folder_special, R.string.fast_enter_favorite));
         arrayList.add(new MenuWindowAdapter.MenuItem(R.drawable.ic_star_border, R.string.action_collect));
         arrayList.add(new MenuWindowAdapter.MenuItem(R.drawable.ic_share, R.string.action_share));
-        arrayList.add(new MenuWindowAdapter.MenuItem(R.drawable.ic_refresh, R.string.action_refresh));
+        arrayList.add(new MenuWindowAdapter.MenuItem(R.drawable.ic_file_download, R.string.action_download));
         arrayList.add(new MenuWindowAdapter.MenuItem(R.drawable.ic_url_history, R.string.action_url_history));
         arrayList.add(new MenuWindowAdapter.MenuItem(R.drawable.ic_search_history, R.string.fast_enter_history));
         arrayList.add(new MenuWindowAdapter.MenuItem(R.drawable.ic_settings, R.string.fast_enter_setting));
@@ -156,6 +165,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         router.put(Tab.URL_FAVORITE, FavoriteTab.class);
         router.put(Tab.URL_HISTORY_SEARCH, HistorySearchTab.class);
         router.put(Tab.URL_HISTORY_URL, HistoryUrlTab.class);
+        router.put(Tab.URL_DOWNLOAD, DownloadTab.class);
     }
 
     public Class getRounterClass(String url) {
@@ -204,6 +214,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 if (tabManager.getTabGroupCount() == 0) {
                     loadHome(true);
                 }
+            } else if (Intent.ACTION_ASSIST.equals(action)) {
+                if (tabManager.getTabGroupCount() == 0) {
+                    loadHome(true);
+                    touchSearch();
+                }
             }
         }
     }
@@ -239,7 +254,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 }
             }
 
-            if(!realBack) {
+            if (!realBack) {
                 realBack = true;
                 Toast.makeText(MainActivity.this, R.string.exit_hint, Toast.LENGTH_SHORT).show();
                 new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
@@ -496,7 +511,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
                                 @Override
                                 protected void onPostExecute(Boolean suc) {
-                                    if(suc) {
+                                    if (suc) {
                                         Toast.makeText(MainActivity.this, R.string.favorite_txt, Toast.LENGTH_SHORT).show();
                                     }
                                 }
@@ -513,6 +528,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         break;
                     case R.string.action_refresh:
                         tabManager.getCurrentTabGroup().getCurrentTab().reload();
+                        break;
+                    case R.string.action_download:
+                        tabManager.loadUrl(Tab.URL_DOWNLOAD, false);
                         break;
                     case R.string.fast_enter_favorite:
                         tabManager.loadUrl(Tab.URL_FAVORITE, false);

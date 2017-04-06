@@ -27,9 +27,6 @@ import peter.util.searcher.activity.EnterActivity;
 import peter.util.searcher.bean.Bean;
 import peter.util.searcher.bean.Engine;
 import peter.util.searcher.db.SqliteHelper;
-import peter.util.searcher.download.MyDownloadListener;
-import peter.util.searcher.net.MyWebChromeClient;
-import peter.util.searcher.net.MyWebClient;
 import peter.util.searcher.utils.UrlUtils;
 import peter.util.searcher.view.ObservableWebView;
 
