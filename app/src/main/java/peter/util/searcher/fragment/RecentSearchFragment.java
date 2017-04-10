@@ -1,5 +1,6 @@
 package peter.util.searcher.fragment;
 
+import android.app.Fragment;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.os.AsyncTask;
@@ -21,6 +22,7 @@ import peter.util.searcher.R;
 import peter.util.searcher.activity.BaseActivity;
 import peter.util.searcher.activity.SearchActivity;
 import peter.util.searcher.db.SqliteHelper;
+import peter.util.searcher.activity.EnterActivity;
 import peter.util.searcher.bean.Bean;
 
 /**
@@ -41,7 +43,13 @@ public class RecentSearchFragment extends BaseFragment implements View.OnClickLi
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         rootView = inflater.inflate(R.layout.fragment_recent_search, container, false);
+        rootView.findViewById(R.id.paste).setOnClickListener(RecentSearchFragment.this);
+        rootView.findViewById(R.id.copy).setEnabled(false);
+        rootView.findViewById(R.id.copy_txt).setEnabled(false);
+        rootView.findViewById(R.id.enter).setEnabled(false);
+        rootView.findViewById(R.id.enter_txt).setEnabled(false);
         return rootView;
     }
 
@@ -51,9 +59,10 @@ public class RecentSearchFragment extends BaseFragment implements View.OnClickLi
         refreshData();
         ClipboardManager cmb = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
         word = cmb.getText();
-        if (!TextUtils.isEmpty(word)) {
-            rootView.findViewById(R.id.paste).setVisibility(View.VISIBLE);
-            rootView.findViewById(R.id.paste).setOnClickListener(RecentSearchFragment.this);
+        if (TextUtils.isEmpty(word)) {
+            rootView.findViewById(R.id.paste).setEnabled(false);
+        } else {
+            rootView.findViewById(R.id.paste).setEnabled(true);
         }
     }
 
