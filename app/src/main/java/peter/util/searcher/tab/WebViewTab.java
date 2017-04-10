@@ -8,11 +8,14 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.webkit.CookieManager;
+import android.webkit.WebBackForwardList;
+import android.webkit.WebHistoryItem;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import peter.util.searcher.R;
@@ -223,4 +226,5 @@ public class WebViewTab extends SearcherTab {
         }
         return null;
     }
+
 }

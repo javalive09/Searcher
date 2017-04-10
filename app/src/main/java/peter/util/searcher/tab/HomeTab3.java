@@ -35,7 +35,7 @@ public class HomeTab3 extends LocalViewTab {
 
     @Override
     public String getSearchWord() {
-        return null;
+        return "";
     }
 
     @Override

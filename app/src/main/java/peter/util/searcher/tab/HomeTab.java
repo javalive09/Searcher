@@ -73,7 +73,7 @@ public class HomeTab extends LocalViewTab implements View.OnClickListener{
 
     @Override
     public String getSearchWord() {
-        return null;
+        return "";
     }
 
     @Override

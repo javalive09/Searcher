@@ -12,11 +12,13 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.google.gson.reflect.TypeToken;
+
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;

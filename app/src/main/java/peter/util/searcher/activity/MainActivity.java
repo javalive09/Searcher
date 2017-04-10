@@ -3,7 +3,9 @@ package peter.util.searcher.activity;
 import android.app.SearchManager;
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.PorterDuff;
 import android.net.Uri;
@@ -75,7 +77,17 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         init();
+        initTabs(savedInstanceState);
         checkIntentData(getIntent());
+    }
+
+    private void initTabs(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            String saved = savedInstanceState.getString("tabs");
+            if(TextUtils.isEmpty(saved)) {
+                tabManager.restoreState(saved);
+            }
+        }
     }
 
     private void init() {
@@ -217,8 +229,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             } else if (Intent.ACTION_ASSIST.equals(action)) {
                 if (tabManager.getTabGroupCount() == 0) {
                     loadHome(true);
-                    touchSearch();
                 }
+                touchSearch();
             }
         }
     }
@@ -367,6 +379,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        SharedPreferences sp = getSharedPreferences("tabs", Context.MODE_PRIVATE);
+        sp.edit().putString("tabs", tabManager.getSaveState()).apply();
     }
 
     public void exit() {
@@ -602,5 +616,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("tabs", tabManager.getSaveState());
+    }
 
 }

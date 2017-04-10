@@ -1,6 +1,5 @@
 package peter.util.searcher.activity;
 
-import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
@@ -19,8 +18,8 @@ import com.umeng.analytics.MobclickAgent;
 
 import peter.util.searcher.R;
 import peter.util.searcher.VoiceRecognizer;
+import peter.util.searcher.fragment.BaseFragment;
 import peter.util.searcher.fragment.EngineViewPagerFragment;
-import peter.util.searcher.fragment.OperateUrlFragment;
 import peter.util.searcher.fragment.OperateUrlFragment2;
 import peter.util.searcher.fragment.RecentSearchFragment;
 import peter.util.searcher.tab.Tab;
@@ -38,7 +37,7 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
     public static final String ENGINE_LIST = "engine_list";
     public static final String OPERATE_URL = "operate_url";
     private String currentFragmentTag = "";
-
+    private BaseFragment currentFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,6 +140,7 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
                         setEngineFragment(ENGINE_LIST);
                     }
                 }
+                currentFragment.refresh();
             }
         });
         setEngineFragment(RECENT_SEARCH);
@@ -165,7 +165,7 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
     public void setEngineFragment(String tag) {
         if (!currentFragmentTag.equals(tag)) {
             currentFragmentTag = tag;
-            Fragment fragment = null;
+            BaseFragment fragment = null;
             if (tag.equals(RECENT_SEARCH)) {
                 fragment = new RecentSearchFragment();
             } else if (tag.equals(ENGINE_LIST)) {
@@ -173,6 +173,7 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
             } else if (tag.equals(OPERATE_URL)) {
                 fragment = new OperateUrlFragment2();
             }
+            currentFragment = fragment;
             FragmentManager fragmentManager = getFragmentManager();
             FragmentTransaction ft = fragmentManager.beginTransaction();
             ft.replace(R.id.content_frame, fragment, tag);

@@ -2,6 +2,15 @@ package peter.util.searcher.activity;
 
 import android.view.View;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 import peter.util.searcher.tab.SearcherTab;
@@ -106,24 +115,71 @@ public class TabManager {
         return tabGroupArrayList.size();
     }
 
-//    public boolean canGoBack() {
-//        TabGroup currentTabGroup = getCurrentTabGroup();
-//        if(currentTabGroup.canGoBack()) {
-//            return true;
-//        }else {
-//            return mCurrentTabIndex > 0;
-//        }
-//    }
+    public String getSaveState() {
+        JsonArray tabGroups = new JsonArray();
+        TabGroup currentTabGroup = getCurrentTabGroup();
+        for(TabGroup tabGroup : tabGroupArrayList) {
+            JsonObject tabGroupJson = new JsonObject();
+            if(tabGroup == currentTabGroup) {
+                tabGroupJson.addProperty("currentTabGroup", true);
+            }else {
+                tabGroupJson.addProperty("currentTabGroup", false);
+            }
+            ArrayList<SearcherTab> groupTabs = tabGroup.getTabArrayList();
+            JsonArray tabs = new JsonArray();
+            SearcherTab currentTab = tabGroup.getCurrentTab();
+            for(SearcherTab tab : groupTabs) {
+                JsonObject tabJson = new JsonObject();
+                if(tab == currentTab) {
+                    tabJson.addProperty("currentTab", true);
+                }else {
+                    tabJson.addProperty("currentTab", false);
+                }
+                tabJson.addProperty("url", tab.getUrl());
+                tabJson.addProperty("searchWord", tab.getSearchWord());
+                tabs.add(tabJson);
+            }
+            tabGroupJson.add("tabs", tabs);
+            tabGroups.add(tabGroupJson);
+        }
+        return tabGroups.toString();
+    }
 
-//    public void goBack() {
-//        TabGroup currentTabGroup = getCurrentTabGroup();
-//        if(currentTabGroup.canGoBack()) {
-//            currentTabGroup.goBack();
-//        }else {
-//            if(mCurrentTabIndex > 0) {
-//                removeTabGroup(getCurrentTabGroup());
-//            }
-//        }
-//    }
+    public void restoreState(String str) {
+        JsonParser parser = new JsonParser();
+        JsonElement tabGroupsJsonElement = parser.parse(str);
+        JsonArray tabGroups = tabGroupsJsonElement.getAsJsonArray();
+
+        TabGroup currentTabGroup = null;
+        for(int i = 0, size = tabGroups.size(); i < size; i++) {
+            JsonObject tabGroupJson = tabGroups.get(i).getAsJsonObject();
+            boolean isCurrentTabGroup = tabGroupJson.getAsJsonPrimitive("currentTabGroup").getAsBoolean();
+            JsonArray tabs = tabGroupJson.getAsJsonArray("tabs");
+            int currentIndex = -1;
+            for(int j = 0, len = tabs.size(); j < len;j++) {
+                JsonObject tabJson = tabs.get(j).getAsJsonObject();
+                String url = tabJson.get("url").getAsString();
+                String searchWord = tabJson.get("searchWord").getAsString();
+                boolean isCurrentTab = tabJson.get("currentTab").getAsBoolean();
+                if(isCurrentTab) {
+                    currentIndex = j;
+                }
+                if(j == 0) {
+                    loadUrl(url, searchWord, true);
+                }else {
+                    loadUrl(url, searchWord, false);
+                }
+                if(j == len - 1) {
+                    getCurrentTabGroup().setCurrentTab(currentIndex);
+                }
+            }
+            if(isCurrentTabGroup) {
+                currentTabGroup = getCurrentTabGroup();
+            }
+        }
+        if(currentTabGroup != null) {
+            switchTabGroup(currentTabGroup);
+        }
+    }
 
 }

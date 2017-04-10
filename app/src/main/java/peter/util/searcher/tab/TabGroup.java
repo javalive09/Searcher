@@ -174,6 +174,10 @@ public class TabGroup extends SearcherTab {
         mainActivity.refreshBottomBar();
     }
 
+    public ArrayList<SearcherTab> getTabArrayList() {
+        return new ArrayList<>(tabArrayList);
+    }
+
     public boolean canGoForward() {
         Tab currentTab = getCurrentTab();
         if (currentTab instanceof WebViewTab) {
@@ -204,6 +208,5 @@ public class TabGroup extends SearcherTab {
         }
         mainActivity.refreshBottomBar();
     }
-
 
 }

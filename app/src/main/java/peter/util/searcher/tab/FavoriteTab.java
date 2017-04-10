@@ -62,7 +62,7 @@ public class FavoriteTab extends LocalViewTab implements View.OnClickListener,Vi
 
     @Override
     public String getSearchWord() {
-        return null;
+        return "";
     }
 
     @Override

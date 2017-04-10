@@ -10,7 +10,8 @@
         android:layout_width="0px"
         android:layout_height="@dimen/top_h"
         android:layout_weight="1"
-        android:background="@drawable/list_item_selector">
+        android:background="@drawable/list_item_selector"
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/copy_txt"
@@ -28,7 +29,8 @@
         android:layout_width="0px"
         android:layout_height="@dimen/top_h"
         android:layout_weight="1"
-        android:background="@drawable/list_item_selector">
+        android:background="@drawable/list_item_selector"
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/paste_txt"
@@ -45,7 +47,8 @@
         android:layout_width="0px"
         android:layout_height="@dimen/top_h"
         android:layout_weight="1"
-        android:background="@drawable/list_item_selector">
+        android:background="@drawable/list_item_selector"
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/enter_txt"

@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 
 import peter.util.searcher.R;
 import peter.util.searcher.activity.BaseActivity;
+import peter.util.searcher.activity.SearchActivity;
 
 /**
  * Created by peter on 16/5/9.
@@ -18,8 +19,8 @@ public class BaseFragment extends Fragment {
         return false;
     }
 
-    public void GoBack() {
+    public void GoBack() {}
 
-    }
+    public void refresh() {}
 
 }

@@ -64,7 +64,7 @@ public class DownloadTab extends LocalViewTab implements View.OnClickListener, V
 
     @Override
     public String getSearchWord() {
-        return null;
+        return "";
     }
 
     @Override

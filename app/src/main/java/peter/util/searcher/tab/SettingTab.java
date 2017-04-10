@@ -77,7 +77,7 @@ public class SettingTab extends LocalViewTab {
 
     @Override
     public String getSearchWord() {
-        return null;
+        return "";
     }
 
     @Override

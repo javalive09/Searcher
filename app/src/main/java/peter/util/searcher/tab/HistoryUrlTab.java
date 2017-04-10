@@ -33,7 +33,7 @@ public class HistoryUrlTab extends LocalViewTab implements View.OnClickListener,
 
     @Override
     public int onCreateViewResId() {
-        return R.layout.tab_history;
+        return R.layout.tab_history_url;
     }
 
     @Override
@@ -55,7 +55,7 @@ public class HistoryUrlTab extends LocalViewTab implements View.OnClickListener,
 
     @Override
     public String getSearchWord() {
-        return null;
+        return "";
     }
 
     @Override
@@ -134,13 +134,13 @@ public class HistoryUrlTab extends LocalViewTab implements View.OnClickListener,
         @Override
         protected void onPostExecute(List<Bean> beans) {
             super.onPostExecute(beans);
-            View loading = mainActivity.findViewById(R.id.loading);
+            View loading = mainActivity.findViewById(R.id.loading_history_url);
             if (loading != null) {
                 loading.setVisibility(View.GONE);
             }
 
             if (beans != null) {
-                ListView history = (ListView) mainActivity.findViewById(R.id.history);
+                ListView history = (ListView) mainActivity.findViewById(R.id.history_url);
                 if (history != null) {
                     Adapter adapter = history.getAdapter();
                     if (adapter == null) {

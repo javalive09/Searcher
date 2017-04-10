@@ -66,4 +66,5 @@ public abstract class LocalViewTab extends SearcherTab{
     public String getHost() {
         return getTitle();
     }
+
 }
