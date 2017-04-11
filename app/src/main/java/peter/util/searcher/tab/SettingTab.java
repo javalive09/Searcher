@@ -1,17 +1,18 @@
 package peter.util.searcher.tab;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.v7.widget.Toolbar;
+import android.provider.Settings;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import peter.util.searcher.R;
+import peter.util.searcher.activity.BaseActivity;
 import peter.util.searcher.activity.MainActivity;
-import peter.util.searcher.activity.SettingActivity;
 import peter.util.searcher.update.AsynWindowHandler;
 import peter.util.searcher.update.UpdateController;
 
@@ -65,6 +66,21 @@ public class SettingTab extends LocalViewTab {
                         case 4://about
                             mainActivity.showAlertDialog(mainActivity.getString(R.string.action_about), mainActivity.getString(R.string.setting_about));
                             break;
+                        case 5://enter
+                            AlertDialog.Builder builder = new AlertDialog.Builder(mainActivity);
+                            builder.setPositiveButton(R.string.fast_enter_setting, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Intent intent = new Intent(Settings.ACTION_HOME_SETTINGS);
+                                    mainActivity.startActivity(intent);
+                                }
+                            });
+                            AlertDialog dialog = builder.create();
+                            dialog.setCanceledOnTouchOutside(true);
+                            dialog.setTitle(R.string.action_one_key);
+                            dialog.setMessage(mainActivity.getString(R.string.action_one_key_txt));
+                            dialog.show();
+
                     }
                 }
             });

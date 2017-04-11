@@ -49,6 +49,8 @@
     <string name="action_search_history">搜索记录</string>
     <string name="action_url_history">浏览记录</string>
     <string name="action_about">关于速搜</string>
+    <string name="action_one_key">一键开启</string>
+    <string name="action_one_key_txt">点击设备辅助应用程序，点选速搜，设置成功后，可长按home一键进入</string>
     <string name="action_delete">删除</string>
     <string name="action_delete_all">删除全部</string>
 
@@ -100,6 +102,7 @@
         <item>反馈意见</item>
         <item>版本更新</item>
         <item>关于速搜</item>
+        <item>一键开启</item>
     </string-array>
 
 </resources>

@@ -22,10 +22,16 @@
         android:layout_above="@+id/bottom_bar"
         android:layout_below="@id/top_bar">
 
-        <peter.util.searcher.view.WebViewContainer
-            android:id="@+id/webview_container"
+        <peter.util.searcher.view.CustomSwipeRefreshLayout
+            android:id="@+id/swiperefresh"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent">
+
+            <peter.util.searcher.view.WebViewContainer
+                android:id="@+id/webview_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </peter.util.searcher.view.CustomSwipeRefreshLayout>
 
         <include
             layout="@layout/layout_multi_window"

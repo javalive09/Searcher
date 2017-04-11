@@ -14,11 +14,13 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
 import android.webkit.WebView;
@@ -52,9 +54,11 @@ import peter.util.searcher.tab.SettingTab;
 import peter.util.searcher.tab.Tab;
 import peter.util.searcher.tab.TabGroup;
 import peter.util.searcher.utils.UrlUtils;
+import peter.util.searcher.view.CustomSwipeRefreshLayout;
 import peter.util.searcher.view.DialogContainer;
 import peter.util.searcher.view.MenuWindowGridView;
 import peter.util.searcher.view.MultiWindowListView;
+import peter.util.searcher.view.ObservableWebView;
 import peter.util.searcher.view.WebViewContainer;
 
 /**
@@ -71,6 +75,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private DialogContainer multiWindow;
     private MultiWindowAdapter multiWindowAdapter;
     private WebViewContainer webViewContainer;
+    private CustomSwipeRefreshLayout mSwipeRefreshLayout;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -84,7 +89,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private void initTabs(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
             String saved = savedInstanceState.getString("tabs");
-            if(TextUtils.isEmpty(saved)) {
+            if (TextUtils.isEmpty(saved)) {
                 tabManager.restoreState(saved);
             }
         }
@@ -94,12 +99,31 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         bottomBar = findViewById(R.id.bottom_bar);
         multiWindowBtn = (TextView) findViewById(R.id.multi_btn_txt);
         webViewContainer = (WebViewContainer) findViewById(R.id.webview_container);
+        mSwipeRefreshLayout = (CustomSwipeRefreshLayout) findViewById(R.id.swiperefresh);
+        mSwipeRefreshLayout.setColorSchemeResources(
+                R.color.progress_color, R.color.progress_color,
+                R.color.progress_color, R.color.progress_color);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                tabManager.getCurrentTabGroup().getCurrentTab().reload();
+                mHandler.removeCallbacks(complete);
+                mHandler.postDelayed(complete, 500);
+            }
+        });
         tabManager = new TabManager(MainActivity.this);
         installLocalTabRounter();
         initTopBar();
         initMenu();
         initMultiWindow();
     }
+
+    Runnable complete = new Runnable() {
+        @Override
+        public void run() {
+            mSwipeRefreshLayout.setRefreshing(false);
+        }
+    };
 
     private void initTopBar() {
         findViewById(R.id.top_txt).setOnTouchListener(new View.OnTouchListener() {
@@ -115,7 +139,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     private void touchSearch() {
-        String content = tabManager.getCurrentTabGroup().getCurrentTab().getUrl();
+        String content = tabManager.getCurrentTabGroup().getCurrentTab().getSearchWord();
         startSearchActivity(content);
         closeDialogFast();
     }
@@ -129,7 +153,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         arrayList.add(new MenuWindowAdapter.MenuItem(R.drawable.ic_share, R.string.action_share));
         arrayList.add(new MenuWindowAdapter.MenuItem(R.drawable.ic_file_download, R.string.action_download));
         arrayList.add(new MenuWindowAdapter.MenuItem(R.drawable.ic_url_history, R.string.action_url_history));
-        arrayList.add(new MenuWindowAdapter.MenuItem(R.drawable.ic_search_history, R.string.fast_enter_history));
+        arrayList.add(new MenuWindowAdapter.MenuItem(R.drawable.ic_search_history, R.string.action_search_history));
         arrayList.add(new MenuWindowAdapter.MenuItem(R.drawable.ic_settings, R.string.fast_enter_setting));
         arrayList.add(new MenuWindowAdapter.MenuItem(R.drawable.ic_power_settings_new, R.string.action_exit));
         MenuWindowAdapter menuWindowAdapter = new MenuWindowAdapter(MainActivity.this, arrayList);
@@ -184,13 +208,31 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         return router.get(url);
     }
 
-
     public void setCurrentView(View view) {
         webViewContainer.setCurrentView(view);
+        setSwipeRefresh(view);
     }
 
     public View setCurrentView(int viewId) {
-        return webViewContainer.setCurrentView(viewId);
+        View view = webViewContainer.setCurrentView(viewId);
+        setSwipeRefresh(view);
+        return view;
+    }
+
+    private void setSwipeRefresh(View view) {
+        if(view instanceof WebView) {
+            mSwipeRefreshLayout.setEnabled(true);
+            final WebView webView = (WebView) view;
+            mSwipeRefreshLayout.setCanChildScrollUpCallback(new CustomSwipeRefreshLayout.CanChildScrollUpCallback() {
+                @Override
+                public boolean canSwipeRefreshChildScrollUp() {
+                    return webView.getScrollY() > 0;
+                }
+            });
+        }else {
+            mSwipeRefreshLayout.setRefreshing(false);
+            mSwipeRefreshLayout.setEnabled(false);
+        }
     }
 
     public TabManager getTabManager() {
@@ -269,7 +311,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             if (!realBack) {
                 realBack = true;
                 Toast.makeText(MainActivity.this, R.string.exit_hint, Toast.LENGTH_SHORT).show();
-                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         realBack = false;
@@ -280,6 +322,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
         return super.onKeyDown(keyCode, event);
     }
+
+    private Handler mHandler = new Handler(Looper.getMainLooper());
 
     protected void onResume() {
         super.onResume();
@@ -549,7 +593,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     case R.string.fast_enter_favorite:
                         tabManager.loadUrl(Tab.URL_FAVORITE, false);
                         break;
-                    case R.string.fast_enter_history:
+                    case R.string.action_search_history:
                         tabManager.loadUrl(Tab.URL_HISTORY_SEARCH, false);
                         break;
                     case R.string.fast_enter_setting:
