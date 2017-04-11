@@ -121,3 +121,11 @@ public static final int *;
 ##---------------End: proguard configuration for Gson  ----------
 
 -keep class com.iflytek.**{*;}
+
+## keep 自定义的tab
+#-keep public class peter.util.searcher.tab.*
+
+# keep 自定义的tab
+-keep public class * extends peter.util.searcher.tab.SearcherTab {
+    public <init>(peter.util.searcher.activity.MainActivity);
+}
