@@ -2,7 +2,7 @@
 <resources>
     <color name="title_bg">@color/colorPrimary_</color>
     <!--<color name="colorPrimary">#0d3c6e</color>-->
-    <!--<color name="colorPrimary">#028ce6</color>-->
+    <color name="colorPrimary">#028ce6</color>
     <color name="colorPrimary_">#2b2c30</color>
     <color name="color_top_gray">#c0c0c1</color>
     <color name="status_bar">#242528</color>
@@ -23,5 +23,7 @@
     <color name="chrome_txt_color">#5a5a5a</color>
     <color name="chrome_top_color">#f2f2f2</color>
     <color name="progress_color">#468dc8</color>
+    <color name="menu_color">#737373</color>
+    <color name="disable_color">#a7a7a7</color>
 
 </resources>

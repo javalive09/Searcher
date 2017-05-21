@@ -1,6 +1,7 @@
 package peter.util.searcher.view;
 
 import android.content.Context;
+import android.support.v7.widget.AppCompatEditText;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.widget.EditText;
@@ -9,7 +10,7 @@ import android.widget.EditText;
  * Created by peter on 2016/11/22.
  */
 
-public class ObservableEditText extends EditText {
+public class ObservableEditText extends AppCompatEditText {
 
     BackPressCallBack mBackPress;
 

@@ -48,6 +48,5 @@ dependencies {
     compile 'com.android.volley:volley:1.0.0'
     compile 'com.anthonycr.grant:permissions:1.0'
     compile 'com.android.support:design:23.4.0'
-    compile files('libs/Msc.jar')
 }
 

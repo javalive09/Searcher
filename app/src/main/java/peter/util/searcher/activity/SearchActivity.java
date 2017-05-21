@@ -12,12 +12,9 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 
-import com.iflytek.cloud.SpeechError;
-import com.iflytek.cloud.ui.RecognizerDialogListener;
 import com.umeng.analytics.MobclickAgent;
 
 import peter.util.searcher.R;
-import peter.util.searcher.VoiceRecognizer;
 import peter.util.searcher.fragment.BaseFragment;
 import peter.util.searcher.fragment.EngineViewPagerFragment;
 import peter.util.searcher.fragment.OperateUrlFragment2;
@@ -32,7 +29,7 @@ import peter.util.searcher.view.ObservableEditText;
 public class SearchActivity extends BaseActivity implements View.OnClickListener {
 
     private ObservableEditText search;
-    private ImageView opt;
+    private ImageView clearAll;
     private static final String RECENT_SEARCH = "recent_search";
     public static final String ENGINE_LIST = "engine_list";
     public static final String OPERATE_URL = "operate_url";
@@ -46,10 +43,6 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
         init();
     }
 
-    public void finish() {
-        super.finish();
-        overridePendingTransition(0, 0);
-    }
 
     public void onResume() {
         super.onResume();
@@ -107,15 +100,8 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
     }
 
     private void init() {
-        opt = (ImageView) findViewById(R.id.opt);
-        search = (ObservableEditText) findViewById(R.id.search);
-        search.setBackPressCallBack(new ObservableEditText.BackPressCallBack() {
-            @Override
-            public void backPress() {
-                closeIME();
-                finish();
-            }
-        });
+        clearAll = (ImageView) findViewById(R.id.clearall);
+        search = (ObservableEditText) findViewById(R.id.top_txt);
         search.addTextChangedListener(new TextWatcher() {
 
             @Override
@@ -131,9 +117,9 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
                 String content = s.toString();
                 if (TextUtils.isEmpty(content)) {
                     setEngineFragment(RECENT_SEARCH);
-                    opt.getDrawable().setLevel(0);
+                    clearAll.setVisibility(View.GONE);
                 } else {
-                    opt.getDrawable().setLevel(1);
+                    clearAll.setVisibility(View.VISIBLE);
                     if (UrlUtils.guessUrl(content)) {
                         setEngineFragment(OPERATE_URL);
                     } else {
@@ -186,57 +172,19 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
         super.onDestroy();
     }
 
-    private void openBoard() {
-        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.showSoftInput(search, InputMethodManager.SHOW_IMPLICIT);
-    }
-
-    private void hideBoard() {
-        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(search.getWindowToken(), 0); //强制隐藏键盘
-    }
-
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.opt:
-                switch (opt.getDrawable().getLevel()) {
-                    case 0:
-                        VoiceRecognizer.instance().showVoiceDialog(SearchActivity.this, mRecognizerDialogListener);
-                        break;
-                    case 1:
-                        search.requestFocus();
-                        search.setText("");
-                        openBoard();
-                        break;
-                }
+            case R.id.clearall:
+                openIME();
+                search.requestFocus();
+                search.setText("");
+                break;
+            case R.id.cancel:
+                closeIME();
+                finish();
                 break;
         }
     }
-
-    /**
-     * Dialog监听器
-     */
-    private RecognizerDialogListener mRecognizerDialogListener = new RecognizerDialogListener() {
-        @Override
-        public void onResult(com.iflytek.cloud.RecognizerResult recognizerResult, boolean isLast) {
-
-            if (recognizerResult != null) {
-                String json = recognizerResult.getResultString();
-                if (!TextUtils.isEmpty(json)) {
-                    String result = VoiceRecognizer.instance().parseIatResult(json);
-                    if (!TextUtils.isEmpty(result)) {
-                        setSearchWord(result);
-                    }
-                }
-            }
-        }
-
-        @Override
-        public void onError(SpeechError speechError) {
-
-        }
-    };
-
 
 }

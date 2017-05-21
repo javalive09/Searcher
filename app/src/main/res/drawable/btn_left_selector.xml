@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@drawable/chrome_btn_left" android:state_enabled="true"/>
-    <item android:drawable="@drawable/chrome_btn_left_disable" android:state_enabled="false"/>
-    <item android:drawable="@drawable/chrome_btn_left"/>
+    <item android:drawable="@drawable/tint_bitmap_left_enable" android:state_enabled="true"/>
+    <item android:drawable="@drawable/tint_bitmap_left_disable" android:state_enabled="false"/>
+    <item android:drawable="@drawable/tint_bitmap_left_enable"/>
 </selector>

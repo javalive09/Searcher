@@ -1,16 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <include
-        android:id="@+id/top_bar"
-        layout="@layout/top_bar"/>
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <Button
+                android:id="@+id/cancel"
+                style="@style/Widget.AppCompat.ActionButton.Overflow"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentRight="true"
+                android:gravity="center"
+                android:onClick="onClick"
+                android:text="@string/action_cancel"
+                android:textColor="@color/menu_color"
+                android:textSize="17sp" />
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_toLeftOf="@id/cancel">
+
+                <peter.util.searcher.view.ObservableEditText
+                    android:id="@+id/top_txt"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:backgroundTint="@color/menu_color"
+                    android:drawableLeft="@drawable/tint_bitmap_icon"
+                    android:drawablePadding="5dp"
+                    android:focusable="true"
+                    android:hint="@string/search_hint"
+                    android:imeOptions="actionDone"
+                    android:paddingRight="@dimen/search_padding_right"
+                    android:singleLine="true"
+                    android:textCursorDrawable="@drawable/cursor" />
+
+                <ImageView
+                    android:id="@+id/clearall"
+                    style="@style/Widget.AppCompat.ActionButton.Overflow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right|center_vertical"
+                    android:layout_marginRight="7dp"
+                    android:onClick="onClick"
+                    android:padding="7dp"
+                    android:src="@drawable/tint_bitmap_stop"
+                    android:visibility="gone" />
+            </FrameLayout>
+        </RelativeLayout>
+
+    </android.support.v7.widget.Toolbar>
 
     <FrameLayout
         android:id="@+id/content_frame"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/top_bar"/>
+        android:layout_below="@+id/toolbar" />
 
 </RelativeLayout>

@@ -8,36 +8,36 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.PorterDuff;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.ListViewCompat;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
 import android.webkit.WebView;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.iflytek.cloud.SpeechError;
-import com.iflytek.cloud.ui.RecognizerDialogListener;
 import com.umeng.analytics.MobclickAgent;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
-import peter.util.searcher.VoiceRecognizer;
 import peter.util.searcher.adapter.MenuWindowAdapter;
 import peter.util.searcher.adapter.MultiWindowAdapter;
 import peter.util.searcher.bean.Bean;
@@ -49,7 +49,6 @@ import peter.util.searcher.tab.HistorySearchTab;
 import peter.util.searcher.tab.HistoryUrlTab;
 import peter.util.searcher.tab.HomeTab;
 import peter.util.searcher.tab.HomeTab2;
-import peter.util.searcher.tab.SearcherTab;
 import peter.util.searcher.tab.SettingTab;
 import peter.util.searcher.tab.Tab;
 import peter.util.searcher.tab.TabGroup;
@@ -58,7 +57,6 @@ import peter.util.searcher.view.CustomSwipeRefreshLayout;
 import peter.util.searcher.view.DialogContainer;
 import peter.util.searcher.view.MenuWindowGridView;
 import peter.util.searcher.view.MultiWindowListView;
-import peter.util.searcher.view.ObservableWebView;
 import peter.util.searcher.view.WebViewContainer;
 
 /**
@@ -76,6 +74,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private MultiWindowAdapter multiWindowAdapter;
     private WebViewContainer webViewContainer;
     private CustomSwipeRefreshLayout mSwipeRefreshLayout;
+    private DrawerLayout drawerLayout;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -116,6 +115,21 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         initTopBar();
         initMenu();
         initMultiWindow();
+        initMultiLayout();
+    }
+
+    public void initMultiLayout() {
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ListView multiTabListView = (ListView) findViewById(R.id.tabs);
+        multiWindowAdapter = new MultiWindowAdapter();
+        multiTabListView.setAdapter(multiWindowAdapter);
+        drawerLayout.findViewById(R.id.add_tab).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                drawerLayout.closeDrawers();
+                loadHome(true);
+            }
+        });
     }
 
     Runnable complete = new Runnable() {
@@ -136,11 +150,21 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 return false;
             }
         });
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.web, menu);
+        return true;
     }
 
     private void touchSearch() {
         String content = tabManager.getCurrentTabGroup().getCurrentTab().getSearchWord();
-        startSearchActivity(content);
+        Intent intent = new Intent(MainActivity.this, SearchActivity.class);
+        intent.putExtra(NAME_WORD, content);
+        startActivity(intent);
         closeDialogFast();
     }
 
@@ -220,7 +244,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     private void setSwipeRefresh(View view) {
-        if(view instanceof WebView) {
+        if (view instanceof WebView) {
             mSwipeRefreshLayout.setEnabled(true);
             final WebView webView = (WebView) view;
             mSwipeRefreshLayout.setCanChildScrollUpCallback(new CustomSwipeRefreshLayout.CanChildScrollUpCallback() {
@@ -229,7 +253,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     return webView.getScrollY() > 0;
                 }
             });
-        }else {
+        } else {
             mSwipeRefreshLayout.setRefreshing(false);
             mSwipeRefreshLayout.setEnabled(false);
         }
@@ -290,8 +314,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if ((keyCode == KeyEvent.KEYCODE_BACK)) {
-            if (isDialogShow()) {
-                closeDialog();
+            if (drawerLayout.isDrawerOpen(Gravity.RIGHT)) {
+                drawerLayout.closeDrawers();
                 return true;
             }
 
@@ -330,30 +354,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         tabManager.resumeTabGroupExclude(null);
         MobclickAgent.onResume(this);
     }
-
-    /**
-     * Dialog监听器
-     */
-    private RecognizerDialogListener mRecognizerDialogListener = new RecognizerDialogListener() {
-        @Override
-        public void onResult(com.iflytek.cloud.RecognizerResult recognizerResult, boolean isLast) {
-
-            if (recognizerResult != null) {
-                String json = recognizerResult.getResultString();
-                if (!TextUtils.isEmpty(json)) {
-                    String result = VoiceRecognizer.instance().parseIatResult(json);
-                    if (!TextUtils.isEmpty(result)) {
-                        startSearchActivity(result);
-                    }
-                }
-            }
-        }
-
-        @Override
-        public void onError(SpeechError speechError) {
-
-        }
-    };
 
     @Override
     protected void onPause() {
@@ -459,7 +459,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.opt:
-                VoiceRecognizer.instance().showVoiceDialog(MainActivity.this, mRecognizerDialogListener);
                 break;
             case R.id.go_back:
                 Tab tab = tabManager.getCurrentTabGroup();
@@ -488,39 +487,32 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 loadHome(false);
                 closeDialog();
                 break;
-            case R.id.search:
-                String content = tabManager.getCurrentTabGroup().getCurrentTab().getSearchWord();
-                startSearchActivity(content);
-                closeDialogFast();
-                break;
             case R.id.multi_btn:
-                if (menu != null) {
-                    menu.hide();
-                }
 
                 if (multiWindow != null) {
                     if (multiWindow.getVisibility() == View.INVISIBLE) {
-                        multiWindow.show();
+                        drawerLayout.openDrawer(Gravity.RIGHT);
                         updateMultiwindow();
                     } else {
                         multiWindow.hide();
                     }
                 }
 
-                break;
-            case R.id.menu:
-                if (multiWindow != null) {
-                    multiWindow.hide();
-                }
 
-                if (menu != null) {
-                    if (menu.getVisibility() == View.INVISIBLE) {
-                        menu.show();
-                    } else {
-                        menu.hide();
-                    }
-                }
                 break;
+//            case R.id.menu:
+//                if (multiWindow != null) {
+//                    multiWindow.hide();
+//                }
+//
+//                if (menu != null) {
+//                    if (menu.getVisibility() == View.INVISIBLE) {
+//                        menu.show();
+//                    } else {
+//                        menu.hide();
+//                    }
+//                }
+//                break;
             case R.id.close_tab:
                 if (tabManager.getTabGroupCount() == 1) {
                     exit();
@@ -608,13 +600,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 }
                 break;
         }
-    }
-
-    public void startSearchActivity(String word) {
-        Intent intent = new Intent(MainActivity.this, SearchActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-        intent.putExtra(NAME_WORD, word);
-        startActivity(intent);
     }
 
     @Override
