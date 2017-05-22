@@ -1,10 +1,10 @@
 package peter.util.searcher.activity;
 
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -42,7 +42,6 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
         setContentView(R.layout.activity_search);
         init();
     }
-
 
     public void onResume() {
         super.onResume();
@@ -160,7 +159,7 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
                 fragment = new OperateUrlFragment2();
             }
             currentFragment = fragment;
-            FragmentManager fragmentManager = getFragmentManager();
+            FragmentManager fragmentManager = getSupportFragmentManager();
             FragmentTransaction ft = fragmentManager.beginTransaction();
             ft.replace(R.id.content_frame, fragment, tag);
             ft.commitAllowingStateLoss();

@@ -37,7 +37,7 @@
         android:visibility="visible" />
 
     <ImageView
-        android:id="@+id/favorite"
+        android:id="@+id/bookmark"
         style="@style/Widget.AppCompat.ActionButton.Overflow"
         android:layout_width="0dp"
         android:layout_height="match_parent"

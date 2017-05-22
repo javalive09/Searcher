@@ -69,8 +69,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private TextView multiWindowBtn;
     private HashMap<String, Class> router = new HashMap<>();
 
-    private DialogContainer menu;
-    private DialogContainer multiWindow;
     private MultiWindowAdapter multiWindowAdapter;
     private WebViewContainer webViewContainer;
     private CustomSwipeRefreshLayout mSwipeRefreshLayout;
@@ -113,8 +111,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         tabManager = new TabManager(MainActivity.this);
         installLocalTabRounter();
         initTopBar();
-        initMenu();
-        initMultiWindow();
         initMultiLayout();
     }
 
@@ -123,11 +119,24 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         ListView multiTabListView = (ListView) findViewById(R.id.tabs);
         multiWindowAdapter = new MultiWindowAdapter();
         multiTabListView.setAdapter(multiWindowAdapter);
-        drawerLayout.findViewById(R.id.add_tab).setOnClickListener(new View.OnClickListener() {
+        drawerLayout.findViewById(R.id.add_tab).setOnClickListener(MainActivity.this);
+        drawerLayout.findViewById(R.id.close_tabs).setOnClickListener(MainActivity.this);
+        drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
-            public void onClick(View v) {
-                drawerLayout.closeDrawers();
-                loadHome(true);
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+            }
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                updateMultiwindow();
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+            }
+
+            @Override
+            public void onDrawerStateChanged(int newState) {
             }
         });
     }
@@ -165,57 +174,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         Intent intent = new Intent(MainActivity.this, SearchActivity.class);
         intent.putExtra(NAME_WORD, content);
         startActivity(intent);
-        closeDialogFast();
-    }
-
-    private void initMenu() {
-        menu = (DialogContainer) findViewById(R.id.menu_window_container);
-        MenuWindowGridView menuList = (MenuWindowGridView) menu.findViewById(R.id.menu_window);
-        ArrayList<MenuWindowAdapter.MenuItem> arrayList = new ArrayList<>();
-        arrayList.add(new MenuWindowAdapter.MenuItem(R.drawable.ic_folder_special, R.string.fast_enter_favorite));
-        arrayList.add(new MenuWindowAdapter.MenuItem(R.drawable.ic_star_border, R.string.action_collect));
-        arrayList.add(new MenuWindowAdapter.MenuItem(R.drawable.ic_share, R.string.action_share));
-        arrayList.add(new MenuWindowAdapter.MenuItem(R.drawable.ic_file_download, R.string.action_download));
-        arrayList.add(new MenuWindowAdapter.MenuItem(R.drawable.ic_url_history, R.string.action_url_history));
-        arrayList.add(new MenuWindowAdapter.MenuItem(R.drawable.ic_search_history, R.string.action_search_history));
-        arrayList.add(new MenuWindowAdapter.MenuItem(R.drawable.ic_settings, R.string.fast_enter_setting));
-        arrayList.add(new MenuWindowAdapter.MenuItem(R.drawable.ic_power_settings_new, R.string.action_exit));
-        MenuWindowAdapter menuWindowAdapter = new MenuWindowAdapter(MainActivity.this, arrayList);
-        menuList.setAdapter(menuWindowAdapter);
-        menu.setOutSideTouchItemCallBack(new DialogContainer.OutSideTouchItemCallBack() {
-            @Override
-            public void outside() {
-                menu.hide();
-            }
-        });
     }
 
     public void updateMultiwindow() {
         if (multiWindowAdapter != null) {
             multiWindowAdapter.update(MainActivity.this);
         }
-    }
-
-    private void initMultiWindow() {
-        multiWindow = (DialogContainer) findViewById(R.id.multi_window_container);
-        MultiWindowListView multiTabListView = (MultiWindowListView) multiWindow.findViewById(R.id.multi_window);
-        multiWindowAdapter = new MultiWindowAdapter();
-        multiTabListView.setAdapter(multiWindowAdapter);
-        DialogContainer container = (DialogContainer) multiWindow.findViewById(R.id.multi_window_container);
-        container.setOutSideTouchItemCallBack(new DialogContainer.OutSideTouchItemCallBack() {
-            @Override
-            public void outside() {
-                multiWindow.hide();
-            }
-        });
-
-        multiWindow.findViewById(R.id.add).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                multiWindow.hide();
-                loadHome(true);
-            }
-        });
     }
 
     private void installLocalTabRounter() {
@@ -429,42 +393,27 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     public void exit() {
         super.exit();
-        menu.hide();
-        multiWindow.hide();
-    }
-
-    private void closeDialog() {
-        if (multiWindow != null) {
-            multiWindow.hide();
-        }
-        if (menu != null) {
-            menu.hide();
-        }
-    }
-
-    private void closeDialogFast() {
-        if (multiWindow != null) {
-            multiWindow.setVisibility(View.INVISIBLE);
-        }
-        if (menu != null) {
-            menu.setVisibility(View.INVISIBLE);
-        }
-    }
-
-    private boolean isDialogShow() {
-        return multiWindow.getVisibility() == View.VISIBLE || menu.getVisibility() == View.VISIBLE;
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.bookmark:
+                startActivity(new Intent(MainActivity.this, BookMarkActivity.class));
+                break;
+            case R.id.add_tab:
+                drawerLayout.closeDrawers();
+                loadHome(true);
+                break;
+            case R.id.close_tabs:
+                drawerLayout.closeDrawers();
+                break;
             case R.id.opt:
                 break;
             case R.id.go_back:
                 Tab tab = tabManager.getCurrentTabGroup();
                 if (tab.canGoBack()) {
                     tab.goBack();
-                    closeDialog();
                 }
                 break;
             case R.id.go_forward:
@@ -472,47 +421,22 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     View view = tabManager.getCurrentTabGroup().getCurrentTab().getView();
                     if (view instanceof WebView) {
                         ((WebView) view).stopLoading();
-                        closeDialog();
                     }
                     refreshGoForward(false);
                 } else if (v.isEnabled()) {
                     tab = tabManager.getCurrentTabGroup();
                     if (tab.canGoForward()) {
                         tab.goForward();
-                        closeDialog();
                     }
                 }
                 break;
             case R.id.home:
                 loadHome(false);
-                closeDialog();
                 break;
             case R.id.multi_btn:
-
-                if (multiWindow != null) {
-                    if (multiWindow.getVisibility() == View.INVISIBLE) {
-                        drawerLayout.openDrawer(Gravity.RIGHT);
-                        updateMultiwindow();
-                    } else {
-                        multiWindow.hide();
-                    }
-                }
-
-
+                drawerLayout.openDrawer(Gravity.RIGHT);
                 break;
-//            case R.id.menu:
-//                if (multiWindow != null) {
-//                    multiWindow.hide();
-//                }
-//
-//                if (menu != null) {
-//                    if (menu.getVisibility() == View.INVISIBLE) {
-//                        menu.show();
-//                    } else {
-//                        menu.hide();
-//                    }
-//                }
-//                break;
+
             case R.id.close_tab:
                 if (tabManager.getTabGroupCount() == 1) {
                     exit();
@@ -525,9 +449,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             case R.id.multi_window_item:
                 TabGroup tabGroup = (TabGroup) v.getTag(R.id.multi_window_item_tag);
                 tabManager.switchTabGroup(tabGroup);
-                if (multiWindow != null) {
-                    multiWindow.hide();
-                }
+                drawerLayout.closeDrawers();
                 break;
             case R.id.menu_window_item:
                 MenuWindowAdapter.MenuItem itemRes = (MenuWindowAdapter.MenuItem) v.getTag(R.id.menu_window_item_tag);
@@ -594,9 +516,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     case R.string.action_url_history:
                         tabManager.loadUrl(Tab.URL_HISTORY_URL, false);
                         break;
-                }
-                if (menu != null) {
-                    menu.hide();
                 }
                 break;
         }

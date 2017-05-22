@@ -1,6 +1,5 @@
 package peter.util.searcher.fragment;
 
-import android.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -52,6 +51,7 @@ public class EngineViewPagerFragment extends BaseFragment implements View.OnClic
         rootView = inflater.inflate(R.layout.fragment_engine_viewpager, container, false);
         mViewPager = (ViewPager) rootView.findViewById(R.id.viewpager);
         mSlidingTabLayout = (SlidingTabLayout) rootView.findViewById(R.id.sliding_tabs);
+        mSlidingTabLayout.setSelectedIndicatorColors(getResources().getColor(R.color.colorPrimary));
         init();
         return rootView;
     }

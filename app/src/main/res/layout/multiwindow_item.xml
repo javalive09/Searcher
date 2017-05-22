@@ -3,7 +3,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/multi_window_item"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/multi_window_item_h"
+    android:layout_height="?attr/actionBarSize"
     android:background="@drawable/multi_item_selector"
     android:orientation="horizontal">
 
@@ -14,12 +14,12 @@
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="@dimen/multi_window_icon_margin"
         android:layout_marginRight="@dimen/multi_window_icon_margin"
-        android:background="@drawable/web_site_icon" />
+        android:background="@drawable/tint_bitmap_webicon" />
 
     <TextView
         android:id="@+id/title"
         android:layout_width="0px"
-        android:layout_height="@dimen/multi_window_item_h"
+        android:layout_height="match_parent"
         android:layout_gravity="center_vertical"
         android:layout_weight="1"
         android:gravity="center"
@@ -27,10 +27,12 @@
 
     <ImageView
         android:id="@+id/close_tab"
-        android:layout_width="@dimen/multi_window_item_h"
-        android:layout_height="@dimen/multi_window_item_h"
+        style="@style/Base.Widget.AppCompat.ActionButton.Overflow"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
         android:layout_gravity="center_vertical"
-        android:scaleType="center"
-        android:src="@drawable/clear_selector" />
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:src="@drawable/tint_bitmap_stop" />
 
 </LinearLayout>

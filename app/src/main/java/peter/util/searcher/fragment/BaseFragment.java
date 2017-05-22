@@ -1,14 +1,7 @@
 package peter.util.searcher.fragment;
 
-import android.app.Fragment;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
-import peter.util.searcher.R;
-import peter.util.searcher.activity.BaseActivity;
-import peter.util.searcher.activity.SearchActivity;
+import android.support.v4.app.Fragment;
 
 /**
  * Created by peter on 16/5/9.
@@ -19,8 +12,10 @@ public class BaseFragment extends Fragment {
         return false;
     }
 
-    public void GoBack() {}
+    public void GoBack() {
+    }
 
-    public void refresh() {}
+    public void refresh() {
+    }
 
 }

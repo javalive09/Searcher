@@ -1,14 +1,14 @@
 package peter.util.searcher.activity;
 
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -81,7 +81,7 @@ public class EnterActivity extends BaseActivity implements DrawerLayoutAdapter.O
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         if (currentFragmentTag.equals(WEBVIEW)) {
-            FragmentManager fragmentManager = getFragmentManager();
+            FragmentManager fragmentManager = getSupportFragmentManager();
             WebViewFragment fragment = (WebViewFragment) fragmentManager.findFragmentByTag(WEBVIEW);
             String url = fragment.getUrl();
             String searchWord = getSearchWord();
@@ -210,7 +210,7 @@ public class EnterActivity extends BaseActivity implements DrawerLayoutAdapter.O
         if (currentFragmentTag.equals(WEBVIEW)) {
             if (event.getAction() == KeyEvent.ACTION_UP) {
                 if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
-                    FragmentManager fragmentManager = getFragmentManager();
+                    FragmentManager fragmentManager = getSupportFragmentManager();
                     BaseFragment fragment = (BaseFragment) fragmentManager.findFragmentByTag(WEBVIEW);
                     if (fragment.canGoBack()) {
                         fragment.GoBack();
@@ -237,8 +237,8 @@ public class EnterActivity extends BaseActivity implements DrawerLayoutAdapter.O
             if (args != null) {
                 fragment.setArguments(args);
             }
-            FragmentManager fragmentManager = getFragmentManager();
-            FragmentTransaction ft = fragmentManager.beginTransaction();
+            FragmentManager fragmentManager = getSupportFragmentManager();
+           FragmentTransaction ft = fragmentManager.beginTransaction();
             ft.replace(R.id.content_frame, fragment, tag);
             ft.commitAllowingStateLoss();
         }

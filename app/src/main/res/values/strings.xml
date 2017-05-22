@@ -45,6 +45,7 @@
     <string name="action_browser">在浏览器中打开</string>
     <string name="action_collect">收藏</string>
     <string name="action_collection">我的收藏</string>
+    <string name="title_bookmark">书签</string>
     <string name="action_copy_link">复制url</string>
     <string name="action_search_history">搜索记录</string>
     <string name="action_url_history">浏览记录</string>
@@ -53,6 +54,7 @@
     <string name="action_one_key_txt">点击设备辅助应用程序，点选速搜，设置成功后，可长按home一键进入</string>
     <string name="action_delete">删除</string>
     <string name="action_delete_all">删除全部</string>
+    <string name="tabs_title">标签</string>
 
     <string name="update_dialog_title">正在下载更新包</string>
     <string name="update_dialog_cancel">取消</string>
@@ -68,6 +70,7 @@
     <string name="title_sign_in">登录</string>
     <string name="hint_username">用户名</string>
     <string name="hint_password">密码</string>
+    <string name="no_record">无记录</string>
 
     <string name="message_insecure_connection">Connection to this site is not secure:\n%1$s\nProceed anyway?</string>
     <string name="message_certificate_date_invalid">date of certificate is invalid</string>
@@ -90,11 +93,18 @@
     <string name="fast_enter_setting">设置</string>
     <string name="home">主页</string>
     <string name="multi_window_add">新建</string>
+    <string name="add_tab">新建</string>
     <string name="copy_board">已经复制到剪切板</string>
     <string name="copy_txt">复制</string>
     <string name="paste_txt">粘贴</string>
     <string name="enter_txt">进入</string>
     <string name="exit_hint">再次点击退出程序</string>
+
+    <string-array name="bookmarks">
+        <item>收藏夹</item>
+        <item>搜索记录</item>
+        <item>下载记录</item>
+    </string-array>
 
     <string-array name="settings_name">
         <item>分享APP</item>

@@ -14,15 +14,12 @@
 
             <Button
                 android:id="@+id/cancel"
-                style="@style/Widget.AppCompat.ActionButton.Overflow"
+                style="@style/normal_button_style"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_alignParentRight="true"
-                android:gravity="center"
                 android:onClick="onClick"
-                android:text="@string/action_cancel"
-                android:textColor="@color/menu_color"
-                android:textSize="17sp" />
+                android:text="@string/action_cancel" />
 
             <FrameLayout
                 android:layout_width="match_parent"

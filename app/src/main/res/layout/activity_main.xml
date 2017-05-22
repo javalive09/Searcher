@@ -14,7 +14,9 @@
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize">
+            android:layout_height="?attr/actionBarSize"
+            android:focusable="true"
+            android:focusableInTouchMode="true">
 
             <peter.util.searcher.view.ObservableEditText
                 android:id="@+id/top_txt"
@@ -24,7 +26,6 @@
                 android:cursorVisible="false"
                 android:drawableLeft="@drawable/tint_bitmap_icon"
                 android:drawablePadding="5dp"
-                android:focusable="true"
                 android:hint="@string/search_hint"
                 android:imeOptions="actionDone"
                 android:singleLine="true"
@@ -72,8 +73,8 @@
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="match_parent"
                 android:layout_height="3dp"
-                android:progressTint="@color/colorPrimary"
                 android:max="100"
+                android:progressTint="@color/colorPrimary"
                 android:visibility="invisible" />
 
         </FrameLayout>
@@ -81,28 +82,9 @@
 
     </RelativeLayout>
 
-    <RelativeLayout
-        android:layout_width="240dp"
+    <include
+        layout="@layout/layout_tabs"
+        android:layout_width="300dp"
         android:layout_height="match_parent"
-        android:layout_gravity="right"
-        android:background="@android:color/white">
-
-        <ListView
-            android:id="@+id/tabs"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_above="@+id/add" />
-
-        <ImageView
-            android:id="@+id/add_tab"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/multi_window_item_h"
-            android:layout_alignParentBottom="true"
-            android:background="@drawable/multi_item_selector"
-            android:scaleType="centerInside"
-            android:src="@drawable/multi_add"
-            android:textColor="@android:color/black" />
-
-    </RelativeLayout>
-
+        android:layout_gravity="right" />
 </android.support.v4.widget.DrawerLayout>
