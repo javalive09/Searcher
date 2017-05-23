@@ -10,6 +10,8 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         app:theme="@style/Widget.AppCompat.ActionBar"
+        android:background="@color/colorPrimary"
+        toolbar:titleTextColor="@color/tint_color"
         toolbar:title="@string/title_bookmark" />
 
     <LinearLayout

@@ -37,16 +37,16 @@
     <string name="permission_hint">使用语音输入需要点击确定按钮</string>
 
     <string name="action_cancel">取消</string>
-    <string name="action_share">分享</string>
+    <string name="action_share">分享链接</string>
     <string name="action_refresh">刷新</string>
-    <string name="action_exit">退出</string>
+    <string name="action_exit">退出程序</string>
     <string name="favorite_txt">已经添加到收藏夹</string>
     <string name="copy_link_txt">已经复制链接</string>
-    <string name="action_browser">在浏览器中打开</string>
-    <string name="action_collect">收藏</string>
+    <string name="action_browser">在其他浏览器中打开</string>
+    <string name="action_collect">收藏链接</string>
     <string name="action_collection">我的收藏</string>
     <string name="title_bookmark">书签</string>
-    <string name="action_copy_link">复制url</string>
+    <string name="action_copy_link">复制链接</string>
     <string name="action_search_history">搜索记录</string>
     <string name="action_url_history">浏览记录</string>
     <string name="action_about">关于速搜</string>
@@ -90,7 +90,7 @@
     <string name="fast_enter_navigation_url">http://h5.mse.360.cn/navi.html</string>
     <string name="fast_enter_history">历史</string>
     <string name="fast_enter_favorite">收藏夹</string>
-    <string name="fast_enter_setting">设置</string>
+    <string name="fast_enter_setting">我的设置</string>
     <string name="home">主页</string>
     <string name="multi_window_add">新建</string>
     <string name="add_tab">新建</string>

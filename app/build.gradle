@@ -13,7 +13,7 @@ android {
     }
     defaultConfig {
         applicationId "peter.util.searcher"
-        minSdkVersion 19
+        minSdkVersion 21
         targetSdkVersion 23
         versionCode 69
         versionName "1.6.4"

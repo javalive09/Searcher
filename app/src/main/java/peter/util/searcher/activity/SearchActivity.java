@@ -10,6 +10,7 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.umeng.analytics.MobclickAgent;
@@ -28,7 +29,7 @@ import peter.util.searcher.view.ObservableEditText;
  */
 public class SearchActivity extends BaseActivity implements View.OnClickListener {
 
-    private ObservableEditText search;
+    private EditText search;
     private ImageView clearAll;
     private static final String RECENT_SEARCH = "recent_search";
     public static final String ENGINE_LIST = "engine_list";
@@ -100,7 +101,7 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
 
     private void init() {
         clearAll = (ImageView) findViewById(R.id.clearall);
-        search = (ObservableEditText) findViewById(R.id.top_txt);
+        search = (EditText) findViewById(R.id.top_txt);
         search.addTextChangedListener(new TextWatcher() {
 
             @Override

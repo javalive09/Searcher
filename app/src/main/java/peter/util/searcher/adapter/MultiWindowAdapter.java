@@ -75,7 +75,7 @@ public class MultiWindowAdapter extends BaseAdapter {
             if (icon != null) {
                 holder.icon.setBackground(icon);
             } else {
-                holder.icon.setBackgroundResource(R.drawable.web_site_icon);
+                holder.icon.setBackgroundResource(R.drawable.tint_bitmap_webicon);
             }
             holder.close.setOnClickListener(mainActivity);
             holder.close.setTag(tabGroup);

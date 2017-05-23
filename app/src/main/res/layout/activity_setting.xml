@@ -6,24 +6,23 @@
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
-        android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:background="@color/colorPrimary_"
-        toolbar:navigationIcon="@drawable/abc_ic_ab_back_mtrl_am_alpha"
-        toolbar:title="@string/setting_title"
-        toolbar:titleTextColor="@color/edit_text_color"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
         android:theme="@style/ThemeOverlay.AppCompat.Dark"
-        toolbar:popupTheme="@style/Theme.ToolBar.Base" />
+        toolbar:popupTheme="@style/Theme.ToolBar.Base"
+        toolbar:title="@string/setting_title"
+        toolbar:titleTextColor="@color/tint_color" />
 
     <TextView
         android:id="@+id/version"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
         android:layout_below="@+id/toolbar"
-        android:gravity="center"
-        android:drawableTop="@drawable/icon"
-        android:layout_margin="@dimen/setting_version_margin"/>
+        android:layout_centerHorizontal="true"
+        android:layout_margin="@dimen/setting_version_margin"
+        android:drawableTop="@drawable/web_hi_res_512"
+        android:gravity="center" />
 
     <ListView
         android:id="@+id/setting_list"

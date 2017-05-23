@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
     android:orientation="horizontal">
 
     <ImageView
@@ -33,7 +34,7 @@
         android:onClick="onClick"
         android:scaleType="center"
         android:src="@drawable/tint_bitmap_home"
-        android:tint="@color/menu_color"
+        android:tint="@color/tint_color"
         android:visibility="visible" />
 
     <ImageView
@@ -45,7 +46,7 @@
         android:onClick="onClick"
         android:scaleType="center"
         android:src="@drawable/tint_bitmap_favorite"
-        android:tint="@color/menu_color"
+        android:tint="@color/tint_color"
         android:visibility="visible" />
 
     <FrameLayout
@@ -61,7 +62,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:src="@drawable/tint_bitmap_tabs"
-            android:tint="@color/menu_color" />
+            android:tint="@color/tint_color" />
 
         <TextView
             android:id="@+id/multi_btn_txt"
@@ -70,7 +71,7 @@
             android:gravity="center"
             android:scaleType="center"
             android:text="1"
-            android:textColor="@color/menu_color"
+            android:textColor="@color/tint_color"
             android:textSize="10sp"
             android:textStyle="bold"
             android:visibility="visible" />

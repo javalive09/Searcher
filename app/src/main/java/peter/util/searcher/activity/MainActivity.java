@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.PorterDuff;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -21,6 +22,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
@@ -53,6 +55,7 @@ import peter.util.searcher.tab.SettingTab;
 import peter.util.searcher.tab.Tab;
 import peter.util.searcher.tab.TabGroup;
 import peter.util.searcher.utils.UrlUtils;
+import peter.util.searcher.utils.Utils;
 import peter.util.searcher.view.CustomSwipeRefreshLayout;
 import peter.util.searcher.view.DialogContainer;
 import peter.util.searcher.view.MenuWindowGridView;
@@ -165,9 +168,79 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.web, menu);
+        getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        String url = tabManager.getCurrentTabGroup().getCurrentTab().getUrl();
+        if (url.startsWith(Tab.LOCAL_SCHEMA)) {
+            menu.setGroupVisible(R.id.web_sites, false);
+        } else {
+            menu.setGroupVisible(R.id.web_sites, true);
+        }
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_share:
+                String url = tabManager.getCurrentTabGroup().getUrl();
+                Intent sendIntent = new Intent();
+                sendIntent.setAction(Intent.ACTION_SEND);
+                sendIntent.putExtra(Intent.EXTRA_TEXT, url);
+                sendIntent.setType("text/plain");
+                startActivity(Intent.createChooser(sendIntent, getString(R.string.share_link_title)));
+                break;
+            case R.id.action_favorite:
+                url = tabManager.getCurrentTabGroup().getCurrentTab().getUrl();
+                if (!TextUtils.isEmpty(url) && !url.startsWith(Tab.LOCAL_SCHEMA)) {
+                    final Bean bean = new Bean();
+                    bean.name = tabManager.getCurrentTabGroup().getCurrentTab().getTitle();
+                    if (TextUtils.isEmpty(bean.name)) {
+                        bean.name = tabManager.getCurrentTabGroup().getCurrentTab().getUrl();
+                    }
+                    bean.url = url;
+                    bean.time = System.currentTimeMillis();
+                    new AsyncTask<Void, Void, Boolean>() {
+                        @Override
+                        protected Boolean doInBackground(Void... params) {
+                            return SqliteHelper.instance(MainActivity.this).insertFav(bean);
+                        }
+
+                        @Override
+                        protected void onPostExecute(Boolean suc) {
+                            if (suc) {
+                                Toast.makeText(MainActivity.this, R.string.favorite_txt, Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }.execute();
+                }
+                break;
+            case R.id.action_copy_link:
+                url = tabManager.getCurrentTabGroup().getUrl();
+                String title = tabManager.getCurrentTabGroup().getTitle();
+                ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText(title, url);
+                clipboard.setPrimaryClip(clip);
+                Toast.makeText(MainActivity.this, R.string.copy_link_txt, Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.action_browser:
+                url = tabManager.getCurrentTabGroup().getUrl();
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                startActivity(browserIntent);
+                break;
+            case R.id.action_setting:
+                startActivity(new Intent(MainActivity.this, SettingActivity.class));
+                break;
+            case R.id.action_exit:
+                exit();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
 
     private void touchSearch() {
         String content = tabManager.getCurrentTabGroup().getCurrentTab().getSearchWord();
@@ -266,11 +339,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     public void loadHome(boolean newTab) {
-        tabManager.loadUrl(Tab.URL_HOME2, newTab);
+//        tabManager.loadUrl(Tab.URL_HOME2, newTab);
 //        loadUrl(Tab.URL_HOME, newTab);
 //        loadUrl("http://m.2345.com/websitesNavigation.htm", newTab);
 //        loadUrl(getString(R.string.fast_enter_navigation_url), newTab);
 //        loadUrl("http://top.baidu.com/m#buzz/1", newTab);
+        tabManager.loadUrl("https://github.com/trending", newTab);
     }
 
     boolean realBack = false;

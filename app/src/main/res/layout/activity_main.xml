@@ -15,21 +15,16 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
+            android:background="@color/colorPrimary"
             android:focusable="true"
             android:focusableInTouchMode="true">
 
-            <peter.util.searcher.view.ObservableEditText
+            <EditText
                 android:id="@+id/top_txt"
+                style="@style/toolbar_edittext_style"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:backgroundTint="@color/menu_color"
-                android:cursorVisible="false"
-                android:drawableLeft="@drawable/tint_bitmap_icon"
-                android:drawablePadding="5dp"
-                android:hint="@string/search_hint"
-                android:imeOptions="actionDone"
-                android:singleLine="true"
-                android:textCursorDrawable="@drawable/cursor" />
+                android:cursorVisible="false" />
 
         </android.support.v7.widget.Toolbar>
 
@@ -74,7 +69,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="3dp"
                 android:max="100"
-                android:progressTint="@color/colorPrimary"
+                android:progressTint="@color/progress_color"
                 android:visibility="invisible" />
 
         </FrameLayout>

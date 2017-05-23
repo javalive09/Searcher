@@ -2,6 +2,7 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="bottom_h">47dp</dimen>
     <dimen name="top_h">50dp</dimen>
+    <dimen name="tab_h">50dp</dimen>
     <dimen name="search_h">55dp</dimen>
     <dimen name="multi_h">40dp</dimen>
     <dimen name="clear_txt_margin_right">10dp</dimen>

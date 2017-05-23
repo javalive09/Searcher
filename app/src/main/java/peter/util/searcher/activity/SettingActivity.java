@@ -3,6 +3,7 @@ package peter.util.searcher.activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
@@ -10,6 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.umeng.analytics.MobclickAgent;
 
 import peter.util.searcher.update.AsynWindowHandler;
@@ -25,23 +27,22 @@ public class SettingActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        if(toolbar != null) {
-            setSupportActionBar(toolbar);
-            getSupportActionBar().setDisplayShowHomeEnabled(false);
-            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    finish();
-                }
-            });
-        }
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true); // this sets the button to the back icon
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
         TextView version = (TextView) findViewById(R.id.version);
-        if(version != null) {
+        if (version != null) {
             version.setText(getVersionName());
         }
         windowHandler = new AsynWindowHandler(this);
         ListView settings = (ListView) findViewById(R.id.setting_list);
-        if(settings != null) {
+        if (settings != null) {
             settings.setAdapter(new ArrayAdapter<>(this, R.layout.setting_item, getResources().getStringArray(R.array.settings_name)));
             settings.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
@@ -85,7 +86,7 @@ public class SettingActivity extends BaseActivity {
     }
 
     public void sendMailByIntent() {
-        Intent data=new Intent(Intent.ACTION_SENDTO);
+        Intent data = new Intent(Intent.ACTION_SENDTO);
         data.setData(Uri.parse(getString(R.string.setting_feedback_address)));
         data.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.setting_feedback));
         data.putExtra(Intent.EXTRA_TEXT, getString(R.string.setting_feedback_body));
@@ -94,7 +95,7 @@ public class SettingActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
-        if(windowHandler != null) {
+        if (windowHandler != null) {
             windowHandler.sendEmptyMessage(AsynWindowHandler.DESTROY);
         }
         super.onDestroy();

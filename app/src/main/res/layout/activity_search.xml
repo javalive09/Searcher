@@ -6,7 +6,8 @@
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize">
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorPrimary">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -26,19 +27,12 @@
                 android:layout_height="match_parent"
                 android:layout_toLeftOf="@id/cancel">
 
-                <peter.util.searcher.view.ObservableEditText
+                <EditText
                     android:id="@+id/top_txt"
+                    style="@style/toolbar_edittext_style"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:backgroundTint="@color/menu_color"
-                    android:drawableLeft="@drawable/tint_bitmap_icon"
-                    android:drawablePadding="5dp"
-                    android:focusable="true"
-                    android:hint="@string/search_hint"
-                    android:imeOptions="actionDone"
-                    android:paddingRight="@dimen/search_padding_right"
-                    android:singleLine="true"
-                    android:textCursorDrawable="@drawable/cursor" />
+                    android:focusable="true" />
 
                 <ImageView
                     android:id="@+id/clearall"
