@@ -115,4 +115,17 @@
         <item>一键开启</item>
     </string-array>
 
+    <string-array name="favorite_urls_names">
+        <item>历史上的今天</item>
+        <item>Github趋势</item>
+        <item>网易新闻</item>
+    </string-array>
+
+    <string-array name="favorite_urls">
+        <item>http://www.todayonhistory.com/</item>
+        <item>https://github.com/trending</item>
+        <item>http://3g.163.com/touch/news/</item>
+    </string-array>
+
+
 </resources>

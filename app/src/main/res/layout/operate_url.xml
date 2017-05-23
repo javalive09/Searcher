@@ -6,24 +6,6 @@
     android:orientation="horizontal">
 
     <FrameLayout
-        android:id="@+id/copy"
-        android:layout_width="0px"
-        android:layout_height="@dimen/top_h"
-        android:layout_weight="1"
-        android:background="@drawable/list_item_selector">
-
-        <TextView
-            android:id="@+id/copy_txt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:drawableLeft="@drawable/ic_content_copy_selector"
-            android:gravity="center"
-            android:text="@string/copy_txt" />
-
-    </FrameLayout>
-
-    <FrameLayout
         android:id="@+id/paste"
         android:layout_width="0px"
         android:layout_height="@dimen/top_h"

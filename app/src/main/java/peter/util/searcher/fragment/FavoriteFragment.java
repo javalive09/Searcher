@@ -70,20 +70,21 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
     }
 
     @Override
-    public void onDestroy() {
-        dismissPopupMenu();
-        cancelAsyncTask();
-        super.onDestroy();
-    }
-
-    @Override
     public boolean onLongClick(View v) {
         switch (v.getId()) {
-            case R.id.recent_search_item:
+            case R.id.favorite_item:
                 popupMenu(v);
                 return true;
         }
         return false;
+    }
+
+
+    @Override
+    public void onDestroy() {
+        dismissPopupMenu();
+        cancelAsyncTask();
+        super.onDestroy();
     }
 
     private void popupMenu(final View view) {

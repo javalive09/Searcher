@@ -150,6 +150,31 @@ public class SqliteHelper extends SQLiteOpenHelper {
         return result;
     }
 
+    public synchronized void insertFav(List<Bean> beans) {
+        SQLiteDatabase db = getWritableDatabase();
+        db.beginTransaction();
+        try {
+            for (Bean bean : beans) {
+                ContentValues values = new ContentValues();
+                Cursor cursor = db.rawQuery("select * from " + TABLE_FAVORITE + " where url=?", new String[]{bean.url});
+                if (cursor != null) {
+                    if (cursor.getCount() == 0) {//没有记录
+                        values.put("time", bean.time);
+                        values.put("name", bean.name);
+                        values.put("url", bean.url);
+                        db.insert(TABLE_FAVORITE, null, values);
+                    }
+                    cursor.close();
+                }
+            }
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            db.endTransaction();
+        }
+    }
+
     public List<Bean> queryAllFavorite() {
         List<Bean> list = new ArrayList<>();
         SQLiteDatabase db = getReadableDatabase();

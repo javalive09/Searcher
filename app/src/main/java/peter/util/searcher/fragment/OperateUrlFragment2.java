@@ -32,7 +32,6 @@ public class OperateUrlFragment2 extends BaseFragment implements View.OnClickLis
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_operate_url2, container, false);
-        rootView.findViewById(R.id.copy).setOnClickListener(OperateUrlFragment2.this);
         rootView.findViewById(R.id.paste).setOnClickListener(OperateUrlFragment2.this);
         rootView.findViewById(R.id.enter).setOnClickListener(OperateUrlFragment2.this);
         return rootView;
@@ -55,11 +54,6 @@ public class OperateUrlFragment2 extends BaseFragment implements View.OnClickLis
         SearchActivity searchActivity = (SearchActivity) getActivity();
         String url = UrlUtils.getGuessUrl(searchActivity.getSearchWord());
         switch (v.getId()) {
-            case R.id.copy:
-                ClipboardManager cmb = (ClipboardManager)getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
-                cmb.setText(url.trim());
-                Toast.makeText(getActivity(), R.string.copy_board, Toast.LENGTH_SHORT).show();
-                break;
             case R.id.paste:
                 searchActivity.setSearchWord(word.toString());
                 break;

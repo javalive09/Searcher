@@ -339,12 +339,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     public void loadHome(boolean newTab) {
-//        tabManager.loadUrl(Tab.URL_HOME2, newTab);
+        tabManager.loadUrl(Tab.URL_HOME2, newTab);
 //        loadUrl(Tab.URL_HOME, newTab);
 //        loadUrl("http://m.2345.com/websitesNavigation.htm", newTab);
 //        loadUrl(getString(R.string.fast_enter_navigation_url), newTab);
 //        loadUrl("http://top.baidu.com/m#buzz/1", newTab);
-        tabManager.loadUrl("https://github.com/trending", newTab);
+//        tabManager.loadUrl("https://github.com/trending", newTab);
     }
 
     boolean realBack = false;
