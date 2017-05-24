@@ -2,9 +2,9 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
 
     <corners android:radius="5dp" />
-    <solid android:color="@color/colorPrimary" />
+    <solid android:color="@color/tab_color" />
     <stroke
-        android:width="1dp"
-        android:color="@color/tint_color" />
+        android:width="2dp"
+        android:color="@color/colorPrimary" />
 
 </shape>

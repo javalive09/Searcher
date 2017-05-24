@@ -19,12 +19,12 @@
 
     <TextView
         android:id="@+id/title"
+        style="@style/normal_tab_txt_style"
         android:layout_width="0px"
         android:layout_height="match_parent"
         android:layout_gravity="center_vertical"
         android:layout_weight="1"
         android:gravity="center"
-        style="@style/normal_text_style"
         android:singleLine="true" />
 
     <ImageView
