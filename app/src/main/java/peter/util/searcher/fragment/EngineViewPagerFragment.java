@@ -1,6 +1,7 @@
 package peter.util.searcher.fragment;
 
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
@@ -36,7 +37,7 @@ import peter.util.searcher.utils.UrlUtils;
 public class EngineViewPagerFragment extends BaseFragment implements View.OnClickListener {
 
     String url = "http://7xoxmg.com1.z0.glb.clouddn.com/engines170124.json";
-    private SlidingTabLayout mSlidingTabLayout;
+    private TabLayout mSlidingTabLayout;
     private ViewPager mViewPager;
     View rootView;
 
@@ -50,8 +51,7 @@ public class EngineViewPagerFragment extends BaseFragment implements View.OnClic
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_engine_viewpager, container, false);
         mViewPager = (ViewPager) rootView.findViewById(R.id.viewpager);
-        mSlidingTabLayout = (SlidingTabLayout) rootView.findViewById(R.id.sliding_tabs);
-        mSlidingTabLayout.setSelectedIndicatorColors(getResources().getColor(R.color.colorPrimary));
+        mSlidingTabLayout = (TabLayout) rootView.findViewById(R.id.sliding_tabs);
         init();
         return rootView;
     }
@@ -74,7 +74,7 @@ public class EngineViewPagerFragment extends BaseFragment implements View.OnClic
                 }
                 EnginesAdapter adapter = new EnginesAdapter(EngineViewPagerFragment.this, response);
                 mViewPager.setAdapter(adapter);
-                mSlidingTabLayout.setViewPager(mViewPager);
+                mSlidingTabLayout.setupWithViewPager(mViewPager);
             }
         };
     }

@@ -1,9 +1,13 @@
 package peter.util.searcher.activity;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
@@ -31,7 +35,7 @@ public class BookMarkActivity extends BaseActivity {
 
     private List<Fragment> fragmentContainter;
     private ViewPager viewPager;
-    private SlidingTabLayout mSlidingTabLayout;
+    private TabLayout mSlidingTabLayout;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -95,18 +99,25 @@ public class BookMarkActivity extends BaseActivity {
         fragmentContainter.add(f3);
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         final String[] title = getResources().getStringArray(R.array.bookmarks);
-        mSlidingTabLayout = (SlidingTabLayout) findViewById(R.id.sliding_tabs);
-        mSlidingTabLayout.setSelectedIndicatorColors(getResources().getColor(R.color.colorPrimary));
-        viewPager.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager()) {
+        mSlidingTabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
+        viewPager.setAdapter(new FragmentStatePagerAdapter(getSupportFragmentManager()) {
 
             @Override
             public int getCount() {
-                return fragmentContainter.size();
+                return 3;
             }
 
             @Override
-            public Fragment getItem(int arg0) {
-                return fragmentContainter.get(arg0);
+            public Fragment getItem(int position) {
+                switch (position) {
+                    case 0:
+                        return new FavoriteFragment();
+                    case 1:
+                        return new HistorySearchFragment();
+                    case 2:
+                        return new HistoryDownloadFragment();
+                }
+                return null;
             }
 
             @Override
@@ -114,7 +125,7 @@ public class BookMarkActivity extends BaseActivity {
                 return title[position];
             }
         });
-        mSlidingTabLayout.setViewPager(viewPager);
+        mSlidingTabLayout.setupWithViewPager(viewPager);
 
     }
 
@@ -140,6 +151,5 @@ public class BookMarkActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
     }
-
 
 }

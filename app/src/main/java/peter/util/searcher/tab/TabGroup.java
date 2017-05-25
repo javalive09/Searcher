@@ -73,7 +73,7 @@ public class TabGroup extends SearcherTab {
             }
         }
         currentTab.loadUrl(url, searchWord);
-        mainActivity.refreshBottomBar();
+        mainActivity.refreshTitle();
     }
 
     @Override
@@ -171,7 +171,7 @@ public class TabGroup extends SearcherTab {
                 setCurrentTab(mCurrentTabIndex - 1);
             }
         }
-        mainActivity.refreshBottomBar();
+        mainActivity.refreshTitle();
     }
 
     public ArrayList<SearcherTab> getTabArrayList() {
@@ -206,7 +206,7 @@ public class TabGroup extends SearcherTab {
         } else {
             setCurrentTab(mCurrentTabIndex + 1);
         }
-        mainActivity.refreshBottomBar();
+        mainActivity.refreshTitle();
     }
 
 }

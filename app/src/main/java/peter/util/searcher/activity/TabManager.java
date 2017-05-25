@@ -2,19 +2,14 @@ package peter.util.searcher.activity;
 
 import android.view.View;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 
 import peter.util.searcher.tab.SearcherTab;
-import peter.util.searcher.tab.Tab;
 import peter.util.searcher.tab.TabGroup;
 
 /**
@@ -61,7 +56,7 @@ public class TabManager {
         pauseTabGroupExclude(tabGroup);
         mainActivity.setCurrentView(currentTabGroupView);
         getCurrentTabGroup().onResume();
-        mainActivity.refreshBottomBar();
+        mainActivity.refreshTitle();
     }
 
     public TabGroup getTabGroup(SearcherTab topTab) {

@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -100,6 +102,19 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
     }
 
     private void init() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true); // this sets the button to the back icon
+        actionBar.setHomeButtonEnabled(true);
+        toolbar.setNavigationOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        closeIME();
+                        finish();
+                    }
+                });
         clearAll = (ImageView) findViewById(R.id.clearall);
         search = (EditText) findViewById(R.id.top_txt);
         search.addTextChangedListener(new TextWatcher() {
@@ -180,10 +195,10 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
                 search.requestFocus();
                 search.setText("");
                 break;
-            case R.id.cancel:
-                closeIME();
-                finish();
-                break;
+//            case R.id.cancel:
+//                closeIME();
+//                finish();
+//                break;
         }
     }
 

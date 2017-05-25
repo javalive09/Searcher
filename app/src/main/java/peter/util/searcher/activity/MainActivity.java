@@ -15,7 +15,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.ListViewCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
@@ -31,14 +30,11 @@ import android.webkit.WebView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.umeng.analytics.MobclickAgent;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import peter.util.searcher.adapter.MenuWindowAdapter;
 import peter.util.searcher.adapter.MultiWindowAdapter;
@@ -55,11 +51,7 @@ import peter.util.searcher.tab.SettingTab;
 import peter.util.searcher.tab.Tab;
 import peter.util.searcher.tab.TabGroup;
 import peter.util.searcher.utils.UrlUtils;
-import peter.util.searcher.utils.Utils;
 import peter.util.searcher.view.CustomSwipeRefreshLayout;
-import peter.util.searcher.view.DialogContainer;
-import peter.util.searcher.view.MenuWindowGridView;
-import peter.util.searcher.view.MultiWindowListView;
 import peter.util.searcher.view.WebViewContainer;
 
 /**
@@ -67,9 +59,7 @@ import peter.util.searcher.view.WebViewContainer;
  */
 public class MainActivity extends BaseActivity implements View.OnClickListener {
 
-    private View bottomBar;
     private TabManager tabManager;
-    private TextView multiWindowBtn;
     private HashMap<String, Class> router = new HashMap<>();
 
     private MultiWindowAdapter multiWindowAdapter;
@@ -96,8 +86,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     private void init() {
-        bottomBar = findViewById(R.id.bottom_bar);
-        multiWindowBtn = (TextView) findViewById(R.id.multi_btn_txt);
         webViewContainer = (WebViewContainer) findViewById(R.id.webview_container);
         mSwipeRefreshLayout = (CustomSwipeRefreshLayout) findViewById(R.id.swiperefresh);
         mSwipeRefreshLayout.setColorSchemeResources(
@@ -115,6 +103,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         installLocalTabRounter();
         initTopBar();
         initMultiLayout();
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setNavigationOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        drawerLayout.openDrawer(Gravity.LEFT);
+                    }
+                });
     }
 
     public void initMultiLayout() {
@@ -237,6 +233,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 break;
             case R.id.action_exit:
                 exit();
+                break;
+            case R.id.action_bookmark:
+                startActivity(new Intent(MainActivity.this, BookMarkActivity.class));
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -400,19 +400,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         MobclickAgent.onPause(this);
     }
 
-    public void refreshBottomBar() {
-        //multi button
-        int count = tabManager.getTabGroupCount();
-        multiWindowBtn.setText(count + "");
-
-        //go back
-        if (tabManager.getCurrentTabGroup().canGoBack()) {
-            findViewById(R.id.go_back).setEnabled(true);
-        } else {
-            findViewById(R.id.go_back).setEnabled(false);
-        }
-
-        refreshGoForward(false);
+    public void refreshTitle() {
         String host = tabManager.getCurrentTabGroup().getCurrentTab().getHost();
         refreshTopText(host);
     }
@@ -441,20 +429,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             });
         } else {
             bar.setVisibility(View.VISIBLE);
-        }
-    }
-
-    public void refreshGoForward(boolean isActivate) {
-        if (isActivate) {
-            findViewById(R.id.go_forward).setActivated(true);
-            findViewById(R.id.go_forward).setEnabled(true);
-        } else {
-            findViewById(R.id.go_forward).setActivated(false);
-            if (tabManager.getCurrentTabGroup().canGoForward()) {
-                findViewById(R.id.go_forward).setEnabled(true);
-            } else {
-                findViewById(R.id.go_forward).setEnabled(false);
-            }
         }
     }
 
@@ -496,7 +470,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     if (view instanceof WebView) {
                         ((WebView) view).stopLoading();
                     }
-                    refreshGoForward(false);
                 } else if (v.isEnabled()) {
                     tab = tabManager.getCurrentTabGroup();
                     if (tab.canGoForward()) {
@@ -601,12 +574,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         switch (newConfig.orientation) {
             case Configuration.ORIENTATION_LANDSCAPE:
                 Log.i("peter", "onConfigurationChanged ORIENTATION_LANDSCAPE");
-                bottomBar.setVisibility(View.GONE);
                 setFullscreen(true, true);
                 break;
             case Configuration.ORIENTATION_PORTRAIT:
                 Log.i("peter", "onConfigurationChanged ORIENTATION_PORTRAIT");
-                bottomBar.setVisibility(View.VISIBLE);
                 setFullscreen(false, false);
                 break;
         }

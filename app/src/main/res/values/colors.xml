@@ -5,7 +5,7 @@
     <color name="colorPrimary">#d23f41</color>
     <color name="colorPrimary_">#2b2c30</color>
     <color name="color_top_gray">#c0c0c1</color>
-    <color name="status_bar">#7e2627</color>
+    <color name="status_bar">#d23f41</color>
     <color name="drawer_layout_bg">#393a3f</color>
     <color name="edit_text_color">#b4ddf8</color>
     <color name="lighter_gray">#ddd</color>

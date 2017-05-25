@@ -51,14 +51,13 @@ public class MyWebClient extends WebViewClient {
         if (view.isShown()) {
             view.postInvalidate();
         }
-        mainActivity.refreshBottomBar();
+        mainActivity.refreshTitle();
         mainActivity.refreshProgress(100);
         saveUrlData(view.getTitle(), url);
     }
 
     @Override
     public void onPageStarted(WebView view, String url, Bitmap favicon) {
-        mainActivity.refreshGoForward(true);
         Log.i("peter", "url=" + url);
     }
 

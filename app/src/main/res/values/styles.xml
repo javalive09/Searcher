@@ -72,6 +72,13 @@
         <item name="android:gravity">center</item>
     </style>
 
+    <style name="normal_content_txt_style" parent="@style/Widget.AppCompat.ActionButton.Overflow">
+        <item name="android:textColor">@color/chrome_txt_color</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">17sp</item>
+        <item name="android:gravity">center</item>
+    </style>
+
     <style name="title_text_style" parent="@style/Theme.AppCompat">
         <item name="android:textColor">@color/tint_color</item>
         <item name="android:textSize">17sp</item>
