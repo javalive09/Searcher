@@ -14,6 +14,8 @@ import android.widget.Toast;
 
 import com.umeng.analytics.MobclickAgent;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import peter.util.searcher.update.AsynWindowHandler;
 import peter.util.searcher.R;
 import peter.util.searcher.update.UpdateController;
@@ -21,12 +23,16 @@ import peter.util.searcher.update.UpdateController;
 public class SettingActivity extends BaseActivity {
 
     AsynWindowHandler windowHandler;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.version)
+    TextView version;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        ButterKnife.bind(SettingActivity.this);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true); // this sets the button to the back icon
@@ -36,10 +42,7 @@ public class SettingActivity extends BaseActivity {
                 finish();
             }
         });
-        TextView version = (TextView) findViewById(R.id.version);
-        if (version != null) {
-            version.setText(getVersionName());
-        }
+        version.setText(getVersionName());
         windowHandler = new AsynWindowHandler(this);
         ListView settings = (ListView) findViewById(R.id.setting_list);
         if (settings != null) {

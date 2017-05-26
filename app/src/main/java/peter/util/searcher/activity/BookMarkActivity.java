@@ -1,12 +1,9 @@
 package peter.util.searcher.activity;
 
-import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
@@ -15,33 +12,36 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.List;
 
+import butterknife.BindArray;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import peter.util.searcher.R;
 import peter.util.searcher.bean.Bean;
 import peter.util.searcher.db.SqliteHelper;
 import peter.util.searcher.fragment.FavoriteFragment;
 import peter.util.searcher.fragment.HistoryDownloadFragment;
 import peter.util.searcher.fragment.HistorySearchFragment;
-import peter.util.searcher.fragment.SlidingTabLayout;
 
 /**
  * Created by peter on 16/5/9.
  */
 public class BookMarkActivity extends BaseActivity {
 
-    private List<Fragment> fragmentContainter;
-    private ViewPager viewPager;
-    private TabLayout mSlidingTabLayout;
+    @BindView(R.id.viewpager)
+    ViewPager viewPager;
+    @BindView(R.id.sliding_tabs)
+    TabLayout mSlidingTabLayout;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bookmark);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        ButterKnife.bind(this);
         setSupportActionBar(toolbar);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -53,30 +53,9 @@ public class BookMarkActivity extends BaseActivity {
         actionBar.setDisplayHomeAsUpEnabled(true); // this sets the button to the back icon
         actionBar.setHomeButtonEnabled(true);
         initFragment();
-        installFavUrl();
     }
 
-    private void installFavUrl() {
-        String[] urls = getResources().getStringArray(R.array.favorite_urls);
-        String[] names = getResources().getStringArray(R.array.favorite_urls_names);
-        final ArrayList<Bean> list = new ArrayList<>(urls.length);
-        for (int i = 0; i < urls.length; i++) {
-            Bean bean = new Bean();
-            bean.name = names[i];
-            bean.url = urls[i];
-            bean.time = -1;
-            list.add(bean);
-        }
-        new AsyncTask<Void, Void, Void>() {
 
-            @Override
-            protected Void doInBackground(Void... params) {
-                SqliteHelper.instance(BookMarkActivity.this).insertFav(list);
-                return null;
-            }
-        }.execute();
-
-    }
 
     /**
      * hide menu
@@ -90,16 +69,7 @@ public class BookMarkActivity extends BaseActivity {
     }
 
     private void initFragment() {
-        FavoriteFragment f1 = new FavoriteFragment();
-        HistorySearchFragment f2 = new HistorySearchFragment();
-        HistoryDownloadFragment f3 = new HistoryDownloadFragment();
-        fragmentContainter = new ArrayList<>(3);
-        fragmentContainter.add(f1);
-        fragmentContainter.add(f2);
-        fragmentContainter.add(f3);
-        viewPager = (ViewPager) findViewById(R.id.viewpager);
         final String[] title = getResources().getStringArray(R.array.bookmarks);
-        mSlidingTabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
         viewPager.setAdapter(new FragmentStatePagerAdapter(getSupportFragmentManager()) {
 
             @Override

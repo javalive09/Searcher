@@ -1,49 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-      xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
         android:id="@+id/action_bookmark"
         android:icon="@drawable/favorite"
         android:orderInCategory="0"
         android:title="@string/title_bookmark"
-        app:showAsAction="always"/>
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_goforward"
+        android:orderInCategory="1"
+        android:title="@string/action_goforward" />
 
     <group android:id="@+id/web_sites">
         <item
             android:id="@+id/action_share"
             android:orderInCategory="2"
-            android:title="@string/action_share"/>
+            android:title="@string/action_share" />
 
         <item
             android:id="@+id/action_favorite"
             android:orderInCategory="3"
-            android:title="@string/action_collect"/>
+            android:title="@string/action_collect" />
 
         <item
             android:id="@+id/action_copy_link"
             android:orderInCategory="4"
-            android:title="@string/action_copy_link"/>
+            android:title="@string/action_copy_link" />
 
         <item
             android:id="@+id/action_browser"
             android:orderInCategory="5"
-            android:title="@string/action_browser"/>
+            android:title="@string/action_browser" />
     </group>
-
-    <item
-        android:id="@+id/action_goforward"
-        android:orderInCategory="6"
-        android:title="@string/action_goforward"/>
 
     <item
         android:id="@+id/action_setting"
         android:orderInCategory="7"
-        android:title="@string/fast_enter_setting"/>
+        android:title="@string/fast_enter_setting" />
 
     <item
         android:id="@+id/action_exit"
         android:orderInCategory="8"
-        android:title="@string/action_exit"/>
+        android:title="@string/action_exit" />
 
 </menu>

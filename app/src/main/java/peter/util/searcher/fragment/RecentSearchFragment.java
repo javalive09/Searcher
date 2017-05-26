@@ -1,6 +1,5 @@
 package peter.util.searcher.fragment;
 
-import android.app.Fragment;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.os.AsyncTask;
@@ -18,11 +17,12 @@ import android.widget.TextView;
 import java.lang.ref.WeakReference;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import peter.util.searcher.R;
 import peter.util.searcher.activity.BaseActivity;
 import peter.util.searcher.activity.SearchActivity;
 import peter.util.searcher.db.SqliteHelper;
-import peter.util.searcher.activity.EnterActivity;
 import peter.util.searcher.bean.Bean;
 
 /**
@@ -30,10 +30,19 @@ import peter.util.searcher.bean.Bean;
  */
 public class RecentSearchFragment extends BaseFragment implements View.OnClickListener, View.OnLongClickListener {
 
-    View rootView;
     PopupMenu popup;
     MyAsyncTask asyncTask;
     CharSequence word;
+    @BindView(R.id.enter)
+    View enter;
+    @BindView(R.id.enter_txt)
+    View enterTxt;
+    @BindView(R.id.paste)
+    View paste;
+    @BindView(R.id.loading)
+    View loading;
+    @BindView(R.id.recent_search)
+    ListView recentSearch;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -44,10 +53,11 @@ public class RecentSearchFragment extends BaseFragment implements View.OnClickLi
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        rootView = inflater.inflate(R.layout.fragment_recent_search, container, false);
-        rootView.findViewById(R.id.paste).setOnClickListener(RecentSearchFragment.this);
-        rootView.findViewById(R.id.enter).setEnabled(false);
-        rootView.findViewById(R.id.enter_txt).setEnabled(false);
+        View rootView = inflater.inflate(R.layout.fragment_recent_search, container, false);
+        ButterKnife.bind(RecentSearchFragment.this, rootView);
+        paste.setOnClickListener(RecentSearchFragment.this);
+        enter.setEnabled(false);
+        enterTxt.setEnabled(false);
         return rootView;
     }
 
@@ -58,9 +68,9 @@ public class RecentSearchFragment extends BaseFragment implements View.OnClickLi
         ClipboardManager cmb = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
         word = cmb.getText();
         if (TextUtils.isEmpty(word)) {
-            rootView.findViewById(R.id.paste).setEnabled(false);
+            paste.setEnabled(false);
         } else {
-            rootView.findViewById(R.id.paste).setEnabled(true);
+            paste.setEnabled(true);
         }
     }
 
@@ -104,7 +114,7 @@ public class RecentSearchFragment extends BaseFragment implements View.OnClickLi
         return false;
     }
 
-    private static class MyAsyncTask extends AsyncTask<Void, Void, List<Bean>> {
+    private class MyAsyncTask extends AsyncTask<Void, Void, List<Bean>> {
 
         WeakReference<RecentSearchFragment> wr;
 
@@ -132,17 +142,11 @@ public class RecentSearchFragment extends BaseFragment implements View.OnClickLi
             RecentSearchFragment f = wr.get();
             if (f != null) {
                 if (!f.isDetached()) {
-                    View loading = f.rootView.findViewById(R.id.loading);
-                    if (loading != null) {
-                        loading.setVisibility(View.GONE);
-                    }
+                    loading.setVisibility(View.GONE);
                     if (beans != null) {
 
                         if (beans.size() > 0) {
-                            ListView recentSearch = (ListView) f.rootView.findViewById(R.id.recent_search);
-                            if (recentSearch != null) {
-                                recentSearch.setAdapter(new RecentSearchAdapter(beans, f));
-                            }
+                            recentSearch.setAdapter(new RecentSearchAdapter(beans, f));
                         }
                     }
                 }

@@ -17,6 +17,9 @@ import android.widget.ImageView;
 
 import com.umeng.analytics.MobclickAgent;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import peter.util.searcher.R;
 import peter.util.searcher.fragment.BaseFragment;
 import peter.util.searcher.fragment.EngineViewPagerFragment;
@@ -31,8 +34,12 @@ import peter.util.searcher.view.ObservableEditText;
  */
 public class SearchActivity extends BaseActivity implements View.OnClickListener {
 
-    private EditText search;
-    private ImageView clearAll;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.top_txt)
+    EditText search;
+    @BindView(R.id.clearall)
+    ImageView clearAll;
     private static final String RECENT_SEARCH = "recent_search";
     public static final String ENGINE_LIST = "engine_list";
     public static final String OPERATE_URL = "operate_url";
@@ -43,6 +50,7 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
+        ButterKnife.bind(SearchActivity.this);
         init();
     }
 
@@ -102,7 +110,6 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
     }
 
     private void init() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true); // this sets the button to the back icon
@@ -115,8 +122,6 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
                         finish();
                     }
                 });
-        clearAll = (ImageView) findViewById(R.id.clearall);
-        search = (EditText) findViewById(R.id.top_txt);
         search.addTextChangedListener(new TextWatcher() {
 
             @Override
@@ -187,19 +192,12 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
         super.onDestroy();
     }
 
-    @Override
+    @OnClick(R.id.clearall)
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.clearall:
-                openIME();
-                search.requestFocus();
-                search.setText("");
-                break;
-//            case R.id.cancel:
-//                closeIME();
-//                finish();
-//                break;
-        }
+        openIME();
+        search.requestFocus();
+        search.setText("");
     }
+
 
 }

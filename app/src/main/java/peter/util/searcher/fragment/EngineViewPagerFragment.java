@@ -23,6 +23,8 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import peter.util.searcher.R;
 import peter.util.searcher.activity.BaseActivity;
 import peter.util.searcher.bean.Engine;
@@ -37,9 +39,13 @@ import peter.util.searcher.utils.UrlUtils;
 public class EngineViewPagerFragment extends BaseFragment implements View.OnClickListener {
 
     String url = "http://7xoxmg.com1.z0.glb.clouddn.com/engines170124.json";
-    private TabLayout mSlidingTabLayout;
-    private ViewPager mViewPager;
-    View rootView;
+    @BindView(R.id.sliding_tabs)
+    TabLayout mSlidingTabLayout;
+    @BindView(R.id.viewpager)
+    ViewPager mViewPager;
+    @BindView(R.id.loading)
+    View loading;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -49,9 +55,8 @@ public class EngineViewPagerFragment extends BaseFragment implements View.OnClic
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.fragment_engine_viewpager, container, false);
-        mViewPager = (ViewPager) rootView.findViewById(R.id.viewpager);
-        mSlidingTabLayout = (TabLayout) rootView.findViewById(R.id.sliding_tabs);
+        View rootView = inflater.inflate(R.layout.fragment_engine_viewpager, container, false);
+        ButterKnife.bind(EngineViewPagerFragment.this, rootView);
         init();
         return rootView;
     }
@@ -68,10 +73,7 @@ public class EngineViewPagerFragment extends BaseFragment implements View.OnClic
 
             @Override
             public void onResponse(ArrayList<TypeEngines<Engine>> response) {
-                View loading = rootView.findViewById(R.id.loading);
-                if (loading != null) {
-                    loading.setVisibility(View.GONE);
-                }
+                loading.setVisibility(View.GONE);
                 EnginesAdapter adapter = new EnginesAdapter(EngineViewPagerFragment.this, response);
                 mViewPager.setAdapter(adapter);
                 mSlidingTabLayout.setupWithViewPager(mViewPager);

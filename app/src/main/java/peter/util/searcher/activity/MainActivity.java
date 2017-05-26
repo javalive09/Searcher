@@ -38,6 +38,7 @@ import java.util.HashMap;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import peter.util.searcher.adapter.MenuWindowAdapter;
 import peter.util.searcher.adapter.MultiWindowAdapter;
 import peter.util.searcher.bean.Bean;
@@ -63,19 +64,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     @BindView(R.id.webview_container)
     WebViewContainer webViewContainer;
-
     @BindView(R.id.swiperefresh)
     CustomSwipeRefreshLayout mSwipeRefreshLayout;
-
     @BindView(R.id.drawer_layout)
     DrawerLayout drawerLayout;
-
     @BindView(R.id.tabs)
     ListView multiTabListView;
-
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-
     @BindView(R.id.top_txt)
     View topText;
 

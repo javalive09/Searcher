@@ -11,12 +11,15 @@ import android.widget.Adapter;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.PopupMenu;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import peter.util.searcher.R;
 import peter.util.searcher.activity.BaseActivity;
 import peter.util.searcher.bean.Bean;
@@ -31,7 +34,12 @@ public class HistoryDownloadFragment extends BaseFragment implements View.OnClic
 
     PopupMenu popup;
     MyAsyncTask asyncTask;
-    View rootView;
+    @BindView((R.id.no_record))
+    TextView noRecord;
+    @BindView((R.id.download))
+    ListView download;
+    @BindView((R.id.loading))
+    ProgressBar loading;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -41,7 +49,8 @@ public class HistoryDownloadFragment extends BaseFragment implements View.OnClic
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.fragment_history_download, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_history_download, container, false);
+        ButterKnife.bind(HistoryDownloadFragment.this, rootView);
         return rootView;
     }
 
@@ -106,18 +115,17 @@ public class HistoryDownloadFragment extends BaseFragment implements View.OnClic
             super.onPostExecute(beans);
             if (beans != null) {
                 if (beans.size() == 0) {
-                    rootView.findViewById(R.id.no_record).setVisibility(View.VISIBLE);
+                    noRecord.setVisibility(View.VISIBLE);
                 } else {
-                    rootView.findViewById(R.id.no_record).setVisibility(View.GONE);
-                    ListView download = (ListView) rootView.findViewById(R.id.download);
-                    if (download.getAdapter() == null) {
-                        download.setAdapter(new DownloadAdapter(beans));
-                    } else {
-                        ((DownloadAdapter) download.getAdapter()).updateData(beans);
-                    }
+                    noRecord.setVisibility(View.GONE);
+                }
+                if (download.getAdapter() == null) {
+                    download.setAdapter(new DownloadAdapter(beans));
+                } else {
+                    ((DownloadAdapter) download.getAdapter()).updateData(beans);
                 }
             }
-            rootView.findViewById(R.id.loading).setVisibility(View.GONE);
+            loading.setVisibility(View.GONE);
         }
 
     }

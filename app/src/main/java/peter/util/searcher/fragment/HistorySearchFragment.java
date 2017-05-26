@@ -10,10 +10,13 @@ import android.widget.Adapter;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.PopupMenu;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import peter.util.searcher.R;
 import peter.util.searcher.activity.BaseActivity;
 import peter.util.searcher.bean.Bean;
@@ -27,7 +30,13 @@ public class HistorySearchFragment extends BaseFragment implements View.OnClickL
 
     PopupMenu popup;
     MyAsyncTask asyncTask;
-    View rootView;
+
+    @BindView(R.id.loading_history_search)
+    ProgressBar loading;
+    @BindView(R.id.no_record)
+    TextView noRecord;
+    @BindView(R.id.history_search)
+    ListView history;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -37,8 +46,8 @@ public class HistorySearchFragment extends BaseFragment implements View.OnClickL
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-        rootView = inflater.inflate(R.layout.fragment_history_search, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_history_search, container, false);
+        ButterKnife.bind(HistorySearchFragment.this, rootView);
         return rootView;
     }
 
@@ -132,23 +141,19 @@ public class HistorySearchFragment extends BaseFragment implements View.OnClickL
         @Override
         protected void onPostExecute(List<Bean> beans) {
             super.onPostExecute(beans);
-            rootView.findViewById(R.id.loading_history_search).setVisibility(View.GONE);
             if (beans != null) {
                 if (beans.size() == 0) {
-                    rootView.findViewById(R.id.no_record).setVisibility(View.VISIBLE);
+                    noRecord.setVisibility(View.VISIBLE);
                 } else {
-                    rootView.findViewById(R.id.no_record).setVisibility(View.GONE);
-                    ListView history = (ListView) rootView.findViewById(R.id.history_search);
-                    if (history != null) {
-                        Adapter adapter = history.getAdapter();
-                        if (adapter == null) {
-                            history.setAdapter(new HistoryAdapter(beans));
-                        } else {
-                            ((HistoryAdapter) adapter).updateData(beans);
-                        }
-                    }
+                    noRecord.setVisibility(View.GONE);
+                }
+                if (history.getAdapter() == null) {
+                    history.setAdapter(new HistoryAdapter(beans));
+                } else {
+                    ((HistoryAdapter) history.getAdapter()).updateData(beans);
                 }
             }
+            loading.setVisibility(View.GONE);
         }
     }
 

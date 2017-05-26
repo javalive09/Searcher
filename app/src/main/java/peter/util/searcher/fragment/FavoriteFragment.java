@@ -9,13 +9,18 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.PopupMenu;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindArray;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import peter.util.searcher.R;
 import peter.util.searcher.activity.BaseActivity;
-import peter.util.searcher.activity.FavoriteActivity;
+import peter.util.searcher.activity.BookMarkActivity;
 import peter.util.searcher.bean.Bean;
 import peter.util.searcher.db.SqliteHelper;
 
@@ -26,7 +31,16 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
 
     PopupMenu popup;
     MyAsyncTask asyncTask;
-    View rootView;
+    @BindView(R.id.favorite)
+    ListView favorite;
+    @BindView(R.id.no_record)
+    View noRecord;
+    @BindView(R.id.loading)
+    ProgressBar loading;
+    @BindArray(R.array.favorite_urls)
+    String[] urls;
+    @BindArray(R.array.favorite_urls_names)
+    String[] names;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -36,8 +50,30 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.fragment_favorite, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_favorite, container, false);
+        ButterKnife.bind(FavoriteFragment.this, rootView);
+        installFavUrl();
         return rootView;
+    }
+
+    private void installFavUrl() {
+        final ArrayList<Bean> list = new ArrayList<>(urls.length);
+        for (int i = 0; i < urls.length; i++) {
+            Bean bean = new Bean();
+            bean.name = names[i];
+            bean.url = urls[i];
+            bean.time = -1;
+            list.add(bean);
+        }
+        new AsyncTask<Void, Void, Void>() {
+
+            @Override
+            protected Void doInBackground(Void... params) {
+                SqliteHelper.instance(getActivity()).insertFav(list);
+                return null;
+            }
+        }.execute();
+
     }
 
     private void refreshData() {
@@ -132,18 +168,17 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
             super.onPostExecute(beans);
             if (beans != null) {
                 if (beans.size() == 0) {
-                    rootView.findViewById(R.id.no_record).setVisibility(View.VISIBLE);
+                    noRecord.setVisibility(View.VISIBLE);
                 } else {
-                    rootView.findViewById(R.id.no_record).setVisibility(View.GONE);
-                    ListView favorite = (ListView) rootView.findViewById(R.id.history);
-                    if (favorite.getAdapter() == null) {
-                        favorite.setAdapter(new FavoriteAdapter(beans));
-                    } else {
-                        ((FavoriteAdapter) favorite.getAdapter()).updateData(beans);
-                    }
+                    noRecord.setVisibility(View.GONE);
+                }
+                if (favorite.getAdapter() == null) {
+                    favorite.setAdapter(new FavoriteAdapter(beans));
+                } else {
+                    ((FavoriteAdapter) favorite.getAdapter()).updateData(beans);
                 }
             }
-            rootView.findViewById(R.id.loading).setVisibility(View.GONE);
+            loading.setVisibility(View.GONE);
         }
 
     }
@@ -188,13 +223,35 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
                 view = (TextView) convertView;
             }
 
-            Bean search = getItem(position);
-            view.setText(search.name);
+            Bean bean = getItem(position);
+            view.setText(bean.name);
             view.setOnClickListener(FavoriteFragment.this);
-            view.setOnLongClickListener(FavoriteFragment.this);
-            view.setTag(search);
+            if (containInnerName(bean) && containInnerUrl(bean)) {
+                view.setOnLongClickListener(null);
+            } else {
+                view.setOnLongClickListener(FavoriteFragment.this);
+            }
+            view.setTag(bean);
             return view;
         }
+    }
+
+    private boolean containInnerName(Bean bean) {
+        for (String name : names) {
+            if (name.equals(bean.name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean containInnerUrl(Bean bean) {
+        for (String url : urls) {
+            if (url.equals(bean.url)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 
