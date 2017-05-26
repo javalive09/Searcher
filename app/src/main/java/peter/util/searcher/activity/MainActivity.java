@@ -118,8 +118,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         ListView multiTabListView = (ListView) findViewById(R.id.tabs);
         multiWindowAdapter = new MultiWindowAdapter();
         multiTabListView.setAdapter(multiWindowAdapter);
-        drawerLayout.findViewById(R.id.add_tab).setOnClickListener(MainActivity.this);
-        drawerLayout.findViewById(R.id.close_tabs).setOnClickListener(MainActivity.this);
+//        drawerLayout.findViewById(R.id.add_tab).setOnClickListener(MainActivity.this);
+//        drawerLayout.findViewById(R.id.close_tabs).setOnClickListener(MainActivity.this);
         drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {

@@ -10,7 +10,6 @@
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:background="@color/colorPrimary_"
-        toolbar:navigationIcon="@drawable/abc_ic_ab_back_mtrl_am_alpha"
         toolbar:title="@string/action_collection"
         toolbar:titleTextColor="@color/edit_text_color"
         android:theme="@style/ThemeOverlay.AppCompat.Dark"

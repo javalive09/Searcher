@@ -6,52 +6,81 @@
     android:background="@android:color/white"
     android:clickable="true">
 
-    <TextView
-        android:id="@+id/title"
-        style="@style/title_text_style"
+
+    <FrameLayout
+        android:id="@+id/title_bar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/colorPrimary"
-        android:text="@string/tabs_title" />
+        android:background="@color/colorPrimary">
+
+        <ImageView
+            android:id="@+id/add_tab"
+            style="@style/Base.Widget.AppCompat.ActionButton.Overflow"
+            android:layout_width="@dimen/multi_window_item_icon_cell"
+            android:layout_height="@dimen/multi_window_item_icon_cell"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="@dimen/multi_window_icon_margin"
+            android:layout_marginRight="@dimen/multi_window_icon_margin"
+            android:onClick="onClick"
+            android:src="@drawable/tabs_add" />
+
+        <ImageView
+            android:id="@+id/close_tabs"
+            style="@style/Base.Widget.AppCompat.ActionButton.Overflow"
+            android:layout_width="@dimen/multi_window_item_icon_cell"
+            android:layout_height="@dimen/multi_window_item_icon_cell"
+            android:layout_gravity="center_vertical|right"
+            android:layout_marginLeft="@dimen/multi_window_icon_margin"
+            android:layout_marginRight="@dimen/multi_window_icon_margin"
+            android:onClick="onClick"
+            android:src="@drawable/stop" />
+
+        <TextView
+            android:id="@+id/title"
+            style="@style/title_text_style"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/tabs_title" />
+
+    </FrameLayout>
 
     <ListView
         android:id="@+id/tabs"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/operate"
-        android:layout_below="@+id/title"
+        android:layout_below="@+id/title_bar"
         android:layout_margin="2dp"
         android:divider="@android:color/transparent"
         android:dividerHeight="2dp" />
 
-    <LinearLayout
-        android:id="@+id/operate"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/bottom_h"
-        android:layout_alignParentBottom="true"
-        android:background="@color/colorPrimary"
-        android:orientation="horizontal">
+    <!--<LinearLayout-->
+    <!--android:id="@+id/operate"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="@dimen/bottom_h"-->
+    <!--android:layout_alignParentBottom="true"-->
+    <!--android:background="@color/colorPrimary"-->
+    <!--android:orientation="horizontal">-->
 
-        <Button
-            android:id="@+id/add_tab"
-            style="@style/normal_button_style"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:text="@string/add_tab" />
+    <!--<Button-->
+    <!--android:id="@+id/add_tab"-->
+    <!--style="@style/normal_button_style"-->
+    <!--android:layout_width="0dp"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:layout_weight="1"-->
+    <!--android:paddingLeft="20dp"-->
+    <!--android:paddingRight="20dp"-->
+    <!--android:text="@string/add_tab" />-->
 
-        <Button
-            android:id="@+id/close_tabs"
-            style="@style/normal_button_style"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:text="@string/action_cancel" />
-    </LinearLayout>
+    <!--<Button-->
+    <!--android:id="@+id/close_tabs"-->
+    <!--style="@style/normal_button_style"-->
+    <!--android:layout_width="0dp"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:layout_weight="1"-->
+    <!--android:paddingLeft="20dp"-->
+    <!--android:paddingRight="20dp"-->
+    <!--android:text="@string/action_cancel" />-->
+    <!--</LinearLayout>-->
 
 
 </RelativeLayout>

@@ -24,7 +24,6 @@
     <color name="chrome_top_color">#f2f2f2</color>
     <color name="progress_color">#468dc8</color>
     <color name="hint_color">#ccffffff</color>
-    <!--<color name="tint_color">#737373</color>-->
     <color name="tint_color">#ffffff</color>
     <color name="disable_color">#a7a7a7</color>
     <color name="tab_color">#ffffff</color>
