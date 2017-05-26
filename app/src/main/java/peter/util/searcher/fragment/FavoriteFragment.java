@@ -15,6 +15,7 @@ import java.util.List;
 
 import peter.util.searcher.R;
 import peter.util.searcher.activity.BaseActivity;
+import peter.util.searcher.activity.FavoriteActivity;
 import peter.util.searcher.bean.Bean;
 import peter.util.searcher.db.SqliteHelper;
 
@@ -96,7 +97,7 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
                 switch (item.getItemId()) {
                     case R.id.action_delete:
                         Bean bean = (Bean) view.getTag();
-                        SqliteHelper.instance(getActivity()).deleteHistory(bean);
+                        SqliteHelper.instance(getActivity()).deleteFav(bean);
                         refreshData();
                         break;
                 }
