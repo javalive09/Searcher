@@ -13,7 +13,6 @@ import android.widget.Toast;
 import com.anthonycr.grant.PermissionsManager;
 import com.anthonycr.grant.PermissionsResultAction;
 
-import peter.util.searcher.activity.EnterActivity;
 import peter.util.searcher.activity.MainActivity;
 import peter.util.searcher.R;
 

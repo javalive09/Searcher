@@ -44,14 +44,12 @@ public class IntentUtils {
 
         intent.addCategory(Intent.CATEGORY_BROWSABLE);
         intent.setComponent(null);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
-            intent.setSelector(null);
-        }
+        intent.setSelector(null);
 
         if (mActivity.getPackageManager().resolveActivity(intent, 0) == null) {
             String packagename = intent.getPackage();
             if (packagename != null) {
-                intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://search?q=pname:"
+                intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://toolbar_ic_search?q=pname:"
                         + packagename));
                 intent.addCategory(Intent.CATEGORY_BROWSABLE);
                 mActivity.startActivity(intent);

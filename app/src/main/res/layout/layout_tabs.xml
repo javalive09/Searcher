@@ -3,9 +3,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
-    android:clickable="true">
-
+    android:background="@color/tab_color">
 
     <FrameLayout
         android:id="@+id/title_bar"
@@ -22,7 +20,7 @@
             android:layout_marginLeft="@dimen/multi_window_icon_margin"
             android:layout_marginRight="@dimen/multi_window_icon_margin"
             android:onClick="onClick"
-            android:src="@drawable/tabs_add" />
+            android:src="@drawable/tabs_ic_add" />
 
         <ImageView
             android:id="@+id/close_tabs"
@@ -33,7 +31,7 @@
             android:layout_marginLeft="@dimen/multi_window_icon_margin"
             android:layout_marginRight="@dimen/multi_window_icon_margin"
             android:onClick="onClick"
-            android:src="@drawable/stop" />
+            android:src="@drawable/ic_close_clear" />
 
         <TextView
             android:id="@+id/title"
@@ -52,35 +50,6 @@
         android:layout_margin="2dp"
         android:divider="@android:color/transparent"
         android:dividerHeight="2dp" />
-
-    <!--<LinearLayout-->
-    <!--android:id="@+id/operate"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="@dimen/bottom_h"-->
-    <!--android:layout_alignParentBottom="true"-->
-    <!--android:background="@color/colorPrimary"-->
-    <!--android:orientation="horizontal">-->
-
-    <!--<Button-->
-    <!--android:id="@+id/add_tab"-->
-    <!--style="@style/normal_button_style"-->
-    <!--android:layout_width="0dp"-->
-    <!--android:layout_height="match_parent"-->
-    <!--android:layout_weight="1"-->
-    <!--android:paddingLeft="20dp"-->
-    <!--android:paddingRight="20dp"-->
-    <!--android:text="@string/add_tab" />-->
-
-    <!--<Button-->
-    <!--android:id="@+id/close_tabs"-->
-    <!--style="@style/normal_button_style"-->
-    <!--android:layout_width="0dp"-->
-    <!--android:layout_height="match_parent"-->
-    <!--android:layout_weight="1"-->
-    <!--android:paddingLeft="20dp"-->
-    <!--android:paddingRight="20dp"-->
-    <!--android:text="@string/action_cancel" />-->
-    <!--</LinearLayout>-->
 
 
 </RelativeLayout>

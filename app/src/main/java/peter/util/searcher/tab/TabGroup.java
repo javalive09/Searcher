@@ -184,7 +184,8 @@ public class TabGroup extends SearcherTab {
             boolean webTabCanGoForward = currentTab.canGoForward();
             if (webTabCanGoForward) {
                 return true;
-            } else if (mCurrentTabIndex < tabArrayList.size() - 1) {
+            }
+            if (mCurrentTabIndex < tabArrayList.size() - 1) {
                 return true;
             } else {
                 return false;

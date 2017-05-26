@@ -1,17 +1,6 @@
 <resources>
-    <string name="search">输入网址或搜索</string>
     <string name="app_name">速搜</string>
     <string name="search_hint">输入网址或搜索</string>
-    <string name="search_icon_hint">输入...</string>
-    <string name="app_js">速搜能用来干什么?</string>
-    <string name="operate_url_copy">复制网址</string>
-    <string name="operate_url_share">分享网址</string>
-    <string name="operate_url_enter">进入网址</string>
-    <string name="operate_url_paste">从剪切板粘贴</string>
-    <string name="news_163">网易新闻</string>
-    <string name="history_today_title">历史.今天</string>
-    <string name="weeks_weather">天气预报</string>
-    <string name="web_guide">网址导航</string>
     <string name="setting_title">我的设置</string>
     <string name="setting_feedback">反馈建议</string>
     <string name="setting_feedback_body">您的反馈和建议</string>
@@ -19,10 +8,7 @@
     <string name="setting_about">使用引擎分类搜索的方式,提供简单畅快的搜索体验。简单快速，干净省电。</string>
     <string name="home_title">使用引擎分类搜索的方式\n提供最快的网络搜索体验</string>
     <string name="setting_clear">缓存和cookies已经清理</string>
-    <string name="record_audio_permission">使用语音输入功能需要此权限</string>
     <string name="wr_sdcard_permission">下载文件到存储卡需要此权限</string>
-    <string name="drawer_open">Open navigation drawer</string>
-    <string name="drawer_close">Close navigation drawer</string>
     <string name="dialog_download">您是否需要下载此文件？</string>
     <string name="action_download">下载</string>
     <string name="problem_download">Invalid URL encountered, cannot download</string>
@@ -34,17 +20,14 @@
     <string name="cannot_download">仅可下载以 \"http\" 或 \"https\" 开头的链接地址</string>
     <string name="problem_location_download">Cannot download to the specified location</string>
     <string name="download_pending">开始下载…</string>
-    <string name="permission_hint">使用语音输入需要点击确定按钮</string>
 
     <string name="action_cancel">取消</string>
     <string name="action_share">分享链接</string>
-    <string name="action_refresh">刷新</string>
     <string name="action_exit">退出程序</string>
     <string name="favorite_txt">已经添加到收藏夹</string>
     <string name="copy_link_txt">已经复制链接</string>
     <string name="action_browser">在其他浏览器中打开</string>
     <string name="action_collect">收藏链接</string>
-    <string name="action_collection">我的收藏</string>
     <string name="title_bookmark">书签</string>
     <string name="action_copy_link">复制链接</string>
     <string name="action_search_history">搜索记录</string>
@@ -84,19 +67,11 @@
 
     <string name="action_yes">确认</string>
     <string name="action_no">取消</string>
-    <string name="recent_search_rec">最近搜索记录</string>
-    <string name="fast_enter_navigation">网址导航</string>
     <!--<string name="fast_enter_navigation_url">http://tpms.mb.qq.com/?aid=site_navigation&amp;cid=site_navigation_cache_direct</string>-->
-    <string name="fast_enter_navigation_url">http://h5.mse.360.cn/navi.html</string>
-    <string name="fast_enter_history">历史</string>
     <string name="fast_enter_favorite">收藏夹</string>
     <string name="fast_enter_setting">我的设置</string>
     <string name="action_goforward">前进</string>
     <string name="home">主页</string>
-    <string name="multi_window_add">新建</string>
-    <string name="add_tab">新建</string>
-    <string name="copy_board">已经复制到剪切板</string>
-    <string name="copy_txt">复制</string>
     <string name="paste_txt">粘贴</string>
     <string name="enter_txt">进入</string>
     <string name="exit_hint">再次点击退出程序</string>

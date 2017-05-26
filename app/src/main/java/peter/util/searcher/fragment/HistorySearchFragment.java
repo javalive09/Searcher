@@ -2,6 +2,7 @@ package peter.util.searcher.fragment;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,7 +27,7 @@ import peter.util.searcher.tab.HistorySearchTab;
 /**
  * Created by peter on 16/5/9.
  */
-public class HistorySearchFragment extends BaseFragment implements View.OnClickListener, View.OnLongClickListener {
+public class HistorySearchFragment extends Fragment implements View.OnClickListener, View.OnLongClickListener {
 
     PopupMenu popup;
     MyAsyncTask asyncTask;

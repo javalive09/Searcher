@@ -38,17 +38,14 @@ import java.util.HashMap;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
-import peter.util.searcher.adapter.MenuWindowAdapter;
+import peter.util.searcher.TabManager;
 import peter.util.searcher.adapter.MultiWindowAdapter;
 import peter.util.searcher.bean.Bean;
 import peter.util.searcher.R;
 import peter.util.searcher.db.SqliteHelper;
-import peter.util.searcher.tab.DownloadTab;
 import peter.util.searcher.tab.FavoriteTab;
 import peter.util.searcher.tab.HistorySearchTab;
 import peter.util.searcher.tab.HistoryUrlTab;
-import peter.util.searcher.tab.HomeTab;
 import peter.util.searcher.tab.HomeTab2;
 import peter.util.searcher.tab.SettingTab;
 import peter.util.searcher.tab.Tab;
@@ -273,13 +270,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     private void installLocalTabRounter() {
-        router.put(Tab.URL_HOME, HomeTab.class);
         router.put(Tab.URL_HOME2, HomeTab2.class);
         router.put(Tab.URL_SETTING, SettingTab.class);
         router.put(Tab.URL_FAVORITE, FavoriteTab.class);
         router.put(Tab.URL_HISTORY_SEARCH, HistorySearchTab.class);
         router.put(Tab.URL_HISTORY_URL, HistoryUrlTab.class);
-        router.put(Tab.URL_DOWNLOAD, DownloadTab.class);
     }
 
     public Class getRounterClass(String url) {

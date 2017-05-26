@@ -29,14 +29,6 @@ public class RequestManager {
 		int cacheSize = 1024 * 1024 * memClass / 8;
 		mImageLoader = new ImageLoader(mRequestQueue, new BitmapLruCache(cacheSize));
 	}
-
-	public static RequestQueue getRequestQueue() {
-		if (mRequestQueue != null) {
-			return mRequestQueue;
-		} else {
-			throw new IllegalStateException("RequestQueue not initialized");
-		}
-	}
 	
 	public static void addRequest(Request<?> request, Object tag) {
         if (tag != null) {

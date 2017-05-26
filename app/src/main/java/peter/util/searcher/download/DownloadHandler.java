@@ -69,9 +69,7 @@ public class DownloadHandler {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.addCategory(Intent.CATEGORY_BROWSABLE);
             intent.setComponent(null);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
-                intent.setSelector(null);
-            }
+            intent.setSelector(null);
             ResolveInfo info = context.getPackageManager().resolveActivity(intent,
                     PackageManager.MATCH_DEFAULT_ONLY);
             if (info != null) {

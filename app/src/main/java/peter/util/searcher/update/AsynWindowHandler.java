@@ -52,7 +52,7 @@ public class AsynWindowHandler extends Handler {
                             .setMessage(content)
                             .setPositiveButton(R.string.update_dialog_ok, new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int whichButton) {
-                                    UpdateController.instance(act.getApplicationContext()).doDownloadApk(url, AsynWindowHandler.this);
+                                    UpdateController.instance().doDownloadApk(url, AsynWindowHandler.this);
                                 }
                             })
                             .setNegativeButton(R.string.update_dialog_cancel, new DialogInterface.OnClickListener() {

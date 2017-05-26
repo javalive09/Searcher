@@ -4,6 +4,7 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -28,7 +29,7 @@ import peter.util.searcher.bean.Bean;
 /**
  * Created by peter on 16/5/9.
  */
-public class RecentSearchFragment extends BaseFragment implements View.OnClickListener, View.OnLongClickListener {
+public class RecentSearchFragment extends Fragment implements View.OnClickListener, View.OnLongClickListener {
 
     PopupMenu popup;
     MyAsyncTask asyncTask;

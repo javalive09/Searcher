@@ -3,6 +3,7 @@ package peter.util.searcher.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
@@ -21,13 +22,11 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import peter.util.searcher.R;
-import peter.util.searcher.fragment.BaseFragment;
 import peter.util.searcher.fragment.EngineViewPagerFragment;
-import peter.util.searcher.fragment.OperateUrlFragment2;
+import peter.util.searcher.fragment.OperateUrlFragment;
 import peter.util.searcher.fragment.RecentSearchFragment;
 import peter.util.searcher.tab.Tab;
 import peter.util.searcher.utils.UrlUtils;
-import peter.util.searcher.view.ObservableEditText;
 
 /**
  * Created by peter on 16/5/19.
@@ -44,7 +43,6 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
     public static final String ENGINE_LIST = "engine_list";
     public static final String OPERATE_URL = "operate_url";
     private String currentFragmentTag = "";
-    private BaseFragment currentFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -146,7 +144,6 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
                         setEngineFragment(ENGINE_LIST);
                     }
                 }
-                currentFragment.refresh();
             }
         });
         setEngineFragment(RECENT_SEARCH);
@@ -171,15 +168,14 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
     public void setEngineFragment(String tag) {
         if (!currentFragmentTag.equals(tag)) {
             currentFragmentTag = tag;
-            BaseFragment fragment = null;
+            Fragment fragment = null;
             if (tag.equals(RECENT_SEARCH)) {
                 fragment = new RecentSearchFragment();
             } else if (tag.equals(ENGINE_LIST)) {
                 fragment = new EngineViewPagerFragment();
             } else if (tag.equals(OPERATE_URL)) {
-                fragment = new OperateUrlFragment2();
+                fragment = new OperateUrlFragment();
             }
-            currentFragment = fragment;
             FragmentManager fragmentManager = getSupportFragmentManager();
             FragmentTransaction ft = fragmentManager.beginTransaction();
             ft.replace(R.id.content_frame, fragment, tag);

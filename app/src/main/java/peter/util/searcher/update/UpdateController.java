@@ -29,7 +29,9 @@ import peter.util.searcher.R;
  */
 public class UpdateController {
 
-    private static UpdateController controller;
+    private static class HOLDER {
+        private static final UpdateController INSTANCE = new UpdateController();
+    }
 
     private static final String URL = "https://raw.githubusercontent.com/javalive09/config/master/searcher_update_info";
 
@@ -41,17 +43,15 @@ public class UpdateController {
 
     private String APK_NAME = "searcher.apk";
 
-    private UpdateController(Context context) {
-        mContext = context;
+    private UpdateController() {
     }
 
-    public static UpdateController instance(Context context) {
-        synchronized (UpdateController.class) {
-            if (controller == null) {
-                controller = new UpdateController(context);
-            }
-            return controller;
-        }
+    public void init(Context mContext) {
+        this.mContext = mContext;
+    }
+
+    public static UpdateController instance() {
+        return HOLDER.INSTANCE;
     }
 
     public synchronized void checkVersion(final AsynWindowHandler handler, final Boolean showToast) {
@@ -61,7 +61,7 @@ public class UpdateController {
         isChecking = true;
         setCheckedTime(System.currentTimeMillis());
 
-        if(handler.isActDestory()) {
+        if (handler.isActDestory()) {
             return;
         }
 
@@ -89,12 +89,12 @@ public class UpdateController {
                     int version = Integer.valueOf(results[0].trim());
                     int currentVersion = getVersionCode();
                     if (currentVersion < version) {
-                        if(results.length > 1) {
+                        if (results.length > 1) {
                             String url = results[1].trim();
                             if (!TextUtils.isEmpty(url)) {
                                 String content = "";
-                                if(results.length > 2) {
-                                    for (int i =2, len = results.length; i < len; i++) {
+                                if (results.length > 2) {
+                                    for (int i = 2, len = results.length; i < len; i++) {
                                         content += results[i].trim() + "\n";
                                     }
                                 }
@@ -229,7 +229,7 @@ public class UpdateController {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            if(conn != null) {
+            if (conn != null) {
                 conn.disconnect();
             }
         }
@@ -264,7 +264,7 @@ public class UpdateController {
 
     private void setCheckedTime(long time) {
         mContext.getSharedPreferences("updateTime", Context.MODE_PRIVATE).edit().putLong("lastTime",
-                time).commit();
+                time).apply();
     }
 
 }

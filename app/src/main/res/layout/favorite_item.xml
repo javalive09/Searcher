@@ -3,10 +3,10 @@
     android:id="@+id/favorite_item"
     android:layout_width="match_parent"
     android:layout_height="@dimen/item_height"
-    android:drawableLeft="@drawable/web_site_icon"
+    android:background="@drawable/list_selector_item"
+    android:drawableLeft="@drawable/ic_explore"
     android:drawablePadding="@dimen/drawable_padding"
-    android:background="@drawable/list_item_selector"
     android:gravity="center_vertical"
-    android:singleLine="true"
     android:paddingLeft="7dp"
-    android:paddingRight="7dp" />
+    android:paddingRight="7dp"
+    android:singleLine="true" />

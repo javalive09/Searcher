@@ -2,6 +2,7 @@ package peter.util.searcher.fragment;
 
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
@@ -36,7 +37,7 @@ import peter.util.searcher.utils.UrlUtils;
 /**
  * Created by peter on 16/5/9.
  */
-public class EngineViewPagerFragment extends BaseFragment implements View.OnClickListener {
+public class EngineViewPagerFragment extends Fragment implements View.OnClickListener {
 
     String url = "http://7xoxmg.com1.z0.glb.clouddn.com/engines170124.json";
     @BindView(R.id.sliding_tabs)
@@ -194,7 +195,7 @@ public class EngineViewPagerFragment extends BaseFragment implements View.OnClic
             Engine engine = getItem(position);
             ImageLoader imageLoader = RequestManager.getImageLoader();
             holder.icon.setImageUrl(engine.icon, imageLoader);
-            holder.icon.setDefaultImageResId(R.drawable.searcher_icon);
+            holder.icon.setDefaultImageResId(R.mipmap.ic_launcher);
             holder.title.setText(engine.name);
             convertView.setOnClickListener(f);
             convertView.setTag(R.id.grid_view_item, engine);

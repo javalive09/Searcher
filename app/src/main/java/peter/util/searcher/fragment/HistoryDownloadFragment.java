@@ -3,11 +3,11 @@ package peter.util.searcher.fragment;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.PopupMenu;
@@ -21,16 +21,12 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import peter.util.searcher.R;
-import peter.util.searcher.activity.BaseActivity;
-import peter.util.searcher.bean.Bean;
-import peter.util.searcher.db.SqliteHelper;
 import peter.util.searcher.download.DownloadHandler;
-import peter.util.searcher.tab.DownloadTab;
 
 /**
  * Created by peter on 16/5/9.
  */
-public class HistoryDownloadFragment extends BaseFragment implements View.OnClickListener, View.OnLongClickListener {
+public class HistoryDownloadFragment extends Fragment implements View.OnClickListener, View.OnLongClickListener {
 
     PopupMenu popup;
     MyAsyncTask asyncTask;

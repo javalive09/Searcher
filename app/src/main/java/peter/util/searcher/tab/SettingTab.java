@@ -61,7 +61,7 @@ public class SettingTab extends LocalViewTab {
                             mainActivity.sendMailByIntent();
                             break;
                         case 3://update
-                            UpdateController.instance(mainActivity.getApplicationContext()).checkVersion(windowHandler, true);
+                            UpdateController.instance().checkVersion(windowHandler, true);
                             break;
                         case 4://about
                             mainActivity.showAlertDialog(mainActivity.getString(R.string.action_about), mainActivity.getString(R.string.setting_about));

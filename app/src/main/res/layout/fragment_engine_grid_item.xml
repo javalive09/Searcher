@@ -5,7 +5,7 @@
     android:layout_gravity="center"
     android:paddingTop="10dp"
     android:layout_height="100dp"
-    android:background="@drawable/list_item_selector">
+    android:background="@drawable/list_selector_item">
 
     <com.android.volley.toolbox.NetworkImageView
         android:id="@+id/icon"

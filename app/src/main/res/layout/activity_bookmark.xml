@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              xmlns:toolbar="http://schemas.android.com/apk/res-auto"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:toolbar="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
@@ -12,7 +13,7 @@
         android:layout_height="?attr/actionBarSize"
         android:background="@color/colorPrimary"
         toolbar:title="@string/title_bookmark"
-        toolbar:titleTextColor="@color/tint_color"/>
+        toolbar:titleTextColor="@color/tint_color" />
 
     <android.support.design.widget.TabLayout
         android:id="@+id/sliding_tabs"
@@ -22,14 +23,13 @@
         app:tabIndicatorColor="@color/colorPrimary"
         app:tabIndicatorHeight="3dp"
         app:tabSelectedTextColor="@color/chrome_txt_color"
-        app:tabTextColor="@color/disable_color"/>
+        app:tabTextColor="@color/disable_color" />
 
     <View
         android:id="@+id/line"
         android:layout_width="match_parent"
         android:layout_height="1px"
-        android:layout_below="@+id/operate_url"
-        android:background="@color/line_color"/>
+        android:background="@color/line_color" />
 
     <android.support.v4.view.ViewPager
         android:id="@+id/viewpager"

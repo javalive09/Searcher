@@ -67,7 +67,7 @@ public class SettingActivity extends BaseActivity {
                             sendMailByIntent();
                             break;
                         case 3://update
-                            UpdateController.instance(getApplicationContext()).checkVersion(windowHandler, true);
+                            UpdateController.instance().checkVersion(windowHandler, true);
                             break;
                         case 4://about
                             showAlertDialog(getString(R.string.action_about), getString(R.string.setting_about));

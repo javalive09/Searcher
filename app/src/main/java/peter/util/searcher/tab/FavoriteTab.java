@@ -10,12 +10,9 @@ import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
-import java.lang.ref.WeakReference;
 import java.util.List;
 
 import peter.util.searcher.R;
-import peter.util.searcher.activity.BaseActivity;
-import peter.util.searcher.activity.FavoriteActivity;
 import peter.util.searcher.activity.MainActivity;
 import peter.util.searcher.bean.Bean;
 import peter.util.searcher.db.SqliteHelper;

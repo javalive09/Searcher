@@ -261,9 +261,9 @@ public class Utils {
     /**
      * Utility method to close cursors. Cursor did not
      * implement Closeable until API 16, so using this
-     * method for when we want to close a cursor.
+     * method for when we want to close a toolbar_shape_cursor.
      *
-     * @param cursor the cursor to close
+     * @param cursor the toolbar_shape_cursor to close
      */
     public static void close(@Nullable Cursor cursor) {
         if (cursor == null) {

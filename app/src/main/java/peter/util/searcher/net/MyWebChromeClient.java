@@ -1,8 +1,5 @@
 package peter.util.searcher.net;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.ObjectAnimator;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaPlayer;
@@ -17,7 +14,6 @@ import android.widget.FrameLayout;
 import android.widget.VideoView;
 
 import peter.util.searcher.activity.MainActivity;
-import peter.util.searcher.activity.TabManager;
 import peter.util.searcher.tab.SearcherTab;
 import peter.util.searcher.tab.Tab;
 import peter.util.searcher.tab.TabGroup;

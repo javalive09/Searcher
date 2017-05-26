@@ -4,22 +4,18 @@ import android.app.Application;
 import android.content.Context;
 
 import peter.util.searcher.net.RequestManager;
+import peter.util.searcher.update.UpdateController;
+
 /**
  * Created by peter on 16/5/19.
  */
 public class Searcher extends Application {
 
-    private static Context mContext;
-
     @Override
     public void onCreate() {
         super.onCreate();
-        mContext = this;
         RequestManager.init(this);
-    }
-
-    public static Context context() {
-        return mContext;
+        UpdateController.instance().init(this);
     }
 
 }

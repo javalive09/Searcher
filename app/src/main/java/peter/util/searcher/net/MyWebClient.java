@@ -33,9 +33,7 @@ import peter.util.searcher.utils.IntentUtils;
 import peter.util.searcher.utils.Utils;
 
 /**
- *
  * Created by peter on 16/6/6.
- *
  */
 public class MyWebClient extends WebViewClient {
     private MainActivity mainActivity;
@@ -198,9 +196,7 @@ public class MyWebClient extends WebViewClient {
             if (intent != null) {
                 intent.addCategory(Intent.CATEGORY_BROWSABLE);
                 intent.setComponent(null);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
-                    intent.setSelector(null);
-                }
+                intent.setSelector(null);
                 try {
                     mainActivity.startActivity(intent);
                 } catch (ActivityNotFoundException e) {

@@ -5,34 +5,8 @@
         <!--<item name="android:popupMenuStyle">@style/PopupMenu</item>-->
     </style>
 
-    <style name="MyEditText" parent="@style/ThemeOverlay.AppCompat.Dark">
-        <item name="colorControlNormal">@color/edit_text_no_focus</item>
-        <item name="colorControlActivated">@android:color/white</item>
-    </style>
-
-    <style name="BottomEditText" parent="@style/ThemeOverlay.AppCompat.Dark">
-        <item name="colorControlNormal">@android:color/white</item>
-        <item name="colorControlActivated">@color/edit_text_color</item>
-    </style>
-
     <style name="PopupMenu" parent="@android:style/Widget.PopupMenu">
-        <item name="android:popupBackground">@drawable/list_item_selector</item>
-    </style>
-
-    <style name="Theme.ToolBar.Base" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="actionMenuTextColor">@color/item_normal</item>
-    </style>
-
-    <style name="MultiWindowTheme" parent="Theme.AppCompat.NoActionBar">
-        <item name="android:windowNoTitle">true</item>
-        <item name="android:windowIsTranslucent">true</item>
-    </style>
-
-    <style name="MultiWindow2Theme" parent="Theme.AppCompat.DayNight.Dialog.Alert">
-        <item name="android:windowNoTitle">true</item>
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
+        <item name="android:popupBackground">@drawable/list_selector_item</item>
     </style>
 
     <style name="Theme.AppCompat.Light.NoActionBar.FullScreen" parent="@style/Theme.AppCompat.Light">
@@ -54,15 +28,6 @@
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowBackground">@color/transparent</item>
         <item name="android:windowNoTitle">true</item>
-    </style>
-
-    <style name="multiwindow_Dialog" parent="@android:style/Theme.Dialog">
-        <item name="android:windowAnimationStyle">@style/multiwindow_anim</item>
-    </style>
-
-    <style name="multiwindow_anim">
-        <item name="android:windowEnterAnimation">@anim/multiwindow_show</item>
-        <item name="android:windowExitAnimation">@anim/multiwindow_hide</item>
     </style>
 
     <style name="normal_button_style" parent="@style/Widget.AppCompat.ActionButton.Overflow">
@@ -95,12 +60,12 @@
     <style name="toolbar_edittext_style" parent="@style/Widget.AppCompat.EditText">
         <item name="android:textColor">@color/tint_color</item>
         <item name="android:textSize">16sp</item>
-        <item name="android:drawableLeft">@drawable/tint_bitmap_icon</item>
+        <item name="android:drawableLeft">@drawable/toolbar_ic_search</item>
         <item name="android:drawablePadding">5dp</item>
         <item name="android:hint">@string/search_hint</item>
         <item name="android:textColorHint">@color/hint_color</item>
         <item name="android:singleLine">true</item>
-        <item name="android:textCursorDrawable">@drawable/cursor</item>
+        <item name="android:textCursorDrawable">@drawable/toolbar_shape_cursor</item>
         <item name="android:imeOptions">actionDone</item>
         <item name="android:backgroundTint">@color/tint_color</item>
 
