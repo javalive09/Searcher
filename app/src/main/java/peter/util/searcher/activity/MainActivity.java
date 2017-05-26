@@ -37,6 +37,7 @@ import com.umeng.analytics.MobclickAgent;
 import java.util.HashMap;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import peter.util.searcher.adapter.MenuWindowAdapter;
 import peter.util.searcher.adapter.MultiWindowAdapter;
 import peter.util.searcher.bean.Bean;
@@ -61,22 +62,22 @@ import peter.util.searcher.view.WebViewContainer;
 public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     @BindView(R.id.webview_container)
-    private WebViewContainer webViewContainer;
+    WebViewContainer webViewContainer;
 
     @BindView(R.id.swiperefresh)
-    private CustomSwipeRefreshLayout mSwipeRefreshLayout;
+    CustomSwipeRefreshLayout mSwipeRefreshLayout;
 
     @BindView(R.id.drawer_layout)
-    private DrawerLayout drawerLayout;
+    DrawerLayout drawerLayout;
 
     @BindView(R.id.tabs)
-    private ListView multiTabListView;
+    ListView multiTabListView;
 
     @BindView(R.id.toolbar)
-    private Toolbar toolbar;
+    Toolbar toolbar;
 
     @BindView(R.id.top_txt)
-    private View topText;
+    View topText;
 
     private TabManager tabManager;
     private HashMap<String, Class> router = new HashMap<>();
@@ -88,6 +89,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
         init(savedInstanceState);
     }
 
@@ -185,6 +187,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         } else {
             menu.setGroupVisible(R.id.web_sites, true);
         }
+
+        if (tabManager.getCurrentTabGroup().canGoForward()) {
+            menu.findItem(R.id.action_goforward).setVisible(true);
+        } else {
+            menu.findItem(R.id.action_goforward).setVisible(false);
+        }
+
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -245,6 +254,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 break;
             case R.id.action_bookmark:
                 startActivity(new Intent(MainActivity.this, BookMarkActivity.class));
+                break;
+            case R.id.action_goforward:
+                tabManager.getCurrentTabGroup().goForward();
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -451,9 +463,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.bookmark:
-                startActivity(new Intent(MainActivity.this, BookMarkActivity.class));
-                break;
             case R.id.add_tab:
                 drawerLayout.closeDrawers();
                 loadHome(true);
@@ -461,34 +470,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             case R.id.close_tabs:
                 drawerLayout.closeDrawers();
                 break;
-            case R.id.opt:
-                break;
-            case R.id.go_back:
-                Tab tab = tabManager.getCurrentTabGroup();
-                if (tab.canGoBack()) {
-                    tab.goBack();
-                }
-                break;
-            case R.id.go_forward:
-                if (v.isActivated()) {
-                    View view = tabManager.getCurrentTabGroup().getCurrentTab().getView();
-                    if (view instanceof WebView) {
-                        ((WebView) view).stopLoading();
-                    }
-                } else if (v.isEnabled()) {
-                    tab = tabManager.getCurrentTabGroup();
-                    if (tab.canGoForward()) {
-                        tab.goForward();
-                    }
-                }
-                break;
-            case R.id.home:
-                loadHome(false);
-                break;
-            case R.id.multi_btn:
-                drawerLayout.openDrawer(Gravity.RIGHT);
-                break;
-
             case R.id.close_tab:
                 if (tabManager.getTabGroupCount() == 1) {
                     exit();
@@ -502,73 +483,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 TabGroup tabGroup = (TabGroup) v.getTag(R.id.multi_window_item_tag);
                 tabManager.switchTabGroup(tabGroup);
                 drawerLayout.closeDrawers();
-                break;
-            case R.id.menu_window_item:
-                MenuWindowAdapter.MenuItem itemRes = (MenuWindowAdapter.MenuItem) v.getTag(R.id.menu_window_item_tag);
-                switch (itemRes.titleRes) {
-                    case R.string.action_exit:
-                        exit();
-                        return;
-                    case R.string.action_copy_link:
-                        String url = tabManager.getCurrentTabGroup().getUrl();
-                        String title = tabManager.getCurrentTabGroup().getTitle();
-                        ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-                        ClipData clip = ClipData.newPlainText(title, url);
-                        clipboard.setPrimaryClip(clip);
-                        Toast.makeText(MainActivity.this, R.string.copy_link_txt, Toast.LENGTH_SHORT).show();
-                        break;
-                    case R.string.action_collect:
-                        url = tabManager.getCurrentTabGroup().getCurrentTab().getUrl();
-                        if (!TextUtils.isEmpty(url) && !url.startsWith(Tab.LOCAL_SCHEMA)) {
-                            final Bean bean = new Bean();
-                            bean.name = tabManager.getCurrentTabGroup().getCurrentTab().getTitle();
-                            if (TextUtils.isEmpty(bean.name)) {
-                                bean.name = tabManager.getCurrentTabGroup().getCurrentTab().getUrl();
-                            }
-                            bean.url = url;
-                            bean.time = System.currentTimeMillis();
-                            new AsyncTask<Void, Void, Boolean>() {
-                                @Override
-                                protected Boolean doInBackground(Void... params) {
-                                    return SqliteHelper.instance(MainActivity.this).insertFav(bean);
-                                }
-
-                                @Override
-                                protected void onPostExecute(Boolean suc) {
-                                    if (suc) {
-                                        Toast.makeText(MainActivity.this, R.string.favorite_txt, Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            }.execute();
-                        }
-                        break;
-                    case R.string.action_share:
-                        url = tabManager.getCurrentTabGroup().getUrl();
-                        Intent sendIntent = new Intent();
-                        sendIntent.setAction(Intent.ACTION_SEND);
-                        sendIntent.putExtra(Intent.EXTRA_TEXT, url);
-                        sendIntent.setType("text/plain");
-                        startActivity(Intent.createChooser(sendIntent, getString(R.string.share_link_title)));
-                        break;
-                    case R.string.action_refresh:
-                        tabManager.getCurrentTabGroup().getCurrentTab().reload();
-                        break;
-                    case R.string.action_download:
-                        tabManager.loadUrl(Tab.URL_DOWNLOAD, false);
-                        break;
-                    case R.string.fast_enter_favorite:
-                        tabManager.loadUrl(Tab.URL_FAVORITE, false);
-                        break;
-                    case R.string.action_search_history:
-                        tabManager.loadUrl(Tab.URL_HISTORY_SEARCH, false);
-                        break;
-                    case R.string.fast_enter_setting:
-                        tabManager.loadUrl(Tab.URL_SETTING, false);
-                        break;
-                    case R.string.action_url_history:
-                        tabManager.loadUrl(Tab.URL_HISTORY_URL, false);
-                        break;
-                }
                 break;
         }
     }

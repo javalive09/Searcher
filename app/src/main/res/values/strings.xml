@@ -91,6 +91,7 @@
     <string name="fast_enter_history">历史</string>
     <string name="fast_enter_favorite">收藏夹</string>
     <string name="fast_enter_setting">我的设置</string>
+    <string name="action_goforward">前进</string>
     <string name="home">主页</string>
     <string name="multi_window_add">新建</string>
     <string name="add_tab">新建</string>

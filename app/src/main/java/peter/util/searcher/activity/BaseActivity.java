@@ -38,7 +38,6 @@ public class BaseActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         LIST.add(this);
-        ButterKnife.bind(this);
     }
 
     @Override
