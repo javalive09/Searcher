@@ -36,6 +36,7 @@ import com.umeng.analytics.MobclickAgent;
 
 import java.util.HashMap;
 
+import butterknife.BindView;
 import peter.util.searcher.adapter.MenuWindowAdapter;
 import peter.util.searcher.adapter.MultiWindowAdapter;
 import peter.util.searcher.bean.Bean;
@@ -59,21 +60,35 @@ import peter.util.searcher.view.WebViewContainer;
  */
 public class MainActivity extends BaseActivity implements View.OnClickListener {
 
+    @BindView(R.id.webview_container)
+    private WebViewContainer webViewContainer;
+
+    @BindView(R.id.swiperefresh)
+    private CustomSwipeRefreshLayout mSwipeRefreshLayout;
+
+    @BindView(R.id.drawer_layout)
+    private DrawerLayout drawerLayout;
+
+    @BindView(R.id.tabs)
+    private ListView multiTabListView;
+
+    @BindView(R.id.toolbar)
+    private Toolbar toolbar;
+
+    @BindView(R.id.top_txt)
+    private View topText;
+
     private TabManager tabManager;
     private HashMap<String, Class> router = new HashMap<>();
-
     private MultiWindowAdapter multiWindowAdapter;
-    private WebViewContainer webViewContainer;
-    private CustomSwipeRefreshLayout mSwipeRefreshLayout;
-    private DrawerLayout drawerLayout;
+    private boolean realBack = false;
+    private Handler mHandler = new Handler(Looper.getMainLooper());
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        init();
-        initTabs(savedInstanceState);
-        checkIntentData(getIntent());
+        init(savedInstanceState);
     }
 
     private void initTabs(Bundle savedInstanceState) {
@@ -85,9 +100,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
     }
 
-    private void init() {
-        webViewContainer = (WebViewContainer) findViewById(R.id.webview_container);
-        mSwipeRefreshLayout = (CustomSwipeRefreshLayout) findViewById(R.id.swiperefresh);
+    private void init(Bundle savedInstanceState) {
         mSwipeRefreshLayout.setColorSchemeResources(
                 R.color.progress_color, R.color.progress_color,
                 R.color.progress_color, R.color.progress_color);
@@ -103,23 +116,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         installLocalTabRounter();
         initTopBar();
         initMultiLayout();
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setNavigationOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        drawerLayout.openDrawer(Gravity.LEFT);
-                    }
-                });
+        initTabs(savedInstanceState);
+        checkIntentData(getIntent());
     }
 
     public void initMultiLayout() {
-        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ListView multiTabListView = (ListView) findViewById(R.id.tabs);
         multiWindowAdapter = new MultiWindowAdapter();
         multiTabListView.setAdapter(multiWindowAdapter);
-//        drawerLayout.findViewById(R.id.add_tab).setOnClickListener(MainActivity.this);
-//        drawerLayout.findViewById(R.id.close_tabs).setOnClickListener(MainActivity.this);
         drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
@@ -140,7 +143,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         });
     }
 
-    Runnable complete = new Runnable() {
+    private Runnable complete = new Runnable() {
         @Override
         public void run() {
             mSwipeRefreshLayout.setRefreshing(false);
@@ -148,7 +151,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     };
 
     private void initTopBar() {
-        findViewById(R.id.top_txt).setOnTouchListener(new View.OnTouchListener() {
+        topText.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
@@ -158,8 +161,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 return false;
             }
         });
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        toolbar.setNavigationOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        drawerLayout.openDrawer(Gravity.LEFT);
+                    }
+                });
     }
 
     @Override
@@ -347,12 +356,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 //        tabManager.loadUrl("https://github.com/trending", newTab);
     }
 
-    boolean realBack = false;
-
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if ((keyCode == KeyEvent.KEYCODE_BACK)) {
-            if (drawerLayout.isDrawerOpen(Gravity.RIGHT)) {
+            if (drawerLayout.isDrawerOpen(Gravity.LEFT)) {
                 drawerLayout.closeDrawers();
                 return true;
             }
@@ -384,8 +391,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
         return super.onKeyDown(keyCode, event);
     }
-
-    private Handler mHandler = new Handler(Looper.getMainLooper());
 
     protected void onResume() {
         super.onResume();

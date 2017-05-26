@@ -20,6 +20,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 
+import butterknife.ButterKnife;
 import peter.util.searcher.R;
 
 /**
@@ -37,6 +38,7 @@ public class BaseActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         LIST.add(this);
+        ButterKnife.bind(this);
     }
 
     @Override
