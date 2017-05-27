@@ -24,13 +24,11 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import peter.util.searcher.R;
 import peter.util.searcher.activity.BaseActivity;
-import peter.util.searcher.bean.Engine;
 import peter.util.searcher.bean.EnginesInfo;
 import peter.util.searcher.bean.EnginesItem;
 import peter.util.searcher.bean.ItemItem;
 import peter.util.searcher.net.CommonRetrofit;
 import peter.util.searcher.net.IEngineService;
-import peter.util.searcher.net.RequestManager;
 import peter.util.searcher.utils.UrlUtils;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -95,8 +93,8 @@ public class EngineInfoViewPagerFragment extends Fragment implements View.OnClic
                 BaseActivity act = (BaseActivity) getActivity();
                 String searchWord = act.getSearchWord();
                 if (!TextUtils.isEmpty(searchWord)) {
-                    Engine engine = (Engine) v.getTag(R.id.grid_view_item);
-                    String url = UrlUtils.smartUrlFilter(searchWord, true, engine.url);
+                    ItemItem engine = (ItemItem) v.getTag(R.id.grid_view_item);
+                    String url = UrlUtils.smartUrlFilter(searchWord, true, engine.getUrl());
                     act.finish();
                     act.overridePendingTransition(0, 0);
                     act.startBrowser(url, searchWord);
@@ -210,10 +208,5 @@ public class EngineInfoViewPagerFragment extends Fragment implements View.OnClic
         }
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        RequestManager.cancelAll(this);
-    }
 
 }
