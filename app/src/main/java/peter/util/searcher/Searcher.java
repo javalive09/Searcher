@@ -3,6 +3,7 @@ package peter.util.searcher;
 import android.app.Application;
 import android.content.Context;
 
+import peter.util.searcher.net.CommonRetrofit;
 import peter.util.searcher.net.RequestManager;
 import peter.util.searcher.update.UpdateController;
 
@@ -15,7 +16,7 @@ public class Searcher extends Application {
     public void onCreate() {
         super.onCreate();
         RequestManager.init(this);
-        UpdateController.instance().init(this);
+        CommonRetrofit.getInstance().init(this);
     }
 
 }

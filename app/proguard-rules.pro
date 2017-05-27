@@ -129,3 +129,5 @@ public static final int *;
 -keep public class * extends peter.util.searcher.tab.SearcherTab {
     public <init>(peter.util.searcher.activity.MainActivity);
 }
+
+-keep class peter.util.searcher.net.CustomGlideModule

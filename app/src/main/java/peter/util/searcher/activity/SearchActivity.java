@@ -22,7 +22,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import peter.util.searcher.R;
-import peter.util.searcher.fragment.EngineViewPagerFragment;
+import peter.util.searcher.fragment.EngineInfoViewPagerFragment;
 import peter.util.searcher.fragment.OperateUrlFragment;
 import peter.util.searcher.fragment.RecentSearchFragment;
 import peter.util.searcher.tab.Tab;
@@ -172,7 +172,7 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
             if (tag.equals(RECENT_SEARCH)) {
                 fragment = new RecentSearchFragment();
             } else if (tag.equals(ENGINE_LIST)) {
-                fragment = new EngineViewPagerFragment();
+                fragment = new EngineInfoViewPagerFragment();
             } else if (tag.equals(OPERATE_URL)) {
                 fragment = new OperateUrlFragment();
             }
