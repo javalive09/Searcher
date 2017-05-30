@@ -4,6 +4,7 @@ import android.graphics.drawable.Drawable;
 import android.view.View;
 
 import peter.util.searcher.activity.MainActivity;
+import peter.util.searcher.bean.Bean;
 
 /**
  *
@@ -56,7 +57,7 @@ public abstract class SearcherTab implements Tab {
 
     public abstract String getUrl();
 
-    public abstract void loadUrl(String url, String searchWord);
+    public abstract void loadUrl(Bean bean);
 
     public abstract void reload();
 

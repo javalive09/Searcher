@@ -10,13 +10,12 @@ import com.google.gson.JsonParser;
 import java.util.ArrayList;
 
 import peter.util.searcher.activity.MainActivity;
+import peter.util.searcher.bean.Bean;
 import peter.util.searcher.tab.SearcherTab;
 import peter.util.searcher.tab.TabGroup;
 
 /**
- *
  * Created by peter on 2016/11/17.
- *
  */
 
 public class TabManager {
@@ -30,12 +29,8 @@ public class TabManager {
         mainActivity = activity;
     }
 
-    public void loadUrl(String url, boolean newTab) {
-        loadUrl(url, "", newTab);
-    }
-
-    public void loadUrl(String url, String searchWord, boolean newTab) {
-        if(tabGroupArrayList.size() == MAX_TAB) {
+    public void loadUrl(Bean bean, boolean newTab) {
+        if (tabGroupArrayList.size() == MAX_TAB) {
             newTab = false;
         }
         if (newTab) {
@@ -44,7 +39,7 @@ public class TabManager {
             mCurrentTabIndex = tabGroupArrayList.size() - 1;
         }
         TabGroup tabGroup = getCurrentTabGroup();
-        tabGroup.loadUrl(url, searchWord);
+        tabGroup.loadUrl(bean);
     }
 
     public TabGroup getCurrentTabGroup() {
@@ -61,19 +56,19 @@ public class TabManager {
     }
 
     public TabGroup getTabGroup(SearcherTab topTab) {
-        for(TabGroup tabGroup : tabGroupArrayList) {
-            if(tabGroup.containsTab(topTab)) {
-                return  tabGroup;
+        for (TabGroup tabGroup : tabGroupArrayList) {
+            if (tabGroup.containsTab(topTab)) {
+                return tabGroup;
             }
         }
         return null;
     }
 
     public void removeTabGroup(TabGroup tabGroup) {
-        if(tabGroupArrayList.size() > 0) {
+        if (tabGroupArrayList.size() > 0) {
             tabGroup.onDestory();
             tabGroupArrayList.remove(tabGroup);
-            if(tabGroupArrayList.size() > 0) {
+            if (tabGroupArrayList.size() > 0) {
                 int indexNext = tabGroupArrayList.size() - 1;
                 TabGroup tabGroupNext = tabGroupArrayList.get(indexNext);
                 switchTabGroup(tabGroupNext);
@@ -82,22 +77,22 @@ public class TabManager {
     }
 
     public void removeIndex(TabGroup tabGroup) {
-        if(tabGroupArrayList.size() > 0) {
+        if (tabGroupArrayList.size() > 0) {
             tabGroupArrayList.remove(tabGroup);
         }
     }
 
     public void resumeTabGroupExclude(TabGroup exTabGroup) {
-        for(TabGroup tabGroup : tabGroupArrayList) {
-            if(tabGroup != exTabGroup) {
+        for (TabGroup tabGroup : tabGroupArrayList) {
+            if (tabGroup != exTabGroup) {
                 tabGroup.onResume();
             }
         }
     }
 
     public void pauseTabGroupExclude(TabGroup exTabGroup) {
-        for(TabGroup tabGroup : tabGroupArrayList) {
-            if(tabGroup != exTabGroup) {
+        for (TabGroup tabGroup : tabGroupArrayList) {
+            if (tabGroup != exTabGroup) {
                 tabGroup.onPause();
             }
         }
@@ -114,21 +109,21 @@ public class TabManager {
     public String getSaveState() {
         JsonArray tabGroups = new JsonArray();
         TabGroup currentTabGroup = getCurrentTabGroup();
-        for(TabGroup tabGroup : tabGroupArrayList) {
+        for (TabGroup tabGroup : tabGroupArrayList) {
             JsonObject tabGroupJson = new JsonObject();
-            if(tabGroup == currentTabGroup) {
+            if (tabGroup == currentTabGroup) {
                 tabGroupJson.addProperty("currentTabGroup", true);
-            }else {
+            } else {
                 tabGroupJson.addProperty("currentTabGroup", false);
             }
             ArrayList<SearcherTab> groupTabs = tabGroup.getTabArrayList();
             JsonArray tabs = new JsonArray();
             SearcherTab currentTab = tabGroup.getCurrentTab();
-            for(SearcherTab tab : groupTabs) {
+            for (SearcherTab tab : groupTabs) {
                 JsonObject tabJson = new JsonObject();
-                if(tab == currentTab) {
+                if (tab == currentTab) {
                     tabJson.addProperty("currentTab", true);
-                }else {
+                } else {
                     tabJson.addProperty("currentTab", false);
                 }
                 tabJson.addProperty("url", tab.getUrl());
@@ -147,33 +142,33 @@ public class TabManager {
         JsonArray tabGroups = tabGroupsJsonElement.getAsJsonArray();
 
         TabGroup currentTabGroup = null;
-        for(int i = 0, size = tabGroups.size(); i < size; i++) {
+        for (int i = 0, size = tabGroups.size(); i < size; i++) {
             JsonObject tabGroupJson = tabGroups.get(i).getAsJsonObject();
             boolean isCurrentTabGroup = tabGroupJson.getAsJsonPrimitive("currentTabGroup").getAsBoolean();
             JsonArray tabs = tabGroupJson.getAsJsonArray("tabs");
             int currentIndex = -1;
-            for(int j = 0, len = tabs.size(); j < len;j++) {
+            for (int j = 0, len = tabs.size(); j < len; j++) {
                 JsonObject tabJson = tabs.get(j).getAsJsonObject();
                 String url = tabJson.get("url").getAsString();
                 String searchWord = tabJson.get("searchWord").getAsString();
                 boolean isCurrentTab = tabJson.get("currentTab").getAsBoolean();
-                if(isCurrentTab) {
+                if (isCurrentTab) {
                     currentIndex = j;
                 }
-                if(j == 0) {
-                    loadUrl(url, searchWord, true);
-                }else {
-                    loadUrl(url, searchWord, false);
+                if (j == 0) {
+                    loadUrl(new Bean(url, searchWord), true);
+                } else {
+                    loadUrl(new Bean(url, searchWord), false);
                 }
-                if(j == len - 1) {
+                if (j == len - 1) {
                     getCurrentTabGroup().setCurrentTab(currentIndex);
                 }
             }
-            if(isCurrentTabGroup) {
+            if (isCurrentTabGroup) {
                 currentTabGroup = getCurrentTabGroup();
             }
         }
-        if(currentTabGroup != null) {
+        if (currentTabGroup != null) {
             switchTabGroup(currentTabGroup);
         }
     }

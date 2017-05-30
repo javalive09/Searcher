@@ -14,6 +14,7 @@
         android:background="@drawable/list_selector_item">
 
         <TextView
+            android:id="@+id/paste_txt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"

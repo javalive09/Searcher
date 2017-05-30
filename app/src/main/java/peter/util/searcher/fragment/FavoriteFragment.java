@@ -101,7 +101,7 @@ public class FavoriteFragment extends Fragment implements View.OnClickListener, 
             case R.id.favorite_item:
                 Bean bean = (Bean) v.getTag();
                 if (bean != null) {
-                    ((BaseActivity) getActivity()).startBrowser(bean.url, bean.name);
+                    ((BaseActivity) getActivity()).startBrowser(bean);
                 }
                 break;
         }

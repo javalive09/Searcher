@@ -9,8 +9,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import peter.util.searcher.R;
 import peter.util.searcher.activity.SearchActivity;
+import peter.util.searcher.bean.Bean;
 import peter.util.searcher.utils.UrlUtils;
 
 
@@ -22,25 +25,37 @@ public class OperateUrlFragment extends Fragment implements View.OnClickListener
 
     View rootView;
     CharSequence word;
+    @BindView(R.id.paste)
+    View paste;
+    @BindView(R.id.paste_txt)
+    View pasteTxt;
+    @BindView(R.id.enter)
+    View enter;
+    @BindView(R.id.enter_txt)
+    View enterTxt;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.fragment_operate_url2, container, false);
-        rootView.findViewById(R.id.paste).setOnClickListener(OperateUrlFragment.this);
-        rootView.findViewById(R.id.enter).setOnClickListener(OperateUrlFragment.this);
+        rootView = inflater.inflate(R.layout.fragment_operate_url, container, false);
+        ButterKnife.bind(this, rootView);
+        paste.setOnClickListener(OperateUrlFragment.this);
+        enter.setOnClickListener(OperateUrlFragment.this);
         return rootView;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        ClipboardManager cmb = (ClipboardManager)getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipboardManager cmb = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
         word = cmb.getText();
-        if(TextUtils.isEmpty(word)) {
-            rootView.findViewById(R.id.paste).setEnabled(false);
-        }else {
-            rootView.findViewById(R.id.paste).setEnabled(true);
+        if (TextUtils.isEmpty(word)) {
+            paste.setEnabled(false);
+            pasteTxt.setEnabled(false);
+        } else {
+            paste.setEnabled(true);
+            pasteTxt.setEnabled(true);
         }
     }
 
@@ -56,7 +71,7 @@ public class OperateUrlFragment extends Fragment implements View.OnClickListener
                 searchActivity.closeIME();
                 searchActivity.finish();
                 searchActivity.overridePendingTransition(0, 0);
-                searchActivity.startBrowser(url, "");
+                searchActivity.startBrowser(new Bean("", url));
                 break;
         }
     }

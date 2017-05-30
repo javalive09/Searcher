@@ -22,6 +22,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import peter.util.searcher.R;
+import peter.util.searcher.bean.Bean;
 import peter.util.searcher.fragment.EngineInfoViewPagerFragment;
 import peter.util.searcher.fragment.OperateUrlFragment;
 import peter.util.searcher.fragment.RecentSearchFragment;
@@ -43,6 +44,7 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
     public static final String ENGINE_LIST = "engine_list";
     public static final String OPERATE_URL = "operate_url";
     private String currentFragmentTag = "";
+    private Bean bean;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,9 +60,9 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
     }
 
     private void checkData(Intent intent) {
-        String content = intent.getStringExtra(NAME_WORD);
-        if (!TextUtils.isEmpty(content) && !content.contains(Tab.LOCAL_SCHEMA)) {
-            setSearchWord(content);
+        this.bean = intent.getParcelableExtra(NAME_BEAN);
+        if (!TextUtils.isEmpty(bean.name) && !bean.name.contains(Tab.LOCAL_SCHEMA)) {
+            setSearchWord(bean.name);
         }
     }
 
@@ -176,10 +178,16 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
             } else if (tag.equals(OPERATE_URL)) {
                 fragment = new OperateUrlFragment();
             }
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            FragmentTransaction ft = fragmentManager.beginTransaction();
-            ft.replace(R.id.content_frame, fragment, tag);
-            ft.commitAllowingStateLoss();
+
+            if (fragment != null) {
+                Bundle bundle = new Bundle();
+                bundle.putParcelable(NAME_BEAN, bean);
+                fragment.setArguments(bundle);
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                FragmentTransaction ft = fragmentManager.beginTransaction();
+                ft.replace(R.id.content_frame, fragment, tag);
+                ft.commitAllowingStateLoss();
+            }
         }
     }
 

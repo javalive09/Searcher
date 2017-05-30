@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 
 import peter.util.searcher.activity.MainActivity;
+import peter.util.searcher.bean.Bean;
 
 /**
  *
@@ -30,8 +31,8 @@ public abstract class LocalViewTab extends SearcherTab{
 
     public abstract String getUrl();
 
-    public void loadUrl(String url, String searchWord) {
-        if (!TextUtils.isEmpty(url)) {
+    public void loadUrl(Bean bean) {
+        if (!TextUtils.isEmpty(bean.url)) {
             if(mView == null) {
                 int viewResId = onCreateViewResId();
                 mView = mainActivity.setCurrentView(viewResId);
@@ -47,6 +48,9 @@ public abstract class LocalViewTab extends SearcherTab{
     public View getView() {
         return mView;
     }
+
+    @Override
+    public int getPageNo() { return 0;}
 
     public void reload() {}
 

@@ -40,6 +40,8 @@ public class RecentSearchFragment extends Fragment implements View.OnClickListen
     View enterTxt;
     @BindView(R.id.paste)
     View paste;
+    @BindView(R.id.paste_txt)
+    View pasteTXT;
     @BindView(R.id.loading)
     View loading;
     @BindView(R.id.recent_search)
@@ -59,6 +61,7 @@ public class RecentSearchFragment extends Fragment implements View.OnClickListen
         paste.setOnClickListener(RecentSearchFragment.this);
         enter.setEnabled(false);
         enterTxt.setEnabled(false);
+        pasteTXT.setEnabled(false);
         return rootView;
     }
 
@@ -69,8 +72,10 @@ public class RecentSearchFragment extends Fragment implements View.OnClickListen
         ClipboardManager cmb = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
         word = cmb.getText();
         if (TextUtils.isEmpty(word)) {
+            pasteTXT.setEnabled(false);
             paste.setEnabled(false);
         } else {
+            pasteTXT.setEnabled(true);
             paste.setEnabled(true);
         }
     }

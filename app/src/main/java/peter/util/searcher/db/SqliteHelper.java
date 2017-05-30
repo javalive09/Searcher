@@ -35,7 +35,7 @@ public class SqliteHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("create table if not exists " + TABLE_HISTORY + " (historyId integer primary key autoincrement, time integer, name varchar(20), show integer, url varchar(100))");
+        db.execSQL("create table if not exists " + TABLE_HISTORY + " (historyId integer primary key autoincrement, time integer, name varchar(20), show integer, pageNo integer, url varchar(100))");
         db.execSQL("create table if not exists " + TABLE_FAVORITE + " (favId integer primary key autoincrement, time integer, name varchar(20), url varchar(100))");
         db.execSQL("create table if not exists " + TABLE_URL_HISTORY + " (historyId integer primary key autoincrement, time integer, name varchar(20), show integer, url varchar(100))");
     }
@@ -56,10 +56,12 @@ public class SqliteHelper extends SQLiteOpenHelper {
                 values.put("time", bean.time);
                 values.put("name", bean.name);
                 values.put("url", bean.url);
+                values.put("pageNo", bean.pageNo);
                 values.put("show", 1);
                 db.insert(TABLE_HISTORY, null, values);
             } else {
                 values.put("show", 1);
+                values.put("pageNo", bean.pageNo);
                 db.update(TABLE_HISTORY, values, "name=?", new String[]{bean.name});
             }
             cursor.close();

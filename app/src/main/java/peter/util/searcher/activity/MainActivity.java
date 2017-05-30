@@ -255,11 +255,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         return super.onOptionsItemSelected(item);
     }
 
-
     private void touchSearch() {
         String content = tabManager.getCurrentTabGroup().getCurrentTab().getSearchWord();
+        int pageNo = tabManager.getCurrentTabGroup().getCurrentTab().getPageNo();
         Intent intent = new Intent(MainActivity.this, SearchActivity.class);
-        intent.putExtra(NAME_WORD, content);
+        Bean bean = new Bean(content);
+        bean.pageNo = pageNo;
+        intent.putExtra(NAME_BEAN, bean);
         startActivity(intent);
     }
 
@@ -322,21 +324,20 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         if (intent != null) {
             String action = intent.getAction();
             if (ACTION_INNER_BROWSE.equals(action)) { // inner invoke
-                String url = (String) intent.getSerializableExtra(NAME_URL);
-                if (!TextUtils.isEmpty(url)) {
-                    String searchWord = intent.getStringExtra(NAME_WORD);
-                    tabManager.loadUrl(url, searchWord, false);
+                Bean bean = intent.getParcelableExtra(NAME_BEAN);
+                if (!TextUtils.isEmpty(bean.url)) {
+                    tabManager.loadUrl(bean, false);
                 }
             } else if (Intent.ACTION_VIEW.equals(action)) { // outside invoke
                 String url = intent.getDataString();
                 if (!TextUtils.isEmpty(url)) {
-                    tabManager.loadUrl(url, true);
+                    tabManager.loadUrl(new Bean(url), true);
                 }
             } else if (Intent.ACTION_WEB_SEARCH.equals(action)) {
                 String searchWord = intent.getStringExtra(SearchManager.QUERY);
                 String engineUrl = getString(R.string.default_engine_url);
                 String url = UrlUtils.smartUrlFilter(searchWord, true, engineUrl);
-                tabManager.loadUrl(url, searchWord, true);
+                tabManager.loadUrl(new Bean(url, searchWord), true);
             } else if (Intent.ACTION_MAIN.equals(action)) {
                 if (tabManager.getTabGroupCount() == 0) {
                     loadHome(true);
@@ -351,7 +352,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     public void loadHome(boolean newTab) {
-        tabManager.loadUrl(Tab.URL_HOME2, newTab);
+        tabManager.loadUrl(new Bean("", Tab.URL_HOME2), newTab);
 //        loadUrl(Tab.URL_HOME, newTab);
 //        loadUrl("http://m.2345.com/websitesNavigation.htm", newTab);
 //        loadUrl(getString(R.string.fast_enter_navigation_url), newTab);

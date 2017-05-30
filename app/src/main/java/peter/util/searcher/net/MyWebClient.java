@@ -60,17 +60,17 @@ public class MyWebClient extends WebViewClient {
     }
 
     private void saveUrlData(final String title, final String url) {
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... params) {
-                Bean search = new Bean();
-                search.name = TextUtils.isEmpty(title) ? url : title;
-                search.time = System.currentTimeMillis();
-                search.url = url;
-                SqliteHelper.instance(mainActivity).insertHistoryURL(search);
-                return null;
-            }
-        }.execute();
+//        new AsyncTask<Void, Void, Void>() {
+//            @Override
+//            protected Void doInBackground(Void... params) {
+//                Bean search = new Bean();
+//                search.name = TextUtils.isEmpty(title) ? url : title;
+//                search.time = System.currentTimeMillis();
+//                search.url = url;
+//                SqliteHelper.instance(mainActivity).insertHistoryURL(search);
+//                return null;
+//            }
+//        }.execute();
     }
 
     @Override

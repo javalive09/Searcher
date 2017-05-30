@@ -4,6 +4,8 @@ import com.google.gson.annotations.SerializedName;
 
 public class ItemItem{
 
+	private int pageNo;
+
 	@SerializedName("name")
 	private String name;
 
@@ -35,6 +37,14 @@ public class ItemItem{
 
 	public String getUrl(){
 		return url;
+	}
+
+	public int getPageNo() {
+		return pageNo;
+	}
+
+	public void setPageNo(int pageNo) {
+		this.pageNo = pageNo;
 	}
 
 	@Override

@@ -36,7 +36,7 @@ public class WebViewTab extends SearcherTab {
 
     private static final int API = Build.VERSION.SDK_INT;
     private WebView mWebView;
-    private HashMap<String, String> searchMap = new HashMap<>();
+    private Bean bean;
 
     public WebViewTab(MainActivity activity) {
         super(activity);
@@ -54,7 +54,7 @@ public class WebViewTab extends SearcherTab {
 
     @Override
     public void onDestory() {
-        if(mWebView != null) {
+        if (mWebView != null) {
             mWebView.clearHistory();
             mWebView.clearCache(true);
             mWebView.loadUrl("about:blank");
@@ -65,14 +65,14 @@ public class WebViewTab extends SearcherTab {
     }
 
     public void onResume() {
-        if(mWebView != null) {
+        if (mWebView != null) {
             mWebView.resumeTimers();
             mWebView.onResume();
         }
     }
 
     public void onPause() {
-        if(mWebView != null) {
+        if (mWebView != null) {
             mWebView.pauseTimers();
             mWebView.onPause();
         }
@@ -83,37 +83,43 @@ public class WebViewTab extends SearcherTab {
         return R.layout.tab_webview;
     }
 
-    public void loadUrl(String url, String searchWord) {
-        if (!TextUtils.isEmpty(url)) {
-            Log.i("peter", "url=" + url);
-            if (mWebView == null) {
-                int resId = onCreateViewResId();
-                mWebView = (WebView) mainActivity.setCurrentView(resId);
-                onCreate();
-                if (!Tab.NEW_WINDOW.equals(url)) {
-                    mWebView.loadUrl(url);
-                }
-
-            } else {
-                if (!getUrl().equals(url)) {
-                    mWebView.loadUrl(url);
-                }
-                mainActivity.setCurrentView(mWebView);
-            }
-            if (!TextUtils.isEmpty(searchWord)) {
-                searchMap.put(url, searchWord);
-                saveData(searchWord, url);
-            }
-        }
-    }
-
     public String getUrl() {
         return mWebView.getUrl();
     }
 
     @Override
+    public void loadUrl(Bean bean) {
+        if (!TextUtils.isEmpty(bean.url)) {
+            this.bean = bean;
+            Log.i("peter", "url=" + bean.url);
+            if (mWebView == null) {
+                int resId = onCreateViewResId();
+                mWebView = (WebView) mainActivity.setCurrentView(resId);
+                onCreate();
+                if (!Tab.NEW_WINDOW.equals(bean.url)) {
+                    mWebView.loadUrl(bean.url);
+                }
+
+            } else {
+                if (!getUrl().equals(bean.url)) {
+                    mWebView.loadUrl(bean.url);
+                }
+                mainActivity.setCurrentView(mWebView);
+            }
+            if (!TextUtils.isEmpty(bean.name)) {
+                saveData(bean);
+            }
+        }
+    }
+
+    @Override
     public String getSearchWord() {
-        return searchMap.get(mWebView.getUrl());
+        return bean.name;
+    }
+
+    @Override
+    public int getPageNo() {
+        return bean.pageNo;
     }
 
     public void reload() {
@@ -140,15 +146,12 @@ public class WebViewTab extends SearcherTab {
         return mWebView.getTitle();
     }
 
-    private void saveData(final String word, final String url) {
+    private void saveData(final Bean bean) {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
-                Bean search = new Bean();
-                search.name = word;
-                search.time = System.currentTimeMillis();
-                search.url = url;
-                SqliteHelper.instance(mainActivity).insertHistory(search);
+                bean.time = System.currentTimeMillis();
+                SqliteHelper.instance(mainActivity).insertHistory(bean);
                 return null;
             }
         }.execute();
@@ -212,14 +215,14 @@ public class WebViewTab extends SearcherTab {
     @Override
     public String getHost() {
         String url = getUrl();
-        if(!TextUtils.isEmpty(url)) {
+        if (!TextUtils.isEmpty(url)) {
             URI uri = null;
             try {
                 uri = new URI(url);
             } catch (URISyntaxException e) {
                 e.printStackTrace();
             }
-            if(uri != null) {
+            if (uri != null) {
                 String domain = uri.getHost();
                 return domain.startsWith("www.") ? domain.substring(4) : domain;
             }

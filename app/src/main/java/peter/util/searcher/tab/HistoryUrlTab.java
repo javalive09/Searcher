@@ -159,7 +159,7 @@ public class HistoryUrlTab extends LocalViewTab implements View.OnClickListener,
             case R.id.history_item:
                 Bean bean = (Bean) v.getTag();
                 if (bean != null) {
-                    mainActivity.startBrowser(bean.url, "");
+                    mainActivity.startBrowser(bean);
                 }
                 break;
         }

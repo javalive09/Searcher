@@ -77,7 +77,7 @@ public class HistorySearchFragment extends Fragment implements View.OnClickListe
             case R.id.history_item:
                 Bean bean = (Bean) v.getTag();
                 if (bean != null) {
-                    ((BaseActivity) getActivity()).startBrowser(bean.url, bean.name);
+                    ((BaseActivity) getActivity()).startBrowser(bean);
                 }
                 break;
         }

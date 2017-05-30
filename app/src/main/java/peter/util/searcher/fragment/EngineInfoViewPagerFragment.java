@@ -24,6 +24,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import peter.util.searcher.R;
 import peter.util.searcher.activity.BaseActivity;
+import peter.util.searcher.bean.Bean;
 import peter.util.searcher.bean.EnginesInfo;
 import peter.util.searcher.bean.EnginesItem;
 import peter.util.searcher.bean.ItemItem;
@@ -55,6 +56,14 @@ public class EngineInfoViewPagerFragment extends Fragment implements View.OnClic
         super.onCreate(savedInstanceState);
     }
 
+    private int getPageNo() {
+        Bean bean = getArguments().getParcelable(BaseActivity.NAME_BEAN);
+        if (bean != null) {
+            return bean.pageNo;
+        }
+        return 0;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -77,6 +86,7 @@ public class EngineInfoViewPagerFragment extends Fragment implements View.OnClic
                         EnginesAdapter adapter = new EnginesAdapter(EngineInfoViewPagerFragment.this, engineInfo.getEngines());
                         mViewPager.setAdapter(adapter);
                         mSlidingTabLayout.setupWithViewPager(mViewPager);
+                        mViewPager.setCurrentItem(getPageNo());
                     }
                 }, new Action1<Throwable>() {
                     @Override
@@ -97,7 +107,9 @@ public class EngineInfoViewPagerFragment extends Fragment implements View.OnClic
                     String url = UrlUtils.smartUrlFilter(searchWord, true, engine.getUrl());
                     act.finish();
                     act.overridePendingTransition(0, 0);
-                    act.startBrowser(url, searchWord);
+                    Bean bean = new Bean(searchWord, url);
+                    bean.pageNo = mViewPager.getCurrentItem();
+                    act.startBrowser(bean);
                 }
                 break;
             default:
@@ -131,7 +143,7 @@ public class EngineInfoViewPagerFragment extends Fragment implements View.OnClic
                     container, false);
             GridView gv = (GridView) view;
             EnginesItem engines = list.get(position);
-            gv.setAdapter(new EngineAdapter(f, engines.getItem()));
+            gv.setAdapter(new EngineAdapter(f, position, engines.getItem()));
             container.addView(view);
             return view;
         }
@@ -152,10 +164,12 @@ public class EngineInfoViewPagerFragment extends Fragment implements View.OnClic
 
         EngineInfoViewPagerFragment f;
         List<ItemItem> list;
+        int pageNo;
 
-        public EngineAdapter(EngineInfoViewPagerFragment f, List<ItemItem> list) {
+        public EngineAdapter(EngineInfoViewPagerFragment f, int pageNo, List<ItemItem> list) {
             this.f = f;
             this.list = list;
+            this.pageNo = pageNo;
         }
 
         @Override
@@ -186,6 +200,7 @@ public class EngineInfoViewPagerFragment extends Fragment implements View.OnClic
             }
 
             ItemItem engine = getItem(position);
+            engine.setPageNo(pageNo);
             Glide.with(f)
                     .load(engine.getIcon())
                     .diskCacheStrategy(DiskCacheStrategy.SOURCE)

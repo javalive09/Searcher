@@ -78,7 +78,7 @@ public class FavoriteTab extends LocalViewTab implements View.OnClickListener,Vi
             case R.id.favorite_item:
                 Bean bean = (Bean) v.getTag();
                 if (bean != null) {
-                    mainActivity.startBrowser(bean.url, bean.name);
+                    mainActivity.startBrowser(bean);
                 }
                 break;
         }
