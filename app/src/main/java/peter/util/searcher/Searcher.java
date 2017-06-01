@@ -2,7 +2,7 @@ package peter.util.searcher;
 
 import android.app.Application;
 
-import com.facebook.stetho.Stetho;
+//import com.facebook.stetho.Stetho;
 
 import peter.util.searcher.net.CommonRetrofit;
 
@@ -15,7 +15,7 @@ public class Searcher extends Application {
     public void onCreate() {
         super.onCreate();
         CommonRetrofit.getInstance().init(this);
-        Stetho.initializeWithDefaults(this);
+//        Stetho.initializeWithDefaults(this);
     }
 
 }

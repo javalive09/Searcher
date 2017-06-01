@@ -130,4 +130,25 @@ public static final int *;
     public <init>(peter.util.searcher.activity.MainActivity);
 }
 
+# okhttp + rxAndroid + retrofit2
+-dontwarn org.codehaus.**
+-dontwarn java.nio.**
+-dontwarn java.lang.invoke.**
+-dontwarn rx.**
+
+# rxjava
+-dontwarn sun.misc.**
+-keepclassmembers class rx.internal.util.unsafe.*ArrayQueue*Field* {
+ long producerIndex;
+ long consumerIndex;
+}
+-keepclassmembers class rx.internal.util.unsafe.BaseLinkedQueueProducerNodeRef {
+ rx.internal.util.atomic.LinkedQueueNode producerNode;
+}
+-keepclassmembers class rx.internal.util.unsafe.BaseLinkedQueueConsumerNodeRef {
+ rx.internal.util.atomic.LinkedQueueNode consumerNode;
+}
+
+# glide + okhttp
+-keep public class * implements com.bumptech.glide.module.GlideModule
 -keep class peter.util.searcher.net.CustomGlideModule

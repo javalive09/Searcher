@@ -2,7 +2,7 @@ package peter.util.searcher.net;
 
 import android.content.Context;
 
-import com.facebook.stetho.okhttp3.StethoInterceptor;
+//import com.facebook.stetho.okhttp3.StethoInterceptor;
 
 import java.io.File;
 import java.util.concurrent.TimeUnit;
@@ -43,7 +43,7 @@ public class CommonRetrofit {
                     .readTimeout(30, TimeUnit.SECONDS)
                     .writeTimeout(30, TimeUnit.SECONDS)
                     .cache(new Cache(new File(context.getCacheDir(), CACHE_NAME), MAX_CACHE))
-                    .addNetworkInterceptor(new StethoInterceptor())
+//                    .addNetworkInterceptor(new StethoInterceptor())
                     .build();
             retrofit = new Retrofit.Builder()
                     .baseUrl(URL)

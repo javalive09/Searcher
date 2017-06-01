@@ -56,10 +56,10 @@ dependencies {
     compile 'com.github.bumptech.glide:okhttp3-integration:1.4.0@aar'
 
     //chrome debug sqlite chrome://inspect/#devices
-    compile 'com.facebook.stetho:stetho:1.3.1'
+//    compile 'com.facebook.stetho:stetho:1.3.1'
 
     //chrome debug okhttp
-    compile 'com.facebook.stetho:stetho-okhttp3:1.3.1'
+//    compile 'com.facebook.stetho:stetho-okhttp3:1.3.1'
 
 }
 
