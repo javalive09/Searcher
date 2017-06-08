@@ -23,6 +23,14 @@
             android:text="@string/paste_txt" />
     </FrameLayout>
 
+    <ImageView
+        android:layout_width="1px"
+        android:layout_height="match_parent"
+        android:background="@color/disable_color"
+        android:layout_marginTop="@dimen/url_opt_margin"
+        android:layout_marginBottom="@dimen/url_opt_margin"
+        android:src="@color/tint_color"/>
+
     <FrameLayout
         android:id="@+id/enter"
         android:layout_width="0px"

@@ -21,7 +21,7 @@
             android:layout_marginLeft="@dimen/multi_window_icon_margin"
             android:layout_marginRight="@dimen/multi_window_icon_margin"
             android:onClick="onClick"
-            android:src="@drawable/tabs_ic_add" />
+            android:src="@drawable/tabs_tint_bitmap_add" />
 
         <ImageView
             android:id="@+id/close_tabs"
@@ -32,7 +32,7 @@
             android:layout_marginLeft="@dimen/multi_window_icon_margin"
             android:layout_marginRight="@dimen/multi_window_icon_margin"
             android:onClick="onClick"
-            android:src="@drawable/ic_close_clear" />
+            android:src="@drawable/ic_close_clear_tint" />
 
         <TextView
             android:id="@+id/title"

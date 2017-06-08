@@ -14,10 +14,10 @@
             android:id="@+id/sliding_tabs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:tabBackground="@color/tint_color"
-            app:tabIndicatorColor="@color/colorPrimary"
+            app:tabBackground="@color/colorPrimary"
+            app:tabIndicatorColor="@color/tint_color"
             app:tabIndicatorHeight="3dp"
-            app:tabSelectedTextColor="@color/chrome_txt_color"
+            app:tabSelectedTextColor="@color/tint_color"
             app:tabTextColor="@color/disable_color"/>
 
         <View
