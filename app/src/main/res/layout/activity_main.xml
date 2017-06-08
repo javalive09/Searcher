@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/drawer_layout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fitsSystemWindows="true">
+                                        xmlns:app="http://schemas.android.com/apk/res-auto"
+                                        android:id="@+id/drawer_layout"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:fitsSystemWindows="true">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -25,7 +25,7 @@
                 style="@style/toolbar_edittext_style"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:cursorVisible="false" />
+                android:cursorVisible="false"/>
 
         </android.support.v7.widget.Toolbar>
 
@@ -34,7 +34,8 @@
             android:id="@+id/webview_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@id/toolbar" />
+            android:background="@color/progress_color"
+            android:layout_below="@id/toolbar"/>
 
         <ProgressBar
             android:id="@+id/progress"
@@ -44,7 +45,7 @@
             android:layout_below="@id/toolbar"
             android:max="100"
             android:progressTint="@color/progress_color"
-            android:visibility="visible" />
+            android:visibility="invisible"/>
 
     </RelativeLayout>
 
@@ -53,5 +54,5 @@
         android:layout_width="300dp"
         android:layout_height="match_parent"
         android:layout_gravity="left"
-        android:background="@color/tint_color" />
+        android:background="@color/tint_color"/>
 </android.support.v4.widget.DrawerLayout>

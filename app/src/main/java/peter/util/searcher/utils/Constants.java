@@ -15,6 +15,8 @@ public final class Constants {
 
     public static final String INTENT_ORIGIN = "URL_INTENT_ORIGIN";
 
+    public static boolean AUTO_FULLSCREEN;
+
     public static int getActionBarH(Context context) {
         if(actionBarHeight == 0) {
             // Calculate ActionBar height
@@ -23,6 +25,11 @@ public final class Constants {
                 actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data, context.getResources().getDisplayMetrics());
             }
         }
+
+        if(!AUTO_FULLSCREEN) {
+            return 0;
+        }
+
         return actionBarHeight;
     }
 }

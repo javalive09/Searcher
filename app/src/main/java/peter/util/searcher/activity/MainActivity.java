@@ -71,7 +71,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @BindView(R.id.progress)
     ProgressBar progressBar;
 
-    private boolean autoFullscreen;
     private TabManager tabManager;
     private HashMap<String, Class> router = new HashMap<>();
     private MultiWindowAdapter multiWindowAdapter;
@@ -146,7 +145,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         drawerLayout.openDrawer(Gravity.LEFT);
                     }
                 });
-        autoFullscreen = getAutoFullScreen();
     }
 
     @Override
@@ -170,7 +168,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             menu.findItem(R.id.action_goforward).setVisible(false);
         }
 
-        menu.findItem(R.id.action_auto_fullscreen).setChecked(autoFullscreen);
+        menu.findItem(R.id.action_auto_fullscreen).setChecked(Constants.AUTO_FULLSCREEN);
 
         return super.onPrepareOptionsMenu(menu);
     }
@@ -251,15 +249,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     private void saveAutoFullScreen(boolean show) {
-        autoFullscreen = show;
+        Constants.AUTO_FULLSCREEN = show;
         SharedPreferences sp = getSharedPreferences("fullscreen", MODE_PRIVATE);
         sp.edit().putBoolean("auto", show).apply();
-    }
+        tabManager.getCurrentTabGroup().getCurrentTab().getView().requestLayout();
 
-    private boolean getAutoFullScreen() {
-        SharedPreferences sp = getSharedPreferences("fullscreen", MODE_PRIVATE);
-        boolean show = sp.getBoolean("auto", false);
-        return show;
     }
 
     private void touchSearch() {
@@ -302,7 +296,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     public void showToolbar() {
-        if (isToolbarHide() && autoFullscreen) {
+        if (isToolbarHide() && Constants.AUTO_FULLSCREEN) {
             ObjectAnimator.ofFloat(toolbar, "translationY", -Constants.getActionBarH(this), 0).setDuration(300).start();
             ObjectAnimator.ofFloat(progressBar, "translationY", -Constants.getActionBarH(this), 0).setDuration(300).start();
             ObjectAnimator.ofFloat(webViewContainer, "translationY", -Constants.getActionBarH(this), 0).setDuration(300).start();
@@ -310,7 +304,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     public void hideToolbar() {
-        if (!isToolbarHide() && autoFullscreen) {
+        if (isToolbarShow() && Constants.AUTO_FULLSCREEN) {
             ObjectAnimator.ofFloat(toolbar, "translationY", 0, -Constants.getActionBarH(this)).setDuration(300).start();
             ObjectAnimator.ofFloat(progressBar, "translationY", 0, -Constants.getActionBarH(this)).setDuration(300).start();
             ObjectAnimator.ofFloat(webViewContainer, "translationY", 0, -Constants.getActionBarH(this)).setDuration(300).start();
@@ -318,8 +312,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     private boolean isToolbarHide() {
-        return toolbar.getTranslationY() < 0;
+        return toolbar.getTranslationY() == -Constants.getActionBarH(this);
     }
+
+    private boolean isToolbarShow() {
+        return toolbar.getTranslationY() == 0;
+    }
+
 
     public TabManager getTabManager() {
         return tabManager;
