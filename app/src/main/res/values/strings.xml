@@ -23,6 +23,7 @@
 
     <string name="action_cancel">取消</string>
     <string name="action_share">分享链接</string>
+    <string name="action_refresh">刷新</string>
     <string name="action_exit">退出程序</string>
     <string name="favorite_txt">已经添加到收藏夹</string>
     <string name="copy_link_txt">已经复制链接</string>
@@ -30,6 +31,7 @@
     <string name="action_collect">收藏链接</string>
     <string name="title_bookmark">书签</string>
     <string name="action_copy_link">复制链接</string>
+    <string name="action_auto_fullscreen">自动全屏</string>
     <string name="action_search_history">搜索记录</string>
     <string name="action_url_history">浏览记录</string>
     <string name="action_about">关于速搜</string>

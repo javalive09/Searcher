@@ -29,33 +29,22 @@
 
         </android.support.v7.widget.Toolbar>
 
-        <FrameLayout
+
+        <peter.util.searcher.view.WebViewContainer
+            android:id="@+id/webview_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@id/toolbar">
+            android:layout_below="@id/toolbar" />
 
-            <peter.util.searcher.view.CustomSwipeRefreshLayout
-                android:id="@+id/swiperefresh"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <peter.util.searcher.view.WebViewContainer
-                    android:id="@+id/webview_container"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-            </peter.util.searcher.view.CustomSwipeRefreshLayout>
-
-            <ProgressBar
-                android:id="@+id/progress"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="match_parent"
-                android:layout_height="3dp"
-                android:max="100"
-                android:progressTint="@color/progress_color"
-                android:visibility="invisible" />
-
-        </FrameLayout>
-
+        <ProgressBar
+            android:id="@+id/progress"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:layout_below="@id/toolbar"
+            android:max="100"
+            android:progressTint="@color/progress_color"
+            android:visibility="visible" />
 
     </RelativeLayout>
 

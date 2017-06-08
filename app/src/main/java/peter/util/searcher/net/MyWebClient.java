@@ -57,6 +57,7 @@ public class MyWebClient extends WebViewClient {
     @Override
     public void onPageStarted(WebView view, String url, Bitmap favicon) {
         Log.i("peter", "url=" + url);
+        mainActivity.showToolbar();
     }
 
     private void saveUrlData(final String title, final String url) {

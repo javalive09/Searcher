@@ -1,5 +1,6 @@
 package peter.util.searcher.activity;
 
+import android.animation.ObjectAnimator;
 import android.app.SearchManager;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -14,7 +15,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
@@ -26,7 +26,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.webkit.WebView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -50,8 +49,8 @@ import peter.util.searcher.tab.HomeTab2;
 import peter.util.searcher.tab.SettingTab;
 import peter.util.searcher.tab.Tab;
 import peter.util.searcher.tab.TabGroup;
+import peter.util.searcher.utils.Constants;
 import peter.util.searcher.utils.UrlUtils;
-import peter.util.searcher.view.CustomSwipeRefreshLayout;
 import peter.util.searcher.view.WebViewContainer;
 
 /**
@@ -61,8 +60,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     @BindView(R.id.webview_container)
     WebViewContainer webViewContainer;
-    @BindView(R.id.swiperefresh)
-    CustomSwipeRefreshLayout mSwipeRefreshLayout;
     @BindView(R.id.drawer_layout)
     DrawerLayout drawerLayout;
     @BindView(R.id.tabs)
@@ -96,17 +93,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     private void init(Bundle savedInstanceState) {
-        mSwipeRefreshLayout.setColorSchemeResources(
-                R.color.progress_color, R.color.progress_color,
-                R.color.progress_color, R.color.progress_color);
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                tabManager.getCurrentTabGroup().getCurrentTab().reload();
-                mHandler.removeCallbacks(complete);
-                mHandler.postDelayed(complete, 500);
-            }
-        });
         tabManager = new TabManager(MainActivity.this);
         installLocalTabRounter();
         initTopBar();
@@ -137,13 +123,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             }
         });
     }
-
-    private Runnable complete = new Runnable() {
-        @Override
-        public void run() {
-            mSwipeRefreshLayout.setRefreshing(false);
-        }
-    };
 
     private void initTopBar() {
         topText.setOnTouchListener(new View.OnTouchListener() {
@@ -186,6 +165,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         } else {
             menu.findItem(R.id.action_goforward).setVisible(false);
         }
+
+        boolean autoFullscreen = getAutoFullScreen();
+        menu.findItem(R.id.action_auto_fullscreen).setChecked(autoFullscreen);
 
         return super.onPrepareOptionsMenu(menu);
     }
@@ -251,8 +233,29 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             case R.id.action_goforward:
                 tabManager.getCurrentTabGroup().goForward();
                 break;
+            case R.id.action_refresh:
+                tabManager.getCurrentTabGroup().getCurrentTab().reload();
+                break;
+            case R.id.action_auto_fullscreen:
+                if(item.isChecked()) {//auto
+                    saveAutoFullScreen(false);
+                }else {
+                    saveAutoFullScreen(true);
+                }
+                break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void saveAutoFullScreen(boolean show) {
+        SharedPreferences sp = getSharedPreferences("fullscreen", MODE_PRIVATE);
+        sp.edit().putBoolean("auto", show).apply();
+    }
+
+    private boolean getAutoFullScreen() {
+        SharedPreferences sp = getSharedPreferences("fullscreen", MODE_PRIVATE);
+        boolean show = sp.getBoolean("auto", false);
+        return show;
     }
 
     private void touchSearch() {
@@ -285,29 +288,31 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     public void setCurrentView(View view) {
         webViewContainer.setCurrentView(view);
-        setSwipeRefresh(view);
+        showToolbar();
     }
 
     public View setCurrentView(int viewId) {
         View view = webViewContainer.setCurrentView(viewId);
-        setSwipeRefresh(view);
+        showToolbar();
         return view;
     }
 
-    private void setSwipeRefresh(View view) {
-        if (view instanceof WebView) {
-            mSwipeRefreshLayout.setEnabled(true);
-            final WebView webView = (WebView) view;
-            mSwipeRefreshLayout.setCanChildScrollUpCallback(new CustomSwipeRefreshLayout.CanChildScrollUpCallback() {
-                @Override
-                public boolean canSwipeRefreshChildScrollUp() {
-                    return webView.getScrollY() > 0;
-                }
-            });
-        } else {
-            mSwipeRefreshLayout.setRefreshing(false);
-            mSwipeRefreshLayout.setEnabled(false);
+    public void showToolbar() {
+        if (isToolbarHide()) {
+            ObjectAnimator.ofFloat(toolbar, "translationY", -Constants.getActionBarH(this), 0).setDuration(300).start();
+            ObjectAnimator.ofFloat(webViewContainer, "translationY", -Constants.getActionBarH(this), 0).setDuration(300).start();
         }
+    }
+
+    public void hideToolbar() {
+        if (!isToolbarHide()) {
+            ObjectAnimator.ofFloat(toolbar, "translationY", 0, -Constants.getActionBarH(this)).setDuration(300).start();
+            ObjectAnimator.ofFloat(webViewContainer, "translationY", 0, -Constants.getActionBarH(this)).setDuration(300).start();
+        }
+    }
+
+    private boolean isToolbarHide() {
+        return toolbar.getTranslationY() < 0;
     }
 
     public TabManager getTabManager() {
