@@ -4,24 +4,23 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <include
-        android:id="@+id/operate_url"
-        layout="@layout/operate_url"
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/top"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content">
 
-    <View
-        android:id="@+id/line"
-        android:layout_width="match_parent"
-        android:layout_height="1px"
-        android:layout_below="@+id/operate_url"
-        android:background="@color/line_color" />
+        <include
+            android:id="@+id/operate_url"
+            layout="@layout/operate_url"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </android.support.design.widget.AppBarLayout>
 
     <ListView
         android:id="@+id/recent_search"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/line" />
+        android:layout_below="@+id/top" />
 
     <ProgressBar
         android:id="@+id/loading"

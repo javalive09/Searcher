@@ -48,9 +48,9 @@ public class SearchWebView extends WebView {
             case MotionEvent.ACTION_UP:
                 int deltaY = y - startY;
                 if(deltaY > SLOP) { //show
-                    ((MainActivity)getContext()).showToolbar();
+                    ((MainActivity)getContext()).showTopbar();
                 }else if(deltaY < -SLOP){//hide
-                    ((MainActivity)getContext()).hideToolbar();
+                    ((MainActivity)getContext()).hideTopbar();
                 }
                 break;
         }

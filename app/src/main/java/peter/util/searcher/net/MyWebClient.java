@@ -6,12 +6,9 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.MailTo;
 import android.net.http.SslError;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
-import android.text.TextUtils;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.webkit.HttpAuthHandler;
@@ -26,9 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import peter.util.searcher.R;
-import peter.util.searcher.db.SqliteHelper;
 import peter.util.searcher.activity.MainActivity;
-import peter.util.searcher.bean.Bean;
 import peter.util.searcher.utils.IntentUtils;
 import peter.util.searcher.utils.Utils;
 
@@ -57,7 +52,7 @@ public class MyWebClient extends WebViewClient {
     @Override
     public void onPageStarted(WebView view, String url, Bitmap favicon) {
         Log.i("peter", "url=" + url);
-        mainActivity.showToolbar();
+        mainActivity.showTopbar();
     }
 
     private void saveUrlData(final String title, final String url) {

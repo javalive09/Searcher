@@ -25,8 +25,6 @@ public class SettingActivity extends BaseActivity {
     AsynWindowHandler windowHandler;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-    @BindView(R.id.version)
-    TextView version;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -42,7 +40,6 @@ public class SettingActivity extends BaseActivity {
                 finish();
             }
         });
-        version.setText(getVersionName());
         windowHandler = new AsynWindowHandler(this);
         ListView settings = (ListView) findViewById(R.id.setting_list);
         if (settings != null) {
@@ -70,8 +67,10 @@ public class SettingActivity extends BaseActivity {
                             UpdateController.instance().checkVersion(windowHandler, true);
                             break;
                         case 4://about
-                            showAlertDialog(getString(R.string.action_about), getString(R.string.setting_about));
+                            showAlertDialog(R.string.action_about, R.string.setting_about);
                             break;
+                        case 5: //one step
+                            showAlertDialog(R.string.one_step_title, R.string.one_step_txt);
                     }
                 }
             });

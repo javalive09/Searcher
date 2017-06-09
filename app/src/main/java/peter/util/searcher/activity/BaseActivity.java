@@ -127,6 +127,9 @@ public class BaseActivity extends AppCompatActivity {
         return dialog;
     }
 
+    public AlertDialog showAlertDialog(int titleRes, int contentRes) {
+        return showAlertDialog(getString(titleRes), getString(contentRes));
+    }
 
     public String getVersionName() {
         PackageManager packageManager = getPackageManager();

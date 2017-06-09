@@ -5,6 +5,6 @@
     <solid android:color="@color/tab_color" />
     <stroke
         android:width="2dp"
-        android:color="@color/colorPrimary" />
+        android:color="@color/colorAccent" />
 
 </shape>

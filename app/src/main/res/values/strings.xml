@@ -20,6 +20,8 @@
     <string name="cannot_download">仅可下载以 \"http\" 或 \"https\" 开头的链接地址</string>
     <string name="problem_location_download">Cannot download to the specified location</string>
     <string name="download_pending">开始下载…</string>
+    <string name="one_step_title">设置为辅助程序</string>
+    <string name="one_step_txt">设置 > 应用程序 > 默认设置 > 辅助 > 应用程序 > 点选速搜 > 便可以长按Home一键开启</string>
 
     <string name="action_cancel">取消</string>
     <string name="action_share">分享链接</string>
