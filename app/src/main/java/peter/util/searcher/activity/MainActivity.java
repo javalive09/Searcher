@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -42,6 +41,7 @@ import peter.util.searcher.adapter.MultiWindowAdapter;
 import peter.util.searcher.bean.Bean;
 import peter.util.searcher.R;
 import peter.util.searcher.db.SqliteHelper;
+import peter.util.searcher.net.UpdateController;
 import peter.util.searcher.tab.FavoriteTab;
 import peter.util.searcher.tab.HistorySearchTab;
 import peter.util.searcher.tab.HistoryUrlTab;
@@ -103,6 +103,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         initMultiLayout();
         initTabs(savedInstanceState);
         checkIntentData(getIntent());
+        UpdateController.instance().autoCheckVersion(MainActivity.this);
     }
 
     public void initMultiLayout() {

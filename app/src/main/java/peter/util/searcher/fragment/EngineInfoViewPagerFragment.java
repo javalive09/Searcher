@@ -48,9 +48,6 @@ public class EngineInfoViewPagerFragment extends Fragment implements View.OnClic
     @BindView(R.id.loading)
     View loading;
 
-    IEngineService iEngineService;
-    int retyrCount = 5;
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,10 +71,10 @@ public class EngineInfoViewPagerFragment extends Fragment implements View.OnClic
     }
 
     private void init() {
-        iEngineService = CommonRetrofit.getInstance().getRetrofit().create(IEngineService.class);
+        IEngineService iEngineService = CommonRetrofit.getInstance().getRetrofit().create(IEngineService.class);
         Observable<EnginesInfo> engineInfoObservable = iEngineService.getInfo();
         engineInfoObservable.subscribeOn(Schedulers.io())
-                .retry(retyrCount)
+                .retry(5)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Action1<EnginesInfo>() {
                     @Override

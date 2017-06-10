@@ -4,6 +4,9 @@ import android.content.Context;
 
 //import com.facebook.stetho.okhttp3.StethoInterceptor;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import java.io.File;
 import java.util.concurrent.TimeUnit;
 
@@ -45,9 +48,11 @@ public class CommonRetrofit {
                     .cache(new Cache(new File(context.getCacheDir(), CACHE_NAME), MAX_CACHE))
 //                    .addNetworkInterceptor(new StethoInterceptor())
                     .build();
+//            Gson gson = new GsonBuilder().setLenient().create();
             retrofit = new Retrofit.Builder()
                     .baseUrl(URL)
                     .client(okHttpClient)
+//                    .addConverterFactory(GsonConverterFactory.create(gson))
                     .addConverterFactory(GsonConverterFactory.create())
                     .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                     .build();

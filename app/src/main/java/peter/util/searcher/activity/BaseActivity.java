@@ -152,4 +152,14 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
+    public int getVersionCode() {//获取版本号(内部识别号)
+        try {
+            PackageInfo pi = getPackageManager().getPackageInfo(getPackageName(), 0);
+            return pi.versionCode;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
 }

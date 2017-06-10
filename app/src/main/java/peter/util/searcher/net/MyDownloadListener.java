@@ -1,7 +1,7 @@
 /*
  * Copyright 2014 A.C.R. Development
  */
-package peter.util.searcher.download;
+package peter.util.searcher.net;
 
 import android.Manifest;
 import android.content.DialogInterface;

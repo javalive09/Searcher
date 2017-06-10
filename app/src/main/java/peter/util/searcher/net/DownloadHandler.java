@@ -1,7 +1,7 @@
 /*
  * Copyright 2014 A.C.R. Development
  */
-package peter.util.searcher.download;
+package peter.util.searcher.net;
 
 import android.app.DownloadManager;
 import android.content.ActivityNotFoundException;
@@ -12,7 +12,6 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -232,11 +231,14 @@ public class DownloadHandler {
             final DownloadManager manager = (DownloadManager) context
                     .getSystemService(Context.DOWNLOAD_SERVICE);
             try {
-                manager.enqueue(request);
+                final long id = manager.enqueue(request);
                 context.registerReceiver(new BroadcastReceiver() {
                     public void onReceive(Context ctxt, Intent intent) {
-                        openFile(customUri, context);
-                        context.unregisterReceiver(this);
+                        long currentId = intent.getExtras().getLong(DownloadManager.EXTRA_DOWNLOAD_ID);
+                        if (currentId == id) {
+                            openFile(customUri, ctxt);
+                            context.unregisterReceiver(this);
+                        }
                     }
                 }, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
 
@@ -256,8 +258,12 @@ public class DownloadHandler {
     }
 
     public static void openFile(Uri uri, Context context) {
+        openFile(uri, context, getMimeType(uri.getPath()));
+    }
+
+    public static void openFile(Uri uri, Context context, String mineType) {
         Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setDataAndType(uri, getMimeType(uri.getPath()));
+        intent.setDataAndType(uri, mineType);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
     }

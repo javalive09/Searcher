@@ -21,7 +21,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import peter.util.searcher.R;
-import peter.util.searcher.download.DownloadHandler;
+import peter.util.searcher.net.DownloadHandler;
 
 /**
  * Created by peter on 16/5/9.

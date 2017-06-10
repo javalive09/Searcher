@@ -8,25 +8,19 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.webkit.CookieManager;
-import android.webkit.WebBackForwardList;
-import android.webkit.WebHistoryItem;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.HashMap;
 
 import peter.util.searcher.R;
 import peter.util.searcher.activity.MainActivity;
 import peter.util.searcher.bean.Bean;
 import peter.util.searcher.db.SqliteHelper;
-import peter.util.searcher.download.MyDownloadListener;
+import peter.util.searcher.net.MyDownloadListener;
 import peter.util.searcher.net.MyWebChromeClient;
 import peter.util.searcher.net.MyWebClient;
-import peter.util.searcher.utils.UrlUtils;
-import peter.util.searcher.utils.Utils;
 
 /**
  * Created by peter on 2016/11/17.

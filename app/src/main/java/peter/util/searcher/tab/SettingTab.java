@@ -11,10 +11,8 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import peter.util.searcher.R;
-import peter.util.searcher.activity.BaseActivity;
 import peter.util.searcher.activity.MainActivity;
-import peter.util.searcher.update.AsynWindowHandler;
-import peter.util.searcher.update.UpdateController;
+import peter.util.searcher.net.UpdateController;
 
 /**
  *
@@ -24,7 +22,6 @@ import peter.util.searcher.update.UpdateController;
 
 public class SettingTab extends LocalViewTab {
 
-    AsynWindowHandler windowHandler;
 
     public SettingTab(MainActivity activity) {
         super(activity);
@@ -37,7 +34,6 @@ public class SettingTab extends LocalViewTab {
 
     @Override
     public void onCreate() {
-        windowHandler = new AsynWindowHandler(mainActivity);
         ListView settings = (ListView) mainActivity.findViewById(R.id.setting_list);
         if(settings != null) {
             settings.setAdapter(new ArrayAdapter<>(mainActivity, R.layout.setting_item, mainActivity.getResources().getStringArray(R.array.settings_name)));
@@ -61,7 +57,7 @@ public class SettingTab extends LocalViewTab {
                             mainActivity.sendMailByIntent();
                             break;
                         case 3://update
-                            UpdateController.instance().checkVersion(windowHandler, true);
+                            UpdateController.instance().checkVersion(mainActivity, true);
                             break;
                         case 4://about
                             mainActivity.showAlertDialog(mainActivity.getString(R.string.action_about), mainActivity.getString(R.string.setting_about));
