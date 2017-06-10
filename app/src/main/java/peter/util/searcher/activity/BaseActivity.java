@@ -2,7 +2,6 @@ package peter.util.searcher.activity;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -20,8 +19,6 @@ import android.webkit.CookieSyncManager;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
-
-import butterknife.ButterKnife;
 import peter.util.searcher.R;
 import peter.util.searcher.bean.Bean;
 

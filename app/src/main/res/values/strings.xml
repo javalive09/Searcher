@@ -51,7 +51,7 @@
     <string name="update_toast_nonew">已经是最新版本</string>
     <string name="update_dialog_title_one">发现新版本</string>
     <string name="update_dialog_ok">更新</string>
-    <string name="app_url">http://7xoxmg.com1.z0.glb.clouddn.com/searcher_10.apk</string>
+    <string name="app_url">http://7xoxmg.com1.z0.glb.clouddn.com/searcher_71.apk</string>
     <string name="share_title">分享应用给小伙伴</string>
     <string name="share_link_title">分享链接</string>
     <string name="default_engine_url">https://m.baidu.com/s?word=%s</string>

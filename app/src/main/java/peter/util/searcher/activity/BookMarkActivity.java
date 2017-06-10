@@ -1,6 +1,5 @@
 package peter.util.searcher.activity;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -13,14 +12,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
-import java.util.ArrayList;
+import com.umeng.analytics.MobclickAgent;
 
-import butterknife.BindArray;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import peter.util.searcher.R;
-import peter.util.searcher.bean.Bean;
-import peter.util.searcher.db.SqliteHelper;
 import peter.util.searcher.fragment.FavoriteFragment;
 import peter.util.searcher.fragment.HistoryDownloadFragment;
 import peter.util.searcher.fragment.HistorySearchFragment;
@@ -55,6 +51,15 @@ public class BookMarkActivity extends BaseActivity {
         initFragment();
     }
 
+    public void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
+    }
 
 
     /**

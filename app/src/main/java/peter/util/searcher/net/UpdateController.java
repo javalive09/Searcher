@@ -73,7 +73,7 @@ public class UpdateController {
             public Observable<VersionInfo> call(UrlInfo urlInfo) {
                 return iVersionService.getInfo(urlInfo.getUrl());
             }
-        }).observeOn(AndroidSchedulers.mainThread())
+        }).retry(5).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Action1<VersionInfo>() {
 
                     @Override
@@ -83,7 +83,7 @@ public class UpdateController {
                             if (holdAct.getVersionCode() < versionInfo.getCode()) {
                                 showUpdateDialog(holdAct, versionInfo);
                             } else {
-                                if(showToast) {
+                                if (showToast) {
                                     Toast.makeText(holdAct, R.string.update_toast_nonew, Toast.LENGTH_SHORT).show();
                                 }
                             }
@@ -93,10 +93,6 @@ public class UpdateController {
                     @Override
                     public void call(Throwable throwable) {
                         throwable.printStackTrace();
-                        BaseActivity holdAct = actHolder.get();
-                        if (holdAct != null) {
-                            Toast.makeText(holdAct, R.string.update_toast_error, Toast.LENGTH_SHORT).show();
-                        }
                     }
                 });
     }
