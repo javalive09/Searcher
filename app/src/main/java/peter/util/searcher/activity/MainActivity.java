@@ -461,9 +461,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 drawerLayout.closeDrawers();
                 loadHome(true);
                 break;
-            case R.id.close_tabs:
-                drawerLayout.closeDrawers();
-                break;
             case R.id.close_tab:
                 if (tabManager.getTabGroupCount() == 1) {
                     exit();

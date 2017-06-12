@@ -9,7 +9,8 @@
 
     <color name="transparent">#00000000</color>
     <color name="chrome_txt_color">#5a5a5a</color>
-    <color name="progress_color">#468dc8</color>
+    <!--<color name="progress_color">#468dc8</color>-->
+    <color name="progress_color">@color/colorAccent</color>
     <color name="hint_color">@color/disable_color</color>
 
     <color name="disable_color">#a7a7a7</color>
