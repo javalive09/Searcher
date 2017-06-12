@@ -12,11 +12,7 @@ public interface Tab {
 
     String LOCAL_SCHEMA = "local://";
     String NEW_WINDOW = "new_window";
-    String URL_HOME2 = LOCAL_SCHEMA + "home2";
-    String URL_SETTING = LOCAL_SCHEMA + "setting";
-    String URL_FAVORITE = LOCAL_SCHEMA + "toolbar_ic_favorite";
-    String URL_HISTORY_SEARCH = LOCAL_SCHEMA + "history_search";
-    String URL_HISTORY_URL = LOCAL_SCHEMA + "history_url";
+    String URL_HOME = LOCAL_SCHEMA + "home";
 
     void loadUrl(Bean bean);
 

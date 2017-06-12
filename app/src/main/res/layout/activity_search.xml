@@ -30,7 +30,7 @@
                 android:layout_gravity="right|center_vertical"
                 android:layout_marginRight="7dp"
                 android:padding="7dp"
-                android:src="@drawable/toolbar_vector_clear"
+                android:src="@drawable/ic_clear"
                 android:visibility="gone" />
         </FrameLayout>
 

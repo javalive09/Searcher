@@ -52,7 +52,8 @@ import peter.util.searcher.R;
 public class Utils {
 
     public static boolean doesSupportHeaders() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
+//        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
+        return true;
     }
 
     /**

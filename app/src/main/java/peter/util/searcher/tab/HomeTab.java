@@ -10,9 +10,9 @@ import peter.util.searcher.activity.MainActivity;
  *
  */
 
-public class HomeTab2 extends LocalViewTab {
+public class HomeTab extends LocalViewTab {
 
-    public HomeTab2(MainActivity activity) {
+    public HomeTab(MainActivity activity) {
         super(activity);
     }
 
@@ -44,7 +44,7 @@ public class HomeTab2 extends LocalViewTab {
 
     @Override
     public String getUrl() {
-        return URL_HOME2;
+        return URL_HOME;
     }
 
     public String getHost() {

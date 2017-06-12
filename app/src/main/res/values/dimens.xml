@@ -3,13 +3,11 @@
     <dimen name="top_h">50dp</dimen>
     <dimen name="tab_h">50dp</dimen>
     <dimen name="search_padding_right">47dp</dimen>
-    <dimen name="setting_version_margin">25dp</dimen>
     <dimen name="setting_item_txt_size">15sp</dimen>
     <dimen name="setting_item_h">47dp</dimen>
     <dimen name="item_height">45dp</dimen>
 
     <dimen name="drawable_padding">5dp</dimen>
-    <dimen name="item_padding">7dp</dimen>
     <dimen name="multi_window_icon_margin">10dp</dimen>
     <dimen name="url_opt_margin">15dp</dimen>
     <dimen name="multi_window_item_icon_cell">25dp</dimen>

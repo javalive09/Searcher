@@ -6,45 +6,32 @@
     android:baselineAligned="false"
     android:orientation="horizontal">
 
-    <FrameLayout
+    <TextView
         android:id="@+id/paste"
         android:layout_width="0px"
         android:layout_height="@dimen/top_h"
         android:layout_weight="1"
-        android:background="@drawable/list_selector_item">
-
-        <TextView
-            android:id="@+id/paste_txt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:drawableLeft="@drawable/search_selector_paste"
-            android:gravity="center"
-            android:text="@string/paste_txt" />
-    </FrameLayout>
+        android:background="@drawable/list_selector_item"
+        android:enabled="false"
+        android:gravity="center"
+        android:text="@string/paste_txt" />
 
     <ImageView
         android:layout_width="1px"
         android:layout_height="match_parent"
-        android:background="@color/disable_color"
-        android:layout_marginTop="@dimen/url_opt_margin"
         android:layout_marginBottom="@dimen/url_opt_margin"
-        android:src="@color/tint_color"/>
+        android:layout_marginTop="@dimen/url_opt_margin"
+        android:background="@color/disable_color"
+        android:src="@color/tint_color" />
 
-    <FrameLayout
+    <TextView
         android:id="@+id/enter"
         android:layout_width="0px"
         android:layout_height="@dimen/top_h"
+        android:layout_gravity="center"
         android:layout_weight="1"
-        android:background="@drawable/list_selector_item">
-
-        <TextView
-            android:id="@+id/enter_txt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:drawableLeft="@drawable/search_selector_enter"
-            android:gravity="center"
-            android:text="@string/enter_txt" />
-    </FrameLayout>
+        android:background="@drawable/list_selector_item"
+        android:enabled="false"
+        android:gravity="center"
+        android:text="@string/enter_txt" />
 </LinearLayout>

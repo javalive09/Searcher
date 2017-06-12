@@ -23,7 +23,7 @@
                 android:background="@color/colorPrimary"
                 android:focusable="true"
                 android:focusableInTouchMode="true"
-                app:navigationIcon="@drawable/toolbar_tint_bitmap_tabs"
+                app:navigationIcon="@drawable/ic_multi"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.ActionBar">
 
                 <EditText
@@ -59,6 +59,5 @@
         layout="@layout/layout_tabs"
         android:layout_width="300dp"
         android:layout_height="match_parent"
-        android:layout_gravity="left"
-        android:background="@color/tint_color" />
+        android:layout_gravity="left"/>
 </android.support.v4.widget.DrawerLayout>

@@ -36,12 +36,8 @@ public class RecentSearchFragment extends Fragment implements View.OnClickListen
     CharSequence word;
     @BindView(R.id.enter)
     View enter;
-    @BindView(R.id.enter_txt)
-    View enterTxt;
     @BindView(R.id.paste)
     View paste;
-    @BindView(R.id.paste_txt)
-    View pasteTXT;
     @BindView(R.id.loading)
     View loading;
     @BindView(R.id.recent_search)
@@ -55,13 +51,8 @@ public class RecentSearchFragment extends Fragment implements View.OnClickListen
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         View rootView = inflater.inflate(R.layout.fragment_recent_search, container, false);
         ButterKnife.bind(RecentSearchFragment.this, rootView);
-        paste.setOnClickListener(RecentSearchFragment.this);
-        enter.setEnabled(false);
-        enterTxt.setEnabled(false);
-        pasteTXT.setEnabled(false);
         return rootView;
     }
 
@@ -71,12 +62,9 @@ public class RecentSearchFragment extends Fragment implements View.OnClickListen
         refreshData();
         ClipboardManager cmb = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
         word = cmb.getText();
-        if (TextUtils.isEmpty(word)) {
-            pasteTXT.setEnabled(false);
-            paste.setEnabled(false);
-        } else {
-            pasteTXT.setEnabled(true);
+        if (!TextUtils.isEmpty(word)) {
             paste.setEnabled(true);
+            paste.setOnClickListener(RecentSearchFragment.this);
         }
     }
 
@@ -84,7 +72,7 @@ public class RecentSearchFragment extends Fragment implements View.OnClickListen
     public void onClick(View v) {
         Bean bean = (Bean) v.getTag();
         switch (v.getId()) {
-            case R.id.recent_search_item:
+            case R.id.item:
                 if (bean != null) {
                     BaseActivity activity = (BaseActivity) getActivity();
                     activity.setSearchWord(bean.name);
@@ -113,7 +101,7 @@ public class RecentSearchFragment extends Fragment implements View.OnClickListen
     @Override
     public boolean onLongClick(View v) {
         switch (v.getId()) {
-            case R.id.recent_search_item:
+            case R.id.item:
                 popupMenu(v);
                 return true;
         }
@@ -157,7 +145,6 @@ public class RecentSearchFragment extends Fragment implements View.OnClickListen
                     }
                 }
             }
-
         }
 
     }
@@ -191,27 +178,17 @@ public class RecentSearchFragment extends Fragment implements View.OnClickListen
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            Holder holder;
             if (convertView == null) {
-                convertView = factory.inflate(R.layout.recent_search_item, parent, false);
-                holder = new Holder();
-                holder.content = (TextView) convertView.findViewById(R.id.recent_search_item);
-                convertView.setTag(R.id.recent_search, holder);
-            } else {
-                holder = (Holder) convertView.getTag(R.id.recent_search);
+                convertView = factory.inflate(R.layout.item_list_recentsearch, parent, false);
             }
-
+            TextView content = (TextView) convertView;
             Bean search = getItem(position);
-            holder.content.setText(search.name);
-            holder.content.setOnClickListener(f);
-            holder.content.setOnLongClickListener(f);
-            holder.content.setTag(search);
+            content.setText(search.name);
+            content.setOnClickListener(f);
+            content.setOnLongClickListener(f);
+            content.setTag(search);
             return convertView;
         }
-    }
-
-    static class Holder {
-        TextView content;
     }
 
     private void popupMenu(final View view) {

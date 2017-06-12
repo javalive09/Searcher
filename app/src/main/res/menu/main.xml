@@ -4,7 +4,7 @@
 
     <item
         android:id="@+id/action_bookmark"
-        android:icon="@drawable/toolbar_tint_bitmap_favorite"
+        android:icon="@drawable/ic_bookmark"
         android:orderInCategory="0"
         android:title="@string/title_bookmark"
         app:showAsAction="always" />

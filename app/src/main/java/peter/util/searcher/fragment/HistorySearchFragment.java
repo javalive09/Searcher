@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.PopupMenu;
@@ -22,7 +21,6 @@ import peter.util.searcher.R;
 import peter.util.searcher.activity.BaseActivity;
 import peter.util.searcher.bean.Bean;
 import peter.util.searcher.db.SqliteHelper;
-import peter.util.searcher.tab.HistorySearchTab;
 
 /**
  * Created by peter on 16/5/9.
@@ -74,7 +72,7 @@ public class HistorySearchFragment extends Fragment implements View.OnClickListe
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.history_item:
+            case R.id.item:
                 Bean bean = (Bean) v.getTag();
                 if (bean != null) {
                     ((BaseActivity) getActivity()).startBrowser(bean);
@@ -86,7 +84,7 @@ public class HistorySearchFragment extends Fragment implements View.OnClickListe
     @Override
     public boolean onLongClick(View v) {
         switch (v.getId()) {
-            case R.id.history_item:
+            case R.id.item:
                 popupMenu(v);
                 return true;
         }
@@ -193,7 +191,7 @@ public class HistorySearchFragment extends Fragment implements View.OnClickListe
             TextView view;
 
             if (convertView == null) {
-                view = (TextView) factory.inflate(R.layout.history_item, parent, false);
+                view = (TextView) factory.inflate(R.layout.item_list_website, parent, false);
             } else {
                 view = (TextView) convertView;
             }

@@ -42,11 +42,7 @@ import peter.util.searcher.bean.Bean;
 import peter.util.searcher.R;
 import peter.util.searcher.db.SqliteHelper;
 import peter.util.searcher.net.UpdateController;
-import peter.util.searcher.tab.FavoriteTab;
-import peter.util.searcher.tab.HistorySearchTab;
-import peter.util.searcher.tab.HistoryUrlTab;
-import peter.util.searcher.tab.HomeTab2;
-import peter.util.searcher.tab.SettingTab;
+import peter.util.searcher.tab.HomeTab;
 import peter.util.searcher.tab.Tab;
 import peter.util.searcher.tab.TabGroup;
 import peter.util.searcher.utils.Constants;
@@ -276,11 +272,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     private void installLocalTabRounter() {
-        router.put(Tab.URL_HOME2, HomeTab2.class);
-        router.put(Tab.URL_SETTING, SettingTab.class);
-        router.put(Tab.URL_FAVORITE, FavoriteTab.class);
-        router.put(Tab.URL_HISTORY_SEARCH, HistorySearchTab.class);
-        router.put(Tab.URL_HISTORY_URL, HistoryUrlTab.class);
+        router.put(Tab.URL_HOME, HomeTab.class);
     }
 
     public Class getRounterClass(String url) {
@@ -344,7 +336,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             } else if (Intent.ACTION_VIEW.equals(action)) { // outside invoke
                 String url = intent.getDataString();
                 if (!TextUtils.isEmpty(url)) {
-                    tabManager.loadUrl(new Bean(url), true);
+                    tabManager.loadUrl(new Bean("", url), true);
                 }
             } else if (Intent.ACTION_WEB_SEARCH.equals(action)) {
                 String searchWord = intent.getStringExtra(SearchManager.QUERY);
@@ -365,7 +357,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     public void loadHome(boolean newTab) {
-        tabManager.loadUrl(new Bean("", Tab.URL_HOME2), newTab);
+        tabManager.loadUrl(new Bean("", Tab.URL_HOME), newTab);
 //        loadUrl(Tab.URL_HOME, newTab);
 //        loadUrl("http://m.2345.com/websitesNavigation.htm", newTab);
 //        loadUrl(getString(R.string.fast_enter_navigation_url), newTab);

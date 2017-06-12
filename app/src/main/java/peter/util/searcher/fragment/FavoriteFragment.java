@@ -21,7 +21,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import peter.util.searcher.R;
 import peter.util.searcher.activity.BaseActivity;
-import peter.util.searcher.activity.BookMarkActivity;
 import peter.util.searcher.bean.Bean;
 import peter.util.searcher.db.SqliteHelper;
 
@@ -98,7 +97,7 @@ public class FavoriteFragment extends Fragment implements View.OnClickListener, 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.favorite_item:
+            case R.id.item:
                 Bean bean = (Bean) v.getTag();
                 if (bean != null) {
                     ((BaseActivity) getActivity()).startBrowser(bean);
@@ -110,7 +109,7 @@ public class FavoriteFragment extends Fragment implements View.OnClickListener, 
     @Override
     public boolean onLongClick(View v) {
         switch (v.getId()) {
-            case R.id.favorite_item:
+            case R.id.item:
                 popupMenu(v);
                 return true;
         }
@@ -219,7 +218,7 @@ public class FavoriteFragment extends Fragment implements View.OnClickListener, 
             TextView view;
 
             if (convertView == null) {
-                view = (TextView) factory.inflate(R.layout.favorite_item, parent, false);
+                view = (TextView) factory.inflate(R.layout.item_list_website, parent, false);
             } else {
                 view = (TextView) convertView;
             }

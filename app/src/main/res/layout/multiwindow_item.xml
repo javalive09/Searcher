@@ -15,7 +15,7 @@
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="@dimen/multi_window_icon_margin"
         android:layout_marginRight="@dimen/multi_window_icon_margin"
-        android:background="@drawable/ic_explore" />
+        android:background="@drawable/ic_website" />
 
     <TextView
         android:id="@+id/title"
@@ -35,6 +35,6 @@
         android:layout_gravity="center_vertical"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
-        android:src="@drawable/ic_close_clear_tint" />
+        android:src="@drawable/ic_clear" />
 
 </LinearLayout>
