@@ -27,15 +27,15 @@ public class WebViewContainer extends FrameLayout {
     }
 
     public void setCurrentView(View view) {
-        removeAllViews();
-        addView(view);
+        removeViewAt(0);
+        addView(view, 0);
     }
 
     public View setCurrentView(int viewId) {
-        removeAllViews();
+        removeViewAt(0);
         LayoutInflater factory = LayoutInflater.from(getContext());
         View mView = factory.inflate(viewId, this, false);
-        addView(mView);
+        addView(mView, 0);
         return mView;
     }
 

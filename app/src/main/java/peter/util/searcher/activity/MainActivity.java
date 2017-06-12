@@ -66,8 +66,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     View topText;
     @BindView(R.id.progress)
     ProgressBar progressBar;
-    @BindView(R.id.top)
-    View top;
 
     private TabManager tabManager;
     private HashMap<String, Class> router = new HashMap<>();
@@ -292,26 +290,24 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     public void showTopbar() {
         if (isTopbarHide() && Constants.AUTO_FULLSCREEN) {
-            ObjectAnimator.ofFloat(top, "translationY", -Constants.getActionBarH(this), 0).setDuration(300).start();
-            ObjectAnimator.ofFloat(progressBar, "translationY", -Constants.getActionBarH(this), 0).setDuration(300).start();
+            ObjectAnimator.ofFloat(toolbar, "translationY", -Constants.getActionBarH(this), 0).setDuration(300).start();
             ObjectAnimator.ofFloat(webViewContainer, "translationY", -Constants.getActionBarH(this), 0).setDuration(300).start();
         }
     }
 
     public void hideTopbar() {
         if (isTopbarShow() && Constants.AUTO_FULLSCREEN) {
-            ObjectAnimator.ofFloat(top, "translationY", 0, -Constants.getActionBarH(this)).setDuration(300).start();
-            ObjectAnimator.ofFloat(progressBar, "translationY", 0, -Constants.getActionBarH(this)).setDuration(300).start();
+            ObjectAnimator.ofFloat(toolbar, "translationY", 0, -Constants.getActionBarH(this)).setDuration(300).start();
             ObjectAnimator.ofFloat(webViewContainer, "translationY", 0, -Constants.getActionBarH(this)).setDuration(300).start();
         }
     }
 
     private boolean isTopbarHide() {
-        return top.getTranslationY() == -Constants.getActionBarH(this);
+        return toolbar.getTranslationY() == -Constants.getActionBarH(this);
     }
 
     private boolean isTopbarShow() {
-        return top.getTranslationY() == 0;
+        return toolbar.getTranslationY() == 0;
     }
 
 
