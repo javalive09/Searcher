@@ -1,8 +1,5 @@
 package peter.util.searcher.net;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.ObjectAnimator;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaPlayer;
@@ -17,7 +14,7 @@ import android.widget.FrameLayout;
 import android.widget.VideoView;
 
 import peter.util.searcher.activity.MainActivity;
-import peter.util.searcher.activity.TabManager;
+import peter.util.searcher.bean.Bean;
 import peter.util.searcher.tab.SearcherTab;
 import peter.util.searcher.tab.Tab;
 import peter.util.searcher.tab.TabGroup;
@@ -79,7 +76,7 @@ public class MyWebChromeClient extends WebChromeClient {
     public boolean onCreateWindow(WebView view, boolean isDialog, boolean isUserGesture, Message resultMsg) {
         if (resultMsg != null) {
             TabGroup parentTabGroup = mActivity.getTabManager().getCurrentTabGroup();
-            mActivity.getTabManager().loadUrl(Tab.NEW_WINDOW, true);
+            mActivity.getTabManager().loadUrl(new Bean("",Tab.NEW_WINDOW), true);
             mActivity.getTabManager().getCurrentTabGroup().setParent(parentTabGroup);
             SearcherTab tab = mActivity.getTabManager().getCurrentTabGroup().getCurrentTab();
             View tabView = tab.getView();

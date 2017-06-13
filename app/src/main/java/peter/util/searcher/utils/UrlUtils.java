@@ -35,7 +35,7 @@ public class UrlUtils {
                     "|(?:.*:.*@)" +
                     ')' +
                     "(.*)");
-    // Google search
+    // Google toolbar_ic_search
     public final static String QUERY_PLACE_HOLDER = "%s";
     // Regular expression to strip http:// and optionally
     // the trailing slash
@@ -67,13 +67,13 @@ public class UrlUtils {
     }
 
     /**
-     * Attempts to determine whether user input is a URL or search
-     * terms.  Anything with a space is passed to search if canBeSearch is true.
+     * Attempts to determine whether user input is a URL or toolbar_ic_search
+     * terms.  Anything with a space is passed to toolbar_ic_search if canBeSearch is true.
      * <p/>
      * Converts to lowercase any mistakenly uppercased schema (i.e.,
      * "Http://" converts to "http://"
      *
-     * @param canBeSearch If true, will return a search url if it isn't a valid
+     * @param canBeSearch If true, will return a toolbar_ic_search url if it isn't a valid
      *                    URL. If false, invalid URLs will return null
      * @return Original or modified URL
      */

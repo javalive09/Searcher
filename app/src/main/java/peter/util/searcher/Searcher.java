@@ -1,28 +1,26 @@
 package peter.util.searcher;
 
 import android.app.Application;
-import android.content.Context;
+import android.content.SharedPreferences;
 
-import peter.util.searcher.net.RequestManager;
-import com.iflytek.cloud.SpeechConstant;
-import com.iflytek.cloud.SpeechUtility;
+//import com.facebook.stetho.Stetho;
+
+import peter.util.searcher.net.CommonRetrofit;
+import peter.util.searcher.utils.Constants;
+
 /**
  * Created by peter on 16/5/19.
  */
 public class Searcher extends Application {
 
-    private static Context mContext;
-
     @Override
     public void onCreate() {
         super.onCreate();
-        mContext = this;
-        RequestManager.init(this);
-        SpeechUtility.createUtility(this, SpeechConstant.APPID + "=5775fcb4");
+        CommonRetrofit.getInstance().init(this);
+        Setting.getInstance().init(this);
+//        Stetho.initializeWithDefaults(this);
     }
 
-    public static Context context() {
-        return mContext;
-    }
+
 
 }

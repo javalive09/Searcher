@@ -6,12 +6,9 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.MailTo;
 import android.net.http.SslError;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
-import android.text.TextUtils;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.webkit.HttpAuthHandler;
@@ -26,16 +23,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import peter.util.searcher.R;
-import peter.util.searcher.db.SqliteHelper;
 import peter.util.searcher.activity.MainActivity;
-import peter.util.searcher.bean.Bean;
 import peter.util.searcher.utils.IntentUtils;
 import peter.util.searcher.utils.Utils;
 
 /**
- *
  * Created by peter on 16/6/6.
- *
  */
 public class MyWebClient extends WebViewClient {
     private MainActivity mainActivity;
@@ -51,29 +44,29 @@ public class MyWebClient extends WebViewClient {
         if (view.isShown()) {
             view.postInvalidate();
         }
-        mainActivity.refreshBottomBar();
+        mainActivity.refreshTitle();
         mainActivity.refreshProgress(100);
         saveUrlData(view.getTitle(), url);
     }
 
     @Override
     public void onPageStarted(WebView view, String url, Bitmap favicon) {
-        mainActivity.refreshGoForward(true);
         Log.i("peter", "url=" + url);
+        mainActivity.showTopbar();
     }
 
     private void saveUrlData(final String title, final String url) {
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... params) {
-                Bean search = new Bean();
-                search.name = TextUtils.isEmpty(title) ? url : title;
-                search.time = System.currentTimeMillis();
-                search.url = url;
-                SqliteHelper.instance(mainActivity).insertHistoryURL(search);
-                return null;
-            }
-        }.execute();
+//        new AsyncTask<Void, Void, Void>() {
+//            @Override
+//            protected Void doInBackground(Void... params) {
+//                Bean search = new Bean();
+//                search.name = TextUtils.isEmpty(title) ? url : title;
+//                search.time = System.currentTimeMillis();
+//                search.url = url;
+//                SqliteHelper.instance(mainActivity).insertHistoryURL(search);
+//                return null;
+//            }
+//        }.execute();
     }
 
     @Override
@@ -199,9 +192,7 @@ public class MyWebClient extends WebViewClient {
             if (intent != null) {
                 intent.addCategory(Intent.CATEGORY_BROWSABLE);
                 intent.setComponent(null);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
-                    intent.setSelector(null);
-                }
+                intent.setSelector(null);
                 try {
                     mainActivity.startActivity(intent);
                 } catch (ActivityNotFoundException e) {

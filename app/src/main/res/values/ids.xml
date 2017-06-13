@@ -1,24 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <item name="hot_list_id" type="id"/>
-    <item name="hot_list_top" type="id"/>
-    <item name="news_163" type="id"/>
-    <item name="nav" type="id"/>
-    <item name="video_huya" type="id"/>
-    <item name="hot_list_history_today" type="id"/>
-    <item name="hot_list_id_week_weather" type="id"/>
-    <item name="hot_list_favorite" type="id"/>
-    <item name="hot_list_history" type="id"/>
-    <item name="hot_list_url_history" type="id"/>
-    <item name="hot_list_setting" type="id"/>
     <item name="recent_search" type="id"/>
-    <item name="multi_window" type="id"/>
 
-    <item name="hot_list_share_app" type="id"/>
-    <item name="hot_list_clear_cache" type="id"/>
-    <item name="hot_list_feedback" type="id"/>
-    <item name="hot_list_update" type="id"/>
-    <item name="hot_list_about" type="id"/>
     <item name="grid_view_item" type="id"/>
     <item name="multi_window_item_tag" type="id"/>
     <item name="menu_window_item_tag" type="id"/>

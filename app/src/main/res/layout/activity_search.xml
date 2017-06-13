@@ -1,16 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fitsSystemWindows="true">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/top"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/colorPrimary">
+
+            <FrameLayout
+                android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-    <include
-        android:id="@+id/top_bar"
-        layout="@layout/top_bar"/>
+                <EditText
+                    android:id="@+id/top_txt"
+                    style="@style/toolbar_edittext_style"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:focusable="true"
+                    android:paddingEnd="@dimen/search_padding_right"/>
+
+                <ImageView
+                    android:id="@+id/clearall"
+                    style="@style/Widget.AppCompat.ActionButton.Overflow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right|center_vertical"
+                    android:layout_marginRight="7dp"
+                    android:padding="7dp"
+                    android:src="@drawable/ic_clear"
+                    android:visibility="gone"/>
+            </FrameLayout>
+
+        </android.support.v7.widget.Toolbar>
+    </android.support.design.widget.AppBarLayout>
 
     <FrameLayout
         android:id="@+id/content_frame"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/top_bar"/>
+        android:layout_below="@+id/top"/>
 
 </RelativeLayout>

@@ -2,23 +2,23 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/engine_item"
     android:layout_width="match_parent"
-    android:layout_gravity="center"
-    android:paddingTop="10dp"
     android:layout_height="100dp"
-    android:background="@drawable/list_item_selector">
+    android:layout_gravity="center"
+    android:background="@drawable/list_selector_item"
+    android:paddingTop="10dp">
 
-    <com.android.volley.toolbox.NetworkImageView
+    <ImageView
         android:id="@+id/icon"
         android:layout_width="70dp"
         android:layout_height="70dp"
-        android:layout_centerHorizontal="true"/>
+        android:layout_centerHorizontal="true" />
 
     <TextView
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/icon"
-        android:textSize="12sp"
-        android:layout_centerHorizontal="true"/>
+        android:layout_centerHorizontal="true"
+        android:textSize="12sp" />
 
 </RelativeLayout>

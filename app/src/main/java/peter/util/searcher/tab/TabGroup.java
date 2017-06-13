@@ -6,6 +6,7 @@ import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 
 import peter.util.searcher.activity.MainActivity;
+import peter.util.searcher.bean.Bean;
 
 /**
  * Created by peter on 2016/11/20.
@@ -53,6 +54,34 @@ public class TabGroup extends SearcherTab {
         return null;
     }
 
+    @Override
+    public int getPageNo() {
+        return 0;
+    }
+
+    public void loadUrl(Bean bean) {
+        SearcherTab currentTab = getCurrentTab();
+        if (currentTab == null) {//head tab
+            currentTab = newTabByUrl(bean.url);
+            tabArrayList.add(currentTab);
+            mCurrentTabIndex = tabArrayList.size() - 1;
+        } else {//body tab
+            if (bean.url.startsWith(LOCAL_SCHEMA) || //local url
+                    currentTab instanceof LocalViewTab) {//current local tab
+                if (currentTab.getUrl().equals(bean.url)) {//same local url
+                    return;
+                }
+                currentTab = newTabByUrl(bean.url);
+                int index = mCurrentTabIndex + 1;
+                tabArrayList.add(index, currentTab);
+                removeTabFromIndeoToEnd(index + 1);
+                mCurrentTabIndex = tabArrayList.size() - 1;
+            }
+        }
+        currentTab.loadUrl(bean);
+        mainActivity.refreshTitle();
+    }
+
     public void loadUrl(String url, String searchWord) {
         SearcherTab currentTab = getCurrentTab();
         if (currentTab == null) {//head tab
@@ -62,7 +91,7 @@ public class TabGroup extends SearcherTab {
         } else {//body tab
             if (url.startsWith(LOCAL_SCHEMA) || //local url
                     currentTab instanceof LocalViewTab) {//current local tab
-                if(currentTab.getUrl().equals(url)) {//same local url
+                if (currentTab.getUrl().equals(url)) {//same local url
                     return;
                 }
                 currentTab = newTabByUrl(url);
@@ -72,22 +101,22 @@ public class TabGroup extends SearcherTab {
                 mCurrentTabIndex = tabArrayList.size() - 1;
             }
         }
-        currentTab.loadUrl(url, searchWord);
-        mainActivity.refreshBottomBar();
+        currentTab.loadUrl(new Bean(searchWord, url));
+        mainActivity.refreshTitle();
     }
 
     @Override
-    public void onDestory() {
-        super.onDestory();
-        for(SearcherTab tab: tabArrayList) {
-            tab.onDestory();
+    public void onDestroy() {
+        super.onDestroy();
+        for (SearcherTab tab : tabArrayList) {
+            tab.onDestroy();
         }
     }
 
     private void removeTabFromIndeoToEnd(int index) {
         for (int i = index, size = tabArrayList.size(); i < size; i++) {
             SearcherTab tab = tabArrayList.remove(index);
-            tab.onDestory();
+            tab.onDestroy();
         }
     }
 
@@ -104,13 +133,13 @@ public class TabGroup extends SearcherTab {
     }
 
     public void onResume() {
-        for(SearcherTab tab: tabArrayList) {
+        for (SearcherTab tab : tabArrayList) {
             tab.onResume();
         }
     }
 
     public void onPause() {
-        for(SearcherTab tab: tabArrayList) {
+        for (SearcherTab tab : tabArrayList) {
             tab.onPause();
         }
     }
@@ -130,7 +159,7 @@ public class TabGroup extends SearcherTab {
     public void setCurrentTab(int index) {
         mCurrentTabIndex = index;
         Tab tab = tabArrayList.get(index);
-        tab.loadUrl(tab.getUrl(), tab.getSearchWord());
+        tab.loadUrl(new Bean(tab.getSearchWord(), tab.getUrl()));
     }
 
     public SearcherTab getCurrentTab() {
@@ -171,7 +200,7 @@ public class TabGroup extends SearcherTab {
                 setCurrentTab(mCurrentTabIndex - 1);
             }
         }
-        mainActivity.refreshBottomBar();
+        mainActivity.refreshTitle();
     }
 
     public ArrayList<SearcherTab> getTabArrayList() {
@@ -184,7 +213,8 @@ public class TabGroup extends SearcherTab {
             boolean webTabCanGoForward = currentTab.canGoForward();
             if (webTabCanGoForward) {
                 return true;
-            } else if (mCurrentTabIndex < tabArrayList.size() - 1) {
+            }
+            if (mCurrentTabIndex < tabArrayList.size() - 1) {
                 return true;
             } else {
                 return false;
@@ -206,7 +236,7 @@ public class TabGroup extends SearcherTab {
         } else {
             setCurrentTab(mCurrentTabIndex + 1);
         }
-        mainActivity.refreshBottomBar();
+        mainActivity.refreshTitle();
     }
 
 }

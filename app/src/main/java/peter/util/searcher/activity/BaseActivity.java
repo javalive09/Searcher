@@ -2,7 +2,6 @@ package peter.util.searcher.activity;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -16,20 +15,20 @@ import android.text.format.DateUtils;
 import android.util.Log;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
-
 import peter.util.searcher.R;
+import peter.util.searcher.bean.Bean;
 
 /**
- *
  * Created by peter on 16/5/9.
  */
-public class BaseActivity extends AppCompatActivity{
+public class BaseActivity extends AppCompatActivity {
 
     public static final String ACTION_INNER_BROWSE = "peter.util.searcher.inner";
-    public static final String NAME_URL = "peter.util.searcher.url";
+    public static final String NAME_BEAN = "peter.util.searcher.bean";
     public static final String NAME_WORD = "peter.util.searcher.word";
     private static final ArrayList<Activity> LIST = new ArrayList<>();
 
@@ -46,7 +45,7 @@ public class BaseActivity extends AppCompatActivity{
     }
 
     public void exit() {
-        for(Activity act: LIST) {
+        for (Activity act : LIST) {
             act.finish();
         }
     }
@@ -55,14 +54,14 @@ public class BaseActivity extends AppCompatActivity{
         return "";
     }
 
-    public void setSearchWord(String word) {}
+    public void setSearchWord(String word) {
+    }
 
-    public void startBrowser(String url, String word) {
+    public void startBrowser(Bean bean) {
         Intent intent = new Intent(BaseActivity.this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
         intent.setAction(ACTION_INNER_BROWSE);
-        intent.putExtra(NAME_URL, url);
-        intent.putExtra(NAME_WORD, word);
+        intent.putExtra(NAME_BEAN, bean);
         startActivity(intent);
     }
 
@@ -109,7 +108,7 @@ public class BaseActivity extends AppCompatActivity{
     }
 
     public void sendMailByIntent() {
-        Intent data=new Intent(Intent.ACTION_SENDTO);
+        Intent data = new Intent(Intent.ACTION_SENDTO);
         data.setData(Uri.parse(getString(R.string.setting_feedback_address)));
         data.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.setting_feedback));
         data.putExtra(Intent.EXTRA_TEXT, getString(R.string.setting_feedback_body));
@@ -125,6 +124,9 @@ public class BaseActivity extends AppCompatActivity{
         return dialog;
     }
 
+    public AlertDialog showAlertDialog(int titleRes, int contentRes) {
+        return showAlertDialog(getString(titleRes), getString(contentRes));
+    }
 
     public String getVersionName() {
         PackageManager packageManager = getPackageManager();
@@ -136,7 +138,7 @@ public class BaseActivity extends AppCompatActivity{
         }
 
         String version = "";
-        if(packInfo != null) {
+        if (packInfo != null) {
             version = packInfo.versionName;
         }
 
@@ -144,6 +146,16 @@ public class BaseActivity extends AppCompatActivity{
             return "";
         } else {
             return "version " + version;
+        }
+    }
+
+    public int getVersionCode() {//获取版本号(内部识别号)
+        try {
+            PackageInfo pi = getPackageManager().getPackageInfo(getPackageName(), 0);
+            return pi.versionCode;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+            return 0;
         }
     }
 

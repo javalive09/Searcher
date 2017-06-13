@@ -1,27 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="title_bg">@color/colorPrimary_</color>
-    <!--<color name="colorPrimary">#0d3c6e</color>-->
-    <!--<color name="colorPrimary">#028ce6</color>-->
+    <color name="colorPrimary">#ffffff</color>
+    <color name="colorAccent">#d23f41</color>
     <color name="colorPrimary_">#2b2c30</color>
-    <color name="color_top_gray">#c0c0c1</color>
-    <color name="status_bar">#242528</color>
-    <color name="drawer_layout_bg">#393a3f</color>
-    <color name="edit_text_color">#b4ddf8</color>
-    <color name="lighter_gray">#ddd</color>
-    <color name="edit_text_no_focus">@android:color/darker_gray</color>
+    <color name="tint_color">#5a5a5a</color>
 
-    <color name="item_normal">#ffffff</color>
-    <color name="item_press">#88999999</color>
-    <color name="menu_press">#cc999999</color>
+    <color name="item_press">#88777777</color>
 
     <color name="transparent">#00000000</color>
-    <color name="half_transparent">#80000000</color>
-    <color name="back_press">#cccccc</color>
-    <color name="line_color">#626262</color>
-    <color name="multi_text_color_gray">#c0c0c0</color>
     <color name="chrome_txt_color">#5a5a5a</color>
-    <color name="chrome_top_color">#f2f2f2</color>
-    <color name="progress_color">#468dc8</color>
+    <!--<color name="progress_color">#468dc8</color>-->
+    <color name="progress_color">@color/colorAccent</color>
+    <color name="hint_color">@color/disable_color</color>
+
+    <color name="disable_color">#a7a7a7</color>
+    <color name="tab_color">#ffffff</color>
+    <color name="tab_txt_color">#5a5a5a</color>
+    <color name="tab_line">#5a5a5a</color>
 
 </resources>
