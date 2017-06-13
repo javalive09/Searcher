@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 /**
+ * load 操作的基本数据
  * Created by peter on 16/4/8.
  */
 public class Bean implements Parcelable {
@@ -12,7 +13,8 @@ public class Bean implements Parcelable {
     public String url;
     public int pageNo;
 
-    public Bean(){}
+    public Bean() {
+    }
 
     public Bean(String name) {
         this.name = name;

@@ -24,6 +24,7 @@ import peter.util.searcher.R;
 import peter.util.searcher.net.DownloadHandler;
 
 /**
+ * 下载记录fragment
  * Created by peter on 16/5/9.
  */
 public class HistoryDownloadFragment extends Fragment implements View.OnClickListener, View.OnLongClickListener {
@@ -36,11 +37,6 @@ public class HistoryDownloadFragment extends Fragment implements View.OnClickLis
     ListView download;
     @BindView((R.id.loading))
     ProgressBar loading;
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

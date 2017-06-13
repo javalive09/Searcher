@@ -22,6 +22,7 @@ import peter.util.searcher.fragment.HistoryDownloadFragment;
 import peter.util.searcher.fragment.HistorySearchFragment;
 
 /**
+ * 书签activity
  * Created by peter on 16/5/9.
  */
 public class BookMarkActivity extends BaseActivity {
@@ -65,8 +66,8 @@ public class BookMarkActivity extends BaseActivity {
     /**
      * hide menu
      *
-     * @param menu
-     * @return
+     * @param menu menu
+     * @return result
      */
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
@@ -120,11 +121,6 @@ public class BookMarkActivity extends BaseActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
     }
 
 }

@@ -25,6 +25,7 @@ import peter.util.searcher.bean.Bean;
 import peter.util.searcher.db.SqliteHelper;
 
 /**
+ * 收藏夹fragment
  * Created by peter on 16/5/9.
  */
 public class FavoriteFragment extends Fragment implements View.OnClickListener, View.OnLongClickListener {
@@ -41,11 +42,6 @@ public class FavoriteFragment extends Fragment implements View.OnClickListener, 
     String[] urls;
     @BindArray(R.array.favorite_urls_names)
     String[] names;
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

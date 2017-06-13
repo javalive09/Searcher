@@ -7,9 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.database.Cursor;
 import android.net.Uri;
-import android.os.Environment;
 import android.webkit.URLUtil;
 import android.widget.Toast;
 
@@ -26,6 +24,7 @@ import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 /**
+ * 版本更新控制类
  * Created by peter on 16/5/4.
  */
 public class UpdateController {

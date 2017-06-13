@@ -9,6 +9,7 @@ import peter.util.searcher.activity.MainActivity;
 import peter.util.searcher.bean.Bean;
 
 /**
+ * 标签组
  * Created by peter on 2016/11/20.
  */
 
@@ -179,12 +180,7 @@ public class TabGroup extends SearcherTab {
         if (currentTab instanceof LocalViewTab) {
             return mCurrentTabIndex > 0;
         } else {
-            boolean webTabCanGoBack = currentTab.canGoBack();
-            if (webTabCanGoBack) {
-                return true;
-            } else {
-                return mCurrentTabIndex > 0;
-            }
+            return currentTab.canGoBack() || mCurrentTabIndex > 0;
         }
     }
 

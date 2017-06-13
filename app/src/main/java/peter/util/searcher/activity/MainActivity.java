@@ -16,7 +16,6 @@ import android.os.Looper;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -53,6 +52,7 @@ import peter.util.searcher.utils.UrlUtils;
 import peter.util.searcher.view.WebViewContainer;
 
 /**
+ * 主页activity
  * Created by peter on 16/5/9.
  */
 public class MainActivity extends BaseActivity implements View.OnClickListener {
@@ -449,10 +449,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         sp.edit().putString("tabs", tabManager.getSaveState()).apply();
     }
 
-    public void exit() {
-        super.exit();
-    }
-
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -477,14 +473,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
     }
 
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-    }
-
     /**
      * @param enabled   status bar
-     * @param immersive
+     * @param immersive total fullscreen
      */
     public void setFullscreen(boolean enabled, boolean immersive) {
         Window window = getWindow();

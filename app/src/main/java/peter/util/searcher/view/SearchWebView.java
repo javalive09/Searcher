@@ -9,6 +9,7 @@ import peter.util.searcher.activity.MainActivity;
 import peter.util.searcher.utils.Constants;
 
 /**
+ * 自定义的webView
  * Created by peter on 2017/6/8.
  */
 
@@ -47,10 +48,10 @@ public class SearchWebView extends WebView {
                 break;
             case MotionEvent.ACTION_UP:
                 int deltaY = y - startY;
-                if(deltaY > SLOP) { //show
-                    ((MainActivity)getContext()).showTopbar();
-                }else if(deltaY < -SLOP){//hide
-                    ((MainActivity)getContext()).hideTopbar();
+                if (deltaY > SLOP) { //show
+                    ((MainActivity) getContext()).showTopbar();
+                } else if (deltaY < -SLOP) {//hide
+                    ((MainActivity) getContext()).hideTopbar();
                 }
                 break;
         }

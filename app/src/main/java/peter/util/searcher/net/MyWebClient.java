@@ -28,6 +28,7 @@ import peter.util.searcher.utils.IntentUtils;
 import peter.util.searcher.utils.Utils;
 
 /**
+ * webView 配置的WebViewClient
  * Created by peter on 16/6/6.
  */
 public class MyWebClient extends WebViewClient {
@@ -156,7 +157,7 @@ public class MyWebClient extends WebViewClient {
 
     @Override
     public boolean shouldOverrideUrlLoading(@NonNull WebView view, @NonNull String url) {
-        if (url.startsWith("about:") && Utils.doesSupportHeaders()) {
+        if (url.startsWith("about:")) {
             view.loadUrl(url);
             return true;
         }

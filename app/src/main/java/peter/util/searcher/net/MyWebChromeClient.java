@@ -22,6 +22,7 @@ import peter.util.searcher.tab.TabGroup;
 import peter.util.searcher.tab.WebViewTab;
 
 /**
+ * webView的配置chromeClient
  * Created by peter on 16/6/6.
  */
 public class MyWebChromeClient extends WebChromeClient {

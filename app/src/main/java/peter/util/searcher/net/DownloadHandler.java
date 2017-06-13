@@ -40,11 +40,6 @@ public class DownloadHandler {
     private static final String TAG = DownloadHandler.class.getSimpleName();
     private static final String COOKIE_REQUEST_HEADER = "Cookie";
 
-    public static final String DEFAULT_DOWNLOAD_PATH =
-            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-                    .getPath();
-
-
     /**
      * Notify the host application a download should be done, or that the data
      * should be streamed if a streaming viewer is available.
@@ -279,39 +274,6 @@ public class DownloadHandler {
 
     private static final String sFileName = "test";
     private static final String sFileExtension = ".txt";
-
-    /**
-     * Determine whether there is write access in the given directory. Returns false if a
-     * file cannot be created in the directory or if the directory does not exist.
-     *
-     * @param directory the directory to check for write access
-     * @return returns true if the directory can be written to or is in a directory that can
-     * be written to. false if there is no write access.
-     */
-    public static boolean isWriteAccessAvailable(@Nullable String directory) {
-        if (directory == null || directory.isEmpty()) {
-            return false;
-        }
-        String dir = addNecessarySlashes(directory);
-        dir = getFirstRealParentDirectory(dir);
-        File file = new File(dir + sFileName + sFileExtension);
-        for (int n = 0; n < 100; n++) {
-            if (!file.exists()) {
-                try {
-                    if (file.createNewFile()) {
-                        //noinspection ResultOfMethodCallIgnored
-                        file.delete();
-                    }
-                    return true;
-                } catch (IOException ignored) {
-                    return false;
-                }
-            } else {
-                file = new File(dir + sFileName + '-' + n + sFileExtension);
-            }
-        }
-        return file.canWrite();
-    }
 
     /**
      * Returns the first parent directory of a directory that exists. This is useful

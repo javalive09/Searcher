@@ -1,7 +1,6 @@
 package peter.util.searcher.tab;
 
 import android.text.TextUtils;
-import android.view.LayoutInflater;
 import android.view.View;
 
 import peter.util.searcher.activity.MainActivity;

@@ -7,11 +7,7 @@ public class Setting {
 
     private Context context;
     private static final String NAME = "setting";
-
     private boolean autoFullScreen;
-
-    public boolean DESK_TOP_UA;
-
 
     private Setting() {
     }
@@ -25,15 +21,14 @@ public class Setting {
     }
 
 
-    public void init(Context context) {
+    void init(Context context) {
         this.context = context;
         autoFullScreen = getAutoFullScreenSP();
     }
 
-    public boolean getAutoFullScreenSP() {
+    private boolean getAutoFullScreenSP() {
         SharedPreferences sp = context.getSharedPreferences(NAME, Context.MODE_PRIVATE);
-        boolean show = sp.getBoolean("fullscreen_auto", false);
-        return show;
+        return sp.getBoolean("fullscreen_auto", false);
     }
 
     public boolean isAutoFullScreen() {
@@ -45,7 +40,5 @@ public class Setting {
         SharedPreferences sp = context.getSharedPreferences(NAME, Context.MODE_PRIVATE);
         sp.edit().putBoolean("fullscreen_auto", autoFullScreen).apply();
     }
-
-
 
 }

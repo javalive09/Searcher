@@ -15,6 +15,7 @@ import peter.util.searcher.tab.SearcherTab;
 import peter.util.searcher.tab.TabGroup;
 
 /**
+ * 标签管理类
  * Created by peter on 2016/11/17.
  */
 

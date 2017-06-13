@@ -15,6 +15,7 @@ import peter.util.searcher.utils.UrlUtils;
 
 
 /**
+ * url操作fragment
  * Created by peter on 2016/11/24.
  */
 
@@ -35,11 +36,6 @@ public class OperateUrlFragment extends Fragment implements View.OnClickListener
         enter.setEnabled(true);
         enter.setOnClickListener(OperateUrlFragment.this);
         return rootView;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
     }
 
     @Override

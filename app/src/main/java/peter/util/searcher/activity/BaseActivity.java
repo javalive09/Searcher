@@ -19,10 +19,12 @@ import android.webkit.CookieSyncManager;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
+
 import peter.util.searcher.R;
 import peter.util.searcher.bean.Bean;
 
 /**
+ * 基础activity 提供一些公用方法
  * Created by peter on 16/5/9.
  */
 public class BaseActivity extends AppCompatActivity {
@@ -124,8 +126,8 @@ public class BaseActivity extends AppCompatActivity {
         return dialog;
     }
 
-    public AlertDialog showAlertDialog(int titleRes, int contentRes) {
-        return showAlertDialog(getString(titleRes), getString(contentRes));
+    public void showAlertDialog(int titleRes, int contentRes) {
+        showAlertDialog(getString(titleRes), getString(contentRes));
     }
 
     public String getVersionName() {

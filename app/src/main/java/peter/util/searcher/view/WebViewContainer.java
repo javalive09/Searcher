@@ -9,6 +9,7 @@ import android.widget.FrameLayout;
 import peter.util.searcher.utils.Constants;
 
 /**
+ * webView 容器类
  * Created by peter on 2017/1/6.
  */
 

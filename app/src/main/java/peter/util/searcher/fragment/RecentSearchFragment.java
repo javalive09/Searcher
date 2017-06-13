@@ -27,6 +27,7 @@ import peter.util.searcher.db.SqliteHelper;
 import peter.util.searcher.bean.Bean;
 
 /**
+ * 最近搜索fragment
  * Created by peter on 16/5/9.
  */
 public class RecentSearchFragment extends Fragment implements View.OnClickListener, View.OnLongClickListener {
@@ -42,11 +43,6 @@ public class RecentSearchFragment extends Fragment implements View.OnClickListen
     View loading;
     @BindView(R.id.recent_search)
     ListView recentSearch;
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

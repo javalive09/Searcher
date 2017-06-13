@@ -23,6 +23,7 @@ import peter.util.searcher.bean.Bean;
 import peter.util.searcher.db.SqliteHelper;
 
 /**
+ * 搜索记录fragment
  * Created by peter on 16/5/9.
  */
 public class HistorySearchFragment extends Fragment implements View.OnClickListener, View.OnLongClickListener {
@@ -36,11 +37,6 @@ public class HistorySearchFragment extends Fragment implements View.OnClickListe
     TextView noRecord;
     @BindView(R.id.history_search)
     ListView history;
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

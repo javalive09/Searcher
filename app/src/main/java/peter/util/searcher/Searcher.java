@@ -1,14 +1,12 @@
 package peter.util.searcher;
 
 import android.app.Application;
-import android.content.SharedPreferences;
 
 //import com.facebook.stetho.Stetho;
-
 import peter.util.searcher.net.CommonRetrofit;
-import peter.util.searcher.utils.Constants;
 
 /**
+ * application 入口
  * Created by peter on 16/5/19.
  */
 public class Searcher extends Application {
@@ -20,7 +18,6 @@ public class Searcher extends Application {
         Setting.getInstance().init(this);
 //        Stetho.initializeWithDefaults(this);
     }
-
 
 
 }

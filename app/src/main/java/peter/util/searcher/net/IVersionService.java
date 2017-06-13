@@ -7,6 +7,7 @@ import retrofit2.http.Url;
 import rx.Observable;
 
 /**
+ * 获取版本信息接口
  * Created by peter on 2017/5/27.
  */
 

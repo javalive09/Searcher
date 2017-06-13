@@ -37,6 +37,7 @@ import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 /**
+ * 引擎列表fragment
  * Created by peter on 16/5/9.
  */
 public class EngineInfoViewPagerFragment extends Fragment implements View.OnClickListener {
@@ -47,11 +48,6 @@ public class EngineInfoViewPagerFragment extends Fragment implements View.OnClic
     ViewPager mViewPager;
     @BindView(R.id.loading)
     View loading;
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
 
     private int getPageNo() {
         Bean bean = getArguments().getParcelable(BaseActivity.NAME_BEAN);

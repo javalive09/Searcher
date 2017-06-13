@@ -30,6 +30,7 @@ import peter.util.searcher.tab.Tab;
 import peter.util.searcher.utils.UrlUtils;
 
 /**
+ * 搜索页activity
  * Created by peter on 16/5/19.
  */
 public class SearchActivity extends BaseActivity implements View.OnClickListener {
@@ -171,12 +172,16 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
         if (!currentFragmentTag.equals(tag)) {
             currentFragmentTag = tag;
             Fragment fragment = null;
-            if (tag.equals(RECENT_SEARCH)) {
-                fragment = new RecentSearchFragment();
-            } else if (tag.equals(ENGINE_LIST)) {
-                fragment = new EngineInfoViewPagerFragment();
-            } else if (tag.equals(OPERATE_URL)) {
-                fragment = new OperateUrlFragment();
+            switch (tag) {
+                case RECENT_SEARCH:
+                    fragment = new RecentSearchFragment();
+                    break;
+                case ENGINE_LIST:
+                    fragment = new EngineInfoViewPagerFragment();
+                    break;
+                case OPERATE_URL:
+                    fragment = new OperateUrlFragment();
+                    break;
             }
 
             if (fragment != null) {
@@ -189,11 +194,6 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
                 ft.commitAllowingStateLoss();
             }
         }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
     }
 
     @OnClick(R.id.clearall)

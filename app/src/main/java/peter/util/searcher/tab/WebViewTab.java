@@ -23,6 +23,7 @@ import peter.util.searcher.net.MyWebClient;
 import peter.util.searcher.utils.Constants;
 
 /**
+ * webView类型的标签
  * Created by peter on 2016/11/17.
  */
 
