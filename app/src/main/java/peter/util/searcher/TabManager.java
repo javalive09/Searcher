@@ -66,7 +66,7 @@ public class TabManager {
 
     public void removeTabGroup(TabGroup tabGroup) {
         if (tabGroupArrayList.size() > 0) {
-            tabGroup.onDestory();
+            tabGroup.onDestroy();
             tabGroupArrayList.remove(tabGroup);
             if (tabGroupArrayList.size() > 0) {
                 int indexNext = tabGroupArrayList.size() - 1;

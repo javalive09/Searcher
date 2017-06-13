@@ -42,19 +42,25 @@
             android:title="@string/action_auto_fullscreen" />
 
         <item
-            android:id="@+id/action_browser"
+            android:id="@+id/action_desktop"
             android:orderInCategory="7"
+            android:checkable="true"
+            android:title="@string/action_desktop" />
+
+        <item
+            android:id="@+id/action_browser"
+            android:orderInCategory="8"
             android:title="@string/action_browser" />
     </group>
 
     <item
         android:id="@+id/action_setting"
-        android:orderInCategory="8"
+        android:orderInCategory="9"
         android:title="@string/fast_enter_setting" />
 
     <item
         android:id="@+id/action_exit"
-        android:orderInCategory="9"
+        android:orderInCategory="10"
         android:title="@string/action_exit" />
 
 </menu>

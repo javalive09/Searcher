@@ -49,7 +49,7 @@ public abstract class SearcherTab implements Tab {
 
     }
 
-    public void onDestory() {
+    public void onDestroy() {
 
     }
 

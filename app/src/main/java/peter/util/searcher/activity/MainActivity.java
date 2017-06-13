@@ -36,6 +36,7 @@ import java.util.HashMap;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import peter.util.searcher.Setting;
 import peter.util.searcher.TabManager;
 import peter.util.searcher.adapter.MultiWindowAdapter;
 import peter.util.searcher.bean.Bean;
@@ -43,8 +44,10 @@ import peter.util.searcher.R;
 import peter.util.searcher.db.SqliteHelper;
 import peter.util.searcher.net.UpdateController;
 import peter.util.searcher.tab.HomeTab;
+import peter.util.searcher.tab.SearcherTab;
 import peter.util.searcher.tab.Tab;
 import peter.util.searcher.tab.TabGroup;
+import peter.util.searcher.tab.WebViewTab;
 import peter.util.searcher.utils.Constants;
 import peter.util.searcher.utils.UrlUtils;
 import peter.util.searcher.view.WebViewContainer;
@@ -152,20 +155,23 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        String url = tabManager.getCurrentTabGroup().getCurrentTab().getUrl();
-        if (url.startsWith(Tab.LOCAL_SCHEMA)) {
+        TabGroup currentGroup = tabManager.getCurrentTabGroup();
+        SearcherTab currentTab = currentGroup.getCurrentTab();
+        String currentUrl = currentTab.getUrl();
+        if (currentUrl.startsWith(Tab.LOCAL_SCHEMA)) {
             menu.setGroupVisible(R.id.web_sites, false);
         } else {
             menu.setGroupVisible(R.id.web_sites, true);
+            menu.findItem(R.id.action_auto_fullscreen).setChecked(Setting.getInstance().isAutoFullScreen());
+            WebViewTab webViewTab = (WebViewTab) currentTab;
+            menu.findItem(R.id.action_desktop).setChecked(webViewTab.isDeskTopUA());
         }
 
-        if (tabManager.getCurrentTabGroup().canGoForward()) {
+        if (currentGroup.canGoForward()) {
             menu.findItem(R.id.action_goforward).setVisible(true);
         } else {
             menu.findItem(R.id.action_goforward).setVisible(false);
         }
-
-        menu.findItem(R.id.action_auto_fullscreen).setChecked(Constants.AUTO_FULLSCREEN);
 
         return super.onPrepareOptionsMenu(menu);
     }
@@ -235,22 +241,24 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 tabManager.getCurrentTabGroup().getCurrentTab().reload();
                 break;
             case R.id.action_auto_fullscreen:
-                if(item.isChecked()) {//auto
-                    saveAutoFullScreen(false);
-                }else {
-                    saveAutoFullScreen(true);
+                if (item.isChecked()) {//auto
+                    Setting.getInstance().saveAutoFullScreenSp(false);
+                } else {
+                    Setting.getInstance().saveAutoFullScreenSp(true);
                 }
+                tabManager.getCurrentTabGroup().getCurrentTab().getView().requestLayout();
+                break;
+            case R.id.action_desktop:
+                WebViewTab tab = (WebViewTab) tabManager.getCurrentTabGroup().getCurrentTab();
+                if (tab.isDeskTopUA()) {
+                    tab.setUA(tab.getDefaultUA());
+                } else {
+                    tab.setUA(Constants.DESKTOP_USER_AGENT);
+                }
+                tab.reload();
                 break;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    private void saveAutoFullScreen(boolean show) {
-        Constants.AUTO_FULLSCREEN = show;
-        SharedPreferences sp = getSharedPreferences("fullscreen", MODE_PRIVATE);
-        sp.edit().putBoolean("auto", show).apply();
-        tabManager.getCurrentTabGroup().getCurrentTab().getView().requestLayout();
-
     }
 
     private void touchSearch() {
@@ -289,14 +297,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     public void showTopbar() {
-        if (isTopbarHide() && Constants.AUTO_FULLSCREEN) {
+        if (isTopbarHide() && Setting.getInstance().isAutoFullScreen()) {
             ObjectAnimator.ofFloat(toolbar, "translationY", -Constants.getActionBarH(this), 0).setDuration(300).start();
             ObjectAnimator.ofFloat(webViewContainer, "translationY", -Constants.getActionBarH(this), 0).setDuration(300).start();
         }
     }
 
     public void hideTopbar() {
-        if (isTopbarShow() && Constants.AUTO_FULLSCREEN) {
+        if (isTopbarShow() && Setting.getInstance().isAutoFullScreen()) {
             ObjectAnimator.ofFloat(toolbar, "translationY", 0, -Constants.getActionBarH(this)).setDuration(300).start();
             ObjectAnimator.ofFloat(webViewContainer, "translationY", 0, -Constants.getActionBarH(this)).setDuration(300).start();
         }
@@ -354,11 +362,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     public void loadHome(boolean newTab) {
         tabManager.loadUrl(new Bean("", Tab.URL_HOME), newTab);
-//        loadUrl(Tab.URL_HOME, newTab);
-//        loadUrl("http://m.2345.com/websitesNavigation.htm", newTab);
-//        loadUrl(getString(R.string.fast_enter_navigation_url), newTab);
-//        loadUrl("http://top.baidu.com/m#buzz/1", newTab);
-//        tabManager.loadUrl("https://github.com/trending", newTab);
     }
 
     @Override

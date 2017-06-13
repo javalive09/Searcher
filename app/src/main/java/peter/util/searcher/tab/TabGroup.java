@@ -106,17 +106,17 @@ public class TabGroup extends SearcherTab {
     }
 
     @Override
-    public void onDestory() {
-        super.onDestory();
+    public void onDestroy() {
+        super.onDestroy();
         for (SearcherTab tab : tabArrayList) {
-            tab.onDestory();
+            tab.onDestroy();
         }
     }
 
     private void removeTabFromIndeoToEnd(int index) {
         for (int i = index, size = tabArrayList.size(); i < size; i++) {
             SearcherTab tab = tabArrayList.remove(index);
-            tab.onDestory();
+            tab.onDestroy();
         }
     }
 

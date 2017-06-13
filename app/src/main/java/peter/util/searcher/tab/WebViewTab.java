@@ -1,6 +1,5 @@
 package peter.util.searcher.tab;
 
-import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -21,6 +20,7 @@ import peter.util.searcher.db.SqliteHelper;
 import peter.util.searcher.net.MyDownloadListener;
 import peter.util.searcher.net.MyWebChromeClient;
 import peter.util.searcher.net.MyWebClient;
+import peter.util.searcher.utils.Constants;
 
 /**
  * Created by peter on 2016/11/17.
@@ -28,9 +28,9 @@ import peter.util.searcher.net.MyWebClient;
 
 public class WebViewTab extends SearcherTab {
 
-    private static final int API = Build.VERSION.SDK_INT;
     private WebView mWebView;
     private Bean bean;
+    private String currentUA;
 
     public WebViewTab(MainActivity activity) {
         super(activity);
@@ -47,12 +47,11 @@ public class WebViewTab extends SearcherTab {
     }
 
     @Override
-    public void onDestory() {
+    public void onDestroy() {
         if (mWebView != null) {
             mWebView.clearHistory();
             mWebView.clearCache(true);
             mWebView.loadUrl("about:blank");
-            mWebView.freeMemory();
             mWebView.pauseTimers();
             mWebView = null;
         }
@@ -70,6 +69,19 @@ public class WebViewTab extends SearcherTab {
             mWebView.pauseTimers();
             mWebView.onPause();
         }
+    }
+
+    public void setUA(String ua) {
+        currentUA = ua;
+        mWebView.getSettings().setUserAgentString(ua);
+    }
+
+    public String getDefaultUA() {
+        return WebSettings.getDefaultUserAgent(mWebView.getContext());
+    }
+
+    public boolean isDeskTopUA() {
+        return Constants.DESKTOP_USER_AGENT.equals(currentUA);
     }
 
     @Override
@@ -170,22 +182,14 @@ public class WebViewTab extends SearcherTab {
         mWebView.setWebChromeClient(new MyWebChromeClient(WebViewTab.this, mainActivity));
         mWebView.setWebViewClient(new MyWebClient(mainActivity));
         mWebView.setDownloadListener(new MyDownloadListener(mainActivity));
-        String def = WebSettings.getDefaultUserAgent(mWebView.getContext());
-        WebSettings settings = mWebView.getSettings();
-        settings.setUserAgentString(def);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            CookieManager.getInstance().setAcceptThirdPartyCookies(mWebView, true);
-        }
+        setUA(getDefaultUA());
+        CookieManager.getInstance().setAcceptThirdPartyCookies(mWebView, true);
     }
 
-    @SuppressLint("NewApi")
     private void initializeSettings() {
         final WebSettings settings = mWebView.getSettings();
         settings.setMediaPlaybackRequiresUserGesture(true);
-        if (API >= Build.VERSION_CODES.LOLLIPOP) {
-            // We're in Incognito mode, reject
-            settings.setMixedContentMode(WebSettings.MIXED_CONTENT_NEVER_ALLOW);
-        }
+        settings.setMixedContentMode(WebSettings.MIXED_CONTENT_NEVER_ALLOW);
         settings.setJavaScriptEnabled(true);
         settings.setJavaScriptCanOpenWindowsAutomatically(true);
         settings.setLoadWithOverviewMode(true);

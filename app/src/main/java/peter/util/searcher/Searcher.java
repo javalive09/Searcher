@@ -17,14 +17,10 @@ public class Searcher extends Application {
     public void onCreate() {
         super.onCreate();
         CommonRetrofit.getInstance().init(this);
-        Constants.AUTO_FULLSCREEN = getAutoFullScreen();
+        Setting.getInstance().init(this);
 //        Stetho.initializeWithDefaults(this);
     }
 
-    private boolean getAutoFullScreen() {
-        SharedPreferences sp = getSharedPreferences("fullscreen", MODE_PRIVATE);
-        boolean show = sp.getBoolean("auto", false);
-        return show;
-    }
+
 
 }

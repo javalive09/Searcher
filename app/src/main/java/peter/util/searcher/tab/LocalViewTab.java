@@ -25,7 +25,7 @@ public abstract class LocalViewTab extends SearcherTab{
 
     public abstract void onCreate();
 
-    public abstract void onDestory();
+    public abstract void onDestroy();
 
     public abstract String getTitle();
 

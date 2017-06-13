@@ -28,7 +28,7 @@ public class HomeTab extends LocalViewTab {
     }
 
     @Override
-    public void onDestory() {
+    public void onDestroy() {
 
     }
 
