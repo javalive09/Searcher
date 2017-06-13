@@ -31,6 +31,7 @@ public class WebViewTab extends SearcherTab {
     private WebView mWebView;
     private Bean bean;
     private String currentUA;
+    private MyWebChromeClient myWebChromeClient;
 
     public WebViewTab(MainActivity activity) {
         super(activity);
@@ -133,11 +134,15 @@ public class WebViewTab extends SearcherTab {
     }
 
     public boolean canGoBack() {
-        return mWebView.canGoBack();
+        return mWebView.canGoBack() || myWebChromeClient.isCustomViewShow();
     }
 
     public void goBack() {
-        mWebView.goBack();
+        if (myWebChromeClient.isCustomViewShow()) {
+            myWebChromeClient.hideCustomView();
+        } else {
+            mWebView.goBack();
+        }
     }
 
     public boolean canGoForward() {
@@ -179,7 +184,7 @@ public class WebViewTab extends SearcherTab {
         mWebView.setScrollbarFadingEnabled(true);
         mWebView.setSaveEnabled(true);
         mWebView.setNetworkAvailable(true);
-        mWebView.setWebChromeClient(new MyWebChromeClient(WebViewTab.this, mainActivity));
+        mWebView.setWebChromeClient(myWebChromeClient = new MyWebChromeClient(WebViewTab.this, mainActivity));
         mWebView.setWebViewClient(new MyWebClient(mainActivity));
         mWebView.setDownloadListener(new MyDownloadListener(mainActivity));
         setUA(getDefaultUA());

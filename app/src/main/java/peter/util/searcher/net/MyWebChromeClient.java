@@ -1,5 +1,6 @@
 package peter.util.searcher.net;
 
+import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaPlayer;
@@ -21,9 +22,7 @@ import peter.util.searcher.tab.TabGroup;
 import peter.util.searcher.tab.WebViewTab;
 
 /**
- *
  * Created by peter on 16/6/6.
- *
  */
 public class MyWebChromeClient extends WebChromeClient {
 
@@ -48,6 +47,10 @@ public class MyWebChromeClient extends WebChromeClient {
         Log.i("peter", "onHideCustomView");
     }
 
+    public boolean isCustomViewShow() {
+        return mCustomView != null;
+    }
+
     public void onProgressChanged(WebView view, int newProgress) {
         mActivity.refreshProgress(newProgress);
     }
@@ -60,7 +63,8 @@ public class MyWebChromeClient extends WebChromeClient {
 
     @Override
     public void onShowCustomView(View view, CustomViewCallback callback) {
-        int requestedOrientation = mOriginalOrientation = mActivity.getRequestedOrientation();
+        mOriginalOrientation = mActivity.getRequestedOrientation();
+        int requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
         showCustomView(view, callback, requestedOrientation);
         Log.i("peter", "onShowCustomView 2");
     }
@@ -68,6 +72,7 @@ public class MyWebChromeClient extends WebChromeClient {
     @Override
     public void onShowCustomView(View view, int requestedOrientation,
                                  CustomViewCallback callback) {
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
         showCustomView(view, callback, requestedOrientation);
         Log.i("peter", "onShowCustomView 3");
     }
@@ -76,7 +81,7 @@ public class MyWebChromeClient extends WebChromeClient {
     public boolean onCreateWindow(WebView view, boolean isDialog, boolean isUserGesture, Message resultMsg) {
         if (resultMsg != null) {
             TabGroup parentTabGroup = mActivity.getTabManager().getCurrentTabGroup();
-            mActivity.getTabManager().loadUrl(new Bean("",Tab.NEW_WINDOW), true);
+            mActivity.getTabManager().loadUrl(new Bean("", Tab.NEW_WINDOW), true);
             mActivity.getTabManager().getCurrentTabGroup().setParent(parentTabGroup);
             SearcherTab tab = mActivity.getTabManager().getCurrentTabGroup().getCurrentTab();
             View tabView = tab.getView();
@@ -188,7 +193,6 @@ public class MyWebChromeClient extends WebChromeClient {
         mFullscreenContainer.addView(mCustomView, params);
         decorView.requestLayout();
         mActivity.setFullscreen(true, true);
-
     }
 
     private class VideoCompletionListener implements MediaPlayer.OnCompletionListener,

@@ -251,7 +251,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             case R.id.action_desktop:
                 WebViewTab tab = (WebViewTab) tabManager.getCurrentTabGroup().getCurrentTab();
                 if (tab.isDeskTopUA()) {
-                    tab.setUA(tab.getDefaultUA());
+                    tab.setUA(Constants.MOBILE_USER_AGENT);
                 } else {
                     tab.setUA(Constants.DESKTOP_USER_AGENT);
                 }
@@ -480,16 +480,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        switch (newConfig.orientation) {
-            case Configuration.ORIENTATION_LANDSCAPE:
-                Log.i("peter", "onConfigurationChanged ORIENTATION_LANDSCAPE");
-                setFullscreen(true, true);
-                break;
-            case Configuration.ORIENTATION_PORTRAIT:
-                Log.i("peter", "onConfigurationChanged ORIENTATION_PORTRAIT");
-                setFullscreen(false, false);
-                break;
-        }
     }
 
     /**

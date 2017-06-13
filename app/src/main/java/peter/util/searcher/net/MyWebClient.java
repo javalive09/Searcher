@@ -46,27 +46,12 @@ public class MyWebClient extends WebViewClient {
         }
         mainActivity.refreshTitle();
         mainActivity.refreshProgress(100);
-        saveUrlData(view.getTitle(), url);
     }
 
     @Override
     public void onPageStarted(WebView view, String url, Bitmap favicon) {
         Log.i("peter", "url=" + url);
         mainActivity.showTopbar();
-    }
-
-    private void saveUrlData(final String title, final String url) {
-//        new AsyncTask<Void, Void, Void>() {
-//            @Override
-//            protected Void doInBackground(Void... params) {
-//                Bean search = new Bean();
-//                search.name = TextUtils.isEmpty(title) ? url : title;
-//                search.time = System.currentTimeMillis();
-//                search.url = url;
-//                SqliteHelper.instance(mainActivity).insertHistoryURL(search);
-//                return null;
-//            }
-//        }.execute();
     }
 
     @Override
