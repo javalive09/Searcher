@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.MailTo;
 import android.net.http.SslError;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
@@ -13,6 +14,7 @@ import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.webkit.HttpAuthHandler;
 import android.webkit.SslErrorHandler;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.EditText;
@@ -21,9 +23,12 @@ import android.widget.LinearLayout;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import peter.util.searcher.R;
 import peter.util.searcher.activity.MainActivity;
+import peter.util.searcher.tab.WebViewTab;
+import peter.util.searcher.utils.Constants;
 import peter.util.searcher.utils.IntentUtils;
 import peter.util.searcher.utils.Utils;
 
@@ -156,19 +161,48 @@ public class MyWebClient extends WebViewClient {
     }
 
     @Override
+    public boolean shouldOverrideUrlLoading(@NonNull WebView view, @NonNull WebResourceRequest request) {
+        return shouldOverrideLoading(view, request.getUrl().toString()) || super.shouldOverrideUrlLoading(view, request);
+    }
+
+    @SuppressWarnings("deprecation")
+    @Override
     public boolean shouldOverrideUrlLoading(@NonNull WebView view, @NonNull String url) {
-        if (url.startsWith("about:")) {
-            view.loadUrl(url);
+        return shouldOverrideLoading(view, url) || super.shouldOverrideUrlLoading(view, url);
+    }
+
+    public boolean shouldOverrideLoading(@NonNull WebView view, @NonNull String url) {
+        WebViewTab webViewTab = (WebViewTab) mainActivity.getTabManager().getCurrentTabGroup().getCurrentTab();
+        Map<String, String> headers = webViewTab.getRequestHeaders();
+        if (url.startsWith(Constants.ABOUT)) {
+            return continueLoadingUrl(view, url, headers);
+        }
+        if (isMailOrIntent(url, view) || mIntentUtils.startActivityForUrl(view, url)) {
             return true;
         }
-        if (url.startsWith("mailto:")) {
+        return continueLoadingUrl(view, url, headers);
+    }
+
+    private boolean continueLoadingUrl(@NonNull WebView webView,
+                                       @NonNull String url,
+                                       @NonNull Map<String, String> headers) {
+        if (headers.isEmpty()) {
+            return false;
+        } else {
+            webView.loadUrl(url, headers);
+            return true;
+        }
+    }
+
+    private boolean isMailOrIntent(@NonNull String url, @NonNull WebView view) {
+        if (url.startsWith(Constants.MAIL_SCHAME)) {
             MailTo mailTo = MailTo.parse(url);
             Intent i = Utils.newEmailIntent(mailTo.getTo(), mailTo.getSubject(),
                     mailTo.getBody(), mailTo.getCc());
             mainActivity.startActivity(i);
             view.reload();
             return true;
-        } else if (url.startsWith("intent://")) {
+        } else if (url.startsWith(Constants.INTENT_SCHAME)) {
             Intent intent;
             try {
                 intent = Intent.parseUri(url, Intent.URI_INTENT_SCHEME);
@@ -182,12 +216,12 @@ public class MyWebClient extends WebViewClient {
                 try {
                     mainActivity.startActivity(intent);
                 } catch (ActivityNotFoundException e) {
-                    e.printStackTrace();
+                    Log.e("MyWebClient", "ActivityNotFoundException");
                 }
                 return true;
             }
         }
-        return mIntentUtils.startActivityForUrl(view, url);
+        return false;
     }
 
 }

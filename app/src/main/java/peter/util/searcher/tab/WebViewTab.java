@@ -3,6 +3,7 @@ package peter.util.searcher.tab;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.support.v4.util.ArrayMap;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -12,8 +13,10 @@ import android.webkit.WebView;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Map;
 
 import peter.util.searcher.R;
+import peter.util.searcher.SettingsManager;
 import peter.util.searcher.activity.MainActivity;
 import peter.util.searcher.bean.Bean;
 import peter.util.searcher.db.SqliteHelper;
@@ -33,6 +36,8 @@ public class WebViewTab extends SearcherTab {
     private Bean bean;
     private String currentUA;
     private MyWebChromeClient myWebChromeClient;
+    private static final String HEADER_DNT = "DNT";
+    private final Map<String, String> mRequestHeaders = new ArrayMap<>();
 
     public WebViewTab(MainActivity activity) {
         super(activity);
@@ -73,6 +78,10 @@ public class WebViewTab extends SearcherTab {
         }
     }
 
+    public Map<String, String> getRequestHeaders() {
+        return mRequestHeaders;
+    }
+
     public void setUA(String ua) {
         currentUA = ua;
         mWebView.getSettings().setUserAgentString(ua);
@@ -105,7 +114,7 @@ public class WebViewTab extends SearcherTab {
                 mWebView = (WebView) mainActivity.setCurrentView(resId);
                 onCreate();
                 if (!Tab.NEW_WINDOW.equals(bean.url)) {
-                    mWebView.loadUrl(bean.url);
+                    mWebView.loadUrl(bean.url, mRequestHeaders);
                 }
 
             } else {
@@ -190,6 +199,12 @@ public class WebViewTab extends SearcherTab {
         mWebView.setDownloadListener(new MyDownloadListener(mainActivity));
         setUA(getDefaultUA());
         CookieManager.getInstance().setAcceptThirdPartyCookies(mWebView, true);
+        if(SettingsManager.getInstance().isNoTrack()) {
+            mRequestHeaders.put(HEADER_DNT, "1");
+        }else {
+            mRequestHeaders.remove(HEADER_DNT);
+        }
+
     }
 
     private void initializeSettings() {

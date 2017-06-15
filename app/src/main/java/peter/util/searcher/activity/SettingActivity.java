@@ -53,7 +53,7 @@ public class SettingActivity extends BaseActivity {
                             break;
                         case 1://clear
                             clearCacheFolder(getCacheDir(), 0);
-                            ClearCookies(SettingActivity.this);
+                            ClearCookies();
                             Toast.makeText(SettingActivity.this, R.string.setting_clear, Toast.LENGTH_LONG).show();
                             break;
                         case 2://feedback

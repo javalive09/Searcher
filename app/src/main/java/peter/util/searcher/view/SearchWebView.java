@@ -1,9 +1,12 @@
 package peter.util.searcher.view;
 
 import android.content.Context;
+import android.support.v4.util.ArrayMap;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.webkit.WebView;
+
+import java.util.Map;
 
 import peter.util.searcher.activity.MainActivity;
 import peter.util.searcher.utils.Constants;

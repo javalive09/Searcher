@@ -91,6 +91,14 @@
         <item>一键开启</item>
     </string-array>
 
+    <string name="no_track">无痕模式</string>
+    <string name="app_share">分享APP</string>
+    <string name="clear_cache">清理缓存</string>
+    <string name="feed_back">反馈意见</string>
+    <string name="manual_update">版本更新</string>
+    <string name="app_about">关于速搜</string>
+    <string name="one_key">一键开启</string>
+
     <string-array name="favorite_urls_names">
         <item>历史上的今天</item>
         <item>Github趋势</item>

@@ -94,12 +94,12 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     @SuppressWarnings("deprecation")
-    public void ClearCookies(Context context) {
+    public void ClearCookies() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
             CookieManager.getInstance().removeAllCookies(null);
             CookieManager.getInstance().flush();
         } else {
-            CookieSyncManager cookieSyncMngr = CookieSyncManager.createInstance(context);
+            CookieSyncManager cookieSyncMngr = CookieSyncManager.createInstance(BaseActivity.this);
             cookieSyncMngr.startSync();
             CookieManager cookieManager = CookieManager.getInstance();
             cookieManager.removeAllCookie();

@@ -7,7 +7,6 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -35,7 +34,7 @@ import java.util.HashMap;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import peter.util.searcher.Setting;
+import peter.util.searcher.SettingsManager;
 import peter.util.searcher.TabManager;
 import peter.util.searcher.adapter.MultiWindowAdapter;
 import peter.util.searcher.bean.Bean;
@@ -162,7 +161,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             menu.setGroupVisible(R.id.web_sites, false);
         } else {
             menu.setGroupVisible(R.id.web_sites, true);
-            menu.findItem(R.id.action_auto_fullscreen).setChecked(Setting.getInstance().isAutoFullScreen());
+            menu.findItem(R.id.action_auto_fullscreen).setChecked(SettingsManager.getInstance().isAutoFullScreen());
             WebViewTab webViewTab = (WebViewTab) currentTab;
             menu.findItem(R.id.action_desktop).setChecked(webViewTab.isDeskTopUA());
         }
@@ -226,7 +225,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 startActivity(browserIntent);
                 break;
             case R.id.action_setting:
-                startActivity(new Intent(MainActivity.this, SettingActivity.class));
+                startActivity(new Intent(MainActivity.this, SettingsActivity.class));
                 break;
             case R.id.action_exit:
                 exit();
@@ -242,9 +241,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 break;
             case R.id.action_auto_fullscreen:
                 if (item.isChecked()) {//auto
-                    Setting.getInstance().saveAutoFullScreenSp(false);
+                    SettingsManager.getInstance().saveAutoFullScreenSp(false);
                 } else {
-                    Setting.getInstance().saveAutoFullScreenSp(true);
+                    SettingsManager.getInstance().saveAutoFullScreenSp(true);
                 }
                 tabManager.getCurrentTabGroup().getCurrentTab().getView().requestLayout();
                 break;
@@ -297,14 +296,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     public void showTopbar() {
-        if (isTopbarHide() && Setting.getInstance().isAutoFullScreen()) {
+        if (isTopbarHide() && SettingsManager.getInstance().isAutoFullScreen()) {
             ObjectAnimator.ofFloat(toolbar, "translationY", -Constants.getActionBarH(this), 0).setDuration(300).start();
             ObjectAnimator.ofFloat(webViewContainer, "translationY", -Constants.getActionBarH(this), 0).setDuration(300).start();
         }
     }
 
     public void hideTopbar() {
-        if (isTopbarShow() && Setting.getInstance().isAutoFullScreen()) {
+        if (isTopbarShow() && SettingsManager.getInstance().isAutoFullScreen()) {
             ObjectAnimator.ofFloat(toolbar, "translationY", 0, -Constants.getActionBarH(this)).setDuration(300).start();
             ObjectAnimator.ofFloat(webViewContainer, "translationY", 0, -Constants.getActionBarH(this)).setDuration(300).start();
         }

@@ -15,7 +15,7 @@ public class Searcher extends Application {
     public void onCreate() {
         super.onCreate();
         CommonRetrofit.getInstance().init(this);
-        Setting.getInstance().init(this);
+        SettingsManager.getInstance().init(this);
 //        Stetho.initializeWithDefaults(this);
     }
 

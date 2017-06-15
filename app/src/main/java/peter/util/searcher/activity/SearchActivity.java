@@ -1,11 +1,11 @@
 package peter.util.searcher.activity;
 
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -188,7 +188,7 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
                 Bundle bundle = new Bundle();
                 bundle.putParcelable(NAME_BEAN, bean);
                 fragment.setArguments(bundle);
-                FragmentManager fragmentManager = getSupportFragmentManager();
+                FragmentManager fragmentManager = getFragmentManager();
                 FragmentTransaction ft = fragmentManager.beginTransaction();
                 ft.replace(R.id.content_frame, fragment, tag);
                 ft.commitAllowingStateLoss();

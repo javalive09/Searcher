@@ -114,7 +114,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.SettingActivity"
+            android:name=".activity.SettingsActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".activity.BookMarkActivity"
