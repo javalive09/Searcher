@@ -8,7 +8,7 @@
         android:id="@+id/operate_url"
         layout="@layout/operate_url"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="?attr/actionBarSize"/>
 
     <View
         android:id="@+id/line"
@@ -21,6 +21,7 @@
         android:id="@+id/recent_search"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:divider="@null"
         android:layout_below="@+id/line"/>
 
     <ProgressBar

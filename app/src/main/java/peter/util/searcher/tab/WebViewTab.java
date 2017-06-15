@@ -199,9 +199,9 @@ public class WebViewTab extends SearcherTab {
         mWebView.setDownloadListener(new MyDownloadListener(mainActivity));
         setUA(getDefaultUA());
         CookieManager.getInstance().setAcceptThirdPartyCookies(mWebView, true);
-        if(SettingsManager.getInstance().isNoTrack()) {
+        if (SettingsManager.getInstance().isNoTrack()) {
             mRequestHeaders.put(HEADER_DNT, "1");
-        }else {
+        } else {
             mRequestHeaders.remove(HEADER_DNT);
         }
 
@@ -210,25 +210,39 @@ public class WebViewTab extends SearcherTab {
     private void initializeSettings() {
         final WebSettings settings = mWebView.getSettings();
         settings.setMediaPlaybackRequiresUserGesture(true);
-        settings.setMixedContentMode(WebSettings.MIXED_CONTENT_NEVER_ALLOW);
-        settings.setJavaScriptEnabled(true);
-        settings.setJavaScriptCanOpenWindowsAutomatically(true);
-        settings.setLoadWithOverviewMode(true);
-        settings.setSupportMultipleWindows(true);
-        settings.setUseWideViewPort(true);
+        settings.setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
+
         settings.setDomStorageEnabled(true);
+        settings.setAppCacheEnabled(true);
         settings.setCacheMode(WebSettings.LOAD_DEFAULT);
         settings.setDatabaseEnabled(true);
+
+        settings.setJavaScriptEnabled(true);
+        settings.setJavaScriptCanOpenWindowsAutomatically(true);
+
+        settings.setGeolocationEnabled(true);
+
         settings.setSupportZoom(true);
         settings.setBuiltInZoomControls(true);
         settings.setDisplayZoomControls(false);
         settings.setAllowContentAccess(true);
         settings.setAllowFileAccess(true);
+
         settings.setAllowFileAccessFromFileURLs(false);
         settings.setAllowUniversalAccessFromFileURLs(false);
+
         settings.setSavePassword(true);
         settings.setSaveFormData(true);
         settings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.TEXT_AUTOSIZING);
+        settings.setBlockNetworkImage(false);
+        settings.setSupportMultipleWindows(true);
+
+        settings.setUseWideViewPort(true);
+        settings.setLoadWithOverviewMode(true);
+
+        //需要加上否则播放不了一些视频如今日头条的视频
+        CookieManager.getInstance().setAcceptThirdPartyCookies(mWebView, true);
+
     }
 
     @Override

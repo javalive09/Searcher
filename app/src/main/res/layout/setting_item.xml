@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="@dimen/setting_item_h"
-    android:background="@drawable/list_selector_item"
-    android:textSize="@dimen/setting_item_txt_size"
-    android:gravity="center"/>

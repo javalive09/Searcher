@@ -12,9 +12,10 @@
 
     <TextView
         android:id="@+id/no_record"
-        style="@style/normal_content_txt_style"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:gravity="center"
+        android:textColor="@color/disable_color"
         android:text="@string/no_record"
         android:visibility="gone"/>
 

@@ -80,7 +80,7 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
         switch (preference.getTitleRes()) {
             case R.string.no_track:
                 SettingsManager.getInstance().saveNoTrackSp(checked);
-                break;
+                return true;
         }
 
 

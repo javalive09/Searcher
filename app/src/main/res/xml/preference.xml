@@ -3,7 +3,7 @@
     <CheckBoxPreference
         android:defaultValue="false"
         android:icon="@drawable/ic_no_track"
-        android:key="fullscreen"
+        android:key="@string/no_track"
         android:title="@string/no_track" />
     <Preference
         android:icon="@drawable/ic_share"

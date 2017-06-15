@@ -3,8 +3,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/multi_window_item"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/tab_h"
-    android:layout_margin="10dp"
+    android:layout_height="?attr/actionBarSize"
+    android:layout_margin="@dimen/multi_window_icon_margin"
     android:background="@drawable/tabs_selector_item"
     android:orientation="horizontal">
 
@@ -19,12 +19,10 @@
 
     <TextView
         android:id="@+id/title"
-        style="@style/normal_tab_txt_style"
+        style="@style/btn_normal_style"
         android:layout_width="0px"
         android:layout_height="match_parent"
-        android:layout_gravity="center_vertical"
         android:layout_weight="1"
-        android:gravity="center"
         android:singleLine="true" />
 
     <ImageView
@@ -33,8 +31,8 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="center_vertical"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
+        android:paddingLeft="@dimen/multi_window_close_padding"
+        android:paddingRight="@dimen/multi_window_close_padding"
         android:src="@drawable/ic_clear" />
 
 </LinearLayout>

@@ -82,15 +82,6 @@
         <item>下载记录</item>
     </string-array>
 
-    <string-array name="settings_name">
-        <item>分享APP</item>
-        <item>清理缓存</item>
-        <item>反馈意见</item>
-        <item>版本更新</item>
-        <item>关于速搜</item>
-        <item>一键开启</item>
-    </string-array>
-
     <string name="no_track">无痕模式</string>
     <string name="app_share">分享APP</string>
     <string name="clear_cache">清理缓存</string>

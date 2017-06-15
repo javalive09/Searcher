@@ -9,52 +9,20 @@
         <item name="android:popupBackground">@drawable/list_selector_item</item>
     </style>
 
-    <style name="Theme.AppCompat.Light.NoActionBar.FullScreen" parent="@style/Theme.AppCompat.Light">
-        <item name="windowNoTitle">true</item>
-        <item name="windowActionBar">false</item>
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowFullscreen">true</item>
-        <item name="android:windowContentOverlay">@null</item>
-        <item name="android:windowAnimationStyle">@android:style/Animation.Translucent</item>
-        <item name="android:windowBackground">@color/transparent</item>
-        <item name="android:windowNoTitle">true</item>
-        <item name="android:colorForeground">#fff</item>
-    </style>
-
-
-    <style name="Transparent" parent="Theme.AppCompat">
-        <item name="windowNoTitle">true</item>
-        <item name="windowActionBar">true</item>
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowBackground">@color/transparent</item>
-        <item name="android:windowNoTitle">true</item>
-    </style>
-
-    <style name="normal_button_style" parent="@style/Widget.AppCompat.ActionButton.Overflow">
-        <item name="android:textColor">@color/tint_color</item>
-        <item name="android:textStyle">normal</item>
-        <item name="android:textSize">17sp</item>
-        <item name="android:gravity">center</item>
-    </style>
-
-    <style name="normal_content_txt_style" parent="@style/Widget.AppCompat.ActionButton.Overflow">
+    <style name="txt_title_style" parent="@style/Widget.AppCompat.ActionButton.Overflow">
         <item name="android:textColor">@color/chrome_txt_color</item>
         <item name="android:textStyle">normal</item>
-        <item name="android:textSize">17sp</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textSize">18sp</item>
         <item name="android:gravity">center</item>
     </style>
 
-    <style name="title_text_style" parent="@style/Theme.AppCompat">
-        <item name="android:textColor">@color/tint_color</item>
-        <item name="android:textSize">17sp</item>
-        <item name="android:gravity">center</item>
-    </style>
-
-    <style name="normal_tab_txt_style" parent="@style/Theme.AppCompat">
-        <item name="android:textColor">@color/tab_txt_color</item>
+    <style name="btn_normal_style" parent="@style/TextAppearance.AppCompat">
+        <item name="android:textColor">@color/chrome_txt_color</item>
         <item name="android:textStyle">normal</item>
-        <item name="android:textSize">12sp</item>
-        <item name="android:gravity">center_vertical</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:gravity">center_vertical|left</item>
     </style>
 
     <style name="toolbar_edittext_main_style" parent="@style/Widget.AppCompat.EditText">
@@ -72,6 +40,11 @@
     <style name="toolbar_edittext_search_style" parent="@style/toolbar_edittext_main_style">
         <item name="android:drawableLeft">@null</item>
         <item name="android:background">@android:color/transparent</item>
+    </style>
+
+    <style name="MyProgressBar" parent="Base.Widget.AppCompat.ProgressBar">
+        <item name="android:indeterminateTint">@color/progress_color</item>
+        <item name="android:indeterminateTintMode">src_atop</item>
     </style>
 
 
