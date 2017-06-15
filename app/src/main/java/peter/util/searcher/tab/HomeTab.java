@@ -18,7 +18,7 @@ public class HomeTab extends LocalViewTab {
 
     @Override
     public int onCreateViewResId() {
-        return R.layout.tab_home2;
+        return R.layout.tab_home;
     }
 
     @Override
