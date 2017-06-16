@@ -22,19 +22,15 @@ import peter.util.searcher.utils.UrlUtils;
 public class OperateUrlFragment extends Fragment implements View.OnClickListener {
 
     View rootView;
-    CharSequence word;
-    @BindView(R.id.paste)
-    View paste;
     @BindView(R.id.enter)
-    View enter;
+    View pasteEnter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_operate_url, container, false);
         ButterKnife.bind(this, rootView);
-        enter.setEnabled(true);
-        enter.setOnClickListener(OperateUrlFragment.this);
+        pasteEnter.setOnClickListener(OperateUrlFragment.this);
         return rootView;
     }
 
@@ -43,9 +39,6 @@ public class OperateUrlFragment extends Fragment implements View.OnClickListener
         SearchActivity searchActivity = (SearchActivity) getActivity();
         String url = UrlUtils.getGuessUrl(searchActivity.getSearchWord());
         switch (v.getId()) {
-            case R.id.paste:
-                searchActivity.setSearchWord(word.toString());
-                break;
             case R.id.enter:
                 searchActivity.closeIME();
                 searchActivity.finish();

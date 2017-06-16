@@ -74,6 +74,7 @@
     <string name="home">主页</string>
     <string name="paste_txt">粘贴</string>
     <string name="enter_txt">进入</string>
+    <string name="paste_enter_txt">粘贴并进入</string>
     <string name="exit_hint">再次点击退出程序</string>
 
     <string-array name="bookmarks">

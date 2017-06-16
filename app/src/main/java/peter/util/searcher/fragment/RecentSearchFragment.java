@@ -25,6 +25,7 @@ import peter.util.searcher.activity.BaseActivity;
 import peter.util.searcher.activity.SearchActivity;
 import peter.util.searcher.db.SqliteHelper;
 import peter.util.searcher.bean.Bean;
+import peter.util.searcher.utils.UrlUtils;
 
 /**
  * 最近搜索fragment
@@ -35,8 +36,8 @@ public class RecentSearchFragment extends Fragment implements View.OnClickListen
     PopupMenu popup;
     MyAsyncTask asyncTask;
     CharSequence word;
-    @BindView(R.id.enter)
-    View enter;
+    @BindView(R.id.paste_enter)
+    View pasteEnter;
     @BindView(R.id.paste)
     View paste;
     @BindView(R.id.loading)
@@ -59,24 +60,34 @@ public class RecentSearchFragment extends Fragment implements View.OnClickListen
         ClipboardManager cmb = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
         word = cmb.getText();
         if (!TextUtils.isEmpty(word)) {
-            paste.setEnabled(true);
-            paste.setOnClickListener(RecentSearchFragment.this);
+            if (UrlUtils.guessUrl(word.toString())) {
+                pasteEnter.setVisibility(View.VISIBLE);
+                pasteEnter.setOnClickListener(RecentSearchFragment.this);
+            } else {
+                paste.setVisibility(View.VISIBLE);
+                paste.setOnClickListener(RecentSearchFragment.this);
+            }
         }
     }
 
     @Override
     public void onClick(View v) {
         Bean bean = (Bean) v.getTag();
+        SearchActivity searchActivity = (SearchActivity) getActivity();
         switch (v.getId()) {
             case R.id.item:
                 if (bean != null) {
-                    BaseActivity activity = (BaseActivity) getActivity();
-                    activity.setSearchWord(bean.name);
+                    searchActivity.setSearchWord(bean.name);
                 }
                 break;
             case R.id.paste:
-                SearchActivity searchActivity = (SearchActivity) getActivity();
                 searchActivity.setSearchWord(word.toString());
+                break;
+            case R.id.paste_enter:
+                searchActivity.closeIME();
+                searchActivity.finish();
+                searchActivity.overridePendingTransition(0, 0);
+                searchActivity.startBrowser(new Bean("", word.toString()));
                 break;
         }
     }

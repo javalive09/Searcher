@@ -5,17 +5,22 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <include
-        android:id="@+id/operate_url"
-        layout="@layout/operate_url"
+    <TextView
+        android:id="@+id/enter"
+        style="@style/btn_normal_style"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize" />
+        android:layout_height="?attr/actionBarSize"
+        android:background="@drawable/list_selector_item"
+        android:drawableLeft="@drawable/ic_enter"
+        android:drawablePadding="@dimen/item_list_drawable_padding"
+        android:paddingLeft="@dimen/item_list_padding"
+        android:paddingRight="@dimen/item_list_padding"
+        android:text="@string/enter_txt" />
 
     <View
         android:id="@+id/line"
         android:layout_width="match_parent"
         android:layout_height="1px"
         android:background="@color/tint_color" />
-
 
 </LinearLayout>
