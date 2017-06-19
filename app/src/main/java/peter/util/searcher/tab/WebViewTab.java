@@ -46,6 +46,7 @@ public class WebViewTab extends SearcherTab {
     public void onCreate() {
         initmWebView();
         initializeSettings();
+        mainActivity.registerForContextMenu(mWebView);
     }
 
     @Override

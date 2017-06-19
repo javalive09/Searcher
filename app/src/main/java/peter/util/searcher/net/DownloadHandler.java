@@ -264,11 +264,12 @@ public class DownloadHandler {
     }
 
     public static String getMimeType(String url) {
-        String type = null;
         String extension = MimeTypeMap.getFileExtensionFromUrl(url);
-        if (extension != null) {
-            type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+        if (TextUtils.isEmpty(extension)) {
+            extension = url.substring(url.lastIndexOf(".") + 1, url.length());
         }
+
+        String type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
         return type;
     }
 

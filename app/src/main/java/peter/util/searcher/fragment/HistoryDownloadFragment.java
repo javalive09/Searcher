@@ -1,5 +1,6 @@
 package peter.util.searcher.fragment;
 
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -163,11 +164,33 @@ public class HistoryDownloadFragment extends Fragment implements View.OnClickLis
             }
 
             File file = getItem(position);
+            String mimeType = DownloadHandler.getMimeType(file.getAbsolutePath());
+            switch (mimeType) {
+                case "application/vnd.android.package-archive":
+                    setDrawable(view, R.drawable.ic_android);
+                    break;
+                case "image/jpeg":
+                case "image/png":
+                case "image/gif":
+                    setDrawable(view, R.drawable.ic_picture);
+                    break;
+                default:
+                    setDrawable(view, R.drawable.ic_picture);
+                    break;
+
+            }
             view.setText(file.getName());
             view.setOnClickListener(HistoryDownloadFragment.this);
             view.setOnLongClickListener(HistoryDownloadFragment.this);
             view.setTag(file);
             return view;
+        }
+
+        private void setDrawable(TextView view, int res) {
+            Drawable drawable = getResources().getDrawable(res);
+            drawable.setBounds(0, 0, drawable.getMinimumWidth(), drawable.getMinimumHeight());
+            view.setCompoundDrawables(drawable, null, null, null);
+            view.setCompoundDrawablePadding(getResources().getDimensionPixelOffset(R.dimen.item_list_drawable_padding));
         }
 
     }

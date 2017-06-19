@@ -23,6 +23,18 @@
     <string name="one_step_title">设置为辅助程序</string>
     <string name="one_step_txt">设置 > 应用程序 > 默认设置 > 辅助 > 应用程序 > 点选速搜 > 便可以长按Home一键开启</string>
 
+    <string name="action_background">在后台打开</string>
+    <string name="action_copy_pic_link">复制图片链接</string>
+    <string name="action_save_pic">保存图片</string>
+    <string name="action_share_pic">分享图片</string>
+
+
+    <string name="action_new_tab">在新标签打开</string>
+    <string name="action_copy_txt_link">复制链接</string>
+    <string name="action_copy_txt_link_name">复制链接名字</string>
+    <string name="action_copy_txt_link_free">自由复制</string>
+
+
     <string name="action_cancel">取消</string>
     <string name="action_share">分享链接</string>
     <string name="action_refresh">刷新</string>

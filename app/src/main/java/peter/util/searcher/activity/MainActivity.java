@@ -15,6 +15,8 @@ import android.os.Looper;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.ActionMode;
+import android.view.ContextMenu;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -23,13 +25,16 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.webkit.WebView;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.umeng.analytics.MobclickAgent;
 
+import java.lang.reflect.Method;
 import java.util.HashMap;
 
 import butterknife.BindView;
@@ -40,6 +45,8 @@ import peter.util.searcher.adapter.MultiWindowAdapter;
 import peter.util.searcher.bean.Bean;
 import peter.util.searcher.R;
 import peter.util.searcher.db.SqliteHelper;
+import peter.util.searcher.net.DownloadHandler;
+import peter.util.searcher.net.MyDownloadListener;
 import peter.util.searcher.net.UpdateController;
 import peter.util.searcher.tab.HomeTab;
 import peter.util.searcher.tab.SearcherTab;
@@ -48,6 +55,7 @@ import peter.util.searcher.tab.TabGroup;
 import peter.util.searcher.tab.WebViewTab;
 import peter.util.searcher.utils.Constants;
 import peter.util.searcher.utils.UrlUtils;
+import peter.util.searcher.view.SearchWebView;
 import peter.util.searcher.view.WebViewContainer;
 
 /**
@@ -68,6 +76,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     View topText;
     @BindView(R.id.progress)
     ProgressBar progressBar;
+    @BindView(R.id.menu_anchor)
+    View menuAnchor;
 
     private TabManager tabManager;
     private HashMap<String, Class> router = new HashMap<>();
@@ -151,6 +161,107 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
+
+    PopupMenu popup;
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        SearchWebView.ContextMenuInfo info = (SearchWebView.ContextMenuInfo) menuInfo;
+        popupContextMenu(info);
+    }
+
+    private void dismissContextMenu() {
+        if (popup != null) {
+            popup.dismiss();
+        }
+    }
+
+    private void popupContextMenu(SearchWebView.ContextMenuInfo info) {
+        menuAnchor.setX(info.getX());
+        menuAnchor.setY(info.getY());
+        dismissContextMenu();
+        popup = new PopupMenu(MainActivity.this, menuAnchor);
+        popup.getMenuInflater().inflate(R.menu.context, popup.getMenu());
+
+        WebView.HitTestResult hitTestResult = info.getResult();
+        if (hitTestResult.getExtra() != null) {
+            switch (hitTestResult.getType()) {
+                case WebView.HitTestResult.SRC_IMAGE_ANCHOR_TYPE: // 带有链接的图片类型
+                case WebView.HitTestResult.IMAGE_TYPE:
+                    popup.getMenu().setGroupVisible(R.id.picture, true);
+                    popup.getMenu().getItem(0).getMenuInfo();
+                    break;
+                case WebView.HitTestResult.SRC_ANCHOR_TYPE:
+                    popup.getMenu().setGroupVisible(R.id.txt_link, true);
+                    break;
+            }
+
+            contextMenuListener.setInfo(hitTestResult);
+            contextMenuListener.setSearchWebView(info.getSearchWebView());
+            popup.setOnMenuItemClickListener(contextMenuListener);
+            popup.show();
+        }
+    }
+
+    private SearchWebView.OnMenuItemClickListener contextMenuListener = new SearchWebView.OnMenuItemClickListener() {
+
+        @Override
+        public boolean onMenuItemClick(MenuItem item) {
+            WebView.HitTestResult info = getInfo();
+            switch (item.getItemId()) {
+                case R.id.open_pic_new_tab:
+                    String url = info.getExtra();
+                    Bean bean = new Bean();
+                    bean.url = url;
+                    bean.time = System.currentTimeMillis();
+                    TabGroup parentTabGroup = getTabManager().getCurrentTabGroup();
+                    tabManager.loadUrl(bean, true);
+                    getTabManager().getCurrentTabGroup().setParent(parentTabGroup);
+                    break;
+                case R.id.copy_pic_link:
+                    url = info.getExtra();
+                    String title = info.getExtra();
+                    ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+                    ClipData clip = ClipData.newPlainText(title, url);
+                    clipboard.setPrimaryClip(clip);
+                    Toast.makeText(MainActivity.this, R.string.copy_link_txt, Toast.LENGTH_SHORT).show();
+                    break;
+                case R.id.save_pic:
+                    url = info.getExtra();
+                    String mineTye = DownloadHandler.getMimeType(url);
+                    if(TextUtils.isEmpty(mineTye)) {
+                        mineTye = "image/jpeg";
+                    }
+
+                    new MyDownloadListener(MainActivity.this).onDownloadStart(url, "", "", mineTye, 0);
+                    break;
+                case R.id.shard_pic:
+                    url = info.getExtra();
+                    Intent sendIntent = new Intent();
+                    sendIntent.setAction(Intent.ACTION_SEND);
+                    sendIntent.putExtra(Intent.EXTRA_TEXT, url);
+                    sendIntent.setType("text/plain");
+                    startActivity(Intent.createChooser(sendIntent, getString(R.string.share_link_title)));
+                    break;
+
+                case R.id.open_url_new_tab:
+                    url = info.getExtra();
+                    bean = new Bean();
+                    bean.url = url;
+                    bean.time = System.currentTimeMillis();
+                    parentTabGroup = getTabManager().getCurrentTabGroup();
+                    tabManager.loadUrl(bean, true);
+                    getTabManager().getCurrentTabGroup().setParent(parentTabGroup);
+                    break;
+
+                case R.id.copy_txt_link_free:
+
+                    break;
+            }
+
+            return false;
+        }
+    };
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {

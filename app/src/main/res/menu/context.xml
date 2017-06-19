@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group
+        android:id="@+id/picture"
+        android:visible="false">
+        <item
+            android:id="@+id/open_pic_new_tab"
+            android:orderInCategory="1"
+            android:title="@string/action_new_tab" />
+
+        <item
+            android:id="@+id/copy_pic_link"
+            android:orderInCategory="2"
+            android:title="@string/action_copy_pic_link" />
+
+        <item
+            android:id="@+id/save_pic"
+            android:orderInCategory="3"
+            android:title="@string/action_save_pic" />
+
+        <item
+            android:id="@+id/shard_pic"
+            android:orderInCategory="4"
+            android:title="@string/action_share_pic" />
+    </group>
+
+    <group
+        android:id="@+id/txt_link"
+        android:visible="false">
+
+        <item
+            android:id="@+id/open_url_new_tab"
+            android:orderInCategory="6"
+            android:title="@string/action_new_tab" />
+
+        <item
+            android:id="@+id/copy_txt_link_free"
+            android:orderInCategory="8"
+            android:title="@string/action_copy_txt_link_free" />
+    </group>
+
+</menu>

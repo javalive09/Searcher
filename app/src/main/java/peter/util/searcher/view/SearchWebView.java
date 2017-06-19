@@ -1,12 +1,12 @@
 package peter.util.searcher.view;
 
 import android.content.Context;
-import android.support.v4.util.ArrayMap;
 import android.util.AttributeSet;
+import android.view.ContextMenu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.webkit.WebView;
-
-import java.util.Map;
+import android.widget.PopupMenu;
 
 import peter.util.searcher.activity.MainActivity;
 import peter.util.searcher.utils.Constants;
@@ -18,7 +18,7 @@ import peter.util.searcher.utils.Constants;
 
 public class SearchWebView extends WebView {
 
-    private int startY;
+    private int startY, touchX, touchY;
     private static int SLOP;
 
     public SearchWebView(Context context) {
@@ -44,10 +44,13 @@ public class SearchWebView extends WebView {
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
+        int x = (int) ev.getX();
         int y = (int) ev.getY();
         switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 startY = y;
+                touchX = x;
+                touchY = y;
                 break;
             case MotionEvent.ACTION_UP:
                 int deltaY = y - startY;
@@ -61,4 +64,75 @@ public class SearchWebView extends WebView {
 
         return super.dispatchTouchEvent(ev);
     }
+
+    @Override
+    protected ContextMenu.ContextMenuInfo getContextMenuInfo() {
+        ContextMenuInfo info = new ContextMenuInfo(getHitTestResult(), touchX, touchY);
+        info.setSearchWebView(this);
+        return info;
+    }
+
+
+    public static class ContextMenuInfo implements ContextMenu.ContextMenuInfo {
+
+        SearchWebView searchWebView;
+        HitTestResult result;
+        int x,y;
+
+        public ContextMenuInfo(HitTestResult result, int x, int y) {
+            this.result = result;
+            this.x = x;
+            this.y = y;
+        }
+
+        public SearchWebView getSearchWebView() {
+            return searchWebView;
+        }
+
+        public void setSearchWebView(SearchWebView searchWebView) {
+            this.searchWebView = searchWebView;
+        }
+
+        public HitTestResult getResult() {
+            return result;
+        }
+
+        public int getX() {
+            return x;
+        }
+
+        public int getY() {
+            return y;
+        }
+
+    }
+
+    public static class OnMenuItemClickListener implements PopupMenu.OnMenuItemClickListener{
+
+        SearchWebView searchWebView;
+
+        HitTestResult result;
+
+        public void setInfo(HitTestResult result) {
+            this.result = result;
+        }
+
+        public HitTestResult getInfo() {
+            return result;
+        }
+
+        public SearchWebView getSearchWebView() {
+            return searchWebView;
+        }
+
+        public void setSearchWebView(SearchWebView searchWebView) {
+            this.searchWebView = searchWebView;
+        }
+
+        @Override
+        public boolean onMenuItemClick(MenuItem item) {
+            return false;
+        }
+    }
+
 }

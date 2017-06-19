@@ -55,6 +55,12 @@
                 android:max="100"
                 android:progressTint="@color/progress_color"
                 android:visibility="invisible" />
+
+            <View
+                android:id="@+id/menu_anchor"
+                android:layout_width="1px"
+                android:layout_height="1px"
+                android:background="@android:color/transparent" />
         </peter.util.searcher.view.WebViewContainer>
 
     </RelativeLayout>
