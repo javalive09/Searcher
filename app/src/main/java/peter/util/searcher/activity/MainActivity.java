@@ -15,7 +15,6 @@ import android.os.Looper;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.view.ActionMode;
 import android.view.ContextMenu;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -34,7 +33,6 @@ import android.widget.Toast;
 
 import com.umeng.analytics.MobclickAgent;
 
-import java.lang.reflect.Method;
 import java.util.HashMap;
 
 import butterknife.BindView;
@@ -56,6 +54,7 @@ import peter.util.searcher.tab.WebViewTab;
 import peter.util.searcher.utils.Constants;
 import peter.util.searcher.utils.UrlUtils;
 import peter.util.searcher.view.SearchWebView;
+import peter.util.searcher.view.TextDrawable;
 import peter.util.searcher.view.WebViewContainer;
 
 /**
@@ -78,7 +77,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     ProgressBar progressBar;
     @BindView(R.id.menu_anchor)
     View menuAnchor;
-
+    private PopupMenu popup;
+    private TextDrawable multiWindowDrawable;
     private TabManager tabManager;
     private HashMap<String, Class> router = new HashMap<>();
     private MultiWindowAdapter multiWindowAdapter;
@@ -147,6 +147,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             }
         });
         setSupportActionBar(toolbar);
+        multiWindowDrawable = new TextDrawable(MainActivity.this);
+        toolbar.setNavigationIcon(multiWindowDrawable);
+        toolbar.setNavigationContentDescription(R.string.app_name);
         toolbar.setNavigationOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -161,8 +164,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
-
-    PopupMenu popup;
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
@@ -229,7 +230,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 case R.id.save_pic:
                     url = info.getExtra();
                     String mineTye = DownloadHandler.getMimeType(url);
-                    if(TextUtils.isEmpty(mineTye)) {
+                    if (TextUtils.isEmpty(mineTye)) {
                         mineTye = "image/jpeg";
                     }
 
@@ -456,7 +457,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 String searchWord = intent.getStringExtra(SearchManager.QUERY);
                 String engineUrl = getString(R.string.default_engine_url);
                 String url = UrlUtils.smartUrlFilter(searchWord, true, engineUrl);
-                tabManager.loadUrl(new Bean(url, searchWord), true);
+                tabManager.loadUrl(new Bean(searchWord, url), true);
             } else if (Intent.ACTION_MAIN.equals(action)) {
                 if (tabManager.getTabGroupCount() == 0) {
                     loadHome(true);
@@ -526,6 +527,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     public void refreshTitle() {
         String host = tabManager.getCurrentTabGroup().getCurrentTab().getHost();
         refreshTopText(host);
+        multiWindowDrawable.setText(tabManager.getTabGroupCount());
     }
 
     public void refreshTopText(String text) {

@@ -258,7 +258,9 @@ public class WebViewTab extends SearcherTab {
             }
             if (uri != null) {
                 String domain = uri.getHost();
-                return domain.startsWith("www.") ? domain.substring(4) : domain;
+                if(!TextUtils.isEmpty(domain)) {
+                    return domain.startsWith("www.") ? domain.substring(4) : domain;
+                }
             }
         }
         return null;

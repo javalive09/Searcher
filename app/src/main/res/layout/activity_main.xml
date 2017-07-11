@@ -14,16 +14,17 @@
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
+            android:minHeight="?actionBarSize"
+            android:layout_height="wrap_content"
             android:background="@color/colorPrimary"
             android:focusable="true"
             android:focusableInTouchMode="true"
-            app:navigationIcon="@drawable/ic_multi"
             app:popupTheme="@style/ThemeOverlay.AppCompat.ActionBar">
 
             <EditText
                 android:id="@+id/top_txt"
                 style="@style/toolbar_edittext_main_style"
+                android:drawableLeft="@null"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:cursorVisible="false" />
