@@ -15,8 +15,8 @@ android {
         applicationId "peter.util.searcher"
         minSdkVersion 21
         targetSdkVersion 21
-        versionCode 75
-        versionName "1.7.0"
+        versionCode 76
+        versionName "1.7.1"
     }
     buildTypes {
         release {
