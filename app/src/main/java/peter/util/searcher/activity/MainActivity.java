@@ -1,6 +1,7 @@
 package peter.util.searcher.activity;
 
 import android.animation.ObjectAnimator;
+import android.app.DownloadManager;
 import android.app.SearchManager;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -331,10 +332,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 clipboard.setPrimaryClip(clip);
                 Toast.makeText(MainActivity.this, R.string.copy_link_txt, Toast.LENGTH_SHORT).show();
                 break;
-            case R.id.action_browser:
-                url = tabManager.getCurrentTabGroup().getUrl();
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                startActivity(browserIntent);
+            case R.id.action_download:
+                Intent intent = new Intent(DownloadManager.ACTION_VIEW_DOWNLOADS);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
                 break;
             case R.id.action_setting:
                 startActivity(new Intent(MainActivity.this, SettingsActivity.class));

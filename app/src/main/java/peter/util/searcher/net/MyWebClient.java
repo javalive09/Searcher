@@ -14,11 +14,13 @@ import android.util.Log;
 import android.webkit.HttpAuthHandler;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
+import java.io.ByteArrayInputStream;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
@@ -157,6 +159,24 @@ public class MyWebClient extends WebViewClient {
         }
 
         return errorCodeMessageCodes;
+    }
+
+    @Override
+    public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
+        if (AdBlock.isAd(request.getUrl().toString())) {
+            ByteArrayInputStream EMPTY = new ByteArrayInputStream("".getBytes());
+            return new WebResourceResponse("text/plain", "utf-8", EMPTY);
+        }
+        return super.shouldInterceptRequest(view, request);
+    }
+
+    @Override
+    public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
+        if (AdBlock.isAd(url)) {
+            ByteArrayInputStream EMPTY = new ByteArrayInputStream("".getBytes());
+            return new WebResourceResponse("text/plain", "utf-8", EMPTY);
+        }
+        return super.shouldInterceptRequest(view, url);
     }
 
     @Override

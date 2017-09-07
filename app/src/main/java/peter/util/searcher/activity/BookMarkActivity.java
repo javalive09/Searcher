@@ -80,7 +80,7 @@ public class BookMarkActivity extends BaseActivity {
 
             @Override
             public int getCount() {
-                return 3;
+                return 2;
             }
 
             @Override
@@ -90,8 +90,8 @@ public class BookMarkActivity extends BaseActivity {
                         return new FavoriteFragment();
                     case 1:
                         return new HistorySearchFragment();
-                    case 2:
-                        return new HistoryDownloadFragment();
+//                    case 2:
+//                        return new HistoryDownloadFragment();
                 }
                 return null;
             }
