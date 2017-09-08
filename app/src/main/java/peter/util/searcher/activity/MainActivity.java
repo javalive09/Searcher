@@ -43,7 +43,7 @@ import peter.util.searcher.TabManager;
 import peter.util.searcher.adapter.MultiWindowAdapter;
 import peter.util.searcher.bean.Bean;
 import peter.util.searcher.R;
-import peter.util.searcher.db.SqliteHelper;
+import peter.util.searcher.db.DaoManager;
 import peter.util.searcher.net.DownloadHandler;
 import peter.util.searcher.net.MyDownloadListener;
 import peter.util.searcher.net.UpdateController;
@@ -312,7 +312,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     new AsyncTask<Void, Void, Boolean>() {
                         @Override
                         protected Boolean doInBackground(Void... params) {
-                            return SqliteHelper.instance(MainActivity.this).insertFav(bean);
+                            return DaoManager.getInstance().insertFavorite(bean) != 0L;
                         }
 
                         @Override

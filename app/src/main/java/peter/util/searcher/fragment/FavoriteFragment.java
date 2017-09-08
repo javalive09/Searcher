@@ -22,7 +22,7 @@ import butterknife.ButterKnife;
 import peter.util.searcher.R;
 import peter.util.searcher.activity.BaseActivity;
 import peter.util.searcher.bean.Bean;
-import peter.util.searcher.db.SqliteHelper;
+import peter.util.searcher.db.DaoManager;
 
 /**
  * 收藏夹fragment
@@ -66,6 +66,7 @@ public class FavoriteFragment extends Fragment implements View.OnClickListener, 
             @Override
             protected Void doInBackground(Void... params) {
                 SqliteHelper.instance(getActivity()).insertFav(list);
+                DaoManager.getInstance().insertFavorite();
                 return null;
             }
         }.execute();
@@ -129,7 +130,7 @@ public class FavoriteFragment extends Fragment implements View.OnClickListener, 
                 switch (item.getItemId()) {
                     case R.id.action_delete:
                         Bean bean = (Bean) view.getTag();
-                        SqliteHelper.instance(getActivity()).deleteFav(bean);
+                        DaoManager.getInstance().deleteFav(bean);
                         refreshData();
                         break;
                 }
@@ -152,7 +153,7 @@ public class FavoriteFragment extends Fragment implements View.OnClickListener, 
         protected List<Bean> doInBackground(Void... params) {
             List<Bean> searches = null;
             try {
-                searches = SqliteHelper.instance(getActivity()).queryAllFavorite();
+                searches = DaoManager.getInstance().queryAllFavorite();
             } catch (Exception e) {
                 e.printStackTrace();
             }

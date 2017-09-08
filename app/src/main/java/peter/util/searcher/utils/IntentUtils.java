@@ -76,7 +76,7 @@ public class IntentUtils {
     }
 
     /**
-     * Search for intent handlers that are specific to this URL aka, specialized
+     * HistorySearch for intent handlers that are specific to this URL aka, specialized
      * apps like google maps or youtube
      */
     private boolean isSpecializedHandlerAvailable(Intent intent) {
