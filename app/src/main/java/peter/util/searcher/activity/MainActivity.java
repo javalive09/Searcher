@@ -122,18 +122,18 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             }
 
             @Override
-            public void onDrawerOpened(View drawerView) {
-                updateMultiwindow();
-            }
+            public void onDrawerOpened(View drawerView) {}
 
             @Override
             public void onDrawerClosed(View drawerView) {
+                updateMultiwindow();
             }
 
             @Override
             public void onDrawerStateChanged(int newState) {
             }
         });
+        updateMultiwindow();
     }
 
     private void initTopBar() {

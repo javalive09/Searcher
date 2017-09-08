@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@drawable/list_selector_item"
-        android:drawableLeft="@drawable/ic_enter"
+        android:drawableLeft="@drawable/ic_paste_enter"
         android:drawablePadding="@dimen/item_list_drawable_padding"
         android:paddingLeft="@dimen/item_list_padding"
         android:paddingRight="@dimen/item_list_padding"
