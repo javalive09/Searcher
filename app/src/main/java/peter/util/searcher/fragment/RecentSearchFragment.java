@@ -21,10 +21,9 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import peter.util.searcher.R;
-import peter.util.searcher.activity.BaseActivity;
 import peter.util.searcher.activity.SearchActivity;
-import peter.util.searcher.db.SqliteHelper;
 import peter.util.searcher.bean.Bean;
+import peter.util.searcher.db.DaoManager;
 import peter.util.searcher.utils.UrlUtils;
 
 /**
@@ -129,7 +128,7 @@ public class RecentSearchFragment extends Fragment implements View.OnClickListen
             List<Bean> searches = null;
             if (f != null) {
                 try {
-                    searches = SqliteHelper.instance(f.getActivity()).queryRecentData();
+                    searches = DaoManager.getInstance().queryRecentData(9);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -207,7 +206,7 @@ public class RecentSearchFragment extends Fragment implements View.OnClickListen
                 switch (item.getItemId()) {
                     case R.id.action_delete:
                         Bean bean = (Bean) view.getTag();
-                        SqliteHelper.instance(getActivity()).deleteHistory(bean);
+                        DaoManager.getInstance().deleteHistory(bean);
                         refreshData();
                         break;
                 }

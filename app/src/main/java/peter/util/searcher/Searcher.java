@@ -3,6 +3,7 @@ package peter.util.searcher;
 import android.app.Application;
 
 //import com.facebook.stetho.Stetho;
+import peter.util.searcher.db.DaoManager;
 import peter.util.searcher.net.CommonRetrofit;
 
 /**
@@ -16,6 +17,7 @@ public class Searcher extends Application {
         super.onCreate();
         CommonRetrofit.getInstance().init(this);
         SettingsManager.getInstance().init(this);
+        DaoManager.getInstance().init(this);
 //        Stetho.initializeWithDefaults(this);
     }
 

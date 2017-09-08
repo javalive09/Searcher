@@ -20,7 +20,7 @@ import butterknife.ButterKnife;
 import peter.util.searcher.R;
 import peter.util.searcher.activity.BaseActivity;
 import peter.util.searcher.bean.Bean;
-import peter.util.searcher.db.SqliteHelper;
+import peter.util.searcher.db.DaoManager;
 
 /**
  * 搜索记录fragment
@@ -103,7 +103,7 @@ public class HistorySearchFragment extends Fragment implements View.OnClickListe
                 switch (item.getItemId()) {
                     case R.id.action_delete:
                         Bean bean = (Bean) view.getTag();
-                        SqliteHelper.instance(getActivity()).deleteHistory(bean);
+                        DaoManager.getInstance().deleteHistory(bean);
                         refreshData();
                         break;
                 }
@@ -126,7 +126,7 @@ public class HistorySearchFragment extends Fragment implements View.OnClickListe
         protected List<Bean> doInBackground(Void... params) {
             List<Bean> searches = null;
             try {
-                searches = SqliteHelper.instance(getActivity()).queryAllHistory();
+                searches = DaoManager.getInstance().queryAllHistory();
             } catch (Exception e) {
                 e.printStackTrace();
             }

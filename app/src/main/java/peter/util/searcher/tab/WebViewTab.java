@@ -19,7 +19,7 @@ import peter.util.searcher.R;
 import peter.util.searcher.SettingsManager;
 import peter.util.searcher.activity.MainActivity;
 import peter.util.searcher.bean.Bean;
-import peter.util.searcher.db.SqliteHelper;
+import peter.util.searcher.db.DaoManager;
 import peter.util.searcher.net.MyDownloadListener;
 import peter.util.searcher.net.MyWebChromeClient;
 import peter.util.searcher.net.MyWebClient;
@@ -173,7 +173,7 @@ public class WebViewTab extends SearcherTab {
             @Override
             protected Void doInBackground(Void... params) {
                 bean.time = System.currentTimeMillis();
-                SqliteHelper.instance(mainActivity).insertHistory(bean);
+                DaoManager.getInstance().insertHistory(bean);
                 return null;
             }
         }.execute();

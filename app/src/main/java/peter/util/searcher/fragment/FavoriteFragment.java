@@ -13,7 +13,6 @@ import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindArray;
@@ -48,29 +47,7 @@ public class FavoriteFragment extends Fragment implements View.OnClickListener, 
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_favorite, container, false);
         ButterKnife.bind(FavoriteFragment.this, rootView);
-        installFavUrl();
         return rootView;
-    }
-
-    private void installFavUrl() {
-        final ArrayList<Bean> list = new ArrayList<>(urls.length);
-        for (int i = 0; i < urls.length; i++) {
-            Bean bean = new Bean();
-            bean.name = names[i];
-            bean.url = urls[i];
-            bean.time = -1;
-            list.add(bean);
-        }
-        new AsyncTask<Void, Void, Void>() {
-
-            @Override
-            protected Void doInBackground(Void... params) {
-                SqliteHelper.instance(getActivity()).insertFav(list);
-                DaoManager.getInstance().insertFavorite();
-                return null;
-            }
-        }.execute();
-
     }
 
     private void refreshData() {
