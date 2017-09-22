@@ -13,6 +13,7 @@ import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindArray;
@@ -22,6 +23,7 @@ import peter.util.searcher.R;
 import peter.util.searcher.activity.BaseActivity;
 import peter.util.searcher.bean.Bean;
 import peter.util.searcher.db.DaoManager;
+import peter.util.searcher.db.dao.FavoriteSearch;
 
 /**
  * 收藏夹fragment
@@ -47,7 +49,26 @@ public class FavoriteFragment extends Fragment implements View.OnClickListener, 
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_favorite, container, false);
         ButterKnife.bind(FavoriteFragment.this, rootView);
+        installFavUrl();
         return rootView;
+    }
+
+    private void installFavUrl() {
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+
+                for (int i = 0; i < urls.length; i++) {
+                    Bean bean = new Bean();
+                    bean.name = names[i];
+                    bean.url = urls[i];
+                    bean.time = -1;
+                    DaoManager.getInstance().insertFavorite(bean);
+                }
+                return null;
+            }
+        }.execute();
+
     }
 
     private void refreshData() {

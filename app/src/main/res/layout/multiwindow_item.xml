@@ -3,7 +3,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/multi_window_item"
     android:layout_width="match_parent"
-    android:layout_height="?attr/actionBarSize"
+    android:layout_height="@dimen/multi_window_h"
     android:layout_margin="@dimen/multi_window_icon_margin"
     android:background="@drawable/tabs_selector_item"
     android:orientation="horizontal">

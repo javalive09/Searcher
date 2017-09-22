@@ -21,7 +21,7 @@ import peter.util.searcher.tab.TabGroup;
 
 public class TabManager {
 
-    private static final int MAX_TAB = 9;
+    private static final int MAX_TAB = 50;
     private ArrayList<TabGroup> tabGroupArrayList = new ArrayList<>(MAX_TAB);
     private MainActivity mainActivity;
     private int mCurrentTabIndex;
@@ -45,6 +45,11 @@ public class TabManager {
 
     public TabGroup getCurrentTabGroup() {
         return tabGroupArrayList.size() > 0 ? tabGroupArrayList.get(mCurrentTabIndex) : null;
+    }
+
+    public void switchTabGroup(int index) {
+        TabGroup tabGroup = tabGroupArrayList.get(index);
+        switchTabGroup(tabGroup);
     }
 
     public void switchTabGroup(TabGroup tabGroup) {

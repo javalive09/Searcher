@@ -8,7 +8,6 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,6 +15,7 @@ import android.os.Looper;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -34,7 +34,9 @@ import android.widget.Toast;
 
 import com.umeng.analytics.MobclickAgent;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -53,6 +55,7 @@ import peter.util.searcher.tab.Tab;
 import peter.util.searcher.tab.TabGroup;
 import peter.util.searcher.tab.WebViewTab;
 import peter.util.searcher.utils.Constants;
+import peter.util.searcher.utils.FileUtils;
 import peter.util.searcher.utils.UrlUtils;
 import peter.util.searcher.view.SearchWebView;
 import peter.util.searcher.view.TextDrawable;
@@ -85,6 +88,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private MultiWindowAdapter multiWindowAdapter;
     private boolean realBack = false;
     private Handler mHandler = new Handler(Looper.getMainLooper());
+    private static final String BUNDLE_KEY_SIGN = "&";
+    private static final String BUNDLE_KEY_TAB_SIZE = "KEY_TAB_SIZE";
+    private static final String BUNDLE_KEY_GROUP_SIZE = "KEY_GROUP_SIZE";
+    private static final String BUNDLE_KEY_CURRENT_GROUP = "KEY_CURRENT_GROUP";
+    private static final String BUNDLE_KEY_CURRENT_TAB = "KEY_CURRENT_TAB";
+    private static final String URL_KEY = "URL_KEY";
+    private static final String BUNDLE_STORAGE = "SAVED_TABS.parcel";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -94,46 +104,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         init(savedInstanceState);
     }
 
-    private void initTabs(Bundle savedInstanceState) {
-        if (savedInstanceState != null) {
-            String saved = savedInstanceState.getString("tabs");
-            if (TextUtils.isEmpty(saved)) {
-                tabManager.restoreState(saved);
-            }
-        }
-    }
-
     private void init(Bundle savedInstanceState) {
         tabManager = new TabManager(MainActivity.this);
         installLocalTabRounter();
         initTopBar();
-        initMultiLayout();
         initTabs(savedInstanceState);
         checkIntentData(getIntent());
         UpdateController.instance().autoCheckVersion(MainActivity.this);
-    }
-
-    public void initMultiLayout() {
-        multiWindowAdapter = new MultiWindowAdapter();
-        multiTabListView.setAdapter(multiWindowAdapter);
-        drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
-            @Override
-            public void onDrawerSlide(View drawerView, float slideOffset) {
-            }
-
-            @Override
-            public void onDrawerOpened(View drawerView) {}
-
-            @Override
-            public void onDrawerClosed(View drawerView) {
-                updateMultiwindow();
-            }
-
-            @Override
-            public void onDrawerStateChanged(int newState) {
-            }
-        });
-        updateMultiwindow();
     }
 
     private void initTopBar() {
@@ -158,6 +135,38 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         drawerLayout.openDrawer(Gravity.LEFT);
                     }
                 });
+    }
+
+    private void initTabs(Bundle savedInstanceState) {
+        multiWindowAdapter = new MultiWindowAdapter();
+        multiTabListView.setAdapter(multiWindowAdapter);
+        drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+            }
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                updateMultiwindow();
+            }
+
+            @Override
+            public void onDrawerStateChanged(int newState) {
+            }
+        });
+        updateMultiwindow();
+
+//        if (savedInstanceState != null) {
+//            String saved = savedInstanceState.getString("tabs");
+//            if (TextUtils.isEmpty(saved)) {
+//                tabManager.restoreState(saved);
+//            }
+//        }
+        restoreLostTabs();
     }
 
     @Override
@@ -523,12 +532,79 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         super.onPause();
         tabManager.pauseTabGroupExclude(null);
         MobclickAgent.onPause(this);
+        saveTabs();
     }
 
     public void refreshTitle() {
         String host = tabManager.getCurrentTabGroup().getCurrentTab().getHost();
         refreshTopText(host);
         multiWindowDrawable.setText(tabManager.getTabGroupCount());
+    }
+
+    public void saveTabs() {
+        Bundle outState = new Bundle(ClassLoader.getSystemClassLoader());
+        List<TabGroup> tabGroupList = tabManager.getList();
+        int groupSize = tabGroupList.size();
+        outState.putString(BUNDLE_KEY_GROUP_SIZE, groupSize + "");
+        int currentGroupIndex = tabManager.getList().indexOf(tabManager.getCurrentTabGroup());
+        int currentTabIndex = tabManager.getCurrentTabGroup().getTabs().indexOf(tabManager.getCurrentTabGroup().getCurrentTab());
+
+        outState.putInt(BUNDLE_KEY_CURRENT_GROUP, currentGroupIndex);
+        outState.putInt(BUNDLE_KEY_CURRENT_TAB, currentTabIndex);
+
+        for (int g = 0; g < groupSize; g++) {
+            TabGroup tabGroup = tabGroupList.get(g);
+            ArrayList<SearcherTab> tabs = tabGroup.getTabs();
+            outState.putInt(BUNDLE_KEY_TAB_SIZE + g, tabs.size());
+            for (int t = 0; t < tabs.size(); t++) {
+                SearcherTab tab = tabs.get(t);
+                if (!TextUtils.isEmpty(tab.getUrl())) {
+                    Bundle state = new Bundle(ClassLoader.getSystemClassLoader());
+                    View view = tab.getView();
+                    final String key = g + BUNDLE_KEY_SIGN + t;
+                    if (view instanceof WebView) {
+                        ((WebView) view).saveState(state);
+                        outState.putBundle(key, state);
+                    } else {
+                        state.putString(URL_KEY, tab.getUrl());
+                        outState.putBundle(key, state);
+                    }
+                }
+            }
+        }
+        FileUtils.writeBundleToStorage(getApplication(), outState, BUNDLE_STORAGE);
+    }
+
+    public void restoreLostTabs() {
+        Bundle savedState = FileUtils.readBundleFromStorage(getApplication(), BUNDLE_STORAGE);
+        if (savedState != null) {
+            int groupSize = Integer.valueOf(savedState.getString(BUNDLE_KEY_GROUP_SIZE));
+            int currentGroupIndex = savedState.getInt(BUNDLE_KEY_CURRENT_GROUP);
+            int currentTabIndex = savedState.getInt(BUNDLE_KEY_CURRENT_TAB);
+            for (int g = 0; g < groupSize; g++) {
+                int tabSize = savedState.getInt(BUNDLE_KEY_TAB_SIZE + g);
+                for (int t = 0; t < tabSize; t++) {
+                    final String key = g + BUNDLE_KEY_SIGN + t;
+                    Bundle state = savedState.getBundle(key);
+                    if(state != null) {
+                        if (t == 0) {//first tab
+                            String url = state.getString(URL_KEY);
+                            Log.i("url ", url);
+                            tabManager.loadUrl(new Bean("", url), true);
+                        } else {// webView
+                            tabManager.loadUrl(new Bean("", Tab.ACTION_RESTORE), false);
+                            Log.i("state ", state.toString());
+                            WebView webView = (WebView) tabManager.getCurrentTabGroup().getView();
+                            Log.i("webView ", webView.toString());
+                            webView.restoreState(state);
+                        }
+                    }
+                }
+            }
+            tabManager.switchTabGroup(currentGroupIndex);
+            tabManager.getCurrentTabGroup().setCurrentTab(currentTabIndex);
+        }
+        FileUtils.deleteBundleInStorage(getApplication(), BUNDLE_STORAGE);
     }
 
     public void refreshTopText(String text) {
@@ -566,8 +642,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.add_tab:
-                drawerLayout.closeDrawers();
                 loadHome(true);
+                drawerLayout.closeDrawers();
                 break;
             case R.id.close_tab:
                 if (tabManager.getTabGroupCount() == 1) {

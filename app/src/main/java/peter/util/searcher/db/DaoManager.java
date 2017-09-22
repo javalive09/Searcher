@@ -10,7 +10,9 @@ import peter.util.searcher.bean.Bean;
 import peter.util.searcher.db.dao.DaoMaster;
 import peter.util.searcher.db.dao.DaoSession;
 import peter.util.searcher.db.dao.FavoriteSearch;
+import peter.util.searcher.db.dao.FavoriteSearchDao;
 import peter.util.searcher.db.dao.HistorySearch;
+import peter.util.searcher.db.dao.HistorySearchDao;
 
 public class DaoManager {
 
@@ -63,7 +65,7 @@ public class DaoManager {
 
     public List<Bean> queryAllHistory() {
         List<Bean> list = new ArrayList<>();
-        List<HistorySearch> historySearchList = mDaoSession.getHistorySearchDao().loadAll();
+        List<HistorySearch> historySearchList = mDaoSession.getHistorySearchDao().queryBuilder().orderDesc(HistorySearchDao.Properties.Time).list();
         for (HistorySearch historySearch : historySearchList) {
             Bean bean = new Bean();
             bean.name = historySearch.getSearchWord();
@@ -77,7 +79,7 @@ public class DaoManager {
 
     public List<Bean> queryAllFavorite() {
         List<Bean> list = new ArrayList<>();
-        List<FavoriteSearch> favoriteSearchList = mDaoSession.getFavoriteSearchDao().loadAll();
+        List<FavoriteSearch> favoriteSearchList = mDaoSession.getFavoriteSearchDao().queryBuilder().orderDesc(FavoriteSearchDao.Properties.Time).list();
         for (FavoriteSearch favoriteSearch : favoriteSearchList) {
             Bean bean = new Bean();
             bean.name = favoriteSearch.getSearchWord();
@@ -92,7 +94,7 @@ public class DaoManager {
 
     public List<Bean> queryRecentData(int count) {
         List<Bean> list = new ArrayList<>();
-        List<HistorySearch> historySearchList = mDaoSession.getHistorySearchDao().queryBuilder().limit(count).list();
+        List<HistorySearch> historySearchList = mDaoSession.getHistorySearchDao().queryBuilder().orderDesc(HistorySearchDao.Properties.Time).limit(count).list();
         for (HistorySearch historySearch : historySearchList) {
             Bean bean = new Bean();
             bean.name = historySearch.getSearchWord();

@@ -11,5 +11,6 @@
     <dimen name="multi_window_item_icon_cell">25dp</dimen>
     <dimen name="multi_window_icon_margin">10dp</dimen>
     <dimen name="multi_window_close_padding">10dp</dimen>
+    <dimen name="multi_window_h">50dp</dimen>
     <dimen name="float_button_margin">16dp</dimen>
 </resources>

@@ -83,27 +83,8 @@ public class TabGroup extends SearcherTab {
         mainActivity.refreshTitle();
     }
 
-    public void loadUrl(String url, String searchWord) {
-        SearcherTab currentTab = getCurrentTab();
-        if (currentTab == null) {//head tab
-            currentTab = newTabByUrl(url);
-            tabArrayList.add(currentTab);
-            mCurrentTabIndex = tabArrayList.size() - 1;
-        } else {//body tab
-            if (url.startsWith(LOCAL_SCHEMA) || //local url
-                    currentTab instanceof LocalViewTab) {//current local tab
-                if (currentTab.getUrl().equals(url)) {//same local url
-                    return;
-                }
-                currentTab = newTabByUrl(url);
-                int index = mCurrentTabIndex + 1;
-                tabArrayList.add(index, currentTab);
-                removeTabFromIndeoToEnd(index + 1);
-                mCurrentTabIndex = tabArrayList.size() - 1;
-            }
-        }
-        currentTab.loadUrl(new Bean(searchWord, url));
-        mainActivity.refreshTitle();
+    public ArrayList<SearcherTab> getTabs() {
+        return tabArrayList;
     }
 
     @Override

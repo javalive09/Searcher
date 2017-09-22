@@ -114,7 +114,8 @@ public class WebViewTab extends SearcherTab {
                 int resId = onCreateViewResId();
                 mWebView = (WebView) mainActivity.setCurrentView(resId);
                 onCreate();
-                if (!Tab.NEW_WINDOW.equals(bean.url)) {
+                if (!Tab.ACTION_NEW_WINDOW.equals(bean.url)
+                        && !Tab.ACTION_RESTORE.equals(bean.url)) {
                     mWebView.loadUrl(bean.url, mRequestHeaders);
                 }
 
@@ -258,7 +259,7 @@ public class WebViewTab extends SearcherTab {
             }
             if (uri != null) {
                 String domain = uri.getHost();
-                if(!TextUtils.isEmpty(domain)) {
+                if (!TextUtils.isEmpty(domain)) {
                     return domain.startsWith("www.") ? domain.substring(4) : domain;
                 }
             }
