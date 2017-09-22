@@ -1,28 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/version"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="80dp"
-        android:layout_marginTop="80dp"
-        android:drawablePadding="15dp"
-        android:drawableTop="@drawable/ic_web_hi_res_512"
-        android:gravity="center"/>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <TextView
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/version"
-        android:layout_centerHorizontal="true"
-        android:gravity="center_horizontal"
-        android:paddingTop="10dp"
-        android:text="@string/home_title"
-        android:textColor="@color/colorPrimary_"
-        android:textSize="17sp"/>
+        android:layout_height="wrap_content">
 
-</RelativeLayout>
+        <TextView
+            android:id="@+id/version"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="80dp"
+            android:layout_marginTop="80dp"
+            android:drawablePadding="15dp"
+            android:drawableTop="@drawable/ic_web_hi_res_512"
+            android:gravity="center" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/version"
+            android:layout_centerHorizontal="true"
+            android:gravity="center_horizontal"
+            android:paddingTop="10dp"
+            android:text="@string/home_title"
+            android:textColor="@color/colorPrimary_"
+            android:textSize="17sp" />
+
+    </RelativeLayout>
+
+</ScrollView>

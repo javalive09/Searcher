@@ -1,6 +1,7 @@
 package peter.util.searcher;
 
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -21,7 +22,7 @@ import peter.util.searcher.tab.TabGroup;
 
 public class TabManager {
 
-    private static final int MAX_TAB = 50;
+    private static final int MAX_TAB = 9;
     private ArrayList<TabGroup> tabGroupArrayList = new ArrayList<>(MAX_TAB);
     private MainActivity mainActivity;
     private int mCurrentTabIndex;
@@ -33,6 +34,7 @@ public class TabManager {
     public void loadUrl(Bean bean, boolean newTab) {
         if (tabGroupArrayList.size() == MAX_TAB) {
             newTab = false;
+            Toast.makeText(Searcher.context, R.string.tabs_max_txt, Toast.LENGTH_LONG).show();
         }
         if (newTab) {
             TabGroup tab = new TabGroup(mainActivity);
