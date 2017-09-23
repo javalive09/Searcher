@@ -143,6 +143,7 @@ public class TabGroup extends SearcherTab {
         mCurrentTabIndex = index;
         SearcherTab tab = tabArrayList.get(index);
         tab.loadUrl(new Bean(tab.getSearchWord(), tab.getUrl()));
+        checkReloadCurrentTab();
     }
 
     public void checkReloadCurrentTab() {
