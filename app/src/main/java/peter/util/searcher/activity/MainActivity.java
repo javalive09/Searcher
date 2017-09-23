@@ -89,6 +89,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private Handler mHandler = new Handler(Looper.getMainLooper());
     private static final String BUNDLE_KEY_SIGN = "&";
     private static final String BUNDLE_KEY_TAB_SIZE = "KEY_TAB_SIZE";
+    private static final String BUNDLE_KEY_SEARCH_WORD = "KEY_SEARCH_WORD";
     private static final String BUNDLE_KEY_GROUP_SIZE = "KEY_GROUP_SIZE";
     private static final String BUNDLE_KEY_CURRENT_GROUP = "KEY_CURRENT_GROUP";
     private static final String BUNDLE_KEY_CURRENT_TAB = "KEY_CURRENT_TAB";
@@ -557,6 +558,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         WebViewTab webViewTab = (WebViewTab) tab;
                         webViewTab.getWebView().saveState(state);
                         outState.putBundle(key, state);
+                        state.putString(BUNDLE_KEY_SEARCH_WORD, webViewTab.getSearchWord());
                     } else {
                         state.putString(URL_KEY, tab.getUrl());
                         outState.putBundle(key, state);
@@ -584,7 +586,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                             Log.i("url ", url);
                             tabManager.loadUrl(new Bean("", url), true);
                         } else {// webView
-                            tabManager.loadUrl(new Bean("", Tab.ACTION_RESTORE), false);
+                            String searchWord = state.getString(BUNDLE_KEY_SEARCH_WORD);
+                            Bean bean = DaoManager.getInstance().queryBean(searchWord);
+                            tabManager.loadUrl(bean, false);
                             Log.i("state ", state.toString());
 
                             SearcherTab searcherTab = tabManager.getCurrentTabGroup().getCurrentTab();

@@ -127,8 +127,7 @@ public class WebViewTab extends SearcherTab {
                 mWebView = (WebView) rootView.findViewById(R.id.webview);
                 progressBar = (ProgressBar) rootView.findViewById(R.id.progress);
                 onCreate();
-                if (!Tab.ACTION_NEW_WINDOW.equals(bean.url)
-                        && !Tab.ACTION_RESTORE.equals(bean.url)) {
+                if (!Tab.ACTION_NEW_WINDOW.equals(bean.url)) {
                     mWebView.loadUrl(bean.url, mRequestHeaders);
                 }
 

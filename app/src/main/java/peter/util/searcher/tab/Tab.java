@@ -12,7 +12,6 @@ public interface Tab {
 
     String LOCAL_SCHEMA = "local://";
     String URL_HOME = LOCAL_SCHEMA + "home";
-    String ACTION_RESTORE = "restore";
     String ACTION_NEW_WINDOW = "new_window";
 
     void loadUrl(Bean bean);

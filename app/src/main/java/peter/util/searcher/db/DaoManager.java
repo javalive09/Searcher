@@ -39,10 +39,6 @@ public class DaoManager {
         mDaoSession = mDaoMaster.newSession();
     }
 
-    public DaoSession getSession() {
-        return mDaoSession;
-    }
-
     public long insertHistory(Bean bean) {
         HistorySearch historySearch = new HistorySearch(bean.name, bean.time, bean.url, bean.pageNo);
         return mDaoSession.getHistorySearchDao().insertOrReplace(historySearch);
@@ -75,6 +71,18 @@ public class DaoManager {
             list.add(bean);
         }
         return list;
+    }
+
+    public Bean queryBean(String word) {
+        List<HistorySearch> list = mDaoSession.getHistorySearchDao().queryBuilder().where(HistorySearchDao.Properties.SearchWord.eq(word)).list();
+        Bean bean = new Bean();
+        HistorySearch historySearch = list.get(0);
+        bean.pageNo = historySearch.getPageNo();
+        bean.url = historySearch.getUrl();
+        bean.time = historySearch.getTime();
+        bean.name = historySearch.getSearchWord();
+        return bean;
+
     }
 
     public List<Bean> queryAllFavorite() {
