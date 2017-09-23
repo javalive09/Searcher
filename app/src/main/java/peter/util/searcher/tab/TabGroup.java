@@ -27,11 +27,11 @@ public class TabGroup extends SearcherTab {
 
     @Override
     public View getView() {
-        return getCurrentTab().getView();
+        return null;
     }
 
     public String getTitle() {
-        return getCurrentTab().getTitle();
+        return null;
     }
 
     @Override
@@ -40,7 +40,7 @@ public class TabGroup extends SearcherTab {
     }
 
     public String getUrl() {
-        return getCurrentTab().getUrl();
+        return null;
     }
 
     public TabGroup getParent() {
@@ -147,10 +147,10 @@ public class TabGroup extends SearcherTab {
 
     public void checkReloadCurrentTab() {
         SearcherTab tab = getCurrentTab();
-        if(tab.getView() instanceof WebView) {
-            WebView webView = (WebView) tab.getView();
-            if(webView.getProgress() != 100 || webView.getContentHeight() == 0) {
-                tab.reload();
+        if (tab instanceof WebViewTab) {
+            WebViewTab webViewTab = (WebViewTab) tab;
+            if (webViewTab.getWebView().getProgress() != 100 || webViewTab.getWebView().getContentHeight() == 0) {
+                webViewTab.reload();
             }
         }
     }

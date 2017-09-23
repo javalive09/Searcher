@@ -70,4 +70,5 @@ public abstract class LocalViewTab extends SearcherTab{
         return getTitle();
     }
 
+
 }

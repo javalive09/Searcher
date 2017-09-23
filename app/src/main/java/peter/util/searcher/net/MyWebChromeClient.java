@@ -37,9 +37,9 @@ public class MyWebChromeClient extends WebChromeClient {
     private MainActivity mActivity;
     private WebViewTab webViewTab;
 
-    public MyWebChromeClient(WebViewTab webViewTab, MainActivity activity) {
+    public MyWebChromeClient(WebViewTab webViewTab) {
         this.webViewTab = webViewTab;
-        this.mActivity = activity;
+        this.mActivity = webViewTab.getActivity();
     }
 
     @Override
@@ -53,7 +53,7 @@ public class MyWebChromeClient extends WebChromeClient {
     }
 
     public void onProgressChanged(WebView view, int newProgress) {
-        mActivity.refreshProgress(newProgress);
+        webViewTab.refreshProgress(newProgress);
     }
 
     @Override

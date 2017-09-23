@@ -55,7 +55,7 @@ public class TabManager {
 
     private void switchTabGroup(TabGroup tabGroup, boolean reload) {
         mCurrentTabIndex = tabGroupArrayList.indexOf(tabGroup);
-        View currentTabGroupView = tabGroup.getView();
+        View currentTabGroupView = tabGroup.getCurrentTab().getView();
         pauseTabGroupExclude(tabGroup);
         mainActivity.setCurrentView(currentTabGroupView);
         getCurrentTabGroup().onResume();

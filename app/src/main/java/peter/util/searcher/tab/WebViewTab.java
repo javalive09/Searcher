@@ -10,6 +10,7 @@ import android.view.View;
 import android.webkit.CookieManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.widget.ProgressBar;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -32,7 +33,9 @@ import peter.util.searcher.utils.Constants;
 
 public class WebViewTab extends SearcherTab {
 
+    private View rootView;
     private WebView mWebView;
+    private ProgressBar progressBar;
     private Bean bean;
     private String currentUA;
     private MyWebChromeClient myWebChromeClient;
@@ -51,6 +54,10 @@ public class WebViewTab extends SearcherTab {
 
     @Override
     public View getView() {
+        return rootView;
+    }
+
+    public WebView getWebView() {
         return mWebView;
     }
 
@@ -63,6 +70,10 @@ public class WebViewTab extends SearcherTab {
             mWebView.pauseTimers();
             mWebView = null;
         }
+    }
+
+    public MainActivity getActivity() {
+        return mainActivity;
     }
 
     public void onResume() {
@@ -112,7 +123,9 @@ public class WebViewTab extends SearcherTab {
             Log.i("peter", "url=" + bean.url);
             if (mWebView == null) {
                 int resId = onCreateViewResId();
-                mWebView = (WebView) mainActivity.setCurrentView(resId);
+                rootView = mainActivity.setCurrentView(resId);
+                mWebView = (WebView) rootView.findViewById(R.id.webview);
+                progressBar = (ProgressBar) rootView.findViewById(R.id.progress);
                 onCreate();
                 if (!Tab.ACTION_NEW_WINDOW.equals(bean.url)
                         && !Tab.ACTION_RESTORE.equals(bean.url)) {
@@ -123,7 +136,7 @@ public class WebViewTab extends SearcherTab {
                 if (!getUrl().equals(bean.url)) {
                     mWebView.loadUrl(bean.url);
                 }
-                mainActivity.setCurrentView(mWebView);
+                mainActivity.setCurrentView(rootView);
             }
             if (!TextUtils.isEmpty(bean.name)) {
                 saveData(bean);
@@ -196,8 +209,8 @@ public class WebViewTab extends SearcherTab {
         mWebView.setScrollbarFadingEnabled(true);
         mWebView.setSaveEnabled(true);
         mWebView.setNetworkAvailable(true);
-        mWebView.setWebChromeClient(myWebChromeClient = new MyWebChromeClient(WebViewTab.this, mainActivity));
-        mWebView.setWebViewClient(new MyWebClient(mainActivity));
+        mWebView.setWebChromeClient(myWebChromeClient = new MyWebChromeClient(WebViewTab.this));
+        mWebView.setWebViewClient(new MyWebClient(WebViewTab.this));
         mWebView.setDownloadListener(new MyDownloadListener(mainActivity));
         setUA(getDefaultUA());
         CookieManager.getInstance().setAcceptThirdPartyCookies(mWebView, true);
@@ -267,4 +280,17 @@ public class WebViewTab extends SearcherTab {
         return null;
     }
 
+    public void refreshProgress(int progress) {
+        progressBar.setProgress(progress);
+        if (progress == 100) {
+            progressBar.post(new Runnable() {
+                @Override
+                public void run() {
+                    progressBar.setVisibility(View.INVISIBLE);
+                }
+            });
+        } else {
+            progressBar.setVisibility(View.VISIBLE);
+        }
+    }
 }

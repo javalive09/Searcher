@@ -40,10 +40,12 @@ import peter.util.searcher.utils.Utils;
 public class MyWebClient extends WebViewClient {
     private MainActivity mainActivity;
     private IntentUtils mIntentUtils;
+    private WebViewTab webViewTab;
 
-    public MyWebClient(MainActivity activity) {
-        this.mainActivity = activity;
-        mIntentUtils = new IntentUtils(activity);
+    public MyWebClient(WebViewTab webViewTab) {
+        this.webViewTab = webViewTab;
+        this.mainActivity = webViewTab.getActivity();
+        mIntentUtils = new IntentUtils(mainActivity);
     }
 
     @Override
@@ -52,7 +54,7 @@ public class MyWebClient extends WebViewClient {
             view.postInvalidate();
         }
         mainActivity.refreshTitle();
-        mainActivity.refreshProgress(100);
+        webViewTab.refreshProgress(100);
     }
 
     @Override

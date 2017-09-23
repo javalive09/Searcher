@@ -14,9 +14,9 @@ import peter.util.searcher.bean.Bean;
 
 public abstract class SearcherTab implements Tab {
 
-    protected MainActivity mainActivity;
+    MainActivity mainActivity;
 
-    protected Drawable iconDrawable;
+    private Drawable iconDrawable;
 
     public SearcherTab(MainActivity activity) {
         mainActivity = activity;
@@ -68,6 +68,5 @@ public abstract class SearcherTab implements Tab {
     public abstract boolean canGoForward();
 
     public abstract void goForward();
-
 
 }

@@ -50,6 +50,7 @@ import peter.util.searcher.net.DownloadHandler;
 import peter.util.searcher.net.MyDownloadListener;
 import peter.util.searcher.net.UpdateController;
 import peter.util.searcher.tab.HomeTab;
+import peter.util.searcher.tab.LocalViewTab;
 import peter.util.searcher.tab.SearcherTab;
 import peter.util.searcher.tab.Tab;
 import peter.util.searcher.tab.TabGroup;
@@ -77,8 +78,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     Toolbar toolbar;
     @BindView(R.id.top_txt)
     View topText;
-    @BindView(R.id.progress)
-    ProgressBar progressBar;
     @BindView(R.id.menu_anchor)
     View menuAnchor;
     private PopupMenu popup;
@@ -160,12 +159,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         });
         updateMultiwindow();
 
-//        if (savedInstanceState != null) {
-//            String saved = savedInstanceState.getString("tabs");
-//            if (TextUtils.isEmpty(saved)) {
-//                tabManager.restoreState(saved);
-//            }
-//        }
         restoreLostTabs();
     }
 
@@ -278,8 +271,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     public boolean onPrepareOptionsMenu(Menu menu) {
         TabGroup currentGroup = tabManager.getCurrentTabGroup();
         SearcherTab currentTab = currentGroup.getCurrentTab();
-        String currentUrl = currentTab.getUrl();
-        if (currentUrl.startsWith(Tab.LOCAL_SCHEMA)) {
+        if (currentTab instanceof LocalViewTab) {
             menu.setGroupVisible(R.id.web_sites, false);
         } else {
             menu.setGroupVisible(R.id.web_sites, true);
@@ -334,8 +326,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 }
                 break;
             case R.id.action_copy_link:
-                url = tabManager.getCurrentTabGroup().getUrl();
-                String title = tabManager.getCurrentTabGroup().getTitle();
+                url = tabManager.getCurrentTabGroup().getCurrentTab().getUrl();
+                String title = tabManager.getCurrentTabGroup().getCurrentTab().getTitle();
                 ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
                 ClipData clip = ClipData.newPlainText(title, url);
                 clipboard.setPrimaryClip(clip);
@@ -560,10 +552,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 SearcherTab tab = tabs.get(t);
                 if (!TextUtils.isEmpty(tab.getUrl())) {
                     Bundle state = new Bundle(ClassLoader.getSystemClassLoader());
-                    View view = tab.getView();
                     final String key = g + BUNDLE_KEY_SIGN + t;
-                    if (view instanceof WebView) {
-                        ((WebView) view).saveState(state);
+                    if (tab instanceof WebViewTab) {
+                        WebViewTab webViewTab = (WebViewTab) tab;
+                        webViewTab.getWebView().saveState(state);
                         outState.putBundle(key, state);
                     } else {
                         state.putString(URL_KEY, tab.getUrl());
@@ -586,7 +578,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 for (int t = 0; t < tabSize; t++) {
                     final String key = g + BUNDLE_KEY_SIGN + t;
                     Bundle state = savedState.getBundle(key);
-                    if(state != null) {
+                    if (state != null) {
                         if (t == 0) {//first tab
                             String url = state.getString(URL_KEY);
                             Log.i("url ", url);
@@ -594,10 +586,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         } else {// webView
                             tabManager.loadUrl(new Bean("", Tab.ACTION_RESTORE), false);
                             Log.i("state ", state.toString());
-                            WebView webView = (WebView) tabManager.getCurrentTabGroup().getView();
-                            Log.i("webView ", webView.toString());
-                            webView.restoreState(state);
-                            webView.stopLoading();
+
+                            SearcherTab searcherTab = tabManager.getCurrentTabGroup().getCurrentTab();
+                            if (searcherTab instanceof WebViewTab) {
+                                WebViewTab webViewTab = (WebViewTab) searcherTab;
+                                Log.i("webView ", webViewTab.getWebView().toString());
+                                webViewTab.getWebView().restoreState(state);
+                                webViewTab.getWebView().stopLoading();
+                            }
                         }
                     }
                 }
@@ -614,20 +610,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             top.setHint(R.string.search_hint);
         } else {
             top.setText(text);
-        }
-    }
-
-    public void refreshProgress(int progress) {
-        progressBar.setProgress(progress);
-        if (progress == 100) {
-            progressBar.post(new Runnable() {
-                @Override
-                public void run() {
-                    progressBar.setVisibility(View.INVISIBLE);
-                }
-            });
-        } else {
-            progressBar.setVisibility(View.VISIBLE);
         }
     }
 
