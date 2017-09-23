@@ -466,7 +466,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     loadHome(true);
                 }
             } else if (Intent.ACTION_ASSIST.equals(action)) {
-                if (tabManager.getTabGroupCount() == 0) {
+                if (!TextUtils.isEmpty(tabManager.getCurrentTabGroup().getCurrentTab().getSearchWord())) {
                     loadHome(true);
                 }
                 touchSearch();
