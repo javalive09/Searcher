@@ -101,14 +101,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        init(savedInstanceState);
+        init();
     }
 
-    private void init(Bundle savedInstanceState) {
+    private void init() {
         tabManager = new TabManager(MainActivity.this);
         installLocalTabRounter();
         initTopBar();
-        initTabs(savedInstanceState);
+        initTabs();
         checkIntentData(getIntent());
         UpdateController.instance().autoCheckVersion(MainActivity.this);
     }
@@ -137,7 +137,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 });
     }
 
-    private void initTabs(Bundle savedInstanceState) {
+    private void initTabs() {
         multiWindowAdapter = new MultiWindowAdapter();
         multiTabListView.setAdapter(multiWindowAdapter);
         drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
@@ -147,6 +147,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
             @Override
             public void onDrawerOpened(View drawerView) {
+                updateMultiwindow();
             }
 
             @Override
@@ -517,6 +518,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     protected void onResume() {
         super.onResume();
         tabManager.resumeTabGroupExclude(null);
+        updateMultiwindow();
         MobclickAgent.onResume(this);
     }
 

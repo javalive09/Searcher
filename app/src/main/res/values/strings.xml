@@ -51,7 +51,7 @@
     <string name="action_delete">删除</string>
     <string name="action_delete_all">删除全部</string>
     <string name="tabs_title">标签</string>
-    <string name="tabs_max_txt">最多可创建9个标签</string>
+    <string name="tabs_max_txt">最多可创建50个标签</string>
 
     <string name="update_dialog_cancel">取消</string>
     <string name="update_toast_start">开始检测版本</string>

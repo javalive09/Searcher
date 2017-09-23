@@ -36,7 +36,7 @@ public class TextDrawable extends Drawable {
     public void setText(int text) {
         this.text = text + "";
         paint.setColor(context.getResources().getColor(R.color.tint_color));
-        int size = sp2px(context, 11);
+        int size = sp2px(context, 10);
 
         paint.setTextSize(size);
         paint.setAntiAlias(true);
