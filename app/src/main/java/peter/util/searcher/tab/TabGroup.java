@@ -1,6 +1,7 @@
 package peter.util.searcher.tab;
 
 import android.view.View;
+import android.webkit.WebView;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -140,8 +141,18 @@ public class TabGroup extends SearcherTab {
 
     public void setCurrentTab(int index) {
         mCurrentTabIndex = index;
-        Tab tab = tabArrayList.get(index);
+        SearcherTab tab = tabArrayList.get(index);
         tab.loadUrl(new Bean(tab.getSearchWord(), tab.getUrl()));
+    }
+
+    public void checkReloadCurrentTab() {
+        SearcherTab tab = getCurrentTab();
+        if(tab.getView() instanceof WebView) {
+            WebView webView = (WebView) tab.getView();
+            if(webView.getProgress() != 100 || webView.getContentHeight() == 0) {
+                tab.reload();
+            }
+        }
     }
 
     public SearcherTab getCurrentTab() {

@@ -597,12 +597,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                             WebView webView = (WebView) tabManager.getCurrentTabGroup().getView();
                             Log.i("webView ", webView.toString());
                             webView.restoreState(state);
+                            webView.stopLoading();
                         }
                     }
                 }
             }
-            tabManager.switchTabGroup(currentGroupIndex);
-            tabManager.getCurrentTabGroup().setCurrentTab(currentTabIndex);
+            tabManager.restoreTabPos(currentGroupIndex, currentTabIndex);
         }
         FileUtils.deleteBundleInStorage(getApplication(), BUNDLE_STORAGE);
     }

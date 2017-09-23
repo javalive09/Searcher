@@ -49,18 +49,27 @@ public class TabManager {
         return tabGroupArrayList.size() > 0 ? tabGroupArrayList.get(mCurrentTabIndex) : null;
     }
 
-    public void switchTabGroup(int index) {
-        TabGroup tabGroup = tabGroupArrayList.get(index);
-        switchTabGroup(tabGroup);
+    public void switchTabGroup(TabGroup tabGroup) {
+        switchTabGroup(tabGroup, true);
     }
 
-    public void switchTabGroup(TabGroup tabGroup) {
+    private void switchTabGroup(TabGroup tabGroup, boolean reload) {
         mCurrentTabIndex = tabGroupArrayList.indexOf(tabGroup);
         View currentTabGroupView = tabGroup.getView();
         pauseTabGroupExclude(tabGroup);
         mainActivity.setCurrentView(currentTabGroupView);
         getCurrentTabGroup().onResume();
         mainActivity.refreshTitle();
+        if(reload) {
+            getCurrentTabGroup().checkReloadCurrentTab();
+        }
+    }
+
+    public void restoreTabPos(int groupIndex, int tabIndex) {
+        TabGroup tabGroup = tabGroupArrayList.get(groupIndex);
+        switchTabGroup(tabGroup, false);
+        getCurrentTabGroup().setCurrentTab(tabIndex);
+        getCurrentTabGroup().checkReloadCurrentTab();
     }
 
     public TabGroup getTabGroup(SearcherTab topTab) {
