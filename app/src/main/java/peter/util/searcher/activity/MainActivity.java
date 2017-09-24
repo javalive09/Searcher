@@ -471,7 +471,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     loadHome(true);
                 }
             } else if (Intent.ACTION_ASSIST.equals(action)) {
-                if (!TextUtils.isEmpty(tabManager.getCurrentTabGroup().getCurrentTab().getSearchWord())) {
+                if (tabManager.getTabGroupCount() == 0) {
+                    loadHome(true);
+                } else if (!TextUtils.isEmpty(tabManager.getCurrentTabGroup().getCurrentTab().getSearchWord())) {
                     loadHome(true);
                 }
                 touchSearch();
@@ -560,13 +562,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 if (!TextUtils.isEmpty(tab.getUrl())) {
                     Bundle state = new Bundle(ClassLoader.getSystemClassLoader());
                     final String key = g + BUNDLE_KEY_SIGN + t;
+                    state.putString(URL_KEY, tab.getUrl());
                     if (tab instanceof WebViewTab) {
                         WebViewTab webViewTab = (WebViewTab) tab;
                         webViewTab.getView().saveState(state);
                         outState.putBundle(key, state);
                         state.putString(BUNDLE_KEY_SEARCH_WORD, webViewTab.getSearchWord());
                     } else {
-                        state.putString(URL_KEY, tab.getUrl());
                         outState.putBundle(key, state);
                     }
                 }
@@ -587,13 +589,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     final String key = g + BUNDLE_KEY_SIGN + t;
                     Bundle state = savedState.getBundle(key);
                     if (state != null) {
+                        String url = state.getString(URL_KEY);
                         if (t == 0) {//first tab
-                            String url = state.getString(URL_KEY);
                             Log.i("url ", url);
                             tabManager.loadUrl(new Bean("", url), true);
                         } else {// webView
                             String searchWord = state.getString(BUNDLE_KEY_SEARCH_WORD);
-                            Bean bean = DaoManager.getInstance().queryBean(searchWord);
+                            Bean bean = DaoManager.getInstance().queryBean(searchWord, url);
                             tabManager.loadUrl(bean, false);
                             Log.i("state ", state.toString());
 

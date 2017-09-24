@@ -73,14 +73,19 @@ public class DaoManager {
         return list;
     }
 
-    public Bean queryBean(String word) {
+    public Bean queryBean(String word, String url) {
         List<HistorySearch> list = mDaoSession.getHistorySearchDao().queryBuilder().where(HistorySearchDao.Properties.SearchWord.eq(word)).list();
         Bean bean = new Bean();
-        HistorySearch historySearch = list.get(0);
-        bean.pageNo = historySearch.getPageNo();
-        bean.url = historySearch.getUrl();
-        bean.time = historySearch.getTime();
-        bean.name = historySearch.getSearchWord();
+        if(list.size() > 0) {
+            HistorySearch historySearch = list.get(0);
+            bean.pageNo = historySearch.getPageNo();
+            bean.url = historySearch.getUrl();
+            bean.time = historySearch.getTime();
+            bean.name = historySearch.getSearchWord();
+        }else {
+            bean.url = url;
+            bean.name = word;
+        }
         return bean;
 
     }

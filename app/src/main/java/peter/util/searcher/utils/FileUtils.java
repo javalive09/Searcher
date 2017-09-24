@@ -43,7 +43,7 @@ public class FileUtils {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
-                File outputFile = new File(app.getFilesDir(), name);
+                File outputFile = new File(app.getExternalFilesDir(null), name);
                 FileOutputStream outputStream = null;
                 try {
                     //noinspection IOResourceOpenedButNotSafelyClosed
@@ -72,7 +72,7 @@ public class FileUtils {
      * @param name the name of the file.
      */
     public static void deleteBundleInStorage(final @NonNull Application app, final @NonNull String name) {
-        File outputFile = new File(app.getFilesDir(), name);
+        File outputFile = new File(app.getExternalFilesDir(null), name);
         if (outputFile.exists()) {
             outputFile.delete();
         }
@@ -90,7 +90,7 @@ public class FileUtils {
      */
     @Nullable
     public static Bundle readBundleFromStorage(@NonNull Application app, @NonNull String name) {
-        File inputFile = new File(app.getFilesDir(), name);
+        File inputFile = new File(app.getExternalFilesDir(null), name);
         FileInputStream inputStream = null;
         try {
             //noinspection IOResourceOpenedButNotSafelyClosed
