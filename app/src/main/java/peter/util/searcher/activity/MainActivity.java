@@ -78,6 +78,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     Toolbar toolbar;
     @BindView(R.id.top_txt)
     View topText;
+    @BindView(R.id.progress)
+    ProgressBar progressBar;
     @BindView(R.id.menu_anchor)
     View menuAnchor;
     private PopupMenu popup;
@@ -402,11 +404,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     public void setCurrentView(View view) {
         webViewContainer.setCurrentView(view);
+        progressBar.setVisibility(View.INVISIBLE);
         showTopbar();
     }
 
     public View setCurrentView(int viewId) {
         View view = webViewContainer.setCurrentView(viewId);
+        progressBar.setVisibility(View.INVISIBLE);
         showTopbar();
         return view;
     }
@@ -558,7 +562,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     final String key = g + BUNDLE_KEY_SIGN + t;
                     if (tab instanceof WebViewTab) {
                         WebViewTab webViewTab = (WebViewTab) tab;
-                        webViewTab.getWebView().saveState(state);
+                        webViewTab.getView().saveState(state);
                         outState.putBundle(key, state);
                         state.putString(BUNDLE_KEY_SEARCH_WORD, webViewTab.getSearchWord());
                     } else {
@@ -596,9 +600,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                             SearcherTab searcherTab = tabManager.getCurrentTabGroup().getCurrentTab();
                             if (searcherTab instanceof WebViewTab) {
                                 WebViewTab webViewTab = (WebViewTab) searcherTab;
-                                Log.i("webView ", webViewTab.getWebView().toString());
-                                webViewTab.getWebView().restoreState(state);
-                                webViewTab.getWebView().stopLoading();
+                                Log.i("webView ", webViewTab.getView().toString());
+                                webViewTab.getView().restoreState(state);
+                                webViewTab.getView().stopLoading();
                             }
                         }
                     }
@@ -680,6 +684,22 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString("tabs", tabManager.getSaveState());
+    }
+
+    public void refreshProgress(WebViewTab webViewTab, int progress) {
+        if (tabManager.getCurrentTabGroup().getCurrentTab() == webViewTab) {
+            progressBar.setProgress(progress);
+            if (progress == 100) {
+                progressBar.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressBar.setVisibility(View.INVISIBLE);
+                    }
+                });
+            } else {
+                progressBar.setVisibility(View.VISIBLE);
+            }
+        }
     }
 
 }

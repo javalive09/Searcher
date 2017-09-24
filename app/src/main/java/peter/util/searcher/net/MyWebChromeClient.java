@@ -14,6 +14,7 @@ import android.webkit.WebView;
 import android.widget.FrameLayout;
 import android.widget.VideoView;
 
+import peter.util.searcher.TabManager;
 import peter.util.searcher.activity.MainActivity;
 import peter.util.searcher.bean.Bean;
 import peter.util.searcher.tab.SearcherTab;
@@ -53,7 +54,7 @@ public class MyWebChromeClient extends WebChromeClient {
     }
 
     public void onProgressChanged(WebView view, int newProgress) {
-        webViewTab.refreshProgress(newProgress);
+        mActivity.refreshProgress(webViewTab, newProgress);
     }
 
     @Override

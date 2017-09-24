@@ -150,7 +150,7 @@ public class TabGroup extends SearcherTab {
         SearcherTab tab = getCurrentTab();
         if (tab instanceof WebViewTab) {
             WebViewTab webViewTab = (WebViewTab) tab;
-            if (webViewTab.getWebView().getProgress() != 100 || webViewTab.getWebView().getContentHeight() == 0) {
+            if (webViewTab.getView().getProgress() != 100 || webViewTab.getView().getContentHeight() == 0) {
                 webViewTab.reload();
             }
         }

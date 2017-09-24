@@ -10,7 +10,6 @@ import android.view.View;
 import android.webkit.CookieManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.widget.ProgressBar;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -33,9 +32,7 @@ import peter.util.searcher.utils.Constants;
 
 public class WebViewTab extends SearcherTab {
 
-    private View rootView;
     private WebView mWebView;
-    private ProgressBar progressBar;
     private Bean bean;
     private String currentUA;
     private MyWebChromeClient myWebChromeClient;
@@ -53,11 +50,7 @@ public class WebViewTab extends SearcherTab {
     }
 
     @Override
-    public View getView() {
-        return rootView;
-    }
-
-    public WebView getWebView() {
+    public WebView getView() {
         return mWebView;
     }
 
@@ -123,9 +116,7 @@ public class WebViewTab extends SearcherTab {
             Log.i("peter", "url=" + bean.url);
             if (mWebView == null) {
                 int resId = onCreateViewResId();
-                rootView = mainActivity.setCurrentView(resId);
-                mWebView = (WebView) rootView.findViewById(R.id.webview);
-                progressBar = (ProgressBar) rootView.findViewById(R.id.progress);
+                mWebView = (WebView) mainActivity.setCurrentView(resId);
                 onCreate();
                 if (!Tab.ACTION_NEW_WINDOW.equals(bean.url)) {
                     mWebView.loadUrl(bean.url, mRequestHeaders);
@@ -135,7 +126,7 @@ public class WebViewTab extends SearcherTab {
                 if (!getUrl().equals(bean.url)) {
                     mWebView.loadUrl(bean.url);
                 }
-                mainActivity.setCurrentView(rootView);
+                mainActivity.setCurrentView(mWebView);
             }
             if (!TextUtils.isEmpty(bean.name)) {
                 saveData(bean);
@@ -279,17 +270,4 @@ public class WebViewTab extends SearcherTab {
         return null;
     }
 
-    public void refreshProgress(int progress) {
-        progressBar.setProgress(progress);
-        if (progress == 100) {
-            progressBar.post(new Runnable() {
-                @Override
-                public void run() {
-                    progressBar.setVisibility(View.INVISIBLE);
-                }
-            });
-        } else {
-            progressBar.setVisibility(View.VISIBLE);
-        }
-    }
 }

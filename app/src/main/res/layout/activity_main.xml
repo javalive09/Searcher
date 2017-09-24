@@ -47,6 +47,16 @@
                 android:layout_height="1px"
                 android:background="@color/tint_color" />
 
+            <ProgressBar
+                android:id="@+id/progress"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="3dp"
+                android:layout_below="@id/toolbar"
+                android:max="100"
+                android:progressTint="@color/progress_color"
+                android:visibility="invisible" />
+
             <View
                 android:id="@+id/menu_anchor"
                 android:layout_width="1px"

@@ -20,6 +20,7 @@ public class SearchWebView extends WebView {
 
     private int startY, touchX, touchY;
     private static int SLOP;
+    private boolean popMenu;
 
     public SearchWebView(Context context) {
         super(context);
@@ -51,13 +52,16 @@ public class SearchWebView extends WebView {
                 startY = y;
                 touchX = x;
                 touchY = y;
+                popMenu = false;
                 break;
             case MotionEvent.ACTION_UP:
-                int deltaY = y - startY;
-                if (deltaY > SLOP) { //show
-                    ((MainActivity) getContext()).showTopbar();
-                } else if (deltaY < -SLOP) {//hide
-                    ((MainActivity) getContext()).hideTopbar();
+                if (!popMenu) {
+                    int deltaY = y - startY;
+                    if (deltaY > SLOP) { //show
+                        ((MainActivity) getContext()).showTopbar();
+                    } else if (deltaY < -SLOP) {//hide
+                        ((MainActivity) getContext()).hideTopbar();
+                    }
                 }
                 break;
         }
@@ -67,6 +71,7 @@ public class SearchWebView extends WebView {
 
     @Override
     protected ContextMenu.ContextMenuInfo getContextMenuInfo() {
+        popMenu = true;
         ContextMenuInfo info = new ContextMenuInfo(getHitTestResult(), touchX, touchY);
         info.setSearchWebView(this);
         return info;
@@ -77,7 +82,7 @@ public class SearchWebView extends WebView {
 
         SearchWebView searchWebView;
         HitTestResult result;
-        int x,y;
+        int x, y;
 
         public ContextMenuInfo(HitTestResult result, int x, int y) {
             this.result = result;
@@ -107,7 +112,7 @@ public class SearchWebView extends WebView {
 
     }
 
-    public static class OnMenuItemClickListener implements PopupMenu.OnMenuItemClickListener{
+    public static class OnMenuItemClickListener implements PopupMenu.OnMenuItemClickListener {
 
         SearchWebView searchWebView;
 
