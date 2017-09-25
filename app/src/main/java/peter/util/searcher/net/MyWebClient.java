@@ -28,6 +28,7 @@ import java.util.Map;
 
 import peter.util.searcher.R;
 import peter.util.searcher.activity.MainActivity;
+import peter.util.searcher.tab.SearcherTab;
 import peter.util.searcher.tab.WebViewTab;
 import peter.util.searcher.utils.Constants;
 import peter.util.searcher.utils.IntentUtils;
@@ -193,15 +194,20 @@ public class MyWebClient extends WebViewClient {
     }
 
     public boolean shouldOverrideLoading(@NonNull WebView view, @NonNull String url) {
-        WebViewTab webViewTab = (WebViewTab) mainActivity.getTabManager().getCurrentTabGroup().getCurrentTab();
-        Map<String, String> headers = webViewTab.getRequestHeaders();
-        if (url.startsWith(Constants.ABOUT)) {
+        SearcherTab tab = mainActivity.getTabManager().getCurrentTabGroup().getCurrentTab();
+        if (tab instanceof WebViewTab) {
+            WebViewTab webViewTab = (WebViewTab) tab;
+            Map<String, String> headers = webViewTab.getRequestHeaders();
+            if (url.startsWith(Constants.ABOUT)) {
+                return continueLoadingUrl(view, url, headers);
+            }
+            if (isMailOrIntent(url, view) || mIntentUtils.startActivityForUrl(view, url)) {
+                return true;
+            }
             return continueLoadingUrl(view, url, headers);
+        } else {
+            return false;
         }
-        if (isMailOrIntent(url, view) || mIntentUtils.startActivityForUrl(view, url)) {
-            return true;
-        }
-        return continueLoadingUrl(view, url, headers);
     }
 
     private boolean continueLoadingUrl(@NonNull WebView webView,
