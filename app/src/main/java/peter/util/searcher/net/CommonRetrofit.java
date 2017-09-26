@@ -1,6 +1,5 @@
 package peter.util.searcher.net;
 
-import android.content.Context;
 
 //import com.facebook.stetho.okhttp3.StethoInterceptor;
 
@@ -9,23 +8,19 @@ import java.util.concurrent.TimeUnit;
 
 import okhttp3.Cache;
 import okhttp3.OkHttpClient;
+import peter.util.searcher.Searcher;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class CommonRetrofit {
 
-    private Context context;
     private Retrofit retrofit;
     private static final String URL = "http://7xoxmg.com1.z0.glb.clouddn.com/";
     private static final String CACHE_NAME = "engines";
     private static final long MAX_CACHE = 1024 * 1024 * 10; //10M
 
     private CommonRetrofit() {
-    }
-
-    public void init(Context context) {
-        this.context = context;
     }
 
     private static class SingletonInstance {
@@ -42,7 +37,7 @@ public class CommonRetrofit {
                     .connectTimeout(30, TimeUnit.SECONDS)
                     .readTimeout(30, TimeUnit.SECONDS)
                     .writeTimeout(30, TimeUnit.SECONDS)
-                    .cache(new Cache(new File(context.getCacheDir(), CACHE_NAME), MAX_CACHE))
+                    .cache(new Cache(new File(Searcher.context.getCacheDir(), CACHE_NAME), MAX_CACHE))
 //                    .addNetworkInterceptor(new StethoInterceptor())
                     .build();
 //            Gson gson = new GsonBuilder().setLenient().create();

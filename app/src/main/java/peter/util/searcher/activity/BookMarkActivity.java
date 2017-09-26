@@ -84,8 +84,6 @@ public class BookMarkActivity extends BaseActivity {
                         return new FavoriteFragment();
                     case 1:
                         return new HistorySearchFragment();
-//                    case 2:
-//                        return new HistoryDownloadFragment();
                 }
                 return null;
             }

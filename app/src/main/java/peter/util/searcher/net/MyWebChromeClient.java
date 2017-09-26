@@ -13,8 +13,6 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.widget.FrameLayout;
 import android.widget.VideoView;
-
-import peter.util.searcher.TabManager;
 import peter.util.searcher.activity.MainActivity;
 import peter.util.searcher.bean.Bean;
 import peter.util.searcher.tab.SearcherTab;
@@ -153,7 +151,7 @@ public class MyWebChromeClient extends WebChromeClient {
         mActivity.setRequestedOrientation(mOriginalOrientation);
     }
 
-    public synchronized void showCustomView(final View view, WebChromeClient.CustomViewCallback callback, int requestedOrientation) {
+    private synchronized void showCustomView(final View view, WebChromeClient.CustomViewCallback callback, int requestedOrientation) {
         if (view == null || mCustomView != null) {
             if (callback != null) {
                 try {

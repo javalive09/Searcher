@@ -30,7 +30,9 @@ public class SettingsActivity extends BaseActivity {
         ButterKnife.bind(SettingsActivity.this);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true); // this sets the button to the back icon
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true); // this sets the button to the back icon
+        }
         toolbar.setNavigationOnClickListener(v -> finish());
     }
 

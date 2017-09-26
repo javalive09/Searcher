@@ -86,23 +86,12 @@ public class MyWebClient extends WebViewClient {
         builder.setTitle(mainActivity.getString(R.string.title_sign_in));
         builder.setView(passLayout);
         builder.setCancelable(true)
-                .setPositiveButton(mainActivity.getString(R.string.title_sign_in),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int id) {
-                                String user = name.getText().toString();
-                                String pass = password.getText().toString();
-                                handler.proceed(user.trim(), pass.trim());
-
-                            }
-                        })
-                .setNegativeButton(mainActivity.getString(R.string.action_cancel),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int id) {
-                                handler.cancel();
-                            }
-                        });
+                .setPositiveButton(mainActivity.getString(R.string.title_sign_in), (dialog, which) -> {
+                    String user = name.getText().toString();
+                    String pass = password.getText().toString();
+                    handler.proceed(user.trim(), pass.trim());
+                })
+                .setNegativeButton(mainActivity.getString(R.string.action_cancel), (dialog, which) -> handler.cancel());
         AlertDialog alert = builder.create();
         alert.show();
     }
@@ -121,20 +110,8 @@ public class MyWebClient extends WebViewClient {
         builder.setTitle(mainActivity.getString(R.string.title_warning));
         builder.setMessage(alertMessage)
                 .setCancelable(true)
-                .setPositiveButton(mainActivity.getString(R.string.action_yes),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int id) {
-                                handler.proceed();
-                            }
-                        })
-                .setNegativeButton(mainActivity.getString(R.string.action_no),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int id) {
-                                handler.cancel();
-                            }
-                        });
+                .setPositiveButton(mainActivity.getString(R.string.action_yes), (dialog, which) -> handler.proceed())
+                .setNegativeButton(mainActivity.getString(R.string.action_no), (dialog, which) -> handler.cancel());
         builder.create().show();
     }
 
@@ -179,7 +156,7 @@ public class MyWebClient extends WebViewClient {
             ByteArrayInputStream EMPTY = new ByteArrayInputStream("".getBytes());
             return new WebResourceResponse("text/plain", "utf-8", EMPTY);
         }
-        return super.shouldInterceptRequest(view, url);
+        return null;
     }
 
     @Override
@@ -193,7 +170,7 @@ public class MyWebClient extends WebViewClient {
         return shouldOverrideLoading(view, url) || super.shouldOverrideUrlLoading(view, url);
     }
 
-    public boolean shouldOverrideLoading(@NonNull WebView view, @NonNull String url) {
+    private boolean shouldOverrideLoading(@NonNull WebView view, @NonNull String url) {
         SearcherTab tab = mainActivity.getTabManager().getCurrentTabGroup().getCurrentTab();
         if (tab instanceof WebViewTab) {
             WebViewTab webViewTab = (WebViewTab) tab;
@@ -201,13 +178,9 @@ public class MyWebClient extends WebViewClient {
             if (url.startsWith(Constants.ABOUT)) {
                 return continueLoadingUrl(view, url, headers);
             }
-            if (isMailOrIntent(url, view) || mIntentUtils.startActivityForUrl(view, url)) {
-                return true;
-            }
-            return continueLoadingUrl(view, url, headers);
-        } else {
-            return false;
+            return isMailOrIntent(url, view) || mIntentUtils.startActivityForUrl(view, url) || continueLoadingUrl(view, url, headers);
         }
+        return false;
     }
 
     private boolean continueLoadingUrl(@NonNull WebView webView,

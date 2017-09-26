@@ -2,7 +2,6 @@ package peter.util.searcher.activity;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -47,9 +46,7 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     public void exit() {
-        for (Activity act : LIST) {
-            act.finish();
-        }
+        LIST.forEach(Activity::finish);
     }
 
     public String getSearchWord() {

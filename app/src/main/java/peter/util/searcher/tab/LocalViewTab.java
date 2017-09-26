@@ -14,9 +14,9 @@ import peter.util.searcher.bean.Bean;
 
 public abstract class LocalViewTab extends SearcherTab{
 
-    protected View mView;
+    View mView;
 
-    public LocalViewTab(MainActivity activity) {
+    LocalViewTab(MainActivity activity) {
         super(activity);
     }
 

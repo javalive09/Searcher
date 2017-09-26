@@ -19,7 +19,7 @@ public final class Constants {
 
     public static final String MOBILE_USER_AGENT = "Mozilla/5.0 (Linux; U; Android 4.4; en-us; Nexus 4 Build/JOP24G) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30";
 
-    public static final String INTENT_ORIGIN = "URL_INTENT_ORIGIN";
+    static final String INTENT_ORIGIN = "URL_INTENT_ORIGIN";
 
     public static final String ABOUT = "about:";
     public static final String MAIL_SCHAME = "mailto:";

@@ -3,7 +3,6 @@ package peter.util.searcher.fragment;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -109,18 +108,15 @@ public class HistorySearchFragment extends Fragment implements View.OnClickListe
         dismissPopupMenu();
         popup = new PopupMenu(getActivity(), view);
         popup.getMenuInflater().inflate(R.menu.item, popup.getMenu());
-        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.action_delete:
-                        Bean bean = (Bean) view.getTag();
-                        DaoManager.getInstance().deleteHistory(bean);
-                        refreshData();
-                        break;
-                }
-
-                return true;
+        popup.setOnMenuItemClickListener(item -> {
+            switch (item.getItemId()) {
+                case R.id.action_delete:
+                    Bean bean = (Bean) view.getTag();
+                    DaoManager.getInstance().deleteHistory(bean);
+                    refreshData();
+                    break;
             }
+            return true;
         });
         popup.show();
     }
@@ -136,12 +132,12 @@ public class HistorySearchFragment extends Fragment implements View.OnClickListe
         private final LayoutInflater factory;
         private List<Bean> list;
 
-        public HistoryAdapter(List<Bean> objects) {
+        HistoryAdapter(List<Bean> objects) {
             factory = LayoutInflater.from(getActivity());
             list = objects;
         }
 
-        public void updateData(List<Bean> list) {
+        void updateData(List<Bean> list) {
             this.list = list;
             notifyDataSetChanged();
         }

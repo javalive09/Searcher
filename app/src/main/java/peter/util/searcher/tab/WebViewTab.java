@@ -6,7 +6,6 @@ import android.os.Build;
 import android.support.v4.util.ArrayMap;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.View;
 import android.webkit.CookieManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -39,7 +38,7 @@ public class WebViewTab extends SearcherTab {
     private static final String HEADER_DNT = "DNT";
     private final Map<String, String> mRequestHeaders = new ArrayMap<>();
 
-    public WebViewTab(MainActivity activity) {
+    WebViewTab(MainActivity activity) {
         super(activity);
     }
 
@@ -92,7 +91,7 @@ public class WebViewTab extends SearcherTab {
         mWebView.getSettings().setUserAgentString(ua);
     }
 
-    public String getDefaultUA() {
+    private String getDefaultUA() {
         return WebSettings.getDefaultUserAgent(mWebView.getContext());
     }
 

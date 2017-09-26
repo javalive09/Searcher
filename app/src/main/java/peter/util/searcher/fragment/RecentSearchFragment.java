@@ -3,19 +3,15 @@ package peter.util.searcher.fragment;
 import android.app.Fragment;
 import android.content.ClipboardManager;
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
-
-import java.lang.ref.WeakReference;
 import java.util.List;
 
 import butterknife.BindView;
@@ -60,14 +56,17 @@ public class RecentSearchFragment extends Fragment implements View.OnClickListen
         super.onResume();
         refreshData();
         ClipboardManager cmb = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
-        word = cmb.getText();
-        if (!TextUtils.isEmpty(word)) {
-            if (UrlUtils.guessUrl(word.toString())) {
-                pasteEnter.setVisibility(View.VISIBLE);
-                pasteEnter.setOnClickListener(RecentSearchFragment.this);
-            } else {
-                paste.setVisibility(View.VISIBLE);
-                paste.setOnClickListener(RecentSearchFragment.this);
+
+        if (cmb.getPrimaryClip().getItemCount() > 0) {
+            word = cmb.getPrimaryClip().getItemAt(0).getText();
+            if (!TextUtils.isEmpty(word)) {
+                if (UrlUtils.guessUrl(word.toString())) {
+                    pasteEnter.setVisibility(View.VISIBLE);
+                    pasteEnter.setOnClickListener(RecentSearchFragment.this);
+                } else {
+                    paste.setVisibility(View.VISIBLE);
+                    paste.setOnClickListener(RecentSearchFragment.this);
+                }
             }
         }
     }
@@ -132,7 +131,7 @@ public class RecentSearchFragment extends Fragment implements View.OnClickListen
         private final LayoutInflater factory;
         private List<Bean> list;
 
-        public RecentSearchAdapter(List<Bean> list) {
+        RecentSearchAdapter(List<Bean> list) {
             factory = LayoutInflater.from(getActivity());
             this.list = list;
         }
@@ -171,18 +170,15 @@ public class RecentSearchFragment extends Fragment implements View.OnClickListen
         dismissPopupMenu();
         popup = new PopupMenu(getActivity(), view);
         popup.getMenuInflater().inflate(R.menu.item, popup.getMenu());
-        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.action_delete:
-                        Bean bean = (Bean) view.getTag();
-                        DaoManager.getInstance().deleteHistory(bean);
-                        refreshData();
-                        break;
-                }
-
-                return true;
+        popup.setOnMenuItemClickListener(item -> {
+            switch (item.getItemId()) {
+                case R.id.action_delete:
+                    Bean bean = (Bean) view.getTag();
+                    DaoManager.getInstance().deleteHistory(bean);
+                    refreshData();
+                    break;
             }
+            return true;
         });
         popup.show();
     }

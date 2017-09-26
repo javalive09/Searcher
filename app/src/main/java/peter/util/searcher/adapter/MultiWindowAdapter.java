@@ -92,7 +92,7 @@ public class MultiWindowAdapter extends BaseAdapter {
         @BindView(R.id.close_tab)
         ImageView close;
 
-        public Holder(View view) {
+        Holder(View view) {
             ButterKnife.bind(this, view);
         }
     }

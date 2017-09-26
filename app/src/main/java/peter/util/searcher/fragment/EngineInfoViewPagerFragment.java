@@ -77,9 +77,7 @@ public class EngineInfoViewPagerFragment extends Fragment implements View.OnClic
                     mViewPager.setAdapter(adapter);
                     mSlidingTabLayout.setupWithViewPager(mViewPager);
                     mViewPager.setCurrentItem(getPageNo());
-                }, throwable -> {
-                    Toast.makeText(getActivity(), throwable.getMessage(), Toast.LENGTH_LONG).show();
-                });
+                }, throwable -> Toast.makeText(getActivity(), throwable.getMessage(), Toast.LENGTH_LONG).show());
     }
 
     @Override
@@ -107,7 +105,7 @@ public class EngineInfoViewPagerFragment extends Fragment implements View.OnClic
         EngineInfoViewPagerFragment f;
         List<EnginesItem> list;
 
-        public EnginesAdapter(EngineInfoViewPagerFragment f, List<EnginesItem> list) {
+        EnginesAdapter(EngineInfoViewPagerFragment f, List<EnginesItem> list) {
             this.list = list;
             this.f = f;
         }
@@ -152,7 +150,7 @@ public class EngineInfoViewPagerFragment extends Fragment implements View.OnClic
         List<ItemItem> list;
         int pageNo;
 
-        public EngineAdapter(EngineInfoViewPagerFragment f, int pageNo, List<ItemItem> list) {
+        EngineAdapter(EngineInfoViewPagerFragment f, int pageNo, List<ItemItem> list) {
             this.f = f;
             this.list = list;
             this.pageNo = pageNo;
@@ -198,13 +196,13 @@ public class EngineInfoViewPagerFragment extends Fragment implements View.OnClic
         }
     }
 
-    public static class EngineHolder {
+    static class EngineHolder {
         @BindView(R.id.title)
         TextView title;
         @BindView(R.id.icon)
         ImageView icon;
 
-        public EngineHolder(View view) {
+        EngineHolder(View view) {
             ButterKnife.bind(this, view);
         }
     }

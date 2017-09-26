@@ -84,7 +84,7 @@ public class SearchWebView extends WebView {
         HitTestResult result;
         int x, y;
 
-        public ContextMenuInfo(HitTestResult result, int x, int y) {
+        ContextMenuInfo(HitTestResult result, int x, int y) {
             this.result = result;
             this.x = x;
             this.y = y;
@@ -94,7 +94,7 @@ public class SearchWebView extends WebView {
             return searchWebView;
         }
 
-        public void setSearchWebView(SearchWebView searchWebView) {
+        void setSearchWebView(SearchWebView searchWebView) {
             this.searchWebView = searchWebView;
         }
 
@@ -122,12 +122,8 @@ public class SearchWebView extends WebView {
             this.result = result;
         }
 
-        public HitTestResult getInfo() {
+        protected HitTestResult getInfo() {
             return result;
-        }
-
-        public SearchWebView getSearchWebView() {
-            return searchWebView;
         }
 
         public void setSearchWebView(SearchWebView searchWebView) {

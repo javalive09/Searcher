@@ -39,8 +39,8 @@ class FetchUrlMimeType extends Thread {
 
     private final String mUserAgent;
 
-    public FetchUrlMimeType(Context context, DownloadManager.Request request, String uri,
-                            String cookies, String userAgent) {
+    FetchUrlMimeType(Context context, DownloadManager.Request request, String uri,
+                     String cookies, String userAgent) {
         mContext = context;
         mRequest = request;
         mUri = uri;
@@ -108,11 +108,6 @@ class FetchUrlMimeType extends Thread {
         manager.enqueue(mRequest);
         Handler handler = new Handler(Looper.getMainLooper());
         final String file = filename;
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(mContext, mContext.getString(R.string.download_pending) + ' ' + file, Toast.LENGTH_LONG).show();
-            }
-        });
+        handler.post(() -> Toast.makeText(mContext, mContext.getString(R.string.download_pending) + ' ' + file, Toast.LENGTH_LONG).show());
     }
 }

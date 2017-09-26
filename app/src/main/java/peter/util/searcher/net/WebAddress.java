@@ -46,7 +46,7 @@ class WebAddress {
     /**
      * Parses given URI-like string.
      */
-    public WebAddress(@Nullable String address) throws IllegalArgumentException {
+    WebAddress(@Nullable String address) throws IllegalArgumentException {
 
         if (address == null) {
             throw new IllegalArgumentException("address can't be null");
@@ -130,28 +130,8 @@ class WebAddress {
         return mScheme + "://" + authInfo + mHost + port + mPath;
     }
 
-    public void setScheme(String scheme) {
-        mScheme = scheme;
-    }
-
-    public String getScheme() {
-        return mScheme;
-    }
-
-    public void setHost(@NonNull String host) {
-        mHost = host;
-    }
-
-    public String getHost() {
+    String getHost() {
         return mHost;
-    }
-
-    public void setPort(int port) {
-        mPort = port;
-    }
-
-    public int getPort() {
-        return mPort;
     }
 
     public void setPath(String path) {
@@ -162,11 +142,4 @@ class WebAddress {
         return mPath;
     }
 
-    public void setAuthInfo(String authInfo) {
-        mAuthInfo = authInfo;
-    }
-
-    public String getAuthInfo() {
-        return mAuthInfo;
-    }
 }

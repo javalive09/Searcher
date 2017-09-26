@@ -1,7 +1,6 @@
 package peter.util.searcher.tab;
 
 import android.view.View;
-import android.webkit.WebView;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -127,6 +126,7 @@ public class TabGroup extends SearcherTab {
         }
     }
 
+
     private LocalViewTab newLocalTab(String url) {
         Class clazz = mainActivity.getRounterClass(url);
         LocalViewTab tab = null;
@@ -203,14 +203,8 @@ public class TabGroup extends SearcherTab {
             if (webTabCanGoForward) {
                 return true;
             }
-            if (mCurrentTabIndex < tabArrayList.size() - 1) {
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            return mCurrentTabIndex < tabArrayList.size() - 1;
         }
+        return mCurrentTabIndex < tabArrayList.size() - 1;
     }
 
     public void goForward() {

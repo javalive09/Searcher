@@ -50,7 +50,7 @@ public class DownloadHandler {
      * @param contentDisposition Content-disposition http header, if present.
      * @param mimetype           The mimetype of the content reported by the server
      */
-    public static void onDownloadStart(@NonNull Context context, String url, String userAgent,
+     static void onDownloadStart(@NonNull Context context, String url, String userAgent,
                                        @Nullable String contentDisposition, String mimetype) {
         // if we're dealing wih A/V content that's not explicitly marked
         // for download, check if it's streamable.
@@ -183,7 +183,12 @@ public class DownloadHandler {
         // or, should it be set to one of several Environment.DIRECTORY* dirs
         // depending on mimetype?
 
-        String location = context.getExternalFilesDir(null).toString();
+        String location = "";
+        File file = context.getExternalFilesDir(null);
+        if(file != null) {
+            location = file.toString();
+        }
+
         Uri downloadFolder;
         location = addNecessarySlashes(location);
         downloadFolder = Uri.parse(location);
@@ -252,11 +257,11 @@ public class DownloadHandler {
 
     }
 
-    public static void openFile(Uri uri, Context context) {
+    static void openFile(Uri uri, Context context) {
         openFile(uri, context, getMimeType(uri.getPath()));
     }
 
-    public static void openFile(Uri uri, Context context, String mineType) {
+    private static void openFile(Uri uri, Context context, String mineType) {
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setDataAndType(uri, mineType);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -268,46 +273,7 @@ public class DownloadHandler {
         if (TextUtils.isEmpty(extension)) {
             extension = url.substring(url.lastIndexOf(".") + 1, url.length());
         }
-
-        String type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
-        return type;
-    }
-
-    private static final String sFileName = "test";
-    private static final String sFileExtension = ".txt";
-
-    /**
-     * Returns the first parent directory of a directory that exists. This is useful
-     * for subdirectories that do not exist but their parents do.
-     *
-     * @param directory the directory to find the first existent parent
-     * @return the first existent parent
-     */
-    @Nullable
-    private static String getFirstRealParentDirectory(@Nullable String directory) {
-        while (true) {
-            if (directory == null || directory.isEmpty()) {
-                return "/";
-            }
-            directory = addNecessarySlashes(directory);
-            File file = new File(directory);
-            if (!file.isDirectory()) {
-                int indexSlash = directory.lastIndexOf('/');
-                if (indexSlash > 0) {
-                    String parent = directory.substring(0, indexSlash);
-                    int previousIndex = parent.lastIndexOf('/');
-                    if (previousIndex > 0) {
-                        directory = parent.substring(0, previousIndex);
-                    } else {
-                        return "/";
-                    }
-                } else {
-                    return "/";
-                }
-            } else {
-                return directory;
-            }
-        }
+        return MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
     }
 
     private static boolean isWriteAccessAvailable(@NonNull Uri fileUri) {
@@ -324,7 +290,7 @@ public class DownloadHandler {
     }
 
     @NonNull
-    public static String addNecessarySlashes(@Nullable String originalPath) {
+    static String addNecessarySlashes(@Nullable String originalPath) {
         if (originalPath == null || originalPath.length() == 0) {
             return "/";
         }

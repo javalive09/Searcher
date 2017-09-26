@@ -153,7 +153,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             }
         });
         updateMultiwindow();
-
         restoreLostTabs();
     }
 
@@ -194,7 +193,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     popup.getMenu().setGroupVisible(R.id.txt_link, true);
                     break;
             }
-
             contextMenuListener.setInfo(hitTestResult);
             contextMenuListener.setSearchWebView(info.getSearchWebView());
             popup.setOnMenuItemClickListener(contextMenuListener);
@@ -505,12 +503,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             if (!realBack) {
                 realBack = true;
                 Toast.makeText(MainActivity.this, R.string.exit_hint, Toast.LENGTH_SHORT).show();
-                mHandler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        realBack = false;
-                    }
-                }, 1000);
+                mHandler.postDelayed(() -> realBack = false, 1000);
                 return true;
             }
         }
@@ -624,8 +617,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        SharedPreferences sp = getSharedPreferences("tabs", Context.MODE_PRIVATE);
-        sp.edit().putString("tabs", tabManager.getSaveState()).apply();
     }
 
     @Override
@@ -681,7 +672,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putString("tabs", tabManager.getSaveState());
     }
 
     public void refreshProgress(WebViewTab webViewTab, int progress) {

@@ -1,6 +1,5 @@
 package peter.util.searcher.db;
 
-import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
@@ -8,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Observable;
+import peter.util.searcher.Searcher;
 import peter.util.searcher.bean.Bean;
 import peter.util.searcher.db.dao.DaoMaster;
 import peter.util.searcher.db.dao.DaoSession;
@@ -18,12 +18,13 @@ import peter.util.searcher.db.dao.HistorySearchDao;
 
 public class DaoManager {
 
-    private DaoMaster.DevOpenHelper mHelper;
-    private SQLiteDatabase db;
-    private DaoMaster mDaoMaster;
     private DaoSession mDaoSession;
 
     private DaoManager() {
+        DaoMaster.DevOpenHelper mHelper = new DaoMaster.DevOpenHelper(Searcher.context, "searcher_db", null);
+        SQLiteDatabase db = mHelper.getWritableDatabase();
+        DaoMaster mDaoMaster = new DaoMaster(db);
+        mDaoSession = mDaoMaster.newSession();
     }
 
     private static class SingletonInstance {
@@ -32,13 +33,6 @@ public class DaoManager {
 
     public static DaoManager getInstance() {
         return SingletonInstance.INSTANCE;
-    }
-
-    public void init(Context context) {
-        mHelper = new DaoMaster.DevOpenHelper(context, "searcher_db", null);
-        db = mHelper.getWritableDatabase();
-        mDaoMaster = new DaoMaster(db);
-        mDaoSession = mDaoMaster.newSession();
     }
 
     public long insertHistory(Bean bean) {

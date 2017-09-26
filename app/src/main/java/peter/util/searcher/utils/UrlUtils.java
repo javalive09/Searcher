@@ -16,7 +16,6 @@
 package peter.util.searcher.utils;
 
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.Patterns;
 import android.webkit.URLUtil;
 
@@ -36,35 +35,9 @@ public class UrlUtils {
                     ')' +
                     "(.*)");
     // Google toolbar_ic_search
-    public final static String QUERY_PLACE_HOLDER = "%s";
-    // Regular expression to strip http:// and optionally
-    // the trailing slash
-    private static final Pattern STRIP_URL_PATTERN =
-            Pattern.compile("^http://(.*?)/?$");
+    private final static String QUERY_PLACE_HOLDER = "%s";
 
     private UrlUtils() { /* cannot be instantiated */ }
-
-    /**
-     * Strips the provided url of preceding "http://" and any trailing "/". Does not
-     * strip "https://". If the provided string cannot be stripped, the original string
-     * is returned.
-     * <p/>
-     * TODO: Put this in TextUtils to be used by other packages doing something similar.
-     *
-     * @param url a url to strip, like "http://www.google.com/"
-     * @return a stripped url like "www.google.com", or the original string if it could
-     * not be stripped
-     */
-    @Nullable
-    public static String stripUrl(@Nullable String url) {
-        if (url == null) return null;
-        Matcher m = STRIP_URL_PATTERN.matcher(url);
-        if (m.matches()) {
-            return m.group(1);
-        } else {
-            return url;
-        }
-    }
 
     /**
      * Attempts to determine whether user input is a URL or toolbar_ic_search
@@ -122,56 +95,10 @@ public class UrlUtils {
         return URLUtil.guessUrl(inUrl);
     }
 
-    public static boolean isUrl(String url) {
+    private static boolean isUrl(String url) {
         String inUrl = url.trim();
         Matcher matcher = ACCEPTED_URI_SCHEMA.matcher(inUrl);
         return matcher.matches();
-    }
-
-    /* package */
-    @NonNull
-    static String fixUrl(@NonNull String inUrl) {
-        // FIXME: Converting the url to lower case
-        // duplicates functionality in smartUrlFilter().
-        // However, changing all current callers of fixUrl to
-        // call smartUrlFilter in addition may have unwanted
-        // consequences, and is deferred for now.
-        int colon = inUrl.indexOf(':');
-        boolean allLower = true;
-        for (int index = 0; index < colon; index++) {
-            char ch = inUrl.charAt(index);
-            if (!Character.isLetter(ch)) {
-                break;
-            }
-            allLower &= Character.isLowerCase(ch);
-            if (index == colon - 1 && !allLower) {
-                inUrl = inUrl.substring(0, colon).toLowerCase()
-                        + inUrl.substring(colon);
-            }
-        }
-        if (inUrl.startsWith("http://") || inUrl.startsWith("https://"))
-            return inUrl;
-        if (inUrl.startsWith("http:") ||
-                inUrl.startsWith("https:")) {
-            if (inUrl.startsWith("http:/") || inUrl.startsWith("https:/")) {
-                inUrl = inUrl.replaceFirst("/", "//");
-            } else inUrl = inUrl.replaceFirst(":", "://");
-        }
-        return inUrl;
-    }
-
-    // Returns the filtered URL. Cannot return null, but can return an empty string
-    /* package */
-    @Nullable
-    static String filteredUrl(@Nullable String inUrl) {
-        if (inUrl == null) {
-            return "";
-        }
-        if (inUrl.startsWith("content:")
-                || inUrl.startsWith("browser:")) {
-            return "";
-        }
-        return inUrl;
     }
 
 }

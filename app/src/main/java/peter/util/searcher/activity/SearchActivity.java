@@ -113,8 +113,11 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
     private void init() {
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true); // this sets the button to the back icon
-        actionBar.setHomeButtonEnabled(true);
+        if(actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            // this sets the button to the back icon
+            actionBar.setHomeButtonEnabled(true);
+        }
         toolbar.setNavigationOnClickListener(v -> {
             closeIME();
             finish();

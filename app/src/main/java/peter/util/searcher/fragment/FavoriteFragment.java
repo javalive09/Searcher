@@ -23,13 +23,11 @@ import java.util.List;
 import butterknife.BindArray;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import peter.util.searcher.R;
 import peter.util.searcher.activity.BaseActivity;
-import peter.util.searcher.activity.BookMarkActivity;
 import peter.util.searcher.bean.Bean;
 import peter.util.searcher.db.DaoManager;
 
@@ -158,18 +156,15 @@ public class FavoriteFragment extends Fragment implements View.OnClickListener, 
         dismissPopupMenu();
         popup = new PopupMenu(getActivity(), view);
         popup.getMenuInflater().inflate(R.menu.item, popup.getMenu());
-        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.action_delete:
-                        Bean bean = (Bean) view.getTag();
-                        DaoManager.getInstance().deleteFav(bean);
-                        refreshListData();
-                        break;
-                }
-
-                return true;
+        popup.setOnMenuItemClickListener(item -> {
+            switch (item.getItemId()) {
+                case R.id.action_delete:
+                    Bean bean = (Bean) view.getTag();
+                    DaoManager.getInstance().deleteFav(bean);
+                    refreshListData();
+                    break;
             }
+            return true;
         });
         popup.show();
     }
@@ -185,12 +180,12 @@ public class FavoriteFragment extends Fragment implements View.OnClickListener, 
         private final LayoutInflater factory;
         private List<Bean> list;
 
-        public FavoriteAdapter(List<Bean> objects) {
+        FavoriteAdapter(List<Bean> objects) {
             factory = LayoutInflater.from(getActivity());
             list = objects;
         }
 
-        public void updateData(List<Bean> list) {
+        void updateData(List<Bean> list) {
             this.list = list;
             notifyDataSetChanged();
         }
