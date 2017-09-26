@@ -115,14 +115,11 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true); // this sets the button to the back icon
         actionBar.setHomeButtonEnabled(true);
-        toolbar.setNavigationOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        closeIME();
-                        finish();
-                    }
-                });
+        toolbar.setNavigationOnClickListener(v -> {
+            closeIME();
+            finish();
+        });
+
         search.addTextChangedListener(new TextWatcher() {
 
             @Override

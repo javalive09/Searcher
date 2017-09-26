@@ -50,6 +50,9 @@
     <string name="action_about">关于速搜</string>
     <string name="action_delete">删除</string>
     <string name="action_delete_all">删除全部</string>
+    <string name="action_bookmark_search">搜索</string>
+    <string name="action_bookmark_search_favorite_hint">搜索收藏记录</string>
+    <string name="action_bookmark_search_history_hint">搜索历史记录</string>
     <string name="tabs_title">标签</string>
     <string name="tabs_max_txt">最多可创建50个标签</string>
 

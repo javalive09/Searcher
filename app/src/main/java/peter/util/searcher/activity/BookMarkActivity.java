@@ -18,7 +18,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import peter.util.searcher.R;
 import peter.util.searcher.fragment.FavoriteFragment;
-import peter.util.searcher.fragment.HistoryDownloadFragment;
 import peter.util.searcher.fragment.HistorySearchFragment;
 
 /**
@@ -40,12 +39,7 @@ public class BookMarkActivity extends BaseActivity {
         setContentView(R.layout.activity_bookmark);
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        toolbar.setNavigationOnClickListener(v -> finish());
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true); // this sets the button to the back icon
         actionBar.setHomeButtonEnabled(true);
@@ -64,9 +58,9 @@ public class BookMarkActivity extends BaseActivity {
 
 
     /**
-     * hide menu
+     * hide bookmark_favorite
      *
-     * @param menu menu
+     * @param menu bookmark_favorite
      * @return result
      */
     @Override
@@ -103,24 +97,6 @@ public class BookMarkActivity extends BaseActivity {
         });
         mSlidingTabLayout.setupWithViewPager(viewPager);
 
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_exit:
-                exit();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
     }
 
 }

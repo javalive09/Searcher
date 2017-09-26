@@ -8,20 +8,17 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
+import android.util.Log;
 import android.webkit.URLUtil;
 import android.widget.Toast;
 
 import java.lang.ref.WeakReference;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import peter.util.searcher.R;
 import peter.util.searcher.activity.BaseActivity;
-import peter.util.searcher.bean.UrlInfo;
 import peter.util.searcher.bean.VersionInfo;
-import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.functions.Func1;
-import rx.schedulers.Schedulers;
 
 /**
  * 版本更新控制类
@@ -67,33 +64,24 @@ public class UpdateController {
             Toast.makeText(act, R.string.update_toast_start, Toast.LENGTH_SHORT).show();
         }
         final IVersionService iVersionService = CommonRetrofit.getInstance().getRetrofit().create(IVersionService.class);
-        iVersionService.getUrl(IVersionService.URL).retry(5).subscribeOn(Schedulers.io()).flatMap(new Func1<UrlInfo, Observable<VersionInfo>>() {
-            @Override
-            public Observable<VersionInfo> call(UrlInfo urlInfo) {
-                return iVersionService.getInfo(urlInfo.getUrl());
-            }
-        }).retry(5).observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<VersionInfo>() {
 
-                    @Override
-                    public void call(VersionInfo versionInfo) {
-                        BaseActivity holdAct = actHolder.get();
-                        if (holdAct != null) {
-                            if (holdAct.getVersionCode() < versionInfo.getCode()) {
-                                showUpdateDialog(holdAct, versionInfo);
-                            } else {
-                                if (showToast) {
-                                    Toast.makeText(holdAct, R.string.update_toast_nonew, Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        }
+
+        iVersionService.getUrl(IVersionService.URL).retry(5).subscribeOn(Schedulers.io()).flatMap(urlInfo -> iVersionService.getInfo(urlInfo.getUrl())).
+                retry(5).observeOn(AndroidSchedulers.mainThread()).subscribe(versionInfo -> {
+            BaseActivity holdAct = actHolder.get();
+            if (holdAct != null) {
+                if (holdAct.getVersionCode() < versionInfo.getCode()) {
+                    showUpdateDialog(holdAct, versionInfo);
+                } else {
+                    if (showToast) {
+                        Toast.makeText(holdAct, R.string.update_toast_nonew, Toast.LENGTH_SHORT).show();
                     }
-                }, new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable throwable) {
-                        throwable.printStackTrace();
-                    }
-                });
+                }
+            }
+        }, throwable -> {
+            throwable.printStackTrace();
+            Log.i("error", throwable.toString());
+        });
     }
 
     private void downloadApk(final Context context, String url) {

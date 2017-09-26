@@ -2,8 +2,13 @@ package peter.util.searcher.fragment;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,17 +18,20 @@ import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindArray;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.Scheduler;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import peter.util.searcher.R;
 import peter.util.searcher.activity.BaseActivity;
+import peter.util.searcher.activity.BookMarkActivity;
 import peter.util.searcher.bean.Bean;
 import peter.util.searcher.db.DaoManager;
-import peter.util.searcher.db.dao.FavoriteSearch;
 
 /**
  * 收藏夹fragment
@@ -32,7 +40,6 @@ import peter.util.searcher.db.dao.FavoriteSearch;
 public class FavoriteFragment extends Fragment implements View.OnClickListener, View.OnLongClickListener {
 
     PopupMenu popup;
-    MyAsyncTask asyncTask;
     @BindView(R.id.favorite)
     ListView favorite;
     @BindView(R.id.no_record)
@@ -43,6 +50,23 @@ public class FavoriteFragment extends Fragment implements View.OnClickListener, 
     String[] urls;
     @BindArray(R.array.favorite_urls_names)
     String[] names;
+    SearchView mSearchView;
+    Disposable queryFavorite;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.bookmark_favorite, menu);
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        mSearchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        mSearchView.setQueryHint(getString(R.string.action_bookmark_search_favorite_hint));
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -71,22 +95,29 @@ public class FavoriteFragment extends Fragment implements View.OnClickListener, 
 
     }
 
-    private void refreshData() {
-        cancelAsyncTask();
-        asyncTask = new MyAsyncTask();
-        asyncTask.execute();
-    }
-
-    private void cancelAsyncTask() {
-        if (asyncTask != null && !asyncTask.isCancelled()) {
-            asyncTask.cancel(true);
-        }
+    private void refreshListData() {
+        queryFavorite = DaoManager.getInstance().queryAllFavorite().subscribeOn(Schedulers.io()).
+                observeOn(AndroidSchedulers.mainThread()).subscribe(beans -> {
+            if (beans != null) {
+                if (beans.size() == 0) {
+                    noRecord.setVisibility(View.VISIBLE);
+                } else {
+                    noRecord.setVisibility(View.GONE);
+                }
+                if (favorite.getAdapter() == null) {
+                    favorite.setAdapter(new FavoriteAdapter(beans));
+                } else {
+                    ((FavoriteAdapter) favorite.getAdapter()).updateData(beans);
+                }
+            }
+            loading.setVisibility(View.GONE);
+        });
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        refreshData();
+        refreshListData();
     }
 
     @Override
@@ -115,7 +146,11 @@ public class FavoriteFragment extends Fragment implements View.OnClickListener, 
     @Override
     public void onDestroy() {
         dismissPopupMenu();
-        cancelAsyncTask();
+        if (queryFavorite != null) {
+            if (!queryFavorite.isDisposed()) {
+                queryFavorite.dispose();
+            }
+        }
         super.onDestroy();
     }
 
@@ -129,7 +164,7 @@ public class FavoriteFragment extends Fragment implements View.OnClickListener, 
                     case R.id.action_delete:
                         Bean bean = (Bean) view.getTag();
                         DaoManager.getInstance().deleteFav(bean);
-                        refreshData();
+                        refreshListData();
                         break;
                 }
 
@@ -143,39 +178,6 @@ public class FavoriteFragment extends Fragment implements View.OnClickListener, 
         if (popup != null) {
             popup.dismiss();
         }
-    }
-
-    private class MyAsyncTask extends AsyncTask<Void, Void, List<Bean>> {
-
-        @Override
-        protected List<Bean> doInBackground(Void... params) {
-            List<Bean> searches = null;
-            try {
-                searches = DaoManager.getInstance().queryAllFavorite();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return searches;
-        }
-
-        @Override
-        protected void onPostExecute(List<Bean> beans) {
-            super.onPostExecute(beans);
-            if (beans != null) {
-                if (beans.size() == 0) {
-                    noRecord.setVisibility(View.VISIBLE);
-                } else {
-                    noRecord.setVisibility(View.GONE);
-                }
-                if (favorite.getAdapter() == null) {
-                    favorite.setAdapter(new FavoriteAdapter(beans));
-                } else {
-                    ((FavoriteAdapter) favorite.getAdapter()).updateData(beans);
-                }
-            }
-            loading.setVisibility(View.GONE);
-        }
-
     }
 
     private class FavoriteAdapter extends BaseAdapter {

@@ -16,7 +16,7 @@ import peter.util.searcher.fragment.SettingsFragment;
  */
 
 public class SettingsActivity extends BaseActivity {
-    
+
     @BindView(R.id.toolbar)
     Toolbar toolbar;
 
@@ -31,12 +31,7 @@ public class SettingsActivity extends BaseActivity {
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true); // this sets the button to the back icon
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        toolbar.setNavigationOnClickListener(v -> finish());
     }
 
 

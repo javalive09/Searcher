@@ -22,6 +22,9 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import peter.util.searcher.R;
 import peter.util.searcher.activity.BaseActivity;
 import peter.util.searcher.bean.Bean;
@@ -31,10 +34,6 @@ import peter.util.searcher.bean.ItemItem;
 import peter.util.searcher.net.CommonRetrofit;
 import peter.util.searcher.net.IEngineService;
 import peter.util.searcher.utils.UrlUtils;
-import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.schedulers.Schedulers;
 
 /**
  * 引擎列表fragment
@@ -72,20 +71,14 @@ public class EngineInfoViewPagerFragment extends Fragment implements View.OnClic
         engineInfoObservable.subscribeOn(Schedulers.io())
                 .retry(5)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<EnginesInfo>() {
-                    @Override
-                    public void call(EnginesInfo engineInfo) {
-                        loading.setVisibility(View.GONE);
-                        EnginesAdapter adapter = new EnginesAdapter(EngineInfoViewPagerFragment.this, engineInfo.getEngines());
-                        mViewPager.setAdapter(adapter);
-                        mSlidingTabLayout.setupWithViewPager(mViewPager);
-                        mViewPager.setCurrentItem(getPageNo());
-                    }
-                }, new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable throwable) {
-                        Toast.makeText(getActivity(), throwable.getMessage(), Toast.LENGTH_LONG).show();
-                    }
+                .subscribe(engineInfo -> {
+                    loading.setVisibility(View.GONE);
+                    EnginesAdapter adapter = new EnginesAdapter(EngineInfoViewPagerFragment.this, engineInfo.getEngines());
+                    mViewPager.setAdapter(adapter);
+                    mSlidingTabLayout.setupWithViewPager(mViewPager);
+                    mViewPager.setCurrentItem(getPageNo());
+                }, throwable -> {
+                    Toast.makeText(getActivity(), throwable.getMessage(), Toast.LENGTH_LONG).show();
                 });
     }
 

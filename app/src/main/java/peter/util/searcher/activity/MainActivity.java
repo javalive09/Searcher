@@ -116,27 +116,18 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     private void initTopBar() {
-        topText.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    touchSearch();
-                    return true;
-                }
-                return false;
+        topText.setOnTouchListener((v, event) -> {
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                touchSearch();
+                return true;
             }
+            return false;
         });
         setSupportActionBar(toolbar);
         multiWindowDrawable = new TextDrawable(MainActivity.this);
         toolbar.setNavigationIcon(multiWindowDrawable);
         toolbar.setNavigationContentDescription(R.string.app_name);
-        toolbar.setNavigationOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        drawerLayout.openDrawer(Gravity.LEFT);
-                    }
-                });
+        toolbar.setNavigationOnClickListener(v -> drawerLayout.openDrawer(Gravity.LEFT));
     }
 
     private void initTabs() {
@@ -697,12 +688,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         if (tabManager.getCurrentTabGroup().getCurrentTab() == webViewTab) {
             progressBar.setProgress(progress);
             if (progress == 100) {
-                progressBar.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        progressBar.setVisibility(View.INVISIBLE);
-                    }
-                });
+                progressBar.post(() -> progressBar.setVisibility(View.INVISIBLE));
             } else {
                 progressBar.setVisibility(View.VISIBLE);
             }

@@ -1,10 +1,10 @@
 package peter.util.searcher.net;
 
+import io.reactivex.Observable;
 import peter.util.searcher.bean.UrlInfo;
 import peter.util.searcher.bean.VersionInfo;
 import retrofit2.http.GET;
 import retrofit2.http.Url;
-import rx.Observable;
 
 /**
  * 获取版本信息接口

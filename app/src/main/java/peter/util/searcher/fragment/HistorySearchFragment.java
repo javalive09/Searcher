@@ -1,6 +1,5 @@
 package peter.util.searcher.fragment;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -17,6 +16,9 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import peter.util.searcher.R;
 import peter.util.searcher.activity.BaseActivity;
 import peter.util.searcher.bean.Bean;
@@ -29,14 +31,13 @@ import peter.util.searcher.db.DaoManager;
 public class HistorySearchFragment extends Fragment implements View.OnClickListener, View.OnLongClickListener {
 
     PopupMenu popup;
-    MyAsyncTask asyncTask;
-
     @BindView(R.id.loading_history_search)
     ProgressBar loading;
     @BindView(R.id.no_record)
     TextView noRecord;
     @BindView(R.id.history_search)
     ListView history;
+    Disposable queryHistory;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -47,22 +48,28 @@ public class HistorySearchFragment extends Fragment implements View.OnClickListe
     }
 
     private void refreshData() {
-        cancelAsyncTask();
-        asyncTask = new MyAsyncTask();
-        asyncTask.execute();
-    }
-
-    private void cancelAsyncTask() {
-        if (asyncTask != null && !asyncTask.isCancelled()) {
-            asyncTask.cancel(true);
-        }
+        queryHistory = DaoManager.getInstance().queryAllHistory().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).
+                subscribe(beans -> {
+                    if (beans != null) {
+                        if (beans.size() == 0) {
+                            noRecord.setVisibility(View.VISIBLE);
+                        } else {
+                            noRecord.setVisibility(View.GONE);
+                        }
+                        if (history.getAdapter() == null) {
+                            history.setAdapter(new HistoryAdapter(beans));
+                        } else {
+                            ((HistoryAdapter) history.getAdapter()).updateData(beans);
+                        }
+                    }
+                    loading.setVisibility(View.GONE);
+                });
     }
 
     @Override
     public void onResume() {
         super.onResume();
         refreshData();
-
     }
 
     @Override
@@ -90,7 +97,11 @@ public class HistorySearchFragment extends Fragment implements View.OnClickListe
     @Override
     public void onDestroy() {
         dismissPopupMenu();
-        cancelAsyncTask();
+        if (queryHistory != null) {
+            if (!queryHistory.isDisposed()) {
+                queryHistory.dispose();
+            }
+        }
         super.onDestroy();
     }
 
@@ -117,38 +128,6 @@ public class HistorySearchFragment extends Fragment implements View.OnClickListe
     private void dismissPopupMenu() {
         if (popup != null) {
             popup.dismiss();
-        }
-    }
-
-    private class MyAsyncTask extends AsyncTask<Void, Void, List<Bean>> {
-
-        @Override
-        protected List<Bean> doInBackground(Void... params) {
-            List<Bean> searches = null;
-            try {
-                searches = DaoManager.getInstance().queryAllHistory();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return searches;
-        }
-
-        @Override
-        protected void onPostExecute(List<Bean> beans) {
-            super.onPostExecute(beans);
-            if (beans != null) {
-                if (beans.size() == 0) {
-                    noRecord.setVisibility(View.VISIBLE);
-                } else {
-                    noRecord.setVisibility(View.GONE);
-                }
-                if (history.getAdapter() == null) {
-                    history.setAdapter(new HistoryAdapter(beans));
-                } else {
-                    ((HistoryAdapter) history.getAdapter()).updateData(beans);
-                }
-            }
-            loading.setVisibility(View.GONE);
         }
     }
 

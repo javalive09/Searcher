@@ -20,6 +20,9 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import peter.util.searcher.R;
 import peter.util.searcher.activity.SearchActivity;
 import peter.util.searcher.bean.Bean;
@@ -33,7 +36,6 @@ import peter.util.searcher.utils.UrlUtils;
 public class RecentSearchFragment extends Fragment implements View.OnClickListener, View.OnLongClickListener {
 
     PopupMenu popup;
-    MyAsyncTask asyncTask;
     CharSequence word;
     @BindView(R.id.paste_enter)
     View pasteEnter;
@@ -43,6 +45,7 @@ public class RecentSearchFragment extends Fragment implements View.OnClickListen
     View loading;
     @BindView(R.id.recent_search)
     ListView recentSearch;
+    Disposable queryRecent;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -92,15 +95,25 @@ public class RecentSearchFragment extends Fragment implements View.OnClickListen
     }
 
     private void refreshData() {
-        cancelAsyncTask();
-        asyncTask = new MyAsyncTask(this);
-        asyncTask.execute();
+        queryRecent = DaoManager.getInstance().queryRecentData(9).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).
+                subscribe(beans -> {
+                    loading.setVisibility(View.GONE);
+                    if (beans != null) {
+                        if (beans.size() > 0) {
+                            recentSearch.setAdapter(new RecentSearchAdapter(beans));
+                        }
+                    }
+                });
     }
 
     @Override
     public void onDestroy() {
         dismissPopupMenu();
-        cancelAsyncTask();
+        if (queryRecent != null) {
+            if (!queryRecent.isDisposed()) {
+                queryRecent.dispose();
+            }
+        }
         super.onDestroy();
     }
 
@@ -114,56 +127,13 @@ public class RecentSearchFragment extends Fragment implements View.OnClickListen
         return false;
     }
 
-    private class MyAsyncTask extends AsyncTask<Void, Void, List<Bean>> {
-
-        WeakReference<RecentSearchFragment> wr;
-
-        public MyAsyncTask(RecentSearchFragment f) {
-            wr = new WeakReference<>(f);
-        }
-
-        @Override
-        protected List<Bean> doInBackground(Void... params) {
-            RecentSearchFragment f = wr.get();
-            List<Bean> searches = null;
-            if (f != null) {
-                try {
-                    searches = DaoManager.getInstance().queryRecentData(9);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-            return searches;
-        }
-
-        @Override
-        protected void onPostExecute(List<Bean> beans) {
-            super.onPostExecute(beans);
-            RecentSearchFragment f = wr.get();
-            if (f != null) {
-                if (!f.isDetached()) {
-                    loading.setVisibility(View.GONE);
-                    if (beans != null) {
-
-                        if (beans.size() > 0) {
-                            recentSearch.setAdapter(new RecentSearchAdapter(beans, f));
-                        }
-                    }
-                }
-            }
-        }
-
-    }
-
-    private static class RecentSearchAdapter extends BaseAdapter {
+    private class RecentSearchAdapter extends BaseAdapter {
 
         private final LayoutInflater factory;
-        RecentSearchFragment f;
         private List<Bean> list;
 
-        public RecentSearchAdapter(List<Bean> list, RecentSearchFragment f) {
-            this.f = f;
-            factory = LayoutInflater.from(f.getActivity());
+        public RecentSearchAdapter(List<Bean> list) {
+            factory = LayoutInflater.from(getActivity());
             this.list = list;
         }
 
@@ -190,8 +160,8 @@ public class RecentSearchFragment extends Fragment implements View.OnClickListen
             TextView content = (TextView) convertView;
             Bean search = getItem(position);
             content.setText(search.name);
-            content.setOnClickListener(f);
-            content.setOnLongClickListener(f);
+            content.setOnClickListener(RecentSearchFragment.this);
+            content.setOnLongClickListener(RecentSearchFragment.this);
             content.setTag(search);
             return convertView;
         }
@@ -220,12 +190,6 @@ public class RecentSearchFragment extends Fragment implements View.OnClickListen
     private void dismissPopupMenu() {
         if (popup != null) {
             popup.dismiss();
-        }
-    }
-
-    private void cancelAsyncTask() {
-        if (asyncTask != null && !asyncTask.isCancelled()) {
-            asyncTask.cancel(true);
         }
     }
 
