@@ -297,8 +297,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_share:
-                String url = tabManager.getCurrentTabGroup().getUrl();
+                String url = tabManager.getCurrentTabGroup().getCurrentTab().getUrl();
+                String title = tabManager.getCurrentTabGroup().getCurrentTab().getTitle();
                 Intent sendIntent = new Intent();
+                if (!TextUtils.isEmpty(title)) {
+                    sendIntent.putExtra(Intent.EXTRA_SUBJECT, title);
+                    url = title + "\n" + url;
+                }
                 sendIntent.setAction(Intent.ACTION_SEND);
                 sendIntent.putExtra(Intent.EXTRA_TEXT, url);
                 sendIntent.setType("text/plain");
@@ -331,7 +336,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 break;
             case R.id.action_copy_link:
                 url = tabManager.getCurrentTabGroup().getCurrentTab().getUrl();
-                String title = tabManager.getCurrentTabGroup().getCurrentTab().getTitle();
+                title = tabManager.getCurrentTabGroup().getCurrentTab().getTitle();
                 ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
                 ClipData clip = ClipData.newPlainText(title, url);
                 clipboard.setPrimaryClip(clip);
