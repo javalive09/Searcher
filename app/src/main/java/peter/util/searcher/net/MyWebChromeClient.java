@@ -33,8 +33,8 @@ public class MyWebChromeClient extends WebChromeClient {
     private VideoView mVideoView;
     private View mCustomView;
     private WebChromeClient.CustomViewCallback mCustomViewCallback;
-    private MainActivity mActivity;
-    private WebViewTab webViewTab;
+    private final MainActivity mActivity;
+    private final WebViewTab webViewTab;
 
     public MyWebChromeClient(WebViewTab webViewTab) {
         this.webViewTab = webViewTab;

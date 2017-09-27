@@ -14,7 +14,7 @@ import peter.util.searcher.bean.Bean;
 
 public abstract class SearcherTab implements Tab {
 
-    MainActivity mainActivity;
+    final MainActivity mainActivity;
 
     private Drawable iconDrawable;
 

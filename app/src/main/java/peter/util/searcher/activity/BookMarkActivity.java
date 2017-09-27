@@ -8,9 +8,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
 
 import com.umeng.analytics.MobclickAgent;
 
@@ -41,8 +38,10 @@ public class BookMarkActivity extends BaseActivity {
         setSupportActionBar(toolbar);
         toolbar.setNavigationOnClickListener(v -> finish());
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true); // this sets the button to the back icon
-        actionBar.setHomeButtonEnabled(true);
+        if(actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true); // this sets the button to the back icon
+            actionBar.setHomeButtonEnabled(true);
+        }
         initFragment();
     }
 

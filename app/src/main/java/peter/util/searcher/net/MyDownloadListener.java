@@ -18,7 +18,7 @@ import peter.util.searcher.R;
 
 public class MyDownloadListener implements android.webkit.DownloadListener {
 
-    private MainActivity mActivity;
+    private final MainActivity mActivity;
     private static final String TAG = MyDownloadListener.class.getSimpleName();
 
     public MyDownloadListener(MainActivity mainActivity) {

@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
@@ -12,6 +11,7 @@ import android.util.Log;
 import android.webkit.URLUtil;
 import android.widget.Toast;
 
+import java.io.File;
 import java.lang.ref.WeakReference;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -43,16 +43,8 @@ public class UpdateController {
                 .setIconAttribute(android.R.attr.alertDialogIcon)
                 .setTitle(act.getString(R.string.update_dialog_title_one))
                 .setMessage(versionInfo.getMessage())
-                .setPositiveButton(R.string.update_dialog_ok, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        downloadApk(context, versionInfo.getUrl());
-                    }
-                })
-                .setNegativeButton(R.string.update_dialog_cancel, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-
-                    }
-                }).create();
+                .setPositiveButton(R.string.update_dialog_ok, (dialog1, which) -> downloadApk(context, versionInfo.getUrl()))
+                .setNegativeButton(R.string.update_dialog_cancel, (dialog1, which) -> dialog1.cancel()).create();
         dialog.setCanceledOnTouchOutside(false);
         dialog.show();
     }
@@ -94,21 +86,25 @@ public class UpdateController {
         req.setMimeType(mineType);
         String filename = URLUtil.guessFileName(url, "", mineType);
         req.setTitle(filename);
-        String location = DownloadHandler.addNecessarySlashes(context.getExternalFilesDir(null).toString());
-        final Uri customUri = Uri.parse(DownloadHandler.FILE + location + filename);
-        req.setDestinationUri(customUri);
 
-        // Ok go!
-        DownloadManager dm = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
-        final long downloadId = dm.enqueue(req);
-        context.registerReceiver(new BroadcastReceiver() {
-            public void onReceive(Context ctx, Intent intent) {
-                long currentId = intent.getExtras().getLong(DownloadManager.EXTRA_DOWNLOAD_ID);
-                if (currentId == downloadId) {
-                    DownloadHandler.openFile(customUri, context);
+        File file = context.getExternalFilesDir(null);
+        if (file != null) {
+            String location = DownloadHandler.addNecessarySlashes(file.toString());
+            final Uri customUri = Uri.parse(DownloadHandler.FILE + location + filename);
+            req.setDestinationUri(customUri);
+
+            // Ok go!
+            DownloadManager dm = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+            final long downloadId = dm.enqueue(req);
+            context.registerReceiver(new BroadcastReceiver() {
+                public void onReceive(Context ctx, Intent intent) {
+                    long currentId = intent.getExtras().getLong(DownloadManager.EXTRA_DOWNLOAD_ID);
+                    if (currentId == downloadId) {
+                        DownloadHandler.openFile(customUri, context);
+                    }
                 }
-            }
-        }, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+            }, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+        }
     }
 
     public void autoCheckVersion(BaseActivity act) {

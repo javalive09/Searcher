@@ -16,12 +16,16 @@ import peter.util.searcher.bean.Bean;
 public class TabGroup extends SearcherTab {
 
     private static final int MAX_TAB = 50;
-    private ArrayList<SearcherTab> tabArrayList = new ArrayList<>(MAX_TAB);
+    private final ArrayList<SearcherTab> tabArrayList = new ArrayList<>(MAX_TAB);
     private int mCurrentTabIndex;
     private TabGroup parent;
+    private Class[] classes;
+    private Object[] activityObject;
 
     public TabGroup(MainActivity activity) {
         super(activity);
+        classes = new Class[]{MainActivity.class};
+        activityObject = new Object[]{mainActivity};
     }
 
     @Override
@@ -131,8 +135,9 @@ public class TabGroup extends SearcherTab {
         Class clazz = mainActivity.getRounterClass(url);
         LocalViewTab tab = null;
         try {
-            Constructor localConstructor = clazz.getConstructor(new Class[]{MainActivity.class});
-            tab = (LocalViewTab) localConstructor.newInstance(new Object[]{mainActivity});
+            @SuppressWarnings("unchecked")
+            Constructor localConstructor = clazz.getConstructor(classes);
+            tab = (LocalViewTab) localConstructor.newInstance(activityObject);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -190,10 +195,6 @@ public class TabGroup extends SearcherTab {
             }
         }
         mainActivity.refreshTitle();
-    }
-
-    public ArrayList<SearcherTab> getTabArrayList() {
-        return new ArrayList<>(tabArrayList);
     }
 
     public boolean canGoForward() {

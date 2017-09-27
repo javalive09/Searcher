@@ -25,8 +25,8 @@ public class TextDrawable extends Drawable {
 
     private String text;
     private final Paint paint;
-    private Context context;
-    private Rect bounds = new Rect();
+    private final Context context;
+    private final Rect bounds = new Rect();
 
     public TextDrawable(Context context) {
         this.context = context;

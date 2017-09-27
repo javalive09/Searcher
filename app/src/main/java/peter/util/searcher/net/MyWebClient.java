@@ -1,7 +1,6 @@
 package peter.util.searcher.net;
 
 import android.content.ActivityNotFoundException;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.MailTo;
@@ -39,9 +38,9 @@ import peter.util.searcher.utils.Utils;
  * Created by peter on 16/6/6.
  */
 public class MyWebClient extends WebViewClient {
-    private MainActivity mainActivity;
-    private IntentUtils mIntentUtils;
-    private WebViewTab webViewTab;
+    private final MainActivity mainActivity;
+    private final IntentUtils mIntentUtils;
+    private final WebViewTab webViewTab;
 
     public MyWebClient(WebViewTab webViewTab) {
         this.webViewTab = webViewTab;

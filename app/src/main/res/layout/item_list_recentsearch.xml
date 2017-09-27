@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
     android:background="@drawable/list_selector_item"
-    android:drawableLeft="@drawable/ic_history"
     android:drawablePadding="@dimen/item_list_drawable_padding"
+    android:drawableStart="@drawable/ic_history"
     android:paddingLeft="@dimen/item_list_padding"
     android:paddingRight="@dimen/item_list_padding" />

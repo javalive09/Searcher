@@ -129,7 +129,7 @@ public class RecentSearchFragment extends Fragment implements View.OnClickListen
     private class RecentSearchAdapter extends BaseAdapter {
 
         private final LayoutInflater factory;
-        private List<Bean> list;
+        private final List<Bean> list;
 
         RecentSearchAdapter(List<Bean> list) {
             factory = LayoutInflater.from(getActivity());

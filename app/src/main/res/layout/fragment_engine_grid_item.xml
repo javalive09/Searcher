@@ -11,7 +11,8 @@
         android:id="@+id/icon"
         android:layout_width="70dp"
         android:layout_height="70dp"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:contentDescription="@string/engine_icon" />
 
     <TextView
         android:id="@+id/title"

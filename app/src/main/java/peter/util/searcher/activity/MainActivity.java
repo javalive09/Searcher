@@ -5,9 +5,7 @@ import android.app.DownloadManager;
 import android.app.SearchManager;
 import android.content.ClipData;
 import android.content.ClipboardManager;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -85,10 +83,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private PopupMenu popup;
     private TextDrawable multiWindowDrawable;
     private TabManager tabManager;
-    private HashMap<String, Class> router = new HashMap<>();
+    private final HashMap<String, Class> router = new HashMap<>();
     private MultiWindowAdapter multiWindowAdapter;
     private boolean realBack = false;
-    private Handler mHandler = new Handler(Looper.getMainLooper());
+    private final Handler mHandler = new Handler(Looper.getMainLooper());
     private static final String BUNDLE_KEY_SIGN = "&";
     private static final String BUNDLE_KEY_TAB_SIZE = "KEY_TAB_SIZE";
     private static final String BUNDLE_KEY_SEARCH_WORD = "KEY_SEARCH_WORD";
@@ -127,7 +125,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         multiWindowDrawable = new TextDrawable(MainActivity.this);
         toolbar.setNavigationIcon(multiWindowDrawable);
         toolbar.setNavigationContentDescription(R.string.app_name);
-        toolbar.setNavigationOnClickListener(v -> drawerLayout.openDrawer(Gravity.LEFT));
+        toolbar.setNavigationOnClickListener(v -> drawerLayout.openDrawer(Gravity.START));
     }
 
     private void initTabs() {
@@ -200,7 +198,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
     }
 
-    private SearchWebView.OnMenuItemClickListener contextMenuListener = new SearchWebView.OnMenuItemClickListener() {
+    private final SearchWebView.OnMenuItemClickListener contextMenuListener = new SearchWebView.OnMenuItemClickListener() {
 
         @Override
         public boolean onMenuItemClick(MenuItem item) {
@@ -467,8 +465,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             } else if (Intent.ACTION_ASSIST.equals(action)) {
                 if (tabManager.getTabGroupCount() == 0) {
                     loadHome(true);
-                } else if (!TextUtils.isEmpty(tabManager.getCurrentTabGroup().getCurrentTab().getSearchWord())) {
-                    loadHome(true);
+                } else {
+                    SearcherTab searcherTab = tabManager.getCurrentTabGroup().getCurrentTab();
+                    if (searcherTab instanceof WebViewTab) {//webView
+                        loadHome(true);
+                    }
                 }
                 touchSearch();
             }
@@ -482,7 +483,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if ((keyCode == KeyEvent.KEYCODE_BACK)) {
-            if (drawerLayout.isDrawerOpen(Gravity.LEFT)) {
+            if (drawerLayout.isDrawerOpen(Gravity.START)) {
                 drawerLayout.closeDrawers();
                 return true;
             }
@@ -667,11 +668,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
             decor.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
         }
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
     }
 
     public void refreshProgress(WebViewTab webViewTab, int progress) {

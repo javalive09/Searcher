@@ -102,8 +102,8 @@ public class EngineInfoViewPagerFragment extends Fragment implements View.OnClic
     }
 
     private static class EnginesAdapter extends PagerAdapter {
-        EngineInfoViewPagerFragment f;
-        List<EnginesItem> list;
+        final EngineInfoViewPagerFragment f;
+        final List<EnginesItem> list;
 
         EnginesAdapter(EngineInfoViewPagerFragment f, List<EnginesItem> list) {
             this.list = list;
@@ -146,9 +146,9 @@ public class EngineInfoViewPagerFragment extends Fragment implements View.OnClic
 
     private static class EngineAdapter extends BaseAdapter {
 
-        EngineInfoViewPagerFragment f;
-        List<ItemItem> list;
-        int pageNo;
+        final EngineInfoViewPagerFragment f;
+        final List<ItemItem> list;
+        final int pageNo;
 
         EngineAdapter(EngineInfoViewPagerFragment f, int pageNo, List<ItemItem> list) {
             this.f = f;

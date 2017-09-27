@@ -18,7 +18,7 @@ import peter.util.searcher.db.dao.HistorySearchDao;
 
 public class DaoManager {
 
-    private DaoSession mDaoSession;
+    private final DaoSession mDaoSession;
 
     private DaoManager() {
         DaoMaster.DevOpenHelper mHelper = new DaoMaster.DevOpenHelper(Searcher.context, "searcher_db", null);

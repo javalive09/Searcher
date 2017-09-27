@@ -18,8 +18,8 @@ import peter.util.searcher.tab.TabGroup;
 public class TabManager {
 
     private static final int MAX_TAB = 50;
-    private ArrayList<TabGroup> tabGroupArrayList = new ArrayList<>(MAX_TAB);
-    private MainActivity mainActivity;
+    private final ArrayList<TabGroup> tabGroupArrayList = new ArrayList<>(MAX_TAB);
+    private final MainActivity mainActivity;
     private int mCurrentTabIndex;
 
     public TabManager(MainActivity activity) {
@@ -33,8 +33,13 @@ public class TabManager {
         }
         if (newTab) {
             TabGroup tab = new TabGroup(mainActivity);
-            tabGroupArrayList.add(tab);
-            mCurrentTabIndex = tabGroupArrayList.size() - 1;
+            if (getTabGroupCount() == 0 || mCurrentTabIndex == getTabGroupCount() - 1) {//有0个tab 或 currentTab在最后
+                mCurrentTabIndex = getTabGroupCount();
+                tabGroupArrayList.add(tab);
+            } else {//currentTab不在最后
+                mCurrentTabIndex = mCurrentTabIndex + 1;
+                tabGroupArrayList.add(mCurrentTabIndex, tab);
+            }
         }
         TabGroup tabGroup = getCurrentTabGroup();
         tabGroup.loadUrl(bean);

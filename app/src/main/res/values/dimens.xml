@@ -1,16 +1,15 @@
 <resources>
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="search_padding_right">47dp</dimen>
+    <dimen name="search_padding_start">1dp</dimen>
 
     <dimen name="item_list_drawable_padding">5dp</dimen>
     <dimen name="item_list_padding">7dp</dimen>
 
     <dimen name="url_opt_separator_margin">15dp</dimen>
 
-    <dimen name="multi_window_item_h">25dp</dimen>
     <dimen name="multi_window_item_icon_cell">25dp</dimen>
     <dimen name="multi_window_icon_margin">10dp</dimen>
     <dimen name="multi_window_close_padding">10dp</dimen>
     <dimen name="multi_window_h">50dp</dimen>
-    <dimen name="float_button_margin">16dp</dimen>
 </resources>

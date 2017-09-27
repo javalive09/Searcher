@@ -81,8 +81,8 @@ public class SearchWebView extends WebView {
     public static class ContextMenuInfo implements ContextMenu.ContextMenuInfo {
 
         SearchWebView searchWebView;
-        HitTestResult result;
-        int x, y;
+        final HitTestResult result;
+        final int x, y;
 
         ContextMenuInfo(HitTestResult result, int x, int y) {
             this.result = result;

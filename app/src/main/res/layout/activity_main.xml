@@ -27,7 +27,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:cursorVisible="false"
-                android:drawableLeft="@null" />
+                android:drawableStart="@null"
+                android:labelFor="@+id/top_txt" />
 
         </android.support.v7.widget.Toolbar>
 
@@ -70,5 +71,5 @@
         layout="@layout/layout_tabs"
         android:layout_width="300dp"
         android:layout_height="match_parent"
-        android:layout_gravity="left" />
+        android:layout_gravity="start" />
 </android.support.v4.widget.DrawerLayout>

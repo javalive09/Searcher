@@ -10,8 +10,8 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@drawable/list_selector_item"
-        android:drawableLeft="@drawable/ic_paste_enter"
         android:drawablePadding="@dimen/item_list_drawable_padding"
+        android:drawableStart="@drawable/ic_paste_enter"
         android:paddingLeft="@dimen/item_list_padding"
         android:paddingRight="@dimen/item_list_padding"
         android:text="@string/paste_enter_txt"
@@ -23,8 +23,8 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@drawable/list_selector_item"
-        android:drawableLeft="@drawable/ic_paste"
         android:drawablePadding="@dimen/item_list_drawable_padding"
+        android:drawableStart="@drawable/ic_paste"
         android:paddingLeft="@dimen/item_list_padding"
         android:paddingRight="@dimen/item_list_padding"
         android:text="@string/paste_txt"
@@ -34,7 +34,6 @@
         android:id="@+id/line"
         android:layout_width="match_parent"
         android:layout_height="1px"
-        android:layout_below="@+id/operate_url"
         android:background="@color/tint_color" />
 
     <ListView

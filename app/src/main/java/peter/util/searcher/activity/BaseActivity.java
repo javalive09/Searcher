@@ -46,7 +46,9 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     public void exit() {
-        LIST.forEach(Activity::finish);
+        for(Activity activity : LIST) {
+            activity.finish();
+        }
     }
 
     public String getSearchWord() {
@@ -114,13 +116,12 @@ public class BaseActivity extends AppCompatActivity {
         startActivity(data);
     }
 
-    public AlertDialog showAlertDialog(String title, String content) {
+    public void showAlertDialog(String title, String content) {
         AlertDialog dialog = new AlertDialog.Builder(BaseActivity.this).create();
         dialog.setCanceledOnTouchOutside(true);
         dialog.setTitle(title);
         dialog.setMessage(content);
         dialog.show();
-        return dialog;
     }
 
     public void showAlertDialog(int titleRes, int contentRes) {
