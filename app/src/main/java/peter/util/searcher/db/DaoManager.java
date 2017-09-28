@@ -88,11 +88,44 @@ public class DaoManager {
         return bean;
     }
 
-    public Cursor queryLike(String word) {
-        return mDaoSession.getHistorySearchDao().queryBuilder().
-                where(HistorySearchDao.Properties.SearchWord.like("%" + word + "%")).
-                buildCursor().forCurrentThread().query();
+    public Observable<List<Bean>> queryHistoryLike(String word) {
+        return Observable.create(subscriber -> {
+            List<Bean> list = new ArrayList<>();
+            List<HistorySearch> historySearchList = mDaoSession.getHistorySearchDao().queryBuilder().
+                    orderDesc(HistorySearchDao.Properties.Time).
+                    where(HistorySearchDao.Properties.SearchWord.like("%" + word + "%")).list();
+            for (HistorySearch historySearch : historySearchList) {
+                Bean bean = new Bean();
+                bean.name = historySearch.getSearchWord();
+                bean.time = historySearch.getTime();
+                bean.url = historySearch.getUrl();
+                bean.pageNo = historySearch.getPageNo();
+                list.add(bean);
+            }
+            subscriber.onNext(list);
+            subscriber.onComplete();
+        });
     }
+
+    public Observable<List<Bean>> queryFavoriteLike(String word) {
+        return Observable.create(subscriber -> {
+            List<Bean> list = new ArrayList<>();
+            List<FavoriteSearch> favoriteSearchList = mDaoSession.getFavoriteSearchDao().queryBuilder().
+                    orderDesc(FavoriteSearchDao.Properties.Time).
+                    where(FavoriteSearchDao.Properties.SearchWord.like("%" + word + "%")).list();
+            for (FavoriteSearch favoriteSearch : favoriteSearchList) {
+                Bean bean = new Bean();
+                bean.name = favoriteSearch.getSearchWord();
+                bean.time = favoriteSearch.getTime();
+                bean.url = favoriteSearch.getUrl();
+                bean.pageNo = favoriteSearch.getPageNo();
+                list.add(bean);
+            }
+            subscriber.onNext(list);
+            subscriber.onComplete();
+        });
+    }
+
 
     public Observable<List<Bean>> queryAllFavorite() {
         return Observable.create(subscriber -> {

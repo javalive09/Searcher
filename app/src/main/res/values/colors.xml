@@ -11,6 +11,7 @@
     <!--<color name="progress_color">#468dc8</color>-->
     <color name="progress_color">@color/colorAccent</color>
     <color name="hint_color">@color/disable_color</color>
+    <color name="cursor_color">#159588</color>
 
     <color name="disable_color">#a7a7a7</color>
     <color name="tab_color">#ffffff</color>

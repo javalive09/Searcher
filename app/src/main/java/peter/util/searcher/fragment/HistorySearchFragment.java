@@ -1,8 +1,16 @@
 package peter.util.searcher.fragment;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.SearchView;
+import android.text.TextUtils;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -15,6 +23,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
@@ -27,7 +36,7 @@ import peter.util.searcher.db.DaoManager;
  * 搜索记录fragment
  * Created by peter on 16/5/9.
  */
-public class HistorySearchFragment extends Fragment implements View.OnClickListener, View.OnLongClickListener {
+public class HistorySearchFragment extends BookmarkFragment implements View.OnClickListener, View.OnLongClickListener {
 
     PopupMenu popup;
     @BindView(R.id.loading_history_search)
@@ -37,38 +46,73 @@ public class HistorySearchFragment extends Fragment implements View.OnClickListe
     @BindView(R.id.history_search)
     ListView history;
     Disposable queryHistory;
+    Disposable queryFavorite;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_history_search, container, false);
         ButterKnife.bind(HistorySearchFragment.this, rootView);
+        refreshAllListData();
         return rootView;
     }
 
-    private void refreshData() {
-        queryHistory = DaoManager.getInstance().queryAllHistory().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).
-                subscribe(beans -> {
-                    if (beans != null) {
-                        if (beans.size() == 0) {
-                            noRecord.setVisibility(View.VISIBLE);
-                        } else {
-                            noRecord.setVisibility(View.GONE);
-                        }
-                        if (history.getAdapter() == null) {
-                            history.setAdapter(new HistoryAdapter(beans));
-                        } else {
-                            ((HistoryAdapter) history.getAdapter()).updateData(beans);
-                        }
-                    }
-                    loading.setVisibility(View.GONE);
-                });
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.bookmark_favorite, menu);
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        mSearchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        mSearchView.setQueryHint(getString(R.string.action_bookmark_search_favorite_hint));
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                if (TextUtils.isEmpty(s)) {
+                    refreshAllListData();
+                } else {
+                    Observable<List<Bean>> listObservable = DaoManager.getInstance().queryHistoryLike(s);
+                    cancelQuery();
+                    queryFavorite = listObservable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).
+                            subscribe(list -> refreshListData(list));
+                }
+                return true;
+            }
+        });
+        SearchView.SearchAutoComplete mSearchAutoComplete = (SearchView.SearchAutoComplete) mSearchView.findViewById(R.id.search_src_text);
+        mSearchAutoComplete.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimensionPixelOffset(R.dimen.search_text_size));
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        refreshData();
+    private void refreshAllListData() {
+        cancelQuery();
+        queryHistory = DaoManager.getInstance().queryAllHistory().subscribeOn(Schedulers.io()).
+                observeOn(AndroidSchedulers.mainThread()).subscribe(this::refreshListData);
+    }
+
+    private void refreshListData(List<Bean> beans) {
+        if (beans != null) {
+            if (beans.size() == 0) {
+                noRecord.setVisibility(View.VISIBLE);
+            } else {
+                noRecord.setVisibility(View.GONE);
+            }
+            if (history.getAdapter() == null) {
+                history.setAdapter(new HistoryAdapter(beans));
+            } else {
+                ((HistoryAdapter) history.getAdapter()).updateData(beans);
+            }
+        }
+        loading.setVisibility(View.GONE);
     }
 
     @Override
@@ -96,12 +140,16 @@ public class HistorySearchFragment extends Fragment implements View.OnClickListe
     @Override
     public void onDestroy() {
         dismissPopupMenu();
+        cancelQuery();
+        super.onDestroy();
+    }
+
+    private void cancelQuery() {
         if (queryHistory != null) {
             if (!queryHistory.isDisposed()) {
                 queryHistory.dispose();
             }
         }
-        super.onDestroy();
     }
 
     private void popupMenu(final View view) {
@@ -113,7 +161,7 @@ public class HistorySearchFragment extends Fragment implements View.OnClickListe
                 case R.id.action_delete:
                     Bean bean = (Bean) view.getTag();
                     DaoManager.getInstance().deleteHistory(bean);
-                    refreshData();
+                    refreshAllListData();
                     break;
             }
             return true;

@@ -1,11 +1,14 @@
 package peter.util.searcher.fragment;
 
-import android.os.AsyncTask;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
+import android.text.TextUtils;
+import android.util.TypedValue;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -18,11 +21,13 @@ import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindArray;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
@@ -35,7 +40,7 @@ import peter.util.searcher.db.DaoManager;
  * 收藏夹fragment
  * Created by peter on 16/5/9.
  */
-public class FavoriteFragment extends Fragment implements View.OnClickListener, View.OnLongClickListener {
+public class FavoriteFragment extends BookmarkFragment implements View.OnClickListener, View.OnLongClickListener {
 
     PopupMenu popup;
     @BindView(R.id.favorite)
@@ -48,8 +53,8 @@ public class FavoriteFragment extends Fragment implements View.OnClickListener, 
     String[] urls;
     @BindArray(R.array.favorite_urls_names)
     String[] names;
-    SearchView mSearchView;
     Disposable queryFavorite;
+    View rootView;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -64,58 +69,73 @@ public class FavoriteFragment extends Fragment implements View.OnClickListener, 
         MenuItem searchItem = menu.findItem(R.id.action_search);
         mSearchView = (SearchView) MenuItemCompat.getActionView(searchItem);
         mSearchView.setQueryHint(getString(R.string.action_bookmark_search_favorite_hint));
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                if (TextUtils.isEmpty(s)) {
+                    refreshAllListData();
+                } else {
+                    Observable<List<Bean>> listObservable = DaoManager.getInstance().queryFavoriteLike(s);
+                    cancelQuery();
+                    queryFavorite = listObservable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).
+                            subscribe(list -> refreshListData(list));
+                }
+                return true;
+            }
+        });
+        SearchView.SearchAutoComplete mSearchAutoComplete = (SearchView.SearchAutoComplete) mSearchView.findViewById(R.id.search_src_text);
+        mSearchAutoComplete.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimensionPixelOffset(R.dimen.search_text_size));
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_favorite, container, false);
+        rootView = inflater.inflate(R.layout.fragment_favorite, container, false);
         ButterKnife.bind(FavoriteFragment.this, rootView);
-        installFavUrl();
+        refreshAllListData();
         return rootView;
     }
 
-    private void installFavUrl() {
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... params) {
-
-                for (int i = 0; i < urls.length; i++) {
-                    Bean bean = new Bean();
-                    bean.name = names[i];
-                    bean.url = urls[i];
-                    bean.time = -1;
-                    DaoManager.getInstance().insertFavorite(bean);
-                }
-                return null;
-            }
-        }.execute();
-
+    private List<Bean> getDefaultFav() {
+        List<Bean> list = new ArrayList<>(urls.length);
+        for (int i = 0; i < urls.length; i++) {
+            Bean bean = new Bean();
+            bean.name = names[i];
+            bean.url = urls[i];
+            bean.time = -1;
+            list.add(bean);
+        }
+        return list;
     }
 
-    private void refreshListData() {
+    private void refreshAllListData() {
+        cancelQuery();
         queryFavorite = DaoManager.getInstance().queryAllFavorite().subscribeOn(Schedulers.io()).
-                observeOn(AndroidSchedulers.mainThread()).subscribe(beans -> {
-            if (beans != null) {
-                if (beans.size() == 0) {
-                    noRecord.setVisibility(View.VISIBLE);
-                } else {
-                    noRecord.setVisibility(View.GONE);
-                }
-                if (favorite.getAdapter() == null) {
-                    favorite.setAdapter(new FavoriteAdapter(beans));
-                } else {
-                    ((FavoriteAdapter) favorite.getAdapter()).updateData(beans);
-                }
-            }
-            loading.setVisibility(View.GONE);
+                observeOn(AndroidSchedulers.mainThread()).subscribe(list -> {
+            list.addAll(0, getDefaultFav());
+            refreshListData(list);
         });
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        refreshListData();
+    private void refreshListData(List<Bean> beans) {
+        if (beans != null) {
+            if (beans.size() == 0) {
+                noRecord.setVisibility(View.VISIBLE);
+            } else {
+                noRecord.setVisibility(View.GONE);
+            }
+            if (favorite.getAdapter() == null) {
+                favorite.setAdapter(new FavoriteAdapter(beans));
+            } else {
+                ((FavoriteAdapter) favorite.getAdapter()).updateData(beans);
+            }
+        }
+        loading.setVisibility(View.GONE);
     }
 
     @Override
@@ -144,12 +164,16 @@ public class FavoriteFragment extends Fragment implements View.OnClickListener, 
     @Override
     public void onDestroy() {
         dismissPopupMenu();
+        cancelQuery();
+        super.onDestroy();
+    }
+
+    private void cancelQuery() {
         if (queryFavorite != null) {
             if (!queryFavorite.isDisposed()) {
                 queryFavorite.dispose();
             }
         }
-        super.onDestroy();
     }
 
     private void popupMenu(final View view) {
@@ -161,7 +185,7 @@ public class FavoriteFragment extends Fragment implements View.OnClickListener, 
                 case R.id.action_delete:
                     Bean bean = (Bean) view.getTag();
                     DaoManager.getInstance().deleteFav(bean);
-                    refreshListData();
+                    refreshAllListData();
                     break;
             }
             return true;

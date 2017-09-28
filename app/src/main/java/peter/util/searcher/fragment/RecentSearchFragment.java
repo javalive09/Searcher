@@ -57,15 +57,17 @@ public class RecentSearchFragment extends Fragment implements View.OnClickListen
         refreshData();
         ClipboardManager cmb = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
 
-        if (cmb.getPrimaryClip().getItemCount() > 0) {
-            word = cmb.getPrimaryClip().getItemAt(0).getText();
-            if (!TextUtils.isEmpty(word)) {
-                if (UrlUtils.guessUrl(word.toString())) {
-                    pasteEnter.setVisibility(View.VISIBLE);
-                    pasteEnter.setOnClickListener(RecentSearchFragment.this);
-                } else {
-                    paste.setVisibility(View.VISIBLE);
-                    paste.setOnClickListener(RecentSearchFragment.this);
+        if(cmb.getPrimaryClip() != null) {
+            if (cmb.getPrimaryClip().getItemCount() > 0) {
+                word = cmb.getPrimaryClip().getItemAt(0).getText();
+                if (!TextUtils.isEmpty(word)) {
+                    if (UrlUtils.guessUrl(word.toString())) {
+                        pasteEnter.setVisibility(View.VISIBLE);
+                        pasteEnter.setOnClickListener(RecentSearchFragment.this);
+                    } else {
+                        paste.setVisibility(View.VISIBLE);
+                        paste.setOnClickListener(RecentSearchFragment.this);
+                    }
                 }
             }
         }

@@ -2,7 +2,6 @@ package peter.util.searcher.activity;
 
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
@@ -14,6 +13,7 @@ import com.umeng.analytics.MobclickAgent;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import peter.util.searcher.R;
+import peter.util.searcher.fragment.BookmarkFragment;
 import peter.util.searcher.fragment.FavoriteFragment;
 import peter.util.searcher.fragment.HistorySearchFragment;
 
@@ -29,6 +29,7 @@ public class BookMarkActivity extends BaseActivity {
     TabLayout mSlidingTabLayout;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
+    BookmarkFragment[] bookmarkFragments = new BookmarkFragment[]{new FavoriteFragment(), new HistorySearchFragment()};
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -36,9 +37,11 @@ public class BookMarkActivity extends BaseActivity {
         setContentView(R.layout.activity_bookmark);
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
-        toolbar.setNavigationOnClickListener(v -> finish());
+        toolbar.setNavigationOnClickListener(v -> {
+            onBackPressed();
+        });
         ActionBar actionBar = getSupportActionBar();
-        if(actionBar != null) {
+        if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true); // this sets the button to the back icon
             actionBar.setHomeButtonEnabled(true);
         }
@@ -73,18 +76,12 @@ public class BookMarkActivity extends BaseActivity {
 
             @Override
             public int getCount() {
-                return 2;
+                return bookmarkFragments.length;
             }
 
             @Override
-            public Fragment getItem(int position) {
-                switch (position) {
-                    case 0:
-                        return new FavoriteFragment();
-                    case 1:
-                        return new HistorySearchFragment();
-                }
-                return null;
+            public BookmarkFragment getItem(int position) {
+                return bookmarkFragments[position];
             }
 
             @Override
@@ -93,7 +90,14 @@ public class BookMarkActivity extends BaseActivity {
             }
         });
         mSlidingTabLayout.setupWithViewPager(viewPager);
-
     }
+
+    @Override
+    public void onBackPressed() {
+        if (!bookmarkFragments[viewPager.getCurrentItem()].needCloseSearchView()) {
+            super.onBackPressed();
+        }
+    }
+
 
 }

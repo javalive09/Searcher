@@ -12,4 +12,5 @@
     <dimen name="multi_window_icon_margin">10dp</dimen>
     <dimen name="multi_window_close_padding">10dp</dimen>
     <dimen name="multi_window_h">50dp</dimen>
+    <dimen name="search_text_size">17sp</dimen>
 </resources>
