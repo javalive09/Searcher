@@ -90,6 +90,11 @@ public class HistorySearchFragment extends BookmarkFragment implements View.OnCl
         });
         SearchView.SearchAutoComplete mSearchAutoComplete = (SearchView.SearchAutoComplete) mSearchView.findViewById(R.id.search_src_text);
         mSearchAutoComplete.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimensionPixelOffset(R.dimen.search_text_size));
+        mSearchAutoComplete.setOnFocusChangeListener((v, hasFocus) -> {
+            if (!hasFocus) {
+                needCloseSearchView();
+            }
+        });
     }
 
     private void refreshAllListData() {
