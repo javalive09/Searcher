@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">速搜</string>
     <string name="search_hint">输入网址或搜索</string>
+    <string name="search_page">页内搜索</string>
+    <string name="search_page_hint">在页面上查找</string>
+    <string name="search_page_pos">搜索</string>
     <string name="setting_title">我的设置</string>
     <string name="setting_feedback">反馈建议</string>
     <string name="setting_feedback_body">您的反馈和建议</string>
@@ -28,6 +31,7 @@
     <string name="action_copy_pic_link">复制图片链接</string>
     <string name="action_save_pic">保存图片</string>
     <string name="action_share_pic">分享图片</string>
+    <string name="find_page_current_content">查找 \'%s\' </string>
 
 
     <string name="action_new_tab">在新标签打开</string>
@@ -35,12 +39,12 @@
     <string name="action_copy_txt_link_free">自由复制</string>
 
     <string name="action_cancel">取消</string>
-    <string name="action_share">分享链接</string>
+    <string name="action_share">分享页面</string>
     <string name="action_refresh">刷新页面</string>
     <string name="action_exit">退出</string>
     <string name="favorite_txt">已经添加到收藏夹</string>
     <string name="copy_link_txt">已经复制链接</string>
-    <string name="action_collect">收藏链接</string>
+    <string name="action_collect">收藏页面</string>
     <string name="title_bookmark">书签</string>
     <string name="action_copy_link">复制链接</string>
     <string name="action_auto_fullscreen">自动全屏</string>
@@ -84,7 +88,7 @@
     <string name="action_no">取消</string>
     <!--<string name="fast_enter_navigation_url">http://tpms.mb.qq.com/?aid=site_navigation&amp;cid=site_navigation_cache_direct</string>-->
     <string name="fast_enter_setting">设置</string>
-    <string name="fast_enter_download">下载</string>
+    <string name="fast_enter_download">下载记录</string>
     <string name="action_goforward">前进</string>
     <string name="home">主页</string>
     <string name="paste_txt">从剪切板粘贴</string>

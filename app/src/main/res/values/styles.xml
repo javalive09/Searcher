@@ -25,21 +25,13 @@
         <item name="android:gravity">center_vertical|left</item>
     </style>
 
-    <style name="toolbar_edittext_main_style" parent="@style/Widget.AppCompat.EditText">
+    <style name="toolbar_edittext_style" parent="@style/Widget.AppCompat.EditText">
         <item name="android:textColor">@color/tint_color</item>
         <item name="android:textSize">@dimen/search_text_size</item>
-        <item name="android:drawableLeft">@drawable/ic_search</item>
         <item name="android:drawablePadding">5dp</item>
-        <item name="android:hint">@string/search_hint</item>
         <item name="android:textColorHint">@color/hint_color</item>
         <item name="android:singleLine">true</item>
         <item name="android:textCursorDrawable">@drawable/toolbar_shape_cursor</item>
-        <item name="android:imeOptions">actionDone</item>
-    </style>
-
-    <style name="toolbar_edittext_search_style" parent="@style/toolbar_edittext_main_style">
-        <item name="android:drawableLeft">@null</item>
-        <item name="android:background">@android:color/transparent</item>
     </style>
 
     <style name="MyProgressBar" parent="Base.Widget.AppCompat.ProgressBar">

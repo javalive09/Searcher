@@ -1,18 +1,24 @@
 package peter.util.searcher.activity;
 
 import android.animation.ObjectAnimator;
+import android.app.AlertDialog;
 import android.app.DownloadManager;
 import android.app.SearchManager;
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Gravity;
@@ -21,13 +27,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewStub;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.umeng.analytics.MobclickAgent;
@@ -75,11 +84,26 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.top_txt)
-    View topText;
+    EditText topText;
     @BindView(R.id.progress)
     ProgressBar progressBar;
     @BindView(R.id.menu_anchor)
     View menuAnchor;
+    @BindView(R.id.top_bar)
+    View mTopBar;
+    @BindView(R.id.find_control)
+    View findControlView;
+    @BindView(R.id.find_content_txt)
+    EditText findControlContent;
+    @BindView(R.id.count_find)
+    TextView findControlCount;
+    @BindView(R.id.up_find)
+    View findControlUp;
+    @BindView(R.id.down_find)
+    View findControlDown;
+    @BindView(R.id.close_find)
+    View findControlClose;
+
     private PopupMenu popup;
     private TextDrawable multiWindowDrawable;
     private TabManager tabManager;
@@ -366,9 +390,86 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 }
                 tab.reload();
                 break;
+            case R.id.action_find:
+                showFindControlView(true);
+
+//                AlertDialog.Builder alert = new AlertDialog.Builder(this);
+//                View view = View.inflate(MainActivity.this, R.layout.edittext_pagefind, null);
+//                alert.setView(view).setTitle(getString(R.string.search_page)).
+//                        setPositiveButton(R.string.search_page_pos, (dialog, which) -> {
+//                            SearcherTab searcherTab = tabManager.getCurrentTabGroup().getCurrentTab();
+//                            if (searcherTab instanceof WebViewTab) {
+//                                EditText editText = (EditText) view.findViewById(R.id.find_content);
+//                                String word = editText.getText().toString();
+//                                if (!TextUtils.isEmpty(word)) {
+//                                    WebViewTab webViewTab = (WebViewTab) searcherTab;
+//                                    webViewTab.getView().findAllAsync(word);
+//                                    showFindControlView(word);
+//                                }
+//                            }
+//                        }).show();
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
+
+    private void showFindControlView(boolean show) {
+        if (show) {
+            SearcherTab searcherTab = tabManager.getCurrentTabGroup().getCurrentTab();
+            if (searcherTab instanceof WebViewTab) {
+                final WebViewTab webViewTab = (WebViewTab) searcherTab;
+                webViewTab.getView().setFindListener(findListener);
+
+                findControlContent.addTextChangedListener(new TextWatcher() {
+
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+                        if (!TextUtils.isEmpty(s)) {
+                            webViewTab.getView().findAllAsync(s.toString());
+                        } else {
+                            findControlCount.setText("");
+                        }
+                    }
+                });
+            }
+            findControlContent.setText("");
+            findControlCount.setText("");
+            findControlContent.requestFocus();
+            findControlView.setVisibility(View.VISIBLE);
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
+        } else {
+            findControlView.setVisibility(View.GONE);
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(findControlContent.getWindowToken(), 0);
+        }
+
+    }
+
+    private WebView.FindListener findListener = new WebView.FindListener() {
+        @Override
+        public void onFindResultReceived(int activeMatchOrdinal, int numberOfMatches, boolean isDoneCounting) {
+            if (isDoneCounting) {
+                if (numberOfMatches > 0) {
+                    findControlCount.setText(activeMatchOrdinal + 1 + "/" + numberOfMatches);
+                } else {
+                    findControlCount.setText("");
+                }
+            } else {
+                if (findControlCount != null) {
+                    findControlCount.setText("...");
+                }
+            }
+        }
+    };
 
     private void touchSearch() {
         String content = tabManager.getCurrentTabGroup().getCurrentTab().getSearchWord();
@@ -403,30 +504,31 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     public View setCurrentView(int viewId) {
         View view = webViewContainer.setCurrentView(viewId);
         progressBar.setVisibility(View.INVISIBLE);
+        showFindControlView(false);
         showTopbar();
         return view;
     }
 
     public void showTopbar() {
         if (isTopbarHide() && SettingsManager.getInstance().isAutoFullScreen()) {
-            ObjectAnimator.ofFloat(toolbar, "translationY", -Constants.getActionBarH(this), 0).setDuration(300).start();
+            ObjectAnimator.ofFloat(mTopBar, "translationY", -Constants.getActionBarH(this), 0).setDuration(300).start();
             ObjectAnimator.ofFloat(webViewContainer, "translationY", -Constants.getActionBarH(this), 0).setDuration(300).start();
         }
     }
 
     public void hideTopbar() {
         if (isTopbarShow() && SettingsManager.getInstance().isAutoFullScreen()) {
-            ObjectAnimator.ofFloat(toolbar, "translationY", 0, -Constants.getActionBarH(this)).setDuration(300).start();
+            ObjectAnimator.ofFloat(mTopBar, "translationY", 0, -Constants.getActionBarH(this)).setDuration(300).start();
             ObjectAnimator.ofFloat(webViewContainer, "translationY", 0, -Constants.getActionBarH(this)).setDuration(300).start();
         }
     }
 
     private boolean isTopbarHide() {
-        return toolbar.getTranslationY() == -Constants.getActionBarH(this);
+        return mTopBar.getTranslationY() == -Constants.getActionBarH(this);
     }
 
     private boolean isTopbarShow() {
-        return toolbar.getTranslationY() == 0;
+        return mTopBar.getTranslationY() == 0;
     }
 
 
@@ -485,6 +587,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         if ((keyCode == KeyEvent.KEYCODE_BACK)) {
             if (drawerLayout.isDrawerOpen(Gravity.START)) {
                 drawerLayout.closeDrawers();
+                return true;
+            }
+
+            if (findControlView.getVisibility() == View.VISIBLE) {
+                showFindControlView(false);
                 return true;
             }
 
@@ -606,12 +713,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     public void refreshTopText(String text) {
-        EditText top = (EditText) findViewById(R.id.top_txt);
         if (TextUtils.isEmpty(text)) {
-            top.setText("");
-            top.setHint(R.string.search_hint);
+            topText.setText("");
+            topText.setHint(R.string.search_hint);
         } else {
-            top.setText(text);
+            topText.setText(text);
         }
     }
 
@@ -640,6 +746,30 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 TabGroup tabGroup = (TabGroup) v.getTag(R.id.multi_window_item_tag);
                 tabManager.switchTabGroup(tabGroup);
                 drawerLayout.closeDrawers();
+                break;
+            case R.id.up_find:
+                SearcherTab searcherTab = tabManager.getCurrentTabGroup().getCurrentTab();
+                if (searcherTab instanceof WebViewTab) {
+                    WebViewTab webViewTab = (WebViewTab) searcherTab;
+                    webViewTab.getView().findNext(false);
+                }
+                break;
+            case R.id.down_find:
+                searcherTab = tabManager.getCurrentTabGroup().getCurrentTab();
+                if (searcherTab instanceof WebViewTab) {
+                    WebViewTab webViewTab = (WebViewTab) searcherTab;
+                    webViewTab.getView().findNext(true);
+                }
+                break;
+            case R.id.close_find:
+                showFindControlView(false);
+                searcherTab = tabManager.getCurrentTabGroup().getCurrentTab();
+                if (searcherTab instanceof WebViewTab) {
+                    WebViewTab webViewTab = (WebViewTab) searcherTab;
+                    webViewTab.getView().clearMatches();
+                }
+                break;
+            default:
                 break;
         }
     }

@@ -37,15 +37,21 @@
 
         <item
             android:id="@+id/action_auto_fullscreen"
-            android:orderInCategory="6"
             android:checkable="true"
+            android:orderInCategory="6"
             android:title="@string/action_auto_fullscreen" />
 
         <item
             android:id="@+id/action_desktop"
-            android:orderInCategory="7"
             android:checkable="true"
+            android:orderInCategory="7"
             android:title="@string/action_desktop" />
+
+        <item
+            android:id="@+id/action_find"
+            android:orderInCategory="8"
+            android:title="@string/search_page" />
+
 
     </group>
 

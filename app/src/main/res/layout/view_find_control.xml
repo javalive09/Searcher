@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/find_control"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:orientation="horizontal"
+    tools:context=".activity.MainActivity">
+
+    <ImageView
+        android:id="@+id/close_find"
+        style="@style/Widget.AppCompat.Toolbar.Button.Navigation"
+        android:layout_width="?android:attr/actionBarSize"
+        android:layout_height="match_parent"
+        android:layout_marginEnd="@dimen/page_find_control_margin"
+        android:layout_marginStart="@dimen/page_find_control_margin"
+        android:onClick="onClick"
+        android:src="@drawable/ic_arrow_back" />
+
+    <EditText
+        android:id="@+id/find_content_txt"
+        style="@style/toolbar_edittext_style"
+        android:layout_width="0px"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:focusable="true"
+        android:hint="@string/search_page_hint"
+        android:labelFor="@+id/top_txt"
+        android:paddingEnd="@dimen/search_padding_start"
+        android:paddingStart="@dimen/search_padding_start" />
+
+    <TextView
+        android:id="@+id/count_find"
+        style="@style/Widget.AppCompat.Light.ActionBar.TabText"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginEnd="@dimen/page_find_control_margin"
+        android:layout_marginStart="@dimen/page_find_control_margin"
+        android:gravity="center"
+        android:text="1/2" />
+
+    <ImageView
+        android:id="@+id/up_find"
+        style="@style/Widget.AppCompat.Light.ActionButton.Overflow"
+        android:layout_width="?android:attr/actionBarSize"
+        android:layout_height="match_parent"
+        android:onClick="onClick"
+        android:src="@drawable/ic_arrow_up" />
+
+    <ImageView
+        android:id="@+id/down_find"
+        style="@style/Widget.AppCompat.Light.ActionButton.Overflow"
+        android:layout_width="?android:attr/actionBarSize"
+        android:layout_height="match_parent"
+        android:onClick="onClick"
+        android:src="@drawable/ic_arrow_down" />
+
+
+</LinearLayout>

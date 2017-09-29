@@ -14,6 +14,7 @@ import android.text.format.DateUtils;
 import android.util.Log;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
+import android.widget.EditText;
 
 import java.io.File;
 import java.util.ArrayList;

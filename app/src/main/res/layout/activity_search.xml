@@ -21,13 +21,15 @@
 
                 <EditText
                     android:id="@+id/top_txt"
-                    android:labelFor="@+id/top_txt"
-                    style="@style/toolbar_edittext_search_style"
+                    style="@style/toolbar_edittext_style"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:background="@android:color/transparent"
                     android:focusable="true"
+                    android:hint="@string/search_hint"
+                    android:labelFor="@+id/top_txt"
                     android:paddingEnd="@dimen/search_padding_right"
-                    android:paddingStart="@dimen/search_padding_start"/>
+                    android:paddingStart="@dimen/search_padding_start" />
 
                 <ImageView
                     android:id="@+id/clearall"
