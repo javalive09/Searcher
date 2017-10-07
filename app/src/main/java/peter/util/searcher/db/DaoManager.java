@@ -1,6 +1,5 @@
 package peter.util.searcher.db;
 
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import java.util.ArrayList;
@@ -21,7 +20,7 @@ public class DaoManager {
     private final DaoSession mDaoSession;
 
     private DaoManager() {
-        DaoMaster.DevOpenHelper mHelper = new DaoMaster.DevOpenHelper(Searcher.context, "searcher_db", null);
+        DaoMaster.DevOpenHelper mHelper = new DaoMaster.DevOpenHelper(Searcher.Companion.getContext(), "searcher_db", null);
         SQLiteDatabase db = mHelper.getWritableDatabase();
         DaoMaster mDaoMaster = new DaoMaster(db);
         mDaoSession = mDaoMaster.newSession();
@@ -36,22 +35,22 @@ public class DaoManager {
     }
 
     public long insertHistory(Bean bean) {
-        HistorySearch historySearch = new HistorySearch(bean.name, bean.time, bean.url, bean.pageNo);
+        HistorySearch historySearch = new HistorySearch(bean.getName(), bean.getTime(), bean.getUrl(), bean.getPageNo());
         return mDaoSession.getHistorySearchDao().insertOrReplace(historySearch);
     }
 
     public long insertFavorite(Bean bean) {
-        FavoriteSearch favoriteSearch = new FavoriteSearch(bean.name, bean.time, bean.url, bean.pageNo);
+        FavoriteSearch favoriteSearch = new FavoriteSearch(bean.getName(), bean.getTime(), bean.getUrl(), bean.getPageNo());
         return mDaoSession.getFavoriteSearchDao().insertOrReplace(favoriteSearch);
     }
 
     public void deleteHistory(Bean bean) {
-        HistorySearch historySearch = new HistorySearch(bean.name, bean.time, bean.url, bean.pageNo);
+        HistorySearch historySearch = new HistorySearch(bean.getName(), bean.getTime(), bean.getUrl(), bean.getPageNo());
         mDaoSession.getHistorySearchDao().delete(historySearch);
     }
 
     public void deleteFav(Bean bean) {
-        FavoriteSearch favoriteSearch = new FavoriteSearch(bean.name, bean.time, bean.url, bean.pageNo);
+        FavoriteSearch favoriteSearch = new FavoriteSearch(bean.getName(), bean.getTime(), bean.getUrl(), bean.getPageNo());
         mDaoSession.getFavoriteSearchDao().delete(favoriteSearch);
     }
 
@@ -61,10 +60,10 @@ public class DaoManager {
             List<HistorySearch> historySearchList = mDaoSession.getHistorySearchDao().queryBuilder().orderDesc(HistorySearchDao.Properties.Time).list();
             for (HistorySearch historySearch : historySearchList) {
                 Bean bean = new Bean();
-                bean.name = historySearch.getSearchWord();
-                bean.time = historySearch.getTime();
-                bean.url = historySearch.getUrl();
-                bean.pageNo = historySearch.getPageNo();
+                bean.setName(historySearch.getSearchWord());
+                bean.setTime(historySearch.getTime());
+                bean.setUrl(historySearch.getUrl());
+                bean.setPageNo(historySearch.getPageNo());
                 list.add(bean);
             }
             subscriber.onNext(list);
@@ -77,13 +76,14 @@ public class DaoManager {
         Bean bean = new Bean();
         if (list.size() > 0) {
             HistorySearch historySearch = list.get(0);
-            bean.pageNo = historySearch.getPageNo();
-            bean.url = historySearch.getUrl();
-            bean.time = historySearch.getTime();
-            bean.name = historySearch.getSearchWord();
+            bean.setUrl(historySearch.getUrl());
+            bean.setPageNo(historySearch.getPageNo());
+            bean.setName(historySearch.getSearchWord());
+            bean.setTime(historySearch.getTime());
+
         } else {
-            bean.url = url;
-            bean.name = word;
+            bean.setUrl(url);
+            bean.setName(word);
         }
         return bean;
     }
@@ -96,10 +96,10 @@ public class DaoManager {
                     where(HistorySearchDao.Properties.SearchWord.like("%" + word + "%")).list();
             for (HistorySearch historySearch : historySearchList) {
                 Bean bean = new Bean();
-                bean.name = historySearch.getSearchWord();
-                bean.time = historySearch.getTime();
-                bean.url = historySearch.getUrl();
-                bean.pageNo = historySearch.getPageNo();
+                bean.setUrl(historySearch.getUrl());
+                bean.setPageNo(historySearch.getPageNo());
+                bean.setName(historySearch.getSearchWord());
+                bean.setTime(historySearch.getTime());
                 list.add(bean);
             }
             subscriber.onNext(list);
@@ -115,10 +115,10 @@ public class DaoManager {
                     where(FavoriteSearchDao.Properties.SearchWord.like("%" + word + "%")).list();
             for (FavoriteSearch favoriteSearch : favoriteSearchList) {
                 Bean bean = new Bean();
-                bean.name = favoriteSearch.getSearchWord();
-                bean.time = favoriteSearch.getTime();
-                bean.url = favoriteSearch.getUrl();
-                bean.pageNo = favoriteSearch.getPageNo();
+                bean.setUrl(favoriteSearch.getUrl());
+                bean.setPageNo(favoriteSearch.getPageNo());
+                bean.setName(favoriteSearch.getSearchWord());
+                bean.setTime(favoriteSearch.getTime());
                 list.add(bean);
             }
             subscriber.onNext(list);
@@ -133,10 +133,10 @@ public class DaoManager {
             List<FavoriteSearch> favoriteSearchList = mDaoSession.getFavoriteSearchDao().queryBuilder().orderDesc(FavoriteSearchDao.Properties.Time).list();
             for (FavoriteSearch favoriteSearch : favoriteSearchList) {
                 Bean bean = new Bean();
-                bean.name = favoriteSearch.getSearchWord();
-                bean.time = favoriteSearch.getTime();
-                bean.url = favoriteSearch.getUrl();
-                bean.pageNo = favoriteSearch.getPageNo();
+                bean.setUrl(favoriteSearch.getUrl());
+                bean.setPageNo(favoriteSearch.getPageNo());
+                bean.setName(favoriteSearch.getSearchWord());
+                bean.setTime(favoriteSearch.getTime());
                 list.add(bean);
             }
             subscriber.onNext(list);
@@ -150,10 +150,10 @@ public class DaoManager {
             List<HistorySearch> historySearchList = mDaoSession.getHistorySearchDao().queryBuilder().orderDesc(HistorySearchDao.Properties.Time).limit(count).list();
             for (HistorySearch historySearch : historySearchList) {
                 Bean bean = new Bean();
-                bean.name = historySearch.getSearchWord();
-                bean.time = historySearch.getTime();
-                bean.url = historySearch.getUrl();
-                bean.pageNo = historySearch.getPageNo();
+                bean.setUrl(historySearch.getUrl());
+                bean.setPageNo(historySearch.getPageNo());
+                bean.setName(historySearch.getSearchWord());
+                bean.setTime(historySearch.getTime());
                 list.add(bean);
             }
             subscriber.onNext(list);

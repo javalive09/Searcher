@@ -35,10 +35,11 @@ class WebAddress {
     private static final int MATCH_GROUP_HOST = 3;
     private static final int MATCH_GROUP_PORT = 4;
     private static final int MATCH_GROUP_PATH = 5;
+    @SuppressWarnings("deprecation")
     private static final Pattern sAddressPattern = Pattern.compile(
     /* scheme */"(?:(http|https|file)://)?" +
     /* authority */"(?:([-A-Za-z0-9$_.+!*'(),;?&=]+(?::[-A-Za-z0-9$_.+!*'(),;?&=]+)?)@)?" +
-    /* host */"([" + GOOD_IRI_CHAR + "%_-][" + GOOD_IRI_CHAR + "%_\\.-]*|\\[[0-9a-fA-F:\\.]+\\])?" +
+    /* host */"([" + GOOD_IRI_CHAR + "%_-][" + GOOD_IRI_CHAR + "%_.-]*|\\[[0-9a-fA-F:.]+\\])?" +
     /* port */"(?::([0-9]*))?" +
     /* path */"(/?[^#]*)?" +
     /* anchor */".*", Pattern.CASE_INSENSITIVE);

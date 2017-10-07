@@ -34,7 +34,7 @@ public final class Constants {
             }
         }
 
-        if (!SettingsManager.getInstance().isAutoFullScreen()) {
+        if (!SettingsManager.Companion.getInstance().isAutoFullScreen()) {
             return 0;
         }
 
