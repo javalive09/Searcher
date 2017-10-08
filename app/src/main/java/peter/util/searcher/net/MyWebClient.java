@@ -38,14 +38,10 @@ import peter.util.searcher.utils.Utils;
  * Created by peter on 16/6/6.
  */
 public class MyWebClient extends WebViewClient {
-    private final MainActivity mainActivity;
-    private final IntentUtils mIntentUtils;
     private final WebViewTab webViewTab;
 
     public MyWebClient(WebViewTab webViewTab) {
         this.webViewTab = webViewTab;
-        this.mainActivity = webViewTab.getActivity();
-        mIntentUtils = new IntentUtils(mainActivity);
     }
 
     @Override
@@ -53,44 +49,44 @@ public class MyWebClient extends WebViewClient {
         if (view.isShown()) {
             view.postInvalidate();
         }
-        mainActivity.refreshTitle();
-        mainActivity.refreshProgress(webViewTab, 100);
+        webViewTab.getActivity().refreshTitle();
+        webViewTab.getActivity().refreshProgress(webViewTab, 100);
     }
 
     @Override
     public void onPageStarted(WebView view, String url, Bitmap favicon) {
         Log.i("peter", "url=" + url);
-        mainActivity.showTopbar();
+        webViewTab.getActivity().showTopbar();
     }
 
     @Override
     public void onReceivedHttpAuthRequest(final WebView view, @NonNull final HttpAuthHandler handler,
                                           final String host, final String realm) {
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(mainActivity);
-        final EditText name = new EditText(mainActivity);
-        final EditText password = new EditText(mainActivity);
-        LinearLayout passLayout = new LinearLayout(mainActivity);
+        AlertDialog.Builder builder = new AlertDialog.Builder(webViewTab.getActivity());
+        final EditText name = new EditText(webViewTab.getActivity());
+        final EditText password = new EditText(webViewTab.getActivity());
+        LinearLayout passLayout = new LinearLayout(webViewTab.getActivity());
         passLayout.setOrientation(LinearLayout.VERTICAL);
 
         passLayout.addView(name);
         passLayout.addView(password);
 
-        name.setHint(mainActivity.getString(R.string.hint_username));
+        name.setHint(webViewTab.getActivity().getString(R.string.hint_username));
         name.setSingleLine();
         password.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
         password.setSingleLine();
         password.setTransformationMethod(new PasswordTransformationMethod());
-        password.setHint(mainActivity.getString(R.string.hint_password));
-        builder.setTitle(mainActivity.getString(R.string.title_sign_in));
+        password.setHint(webViewTab.getActivity().getString(R.string.hint_password));
+        builder.setTitle(webViewTab.getActivity().getString(R.string.title_sign_in));
         builder.setView(passLayout);
         builder.setCancelable(true)
-                .setPositiveButton(mainActivity.getString(R.string.title_sign_in), (dialog, which) -> {
+                .setPositiveButton(webViewTab.getActivity().getString(R.string.title_sign_in), (dialog, which) -> {
                     String user = name.getText().toString();
                     String pass = password.getText().toString();
                     handler.proceed(user.trim(), pass.trim());
                 })
-                .setNegativeButton(mainActivity.getString(R.string.action_cancel), (dialog, which) -> handler.cancel());
+                .setNegativeButton(webViewTab.getActivity().getString(R.string.action_cancel), (dialog, which) -> handler.cancel());
         AlertDialog alert = builder.create();
         alert.show();
     }
@@ -100,17 +96,17 @@ public class MyWebClient extends WebViewClient {
         List<Integer> errorCodeMessageCodes = getAllSslErrorMessageCodes(error);
         StringBuilder stringBuilder = new StringBuilder();
         for (Integer messageCode : errorCodeMessageCodes) {
-            stringBuilder.append(" - ").append(mainActivity.getString(messageCode)).append('\n');
+            stringBuilder.append(" - ").append(webViewTab.getActivity().getString(messageCode)).append('\n');
         }
         String alertMessage =
-                mainActivity.getString(R.string.message_insecure_connection, stringBuilder.toString());
+                webViewTab.getActivity().getString(R.string.message_insecure_connection, stringBuilder.toString());
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(mainActivity);
-        builder.setTitle(mainActivity.getString(R.string.title_warning));
+        AlertDialog.Builder builder = new AlertDialog.Builder(webViewTab.getActivity());
+        builder.setTitle(webViewTab.getActivity().getString(R.string.title_warning));
         builder.setMessage(alertMessage)
                 .setCancelable(true)
-                .setPositiveButton(mainActivity.getString(R.string.action_yes), (dialog, which) -> handler.proceed())
-                .setNegativeButton(mainActivity.getString(R.string.action_no), (dialog, which) -> handler.cancel());
+                .setPositiveButton(webViewTab.getActivity().getString(R.string.action_yes), (dialog, which) -> handler.proceed())
+                .setNegativeButton(webViewTab.getActivity().getString(R.string.action_no), (dialog, which) -> handler.cancel());
         builder.create().show();
     }
 
@@ -170,14 +166,14 @@ public class MyWebClient extends WebViewClient {
     }
 
     private boolean shouldOverrideLoading(@NonNull WebView view, @NonNull String url) {
-        SearcherTab tab = mainActivity.getTabManager().getCurrentTabGroup().getCurrentTab();
+        SearcherTab tab = webViewTab.getActivity().getTabManager().getCurrentTabGroup().getCurrentTab();
         if (tab instanceof WebViewTab) {
             WebViewTab webViewTab = (WebViewTab) tab;
             Map<String, String> headers = webViewTab.getRequestHeaders();
             if (url.startsWith(Constants.ABOUT)) {
                 return continueLoadingUrl(view, url, headers);
             }
-            return isMailOrIntent(url, view) || mIntentUtils.startActivityForUrl(view, url) || continueLoadingUrl(view, url, headers);
+            return isMailOrIntent(url, view) || new IntentUtils(webViewTab.getActivity()).startActivityForUrl(view, url) || continueLoadingUrl(view, url, headers);
         }
         return false;
     }
@@ -198,7 +194,7 @@ public class MyWebClient extends WebViewClient {
             MailTo mailTo = MailTo.parse(url);
             Intent i = Utils.newEmailIntent(mailTo.getTo(), mailTo.getSubject(),
                     mailTo.getBody(), mailTo.getCc());
-            mainActivity.startActivity(i);
+            webViewTab.getActivity().startActivity(i);
             view.reload();
             return true;
         } else if (url.startsWith(Constants.INTENT_SCHAME)) {
@@ -213,7 +209,7 @@ public class MyWebClient extends WebViewClient {
                 intent.setComponent(null);
                 intent.setSelector(null);
                 try {
-                    mainActivity.startActivity(intent);
+                    webViewTab.getActivity().startActivity(intent);
                 } catch (ActivityNotFoundException e) {
                     Log.e("MyWebClient", "ActivityNotFoundException");
                 }

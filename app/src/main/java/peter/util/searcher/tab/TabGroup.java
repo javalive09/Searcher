@@ -1,10 +1,8 @@
 package peter.util.searcher.tab;
 
 import android.view.View;
-
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
-
 import peter.util.searcher.activity.MainActivity;
 import peter.util.searcher.bean.Bean;
 
@@ -15,8 +13,7 @@ import peter.util.searcher.bean.Bean;
 
 public class TabGroup extends SearcherTab {
 
-    private static final int MAX_TAB = 50;
-    private final ArrayList<SearcherTab> tabArrayList = new ArrayList<>(MAX_TAB);
+    private final ArrayList<SearcherTab> tabArrayList = new ArrayList<>(2);
     private int mCurrentTabIndex;
     private TabGroup parent;
     private Class[] classes;

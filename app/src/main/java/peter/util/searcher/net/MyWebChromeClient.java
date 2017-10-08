@@ -33,12 +33,10 @@ public class MyWebChromeClient extends WebChromeClient {
     private VideoView mVideoView;
     private View mCustomView;
     private WebChromeClient.CustomViewCallback mCustomViewCallback;
-    private final MainActivity mActivity;
     private final WebViewTab webViewTab;
 
     public MyWebChromeClient(WebViewTab webViewTab) {
         this.webViewTab = webViewTab;
-        this.mActivity = webViewTab.getActivity();
     }
 
     @Override
@@ -52,18 +50,18 @@ public class MyWebChromeClient extends WebChromeClient {
     }
 
     public void onProgressChanged(WebView view, int newProgress) {
-        mActivity.refreshProgress(webViewTab, newProgress);
+        webViewTab.getActivity().refreshProgress(webViewTab, newProgress);
     }
 
     @Override
     public void onReceivedIcon(WebView view, Bitmap icon) {
         super.onReceivedIcon(view, icon);
-        webViewTab.setIconDrawable(new BitmapDrawable(mActivity.getResources(), icon));
+        webViewTab.setIconDrawable(new BitmapDrawable(webViewTab.getActivity().getResources(), icon));
     }
 
     @Override
     public void onShowCustomView(View view, CustomViewCallback callback) {
-        mOriginalOrientation = mActivity.getRequestedOrientation();
+        mOriginalOrientation = webViewTab.getActivity().getRequestedOrientation();
         int requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
         showCustomView(view, callback, requestedOrientation);
         Log.i("peter", "onShowCustomView 2");
@@ -80,10 +78,10 @@ public class MyWebChromeClient extends WebChromeClient {
     @Override
     public boolean onCreateWindow(WebView view, boolean isDialog, boolean isUserGesture, Message resultMsg) {
         if (resultMsg != null) {
-            TabGroup parentTabGroup = mActivity.getTabManager().getCurrentTabGroup();
-            mActivity.getTabManager().loadUrl(new Bean("", Tab.ACTION_NEW_WINDOW), true);
-            mActivity.getTabManager().getCurrentTabGroup().setParent(parentTabGroup);
-            SearcherTab tab = mActivity.getTabManager().getCurrentTabGroup().getCurrentTab();
+            TabGroup parentTabGroup = webViewTab.getActivity().getTabManager().getCurrentTabGroup();
+            webViewTab.getActivity().getTabManager().loadUrl(new Bean("", Tab.ACTION_NEW_WINDOW), true);
+            webViewTab.getActivity().getTabManager().getCurrentTabGroup().setParent(parentTabGroup);
+            SearcherTab tab = webViewTab.getActivity().getTabManager().getCurrentTabGroup().getCurrentTab();
             View tabView = tab.getView();
             if (tabView != null && tabView instanceof WebView) {
                 WebView webView = (WebView) tabView;
@@ -98,9 +96,9 @@ public class MyWebChromeClient extends WebChromeClient {
     @Override
     public void onCloseWindow(WebView window) {
         Log.i("onCloseWindow", window.toString());
-        TabGroup tabGroup = mActivity.getTabManager().getTabGroup(webViewTab);
+        TabGroup tabGroup = webViewTab.getActivity().getTabManager().getTabGroup(webViewTab);
         if (tabGroup != null) {
-            mActivity.getTabManager().removeTabGroup(tabGroup);
+            webViewTab.getActivity().getTabManager().removeTabGroup(tabGroup);
         }
     }
 
@@ -122,7 +120,7 @@ public class MyWebChromeClient extends WebChromeClient {
         } catch (SecurityException e) {
             Log.e(TAG, "WebView is not allowed to keep the screen on");
         }
-        mActivity.setFullscreen(false, false);
+        webViewTab.getActivity().setFullscreen(false, false);
         if (mFullscreenContainer != null) {
             ViewGroup parent = (ViewGroup) mFullscreenContainer.getParent();
             if (parent != null) {
@@ -148,7 +146,7 @@ public class MyWebChromeClient extends WebChromeClient {
             }
         }
         mCustomViewCallback = null;
-        mActivity.setRequestedOrientation(mOriginalOrientation);
+        webViewTab.getActivity().setRequestedOrientation(mOriginalOrientation);
     }
 
     private synchronized void showCustomView(final View view, WebChromeClient.CustomViewCallback callback, int requestedOrientation) {
@@ -167,15 +165,15 @@ public class MyWebChromeClient extends WebChromeClient {
         } catch (SecurityException e) {
             Log.e(TAG, "WebView is not allowed to keep the screen on");
         }
-        mOriginalOrientation = mActivity.getRequestedOrientation();
+        mOriginalOrientation = webViewTab.getActivity().getRequestedOrientation();
         mCustomViewCallback = callback;
         mCustomView = view;
 
-        mActivity.setRequestedOrientation(requestedOrientation);
-        final FrameLayout decorView = (FrameLayout) mActivity.getWindow().getDecorView();
+        webViewTab.getActivity().setRequestedOrientation(requestedOrientation);
+        final FrameLayout decorView = (FrameLayout) webViewTab.getActivity().getWindow().getDecorView();
 
-        mFullscreenContainer = new FrameLayout(mActivity);
-        mFullscreenContainer.setBackgroundColor(ContextCompat.getColor(mActivity, android.R.color.black));
+        mFullscreenContainer = new FrameLayout(webViewTab.getActivity());
+        mFullscreenContainer.setBackgroundColor(ContextCompat.getColor(webViewTab.getActivity(), android.R.color.black));
         if (view instanceof FrameLayout) {
             if (((FrameLayout) view).getFocusedChild() instanceof VideoView) {
                 mVideoView = (VideoView) ((FrameLayout) view).getFocusedChild();
@@ -192,7 +190,7 @@ public class MyWebChromeClient extends WebChromeClient {
         decorView.addView(mFullscreenContainer, params);
         mFullscreenContainer.addView(mCustomView, params);
         decorView.requestLayout();
-        mActivity.setFullscreen(true, true);
+        webViewTab.getActivity().setFullscreen(true, true);
     }
 
     private class VideoCompletionListener implements MediaPlayer.OnCompletionListener,

@@ -84,10 +84,22 @@ public class TabManager {
     public void removeTabGroup(TabGroup tabGroup) {
         if (tabGroupArrayList.size() > 0) {
             tabGroup.onDestroy();
+            int removeIndex = tabGroupArrayList.indexOf(tabGroup);
+            int nextIndex = 0;
+            if(removeIndex < mCurrentTabIndex) {
+                nextIndex = mCurrentTabIndex - 1;
+            }else if(removeIndex > mCurrentTabIndex) {
+                nextIndex = mCurrentTabIndex;
+            }else if(removeIndex == mCurrentTabIndex) {
+                if(removeIndex == tabGroupArrayList.size() - 1) {//end
+                    nextIndex = tabGroupArrayList.size() - 2;
+                }else {
+                    nextIndex = mCurrentTabIndex;
+                }
+            }
             tabGroupArrayList.remove(tabGroup);
             if (tabGroupArrayList.size() > 0) {
-                int indexNext = tabGroupArrayList.size() - 1;
-                TabGroup tabGroupNext = tabGroupArrayList.get(indexNext);
+                TabGroup tabGroupNext = tabGroupArrayList.get(nextIndex);
                 switchTabGroup(tabGroupNext);
             }
         }
