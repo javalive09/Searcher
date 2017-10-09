@@ -136,6 +136,8 @@ public static final int *;
 -dontwarn java.lang.invoke.**
 -dontwarn rx.**
 
+-dontwarn javax.annotation.**
+
 # rxjava
 -dontwarn sun.misc.**
 -keepclassmembers class rx.internal.util.unsafe.*ArrayQueue*Field* {
