@@ -29,7 +29,7 @@ public class BookMarkActivity extends BaseActivity {
     TabLayout mSlidingTabLayout;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-    BookmarkFragment[] bookmarkFragments = new BookmarkFragment[]{new FavoriteFragment(), new HistorySearchFragment()};
+    final BookmarkFragment[] bookmarkFragments = new BookmarkFragment[]{new FavoriteFragment(), new HistorySearchFragment()};
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -37,9 +37,7 @@ public class BookMarkActivity extends BaseActivity {
         setContentView(R.layout.activity_bookmark);
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
-        toolbar.setNavigationOnClickListener(v -> {
-            onBackPressed();
-        });
+        toolbar.setNavigationOnClickListener(v -> onBackPressed());
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true); // this sets the button to the back icon

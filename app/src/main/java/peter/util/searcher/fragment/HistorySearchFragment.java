@@ -65,7 +65,7 @@ public class HistorySearchFragment extends BookmarkFragment implements View.OnCl
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.bookmark_favorite, menu);
+        inflater.inflate(R.menu.bookmark_history, menu);
         MenuItem searchItem = menu.findItem(R.id.action_search);
         mSearchView = (SearchView) MenuItemCompat.getActionView(searchItem);
         mSearchView.setQueryHint(getString(R.string.action_bookmark_search_favorite_hint));

@@ -16,8 +16,8 @@ public class TabGroup extends SearcherTab {
     private final ArrayList<SearcherTab> tabArrayList = new ArrayList<>(2);
     private int mCurrentTabIndex;
     private TabGroup parent;
-    private Class[] classes;
-    private Object[] activityObject;
+    private final Class[] classes;
+    private final Object[] activityObject;
 
     public TabGroup(MainActivity activity) {
         super(activity);
@@ -76,7 +76,7 @@ public class TabGroup extends SearcherTab {
                 currentTab = newTabByUrl(bean.url);
                 int index = mCurrentTabIndex + 1;
                 tabArrayList.add(index, currentTab);
-                removeTabFromIndeoToEnd(index + 1);
+                removeTabFromIndexToEnd(index + 1);
                 mCurrentTabIndex = tabArrayList.size() - 1;
             }
         }
@@ -91,12 +91,10 @@ public class TabGroup extends SearcherTab {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        for (SearcherTab tab : tabArrayList) {
-            tab.onDestroy();
-        }
+        tabArrayList.forEach(SearcherTab::onDestroy);
     }
 
-    private void removeTabFromIndeoToEnd(int index) {
+    private void removeTabFromIndexToEnd(int index) {
         for (int i = index, size = tabArrayList.size(); i < size; i++) {
             SearcherTab tab = tabArrayList.remove(index);
             tab.onDestroy();
@@ -116,15 +114,11 @@ public class TabGroup extends SearcherTab {
     }
 
     public void onResume() {
-        for (SearcherTab tab : tabArrayList) {
-            tab.onResume();
-        }
+        tabArrayList.forEach(SearcherTab::onResume);
     }
 
     public void onPause() {
-        for (SearcherTab tab : tabArrayList) {
-            tab.onPause();
-        }
+        tabArrayList.forEach(SearcherTab::onPause);
     }
 
 

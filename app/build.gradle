@@ -71,10 +71,10 @@ dependencies {
     compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
     compile 'io.reactivex.rxjava2:rxjava:2.1.3'
 
-    //chrome debug sqlite chrome://inspect/#devices
+    //chrome debug sqLite chrome://inspect/#devices
     compile 'com.facebook.stetho:stetho:1.3.1'
 
-    //chrome debug okhttp
+    //chrome debug okHttp
 //    compile 'com.facebook.stetho:stetho-okhttp3:1.3.1'
 
 }

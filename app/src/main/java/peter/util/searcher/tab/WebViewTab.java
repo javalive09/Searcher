@@ -43,7 +43,7 @@ public class WebViewTab extends SearcherTab {
     }
 
     public void onCreate() {
-        initmWebView();
+        initWebView();
         initializeSettings();
         mainActivity.registerForContextMenu(mWebView);
     }
@@ -182,7 +182,7 @@ public class WebViewTab extends SearcherTab {
         }.execute();
     }
 
-    private void initmWebView() {
+    private void initWebView() {
         mWebView.setDrawingCacheBackgroundColor(Color.WHITE);
         mWebView.setFocusableInTouchMode(true);
         mWebView.setFocusable(true);

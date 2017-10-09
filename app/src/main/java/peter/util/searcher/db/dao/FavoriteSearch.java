@@ -6,6 +6,7 @@ import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Index;
 
 /**
+ *
  * Created by peter on 2017/9/8.
  */
 

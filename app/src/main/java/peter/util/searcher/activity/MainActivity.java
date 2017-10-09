@@ -1,7 +1,6 @@
 package peter.util.searcher.activity;
 
 import android.animation.ObjectAnimator;
-import android.app.AlertDialog;
 import android.app.DownloadManager;
 import android.app.SearchManager;
 import android.content.ClipData;
@@ -9,11 +8,9 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -27,7 +24,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewStub;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
@@ -50,7 +46,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import peter.util.searcher.SettingsManager;
 import peter.util.searcher.TabManager;
-import peter.util.searcher.adapter.MultiWindowAdapter;
+import peter.util.searcher.adapter.TabsAdapter;
 import peter.util.searcher.bean.Bean;
 import peter.util.searcher.R;
 import peter.util.searcher.db.DaoManager;
@@ -76,7 +72,7 @@ import peter.util.searcher.view.WebViewContainer;
  */
 public class MainActivity extends BaseActivity implements View.OnClickListener {
 
-    @BindView(R.id.webview_container)
+    @BindView(R.id.webView_container)
     WebViewContainer webViewContainer;
     @BindView(R.id.drawer_layout)
     DrawerLayout drawerLayout;
@@ -98,18 +94,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     EditText findControlContent;
     @BindView(R.id.count_find)
     TextView findControlCount;
-    @BindView(R.id.up_find)
-    View findControlUp;
-    @BindView(R.id.down_find)
-    View findControlDown;
-    @BindView(R.id.close_find)
-    View findControlClose;
 
     private PopupMenu popup;
-    private TextDrawable multiWindowDrawable;
+    private TextDrawable tabsDrawable;
     private TabManager tabManager;
     private final HashMap<String, Class> router = new HashMap<>();
-    private MultiWindowAdapter multiWindowAdapter;
+    private TabsAdapter tabsAdapter;
     private boolean realBack = false;
     private final Handler mHandler = new Handler(Looper.getMainLooper());
     private static final String BUNDLE_KEY_SIGN = "&";
@@ -147,8 +137,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             return false;
         });
         setSupportActionBar(toolbar);
-        multiWindowDrawable = new TextDrawable(MainActivity.this);
-        toolbar.setNavigationIcon(multiWindowDrawable);
+        tabsDrawable = new TextDrawable(MainActivity.this);
+        toolbar.setNavigationIcon(tabsDrawable);
         toolbar.setNavigationContentDescription(R.string.app_name);
         toolbar.setNavigationOnClickListener(v -> drawerLayout.openDrawer(Gravity.START));
         //long click mNavButtonView
@@ -171,8 +161,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     private void initTabs() {
-        multiWindowAdapter = new MultiWindowAdapter();
-        multiTabListView.setAdapter(multiWindowAdapter);
+        tabsAdapter = new TabsAdapter();
+        multiTabListView.setAdapter(tabsAdapter);
         drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
@@ -180,19 +170,19 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
             @Override
             public void onDrawerOpened(View drawerView) {
-                updateMultiwindow();
+                updateTabs();
             }
 
             @Override
             public void onDrawerClosed(View drawerView) {
-                updateMultiwindow();
+                updateTabs();
             }
 
             @Override
             public void onDrawerStateChanged(int newState) {
             }
         });
-        updateMultiwindow();
+        updateTabs();
         restoreLostTabs();
     }
 
@@ -410,22 +400,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 break;
             case R.id.action_find:
                 showFindControlView(true);
-
-//                AlertDialog.Builder alert = new AlertDialog.Builder(this);
-//                View view = View.inflate(MainActivity.this, R.layout.edittext_pagefind, null);
-//                alert.setView(view).setTitle(getString(R.string.search_page)).
-//                        setPositiveButton(R.string.search_page_pos, (dialog, which) -> {
-//                            SearcherTab searcherTab = tabManager.getCurrentTabGroup().getCurrentTab();
-//                            if (searcherTab instanceof WebViewTab) {
-//                                EditText editText = (EditText) view.findViewById(R.id.find_content);
-//                                String word = editText.getText().toString();
-//                                if (!TextUtils.isEmpty(word)) {
-//                                    WebViewTab webViewTab = (WebViewTab) searcherTab;
-//                                    webViewTab.getView().findAllAsync(word);
-//                                    showFindControlView(word);
-//                                }
-//                            }
-//                        }).show();
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -472,7 +446,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     }
 
-    private WebView.FindListener findListener = new WebView.FindListener() {
+    private final WebView.FindListener findListener = new WebView.FindListener() {
         @Override
         public void onFindResultReceived(int activeMatchOrdinal, int numberOfMatches, boolean isDoneCounting) {
             if (isDoneCounting) {
@@ -499,9 +473,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         startActivity(intent);
     }
 
-    public void updateMultiwindow() {
-        if (multiWindowAdapter != null) {
-            multiWindowAdapter.update(MainActivity.this);
+    public void updateTabs() {
+        if (tabsAdapter != null) {
+            tabsAdapter.update(MainActivity.this);
         }
     }
 
@@ -641,7 +615,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     protected void onResume() {
         super.onResume();
         tabManager.resumeTabGroupExclude(null);
-        updateMultiwindow();
+        updateTabs();
         MobclickAgent.onResume(this);
     }
 
@@ -656,7 +630,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     public void refreshTitle() {
         String host = tabManager.getCurrentTabGroup().getCurrentTab().getHost();
         refreshTopText(host);
-        multiWindowDrawable.setText(tabManager.getTabGroupCount());
+        tabsDrawable.setText(tabManager.getTabGroupCount());
     }
 
     public void saveTabs() {
@@ -759,7 +733,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 } else {
                     TabGroup tabGroup = (TabGroup) v.getTag();
                     tabManager.removeTabGroup(tabGroup);
-                    updateMultiwindow();
+                    updateTabs();
                 }
                 break;
             case R.id.multi_window_item:

@@ -88,7 +88,7 @@ class WebAddress {
         t = m.group(MATCH_GROUP_PATH);
         if (t != null && !t.isEmpty()) {
             /*
-             * handle busted myspace frontpage redirect with missing initial "/"
+             * handle busted my space front page redirect with missing initial "/"
              */
             if (t.charAt(0) == '/') {
                 mPath = t;

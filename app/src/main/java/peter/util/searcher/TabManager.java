@@ -108,20 +108,12 @@ public class TabManager {
 
     public void resumeTabGroupExclude(TabGroup exTabGroup) {
         ArrayList<TabGroup> list = new ArrayList<>(tabGroupArrayList);
-        for (TabGroup tabGroup : list) {
-            if (tabGroup != exTabGroup) {
-                tabGroup.onResume();
-            }
-        }
+        list.stream().filter(tabGroup -> tabGroup != exTabGroup).forEach(TabGroup::onResume);
     }
 
     public void pauseTabGroupExclude(TabGroup exTabGroup) {
         ArrayList<TabGroup> list = new ArrayList<>(tabGroupArrayList);
-        for (TabGroup tabGroup : list) {
-            if (tabGroup != exTabGroup) {
-                tabGroup.onPause();
-            }
-        }
+        list.stream().filter(tabGroup -> tabGroup != exTabGroup).forEach(TabGroup::onPause);
     }
 
     public ArrayList<TabGroup> getList() {

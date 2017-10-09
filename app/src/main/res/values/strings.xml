@@ -32,6 +32,8 @@
     <string name="action_save_pic">保存图片</string>
     <string name="action_share_pic">分享图片</string>
     <string name="find_page_current_content">查找 \'%s\' </string>
+    <string name="find_page_current_up">上一个</string>
+    <string name="find_page_current_down">下一个</string>
 
 
     <string name="action_new_tab">在新标签打开</string>

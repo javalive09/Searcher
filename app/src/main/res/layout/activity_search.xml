@@ -21,7 +21,7 @@
 
                 <EditText
                     android:id="@+id/top_txt"
-                    style="@style/toolbar_edittext_style"
+                    style="@style/toolbar_edit_text_style"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@android:color/transparent"
@@ -32,7 +32,7 @@
                     android:paddingStart="@dimen/search_padding_start" />
 
                 <ImageView
-                    android:id="@+id/clearall"
+                    android:id="@+id/clearAll"
                     style="@style/Widget.AppCompat.ActionButton.Overflow"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

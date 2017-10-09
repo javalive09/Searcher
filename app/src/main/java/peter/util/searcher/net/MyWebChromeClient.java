@@ -13,7 +13,6 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.widget.FrameLayout;
 import android.widget.VideoView;
-import peter.util.searcher.activity.MainActivity;
 import peter.util.searcher.bean.Bean;
 import peter.util.searcher.tab.SearcherTab;
 import peter.util.searcher.tab.Tab;

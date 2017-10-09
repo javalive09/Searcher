@@ -39,7 +39,7 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
     Toolbar toolbar;
     @BindView(R.id.top_txt)
     EditText search;
-    @BindView(R.id.clearall)
+    @BindView(R.id.clearAll)
     ImageView clearAll;
     private static final String RECENT_SEARCH = "recent_search";
     public static final String ENGINE_LIST = "engine_list";
@@ -196,7 +196,7 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
         }
     }
 
-    @OnClick(R.id.clearall)
+    @OnClick(R.id.clearAll)
     public void onClick(View v) {
         openIME();
         search.requestFocus();

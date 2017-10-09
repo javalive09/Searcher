@@ -15,7 +15,7 @@ import peter.util.searcher.R;
 import peter.util.searcher.activity.MainActivity;
 import peter.util.searcher.tab.TabGroup;
 
-public class MultiWindowAdapter extends BaseAdapter {
+public class TabsAdapter extends BaseAdapter {
 
     private ArrayList<TabGroup> mList;
 

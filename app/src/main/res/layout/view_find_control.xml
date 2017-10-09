@@ -16,11 +16,12 @@
         android:layout_marginEnd="@dimen/page_find_control_margin"
         android:layout_marginStart="@dimen/page_find_control_margin"
         android:onClick="onClick"
+        android:contentDescription="@string/action_cancel"
         android:src="@drawable/ic_arrow_back" />
 
     <EditText
         android:id="@+id/find_content_txt"
-        style="@style/toolbar_edittext_style"
+        style="@style/toolbar_edit_text_style"
         android:layout_width="0px"
         android:layout_height="match_parent"
         android:layout_weight="1"
@@ -37,8 +38,7 @@
         android:layout_height="match_parent"
         android:layout_marginEnd="@dimen/page_find_control_margin"
         android:layout_marginStart="@dimen/page_find_control_margin"
-        android:gravity="center"
-        android:text="1/2" />
+        android:gravity="center" />
 
     <ImageView
         android:id="@+id/up_find"
@@ -46,6 +46,7 @@
         android:layout_width="?android:attr/actionBarSize"
         android:layout_height="match_parent"
         android:onClick="onClick"
+        android:contentDescription="@string/find_page_current_up"
         android:src="@drawable/ic_arrow_up" />
 
     <ImageView
@@ -53,6 +54,7 @@
         style="@style/Widget.AppCompat.Light.ActionButton.Overflow"
         android:layout_width="?android:attr/actionBarSize"
         android:layout_height="match_parent"
+        android:contentDescription="@string/find_page_current_down"
         android:onClick="onClick"
         android:src="@drawable/ic_arrow_down" />
 

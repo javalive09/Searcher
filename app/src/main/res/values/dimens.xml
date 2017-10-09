@@ -6,14 +6,11 @@
     <dimen name="item_list_drawable_padding">5dp</dimen>
     <dimen name="item_list_padding">7dp</dimen>
 
-    <dimen name="url_opt_separator_margin">15dp</dimen>
 
     <dimen name="multi_window_item_icon_cell">25dp</dimen>
     <dimen name="multi_window_icon_margin">10dp</dimen>
     <dimen name="multi_window_close_padding">10dp</dimen>
     <dimen name="multi_window_h">50dp</dimen>
     <dimen name="search_text_size">17sp</dimen>
-    <dimen name="page_find_margin">20dp</dimen>
     <dimen name="page_find_control_margin">7dp</dimen>
-    <dimen name="page_find_control_back_w">80dp</dimen>
 </resources>

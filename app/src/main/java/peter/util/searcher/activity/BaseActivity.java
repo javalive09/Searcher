@@ -14,7 +14,6 @@ import android.text.format.DateUtils;
 import android.util.Log;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
-import android.widget.EditText;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -47,9 +46,7 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     public void exit() {
-        for(Activity activity : LIST) {
-            activity.finish();
-        }
+        LIST.forEach(Activity::finish);
     }
 
     public String getSearchWord() {
@@ -79,7 +76,7 @@ public class BaseActivity extends AppCompatActivity {
                     }
 
                     //then delete the files and subdirectories in this dir
-                    //only empty directories can be deleted, so subdirs have been done first
+                    //only empty directories can be deleted, so sub dirs have been done first
                     if (child.lastModified() < new Date().getTime() - numDays * DateUtils.DAY_IN_MILLIS) {
                         if (child.delete()) {
                             deletedFiles++;
@@ -99,13 +96,13 @@ public class BaseActivity extends AppCompatActivity {
             CookieManager.getInstance().removeAllCookies(null);
             CookieManager.getInstance().flush();
         } else {
-            CookieSyncManager cookieSyncMngr = CookieSyncManager.createInstance(BaseActivity.this);
-            cookieSyncMngr.startSync();
+            CookieSyncManager cookieSyncMng = CookieSyncManager.createInstance(BaseActivity.this);
+            cookieSyncMng.startSync();
             CookieManager cookieManager = CookieManager.getInstance();
             cookieManager.removeAllCookie();
             cookieManager.removeSessionCookie();
-            cookieSyncMngr.stopSync();
-            cookieSyncMngr.sync();
+            cookieSyncMng.stopSync();
+            cookieSyncMng.sync();
         }
     }
 

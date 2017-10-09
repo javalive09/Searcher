@@ -3,6 +3,7 @@ package peter.util.searcher.net;
 import android.text.TextUtils;
 
 /**
+ *  ad block
  * Created by peter on 2017/9/6.
  */
 

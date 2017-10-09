@@ -25,7 +25,7 @@
         <item name="android:gravity">center_vertical|left</item>
     </style>
 
-    <style name="toolbar_edittext_style" parent="@style/Widget.AppCompat.EditText">
+    <style name="toolbar_edit_text_style" parent="@style/Widget.AppCompat.EditText">
         <item name="android:textColor">@color/tint_color</item>
         <item name="android:textSize">@dimen/search_text_size</item>
         <item name="android:drawablePadding">5dp</item>

@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 
 import peter.util.searcher.R;
-import peter.util.searcher.activity.MainActivity;
 import peter.util.searcher.tab.SearcherTab;
 import peter.util.searcher.tab.WebViewTab;
 import peter.util.searcher.utils.Constants;

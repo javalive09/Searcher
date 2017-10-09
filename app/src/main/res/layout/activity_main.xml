@@ -28,7 +28,7 @@
 
                 <EditText
                     android:id="@+id/top_txt"
-                    style="@style/toolbar_edittext_style"
+                    style="@style/toolbar_edit_text_style"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:cursorVisible="false"
@@ -47,7 +47,7 @@
         </FrameLayout>
 
         <peter.util.searcher.view.WebViewContainer
-            android:id="@+id/webview_container"
+            android:id="@+id/webView_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@id/top_bar">

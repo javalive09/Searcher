@@ -11,6 +11,7 @@ import peter.util.searcher.R;
 import peter.util.searcher.fragment.SettingsFragment;
 
 /**
+ *
  * Created by peter on 2017/6/14.
  */
 
