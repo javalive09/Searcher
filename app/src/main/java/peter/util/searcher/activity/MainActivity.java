@@ -147,7 +147,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 View mNavButtonView = toolbar.getChildAt(i);
                 mNavButtonView.setOnLongClickListener(v -> {
                     final Toast toast = Toast.makeText(MainActivity.this, R.string.add_new_tab, Toast.LENGTH_SHORT);
-                    toast.cancel();
                     int[] loc = new int[2];
                     v.getLocationOnScreen(loc);
                     toast.setGravity(Gravity.TOP | Gravity.START, loc[0] + v.getWidth() / 2, loc[1] + v.getHeight() / 2);
