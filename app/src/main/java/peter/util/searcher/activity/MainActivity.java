@@ -33,6 +33,7 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebView;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.ProgressBar;
@@ -150,6 +151,23 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         toolbar.setNavigationIcon(multiWindowDrawable);
         toolbar.setNavigationContentDescription(R.string.app_name);
         toolbar.setNavigationOnClickListener(v -> drawerLayout.openDrawer(Gravity.START));
+        //long click mNavButtonView
+        for (int i = 0; i < toolbar.getChildCount(); i++) {
+            if (toolbar.getChildAt(i) instanceof ImageButton) {
+                View mNavButtonView = toolbar.getChildAt(i);
+                mNavButtonView.setOnLongClickListener(v -> {
+                    final Toast toast = Toast.makeText(MainActivity.this, R.string.add_new_tab, Toast.LENGTH_SHORT);
+                    toast.cancel();
+                    int[] loc = new int[2];
+                    v.getLocationOnScreen(loc);
+                    toast.setGravity(Gravity.TOP | Gravity.START, loc[0] + v.getWidth() / 2, loc[1] + v.getHeight() / 2);
+                    toast.show();
+                    loadHome(true);
+                    return true;
+                });
+                break;
+            }
+        }
     }
 
     private void initTabs() {
@@ -570,7 +588,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 } else {
                     SearcherTab searcherTab = tabManager.getCurrentTabGroup().getCurrentTab();
                     if (searcherTab instanceof WebViewTab) {//webView
-                        loadHome(true);
+                        if (tabManager.getTabGroupCount() < TabManager.MAX_TAB) {
+                            loadHome(true);
+                        }
                     }
                 }
                 touchSearch();

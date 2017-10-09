@@ -17,7 +17,7 @@ import peter.util.searcher.tab.TabGroup;
 
 public class TabManager {
 
-    private static final int MAX_TAB = 50;
+    public static final int MAX_TAB = 50;
     private final ArrayList<TabGroup> tabGroupArrayList = new ArrayList<>(MAX_TAB);
     private final MainActivity mainActivity;
     private int mCurrentTabIndex;
@@ -33,13 +33,8 @@ public class TabManager {
         }
         if (newTab) {
             TabGroup tab = new TabGroup(mainActivity);
-            if (getTabGroupCount() == 0 || mCurrentTabIndex == getTabGroupCount() - 1) {//有0个tab 或 currentTab在最后
-                mCurrentTabIndex = getTabGroupCount();
-                tabGroupArrayList.add(tab);
-            } else {//currentTab不在最后
-                mCurrentTabIndex = mCurrentTabIndex + 1;
-                tabGroupArrayList.add(mCurrentTabIndex, tab);
-            }
+            tabGroupArrayList.add(tab);
+            mCurrentTabIndex = tabGroupArrayList.size() - 1;
         }
         TabGroup tabGroup = getCurrentTabGroup();
         tabGroup.loadUrl(bean);
@@ -112,7 +107,8 @@ public class TabManager {
     }
 
     public void resumeTabGroupExclude(TabGroup exTabGroup) {
-        for (TabGroup tabGroup : tabGroupArrayList) {
+        ArrayList<TabGroup> list = new ArrayList<>(tabGroupArrayList);
+        for (TabGroup tabGroup : list) {
             if (tabGroup != exTabGroup) {
                 tabGroup.onResume();
             }
@@ -120,7 +116,8 @@ public class TabManager {
     }
 
     public void pauseTabGroupExclude(TabGroup exTabGroup) {
-        for (TabGroup tabGroup : tabGroupArrayList) {
+        ArrayList<TabGroup> list = new ArrayList<>(tabGroupArrayList);
+        for (TabGroup tabGroup : list) {
             if (tabGroup != exTabGroup) {
                 tabGroup.onPause();
             }
