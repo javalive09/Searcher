@@ -40,6 +40,10 @@ public class TabManager {
         tabGroup.loadUrl(bean);
     }
 
+    public int getCurrentTabIndex() {
+        return mCurrentTabIndex;
+    }
+
     public TabGroup getCurrentTabGroup() {
         return tabGroupArrayList.size() > 0 ? tabGroupArrayList.get(mCurrentTabIndex) : null;
     }

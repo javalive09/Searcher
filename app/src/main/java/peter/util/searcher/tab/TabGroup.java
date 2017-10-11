@@ -123,7 +123,7 @@ public class TabGroup extends SearcherTab {
 
 
     private LocalViewTab newLocalTab(String url) {
-        Class clazz = mainActivity.getRounterClass(url);
+        Class clazz = mainActivity.getRouterClass(url);
         LocalViewTab tab = null;
         try {
             @SuppressWarnings("unchecked")

@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -18,13 +19,21 @@ import peter.util.searcher.tab.TabGroup;
 public class TabsAdapter extends BaseAdapter {
 
     private ArrayList<TabGroup> mList;
-
+    private int activateIndex;
     private MainActivity mainActivity;
 
-    public void update(MainActivity activity) {
+    public boolean update(MainActivity activity) {
         mainActivity = activity;
-        mList = mainActivity.getTabManager().getList();
+        ArrayList<TabGroup> arrayList = new ArrayList<>(mainActivity.getTabManager().getList());
+        final int currentIndex = mainActivity.getTabManager().getCurrentTabIndex();
+        if (currentIndex == activateIndex) {
+            if (mList != null && new HashSet<>(mList).equals(new HashSet<>(arrayList))) {
+                return false;
+            }
+        }
+        mList = arrayList;
         notifyDataSetChanged();
+        return true;
     }
 
     @Override
@@ -66,6 +75,7 @@ public class TabsAdapter extends BaseAdapter {
         if (tabGroup != null) {
             if (mainActivity.getTabManager().getCurrentTabGroup() == tabGroup) {
                 convertView.setActivated(true);
+                activateIndex = position;
             } else {
                 convertView.setActivated(false);
             }

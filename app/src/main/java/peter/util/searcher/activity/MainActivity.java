@@ -77,7 +77,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @BindView(R.id.drawer_layout)
     DrawerLayout drawerLayout;
     @BindView(R.id.tabs)
-    ListView multiTabListView;
+    ListView tabsListView;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.top_txt)
@@ -121,7 +121,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private void init() {
         tabManager = new TabManager(MainActivity.this);
-        installLocalTabRounter();
+        installLocalTabRouter();
         initTopBar();
         initTabs();
         checkIntentData(getIntent());
@@ -161,7 +161,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private void initTabs() {
         tabsAdapter = new TabsAdapter();
-        multiTabListView.setAdapter(tabsAdapter);
+        tabsListView.setAdapter(tabsAdapter);
         drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
@@ -475,14 +475,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     public void updateTabs() {
         if (tabsAdapter != null) {
             tabsAdapter.update(MainActivity.this);
+            tabsListView.setSelection(getTabManager().getCurrentTabIndex());
         }
     }
 
-    private void installLocalTabRounter() {
+    private void installLocalTabRouter() {
         router.put(Tab.URL_HOME, HomeTab.class);
     }
 
-    public Class getRounterClass(String url) {
+    public Class getRouterClass(String url) {
         return router.get(url);
     }
 
@@ -501,24 +502,24 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     public void showTopbar() {
-        if (isTopbarHide() && SettingsManager.getInstance().isAutoFullScreen()) {
+        if (isTopBarHide() && SettingsManager.getInstance().isAutoFullScreen()) {
             ObjectAnimator.ofFloat(mTopBar, "translationY", -Constants.getActionBarH(this), 0).setDuration(300).start();
             ObjectAnimator.ofFloat(webViewContainer, "translationY", -Constants.getActionBarH(this), 0).setDuration(300).start();
         }
     }
 
     public void hideTopbar() {
-        if (isTopbarShow() && SettingsManager.getInstance().isAutoFullScreen()) {
+        if (isTopBarShow() && SettingsManager.getInstance().isAutoFullScreen()) {
             ObjectAnimator.ofFloat(mTopBar, "translationY", 0, -Constants.getActionBarH(this)).setDuration(300).start();
             ObjectAnimator.ofFloat(webViewContainer, "translationY", 0, -Constants.getActionBarH(this)).setDuration(300).start();
         }
     }
 
-    private boolean isTopbarHide() {
+    private boolean isTopBarHide() {
         return mTopBar.getTranslationY() == -Constants.getActionBarH(this);
     }
 
-    private boolean isTopbarShow() {
+    private boolean isTopBarShow() {
         return mTopBar.getTranslationY() == 0;
     }
 
