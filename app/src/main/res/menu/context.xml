@@ -35,9 +35,9 @@
             android:title="@string/action_new_tab" />
 
         <item
-            android:id="@+id/copy_txt_link_free"
+            android:id="@+id/copy_link"
             android:orderInCategory="8"
-            android:title="@string/action_copy_txt_link_free" />
+            android:title="@string/action_copy_txt_link" />
     </group>
 
 </menu>

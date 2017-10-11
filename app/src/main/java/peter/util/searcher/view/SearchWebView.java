@@ -72,15 +72,12 @@ public class SearchWebView extends WebView {
     @Override
     protected ContextMenu.ContextMenuInfo getContextMenuInfo() {
         popMenu = true;
-        ContextMenuInfo info = new ContextMenuInfo(getHitTestResult(), touchX, touchY);
-        info.setSearchWebView(this);
-        return info;
+        return new ContextMenuInfo(getHitTestResult(), touchX, touchY);
     }
 
 
     public static class ContextMenuInfo implements ContextMenu.ContextMenuInfo {
 
-        SearchWebView searchWebView;
         final HitTestResult result;
         final int x, y;
 
@@ -88,14 +85,6 @@ public class SearchWebView extends WebView {
             this.result = result;
             this.x = x;
             this.y = y;
-        }
-
-        public SearchWebView getSearchWebView() {
-            return searchWebView;
-        }
-
-        void setSearchWebView(SearchWebView searchWebView) {
-            this.searchWebView = searchWebView;
         }
 
         public HitTestResult getResult() {
@@ -114,20 +103,27 @@ public class SearchWebView extends WebView {
 
     public static class OnMenuItemClickListener implements PopupMenu.OnMenuItemClickListener {
 
-        SearchWebView searchWebView;
 
-        HitTestResult result;
+        SearchWebView.ContextMenuInfo info;
 
-        public void setInfo(HitTestResult result) {
-            this.result = result;
+        String url;
+
+        public ContextMenuInfo getInfo() {
+            return info;
         }
 
-        protected HitTestResult getInfo() {
-            return result;
+        public OnMenuItemClickListener setInfo(ContextMenuInfo info) {
+            this.info = info;
+            return this;
         }
 
-        public void setSearchWebView(SearchWebView searchWebView) {
-            this.searchWebView = searchWebView;
+        public String getUrl() {
+            return url;
+        }
+
+        public OnMenuItemClickListener setUrl(String url) {
+            this.url = url;
+            return this;
         }
 
         @Override
