@@ -11,6 +11,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -38,6 +39,7 @@ import android.widget.Toast;
 
 import com.umeng.analytics.MobclickAgent;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -210,33 +212,56 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         popup = new PopupMenu(MainActivity.this, menuAnchor);
         popup.getMenuInflater().inflate(R.menu.context, popup.getMenu());
 
-        WebView.HitTestResult hitTestResult = info.getResult();
-        if (hitTestResult.getExtra() != null) {
-            switch (hitTestResult.getType()) {
-                case WebView.HitTestResult.SRC_IMAGE_ANCHOR_TYPE: // 带有链接的图片类型
-                case WebView.HitTestResult.IMAGE_TYPE:
-                    popup.getMenu().setGroupVisible(R.id.picture, true);
-                    popup.getMenu().getItem(0).getMenuInfo();
-                    break;
-                case WebView.HitTestResult.SRC_ANCHOR_TYPE:
-                    popup.getMenu().setGroupVisible(R.id.txt_link, true);
-                    break;
-            }
-            contextMenuListener.setInfo(hitTestResult);
-            contextMenuListener.setSearchWebView(info.getSearchWebView());
-            popup.setOnMenuItemClickListener(contextMenuListener);
-            popup.show();
-        }
+        WebViewTab webViewTab = (WebViewTab) getTabManager().getCurrentTabGroup().getCurrentTab();
+        Message msg = webViewHandler.obtainMessage();
+        msg.setTarget(webViewHandler);
+        msg.obj = info;
+        webViewTab.getView().requestFocusNodeHref(msg);
     }
+
+    private Handler webViewHandler = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            String url = msg.getData().getString("url");
+            SearchWebView.ContextMenuInfo info = (SearchWebView.ContextMenuInfo) msg.obj;
+            contextMenuListener.setUrl(url);
+            contextMenuListener.setInfo(info);
+            popup.setOnMenuItemClickListener(contextMenuListener);
+            WebView.HitTestResult hitTestResult = info.getResult();
+            if (hitTestResult != null) {
+                switch (hitTestResult.getType()) {
+                    case WebView.HitTestResult.SRC_IMAGE_ANCHOR_TYPE: // 带有链接的图片类型
+                    case WebView.HitTestResult.IMAGE_TYPE: //图片类型
+                        popup.getMenu().setGroupVisible(R.id.picture, true);
+                        popup.getMenu().getItem(0).getMenuInfo();
+                        popup.show();
+                        break;
+                    case WebView.HitTestResult.PHONE_TYPE:// 拨号类型
+                    case WebView.HitTestResult.EMAIL_TYPE:// Email类型
+                    case WebView.HitTestResult.EDIT_TEXT_TYPE:// 选中的文字类型
+                        break;
+                    case WebView.HitTestResult.SRC_ANCHOR_TYPE://链接类型
+                        popup.getMenu().setGroupVisible(R.id.txt_link, true);
+                        popup.show();
+                    default:
+                        break;
+                }
+            }
+        }
+    };
 
     private final SearchWebView.OnMenuItemClickListener contextMenuListener = new SearchWebView.OnMenuItemClickListener() {
 
         @Override
         public boolean onMenuItemClick(MenuItem item) {
-            WebView.HitTestResult info = getInfo();
+            SearchWebView.ContextMenuInfo info = getInfo();
+            String url = getUrl();
+            if (info.getResult() != null) {
+                url = info.getResult().getExtra();
+            }
             switch (item.getItemId()) {
                 case R.id.open_pic_new_tab:
-                    String url = info.getExtra();
                     Bean bean = new Bean();
                     bean.url = url;
                     bean.time = System.currentTimeMillis();
@@ -245,15 +270,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     getTabManager().getCurrentTabGroup().setParent(parentTabGroup);
                     break;
                 case R.id.copy_pic_link:
-                    url = info.getExtra();
-                    String title = info.getExtra();
+                    String title = url;
                     ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
                     ClipData clip = ClipData.newPlainText(title, url);
                     clipboard.setPrimaryClip(clip);
                     Toast.makeText(MainActivity.this, R.string.copy_link_txt, Toast.LENGTH_SHORT).show();
                     break;
                 case R.id.save_pic:
-                    url = info.getExtra();
                     String mineTye = DownloadHandler.getMimeType(url);
                     if (TextUtils.isEmpty(mineTye)) {
                         mineTye = "image/jpeg";
@@ -262,7 +285,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     new MyDownloadListener(MainActivity.this).onDownloadStart(url, "", "", mineTye, 0);
                     break;
                 case R.id.shard_pic:
-                    url = info.getExtra();
                     Intent sendIntent = new Intent();
                     sendIntent.setAction(Intent.ACTION_SEND);
                     sendIntent.putExtra(Intent.EXTRA_TEXT, url);
@@ -271,7 +293,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     break;
 
                 case R.id.open_url_new_tab:
-                    url = info.getExtra();
                     bean = new Bean();
                     bean.url = url;
                     bean.time = System.currentTimeMillis();
@@ -280,8 +301,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     getTabManager().getCurrentTabGroup().setParent(parentTabGroup);
                     break;
 
-                case R.id.copy_txt_link_free:
-
+                case R.id.copy_link:
+                    clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+                    clip = ClipData.newPlainText(url, url);
+                    clipboard.setPrimaryClip(clip);
+                    Toast.makeText(MainActivity.this, R.string.copy_link_txt, Toast.LENGTH_SHORT).show();
                     break;
             }
 
