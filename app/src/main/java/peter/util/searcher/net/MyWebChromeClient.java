@@ -1,18 +1,27 @@
 package peter.util.searcher.net;
 
+import android.Manifest;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaPlayer;
 import android.os.Message;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.GeolocationPermissions;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 import android.widget.VideoView;
+
+import com.anthonycr.grant.PermissionsManager;
+import com.anthonycr.grant.PermissionsResultAction;
+
+import peter.util.searcher.R;
 import peter.util.searcher.bean.Bean;
 import peter.util.searcher.tab.SearcherTab;
 import peter.util.searcher.tab.Tab;
@@ -207,4 +216,30 @@ public class MyWebChromeClient extends WebChromeClient {
 
     }
 
+    @Override
+    public void onGeolocationPermissionsShowPrompt(String origin, GeolocationPermissions.Callback callback) {
+        super.onGeolocationPermissionsShowPrompt(origin, callback);
+        String[] permissions = new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
+        PermissionsManager.getInstance().requestPermissionsIfNecessaryForResult(webViewTab.getActivity(), permissions, new PermissionsResultAction() {
+
+            @Override
+            public void onGranted() {
+                boolean remember = true;
+                String org = origin.length() > 50 ? origin.substring(0, 50) : origin;
+                new AlertDialog.Builder(webViewTab.getActivity()).setTitle(R.string.location)
+                        .setMessage(org + webViewTab.getActivity().getString(R.string.message_location))
+                        .setCancelable(true)
+                        .setPositiveButton(webViewTab.getActivity().getString(R.string.action_allow), (dialog, which) ->
+                                callback.invoke(origin, true, remember))
+                        .setNegativeButton(webViewTab.getActivity().getString(R.string.action_do_not_allow), (dialog, which) ->
+                                callback.invoke(origin, false, remember)).show();
+            }
+
+            @Override
+            public void onDenied(String permission) {
+                Toast.makeText(webViewTab.getActivity(), R.string.wr_location_permission, Toast.LENGTH_LONG).show();
+            }
+        });
+
+    }
 }

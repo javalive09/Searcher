@@ -14,6 +14,7 @@
     <string name="clear_all">清理所有</string>
     <string name="close_tab">关闭标签</string>
     <string name="wr_sdcard_permission">下载文件到存储卡需要此权限</string>
+    <string name="wr_location_permission">网页定位功能需要此权限</string>
     <string name="dialog_download">您是否需要下载此文件？</string>
     <string name="action_download">下载</string>
     <string name="problem_download">Invalid URL encountered, cannot download</string>
@@ -40,6 +41,10 @@
     <string name="add_new_tab">新标签</string>
     <string name="action_copy_txt_link">复制文字链接</string>
     <string name="action_copy_txt_link_free">自由复制</string>
+    <string name="location">允许站点访问地理位置</string>
+    <string name="message_location">\n你想使用你的位置吗？</string>
+    <string name="action_allow">允许</string>
+    <string name="action_do_not_allow">不允许</string>
 
     <string name="action_cancel">取消</string>
     <string name="action_share">分享页面</string>
