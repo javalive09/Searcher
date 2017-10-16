@@ -27,7 +27,7 @@ Searcher
 
 应用包下载
 --------
-[点击下载](http://7xoxmg.com1.z0.glb.clouddn.com/searcher_79.apk)
+[点击下载 V1.7.8](http://7xoxmg.com1.z0.glb.clouddn.com/searcher_79.apk)
 
 
 License
