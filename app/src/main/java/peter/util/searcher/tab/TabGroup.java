@@ -1,10 +1,12 @@
 package peter.util.searcher.tab;
 
 import android.view.View;
+
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
+
 import peter.util.searcher.activity.MainActivity;
-import peter.util.searcher.bean.Bean;
+import peter.util.searcher.bean.TabBean;
 
 /**
  * 标签组
@@ -43,6 +45,29 @@ public class TabGroup extends SearcherTab {
         return null;
     }
 
+    @Override
+    public TabGroup create(TabBean bean) {
+        SearcherTab currentTab = getCurrentTab();
+        if (currentTab == null) {//head tab
+            currentTab = newTab(bean);
+            tabArrayList.add(currentTab);
+            mCurrentTabIndex = tabArrayList.size() - 1;
+        } else {//body tab
+            if (bean.url.startsWith(LOCAL_SCHEMA) || //local url
+                    currentTab instanceof LocalViewTab) {//current local tab
+                if (currentTab.getUrl().equals(bean.url)) {//same local url
+                    return this;
+                }
+                currentTab = newTab(bean);
+                int index = mCurrentTabIndex + 1;
+                tabArrayList.add(index, currentTab);
+                removeTabFromIndexToEnd(index + 1);
+                mCurrentTabIndex = tabArrayList.size() - 1;
+            }
+        }
+        return this;
+    }
+
     public TabGroup getParent() {
         return parent;
     }
@@ -61,26 +86,8 @@ public class TabGroup extends SearcherTab {
         return 0;
     }
 
-    public void loadUrl(Bean bean) {
-        SearcherTab currentTab = getCurrentTab();
-        if (currentTab == null) {//head tab
-            currentTab = newTabByUrl(bean.url);
-            tabArrayList.add(currentTab);
-            mCurrentTabIndex = tabArrayList.size() - 1;
-        } else {//body tab
-            if (bean.url.startsWith(LOCAL_SCHEMA) || //local url
-                    currentTab instanceof LocalViewTab) {//current local tab
-                if (currentTab.getUrl().equals(bean.url)) {//same local url
-                    return;
-                }
-                currentTab = newTabByUrl(bean.url);
-                int index = mCurrentTabIndex + 1;
-                tabArrayList.add(index, currentTab);
-                removeTabFromIndexToEnd(index + 1);
-                mCurrentTabIndex = tabArrayList.size() - 1;
-            }
-        }
-        currentTab.loadUrl(bean);
+    public void loadUrl(TabBean bean) {
+        getCurrentTab().loadUrl(bean);
         mainActivity.refreshTitle();
     }
 
@@ -91,7 +98,9 @@ public class TabGroup extends SearcherTab {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        tabArrayList.forEach(SearcherTab::onDestroy);
+        for (SearcherTab searcherTab : tabArrayList) {
+            searcherTab.onDestroy();
+        }
     }
 
     private void removeTabFromIndexToEnd(int index) {
@@ -105,25 +114,29 @@ public class TabGroup extends SearcherTab {
         return tabArrayList.contains(tab);
     }
 
-    private SearcherTab newTabByUrl(String url) {
-        if (url.startsWith(LOCAL_SCHEMA)) {
-            return newLocalTab(url);
+    private SearcherTab newTab(TabBean bean) {
+        if (bean.url.startsWith(LOCAL_SCHEMA)) {
+            return newLocalTab(bean).create(bean);
         } else {
-            return new WebViewTab(mainActivity);
+            return new WebViewTab(mainActivity).create(bean);
         }
     }
 
     public void onResume() {
-        tabArrayList.forEach(SearcherTab::onResume);
+        for (SearcherTab searcherTab : tabArrayList) {
+            searcherTab.onResume();
+        }
     }
 
     public void onPause() {
-        tabArrayList.forEach(SearcherTab::onPause);
+        for (SearcherTab searcherTab : tabArrayList) {
+            searcherTab.onPause();
+        }
     }
 
 
-    private LocalViewTab newLocalTab(String url) {
-        Class clazz = mainActivity.getRouterClass(url);
+    private LocalViewTab newLocalTab(TabBean bean) {
+        Class clazz = mainActivity.getRouterClass(bean.url);
         LocalViewTab tab = null;
         try {
             @SuppressWarnings("unchecked")
@@ -138,7 +151,7 @@ public class TabGroup extends SearcherTab {
     public void setCurrentTab(int index) {
         mCurrentTabIndex = index;
         SearcherTab tab = tabArrayList.get(index);
-        tab.loadUrl(new Bean(tab.getSearchWord(), tab.getUrl()));
+        tab.loadUrl(new TabBean(tab.getSearchWord(), tab.getUrl()));
         checkReloadCurrentTab();
     }
 
@@ -165,7 +178,7 @@ public class TabGroup extends SearcherTab {
     }
 
     public boolean canGoBack() {
-        Tab currentTab = getCurrentTab();
+        peter.util.searcher.tab.Tab currentTab = getCurrentTab();
         if (currentTab instanceof LocalViewTab) {
             return mCurrentTabIndex > 0;
         } else {
@@ -174,7 +187,7 @@ public class TabGroup extends SearcherTab {
     }
 
     public void goBack() {
-        Tab currentTab = getCurrentTab();
+        peter.util.searcher.tab.Tab currentTab = getCurrentTab();
         if (currentTab instanceof LocalViewTab) {
             setCurrentTab(mCurrentTabIndex - 1);
         } else {
@@ -189,7 +202,7 @@ public class TabGroup extends SearcherTab {
     }
 
     public boolean canGoForward() {
-        Tab currentTab = getCurrentTab();
+        peter.util.searcher.tab.Tab currentTab = getCurrentTab();
         if (currentTab instanceof WebViewTab) {
             boolean webTabCanGoForward = currentTab.canGoForward();
             if (webTabCanGoForward) {
@@ -200,7 +213,7 @@ public class TabGroup extends SearcherTab {
     }
 
     public void goForward() {
-        Tab currentTab = getCurrentTab();
+        peter.util.searcher.tab.Tab currentTab = getCurrentTab();
         if (currentTab instanceof WebViewTab) {
             boolean webTabCanGoForward = currentTab.canGoForward();
             if (webTabCanGoForward) {

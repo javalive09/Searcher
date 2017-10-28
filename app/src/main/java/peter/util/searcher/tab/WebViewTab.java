@@ -17,7 +17,7 @@ import java.util.Map;
 import peter.util.searcher.R;
 import peter.util.searcher.SettingsManager;
 import peter.util.searcher.activity.MainActivity;
-import peter.util.searcher.bean.Bean;
+import peter.util.searcher.bean.TabBean;
 import peter.util.searcher.db.DaoManager;
 import peter.util.searcher.net.MyDownloadListener;
 import peter.util.searcher.net.MyWebChromeClient;
@@ -32,7 +32,7 @@ import peter.util.searcher.utils.Constants;
 public class WebViewTab extends SearcherTab {
 
     private WebView mWebView;
-    private Bean bean;
+    private TabBean bean;
     private String currentUA;
     private MyWebChromeClient myWebChromeClient;
     private static final String HEADER_DNT = "DNT";
@@ -42,10 +42,24 @@ public class WebViewTab extends SearcherTab {
         super(activity);
     }
 
-    public void onCreate() {
+    void onCreate() {
         initWebView();
         initializeSettings();
         mainActivity.registerForContextMenu(mWebView);
+    }
+
+    @Override
+    public WebViewTab create(TabBean bean) {
+        if (!TextUtils.isEmpty(bean.url)) {
+            this.bean = bean;
+            Log.i("peter", "url=" + bean.url);
+            if (mWebView == null) {
+                int resId = onCreateViewResId();
+                mWebView = (WebView) mainActivity.setCurrentView(resId);
+                onCreate();
+            }
+        }
+        return this;
     }
 
     @Override
@@ -109,26 +123,15 @@ public class WebViewTab extends SearcherTab {
     }
 
     @Override
-    public void loadUrl(Bean bean) {
+    public void loadUrl(TabBean bean) {
         if (!TextUtils.isEmpty(bean.url)) {
-            this.bean = bean;
-            Log.i("peter", "url=" + bean.url);
-            if (mWebView == null) {
-                int resId = onCreateViewResId();
-                mWebView = (WebView) mainActivity.setCurrentView(resId);
-                onCreate();
-                if (!Tab.ACTION_NEW_WINDOW.equals(bean.url)) {
-                    mWebView.loadUrl(bean.url, mRequestHeaders);
-                }
-
-            } else {
-                if (!getUrl().equals(bean.url)) {
-                    mWebView.loadUrl(bean.url);
-                }
+            if (!peter.util.searcher.tab.Tab.ACTION_NEW_WINDOW.equals(bean.url)
+                    || !getUrl().equals(bean.url)) {
+                mWebView.loadUrl(bean.url);
                 mainActivity.setCurrentView(mWebView);
-            }
-            if (!TextUtils.isEmpty(bean.name)) {
-                saveData(bean);
+                if (!TextUtils.isEmpty(bean.name)) {
+                    saveData(bean);
+                }
             }
         }
     }
@@ -171,7 +174,7 @@ public class WebViewTab extends SearcherTab {
         return mWebView.getTitle();
     }
 
-    private void saveData(final Bean bean) {
+    private void saveData(final TabBean bean) {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {

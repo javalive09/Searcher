@@ -7,25 +7,25 @@ import android.os.Parcelable;
  * load 操作的基本数据
  * Created by peter on 16/4/8.
  */
-public class Bean implements Parcelable {
+public class TabBean implements Parcelable {
     public long time;
     public String name;
     public String url;
     public int pageNo;
 
-    public Bean() {
+    public TabBean() {
     }
 
-    public Bean(String name) {
+    public TabBean(String name) {
         this.name = name;
     }
 
-    public Bean(String name, String url) {
+    public TabBean(String name, String url) {
         this.name = name;
         this.url = url;
     }
 
-    protected Bean(Parcel in) {
+    protected TabBean(Parcel in) {
         time = in.readLong();
         name = in.readString();
         url = in.readString();
@@ -45,15 +45,15 @@ public class Bean implements Parcelable {
         return 0;
     }
 
-    public static final Creator<Bean> CREATOR = new Creator<Bean>() {
+    public static final Creator<TabBean> CREATOR = new Creator<TabBean>() {
         @Override
-        public Bean createFromParcel(Parcel in) {
-            return new Bean(in);
+        public TabBean createFromParcel(Parcel in) {
+            return new TabBean(in);
         }
 
         @Override
-        public Bean[] newArray(int size) {
-            return new Bean[size];
+        public TabBean[] newArray(int size) {
+            return new TabBean[size];
         }
     };
 }

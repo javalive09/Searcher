@@ -4,12 +4,10 @@ import android.graphics.drawable.Drawable;
 import android.view.View;
 
 import peter.util.searcher.activity.MainActivity;
-import peter.util.searcher.bean.Bean;
+import peter.util.searcher.bean.TabBean;
 
 /**
- *
  * Created by peter on 2016/11/17.
- *
  */
 
 public abstract class SearcherTab implements Tab {
@@ -26,11 +24,19 @@ public abstract class SearcherTab implements Tab {
         return 0;
     }
 
-    public void onCreate() {
+    void onCreate() {
 
     }
 
-    public void onPause() {
+    void onResume() {
+
+    }
+
+    void onPause() {
+
+    }
+
+    void onDestroy() {
 
     }
 
@@ -45,19 +51,13 @@ public abstract class SearcherTab implements Tab {
         mainActivity.updateTabs();
     }
 
-    public void onResume() {
-
-    }
-
-    public void onDestroy() {
-
-    }
-
     public abstract String getTitle();
 
     public abstract String getUrl();
 
-    public abstract void loadUrl(Bean bean);
+    public abstract SearcherTab create(TabBean bean);
+
+    public abstract void loadUrl(TabBean bean);
 
     public abstract void reload();
 

@@ -22,9 +22,8 @@ import com.anthonycr.grant.PermissionsManager;
 import com.anthonycr.grant.PermissionsResultAction;
 
 import peter.util.searcher.R;
-import peter.util.searcher.bean.Bean;
+import peter.util.searcher.bean.TabBean;
 import peter.util.searcher.tab.SearcherTab;
-import peter.util.searcher.tab.Tab;
 import peter.util.searcher.tab.TabGroup;
 import peter.util.searcher.tab.WebViewTab;
 
@@ -87,7 +86,7 @@ public class MyWebChromeClient extends WebChromeClient {
     public boolean onCreateWindow(WebView view, boolean isDialog, boolean isUserGesture, Message resultMsg) {
         if (resultMsg != null) {
             TabGroup parentTabGroup = webViewTab.getActivity().getTabManager().getCurrentTabGroup();
-            webViewTab.getActivity().getTabManager().loadUrl(new Bean("", Tab.ACTION_NEW_WINDOW), true);
+            webViewTab.getActivity().getTabManager().loadTab(new TabBean("", peter.util.searcher.tab.Tab.ACTION_NEW_WINDOW), true);
             webViewTab.getActivity().getTabManager().getCurrentTabGroup().setParent(parentTabGroup);
             SearcherTab tab = webViewTab.getActivity().getTabManager().getCurrentTabGroup().getCurrentTab();
             View tabView = tab.getView();

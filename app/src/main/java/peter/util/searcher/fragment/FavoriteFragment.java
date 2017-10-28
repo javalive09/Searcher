@@ -30,7 +30,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import peter.util.searcher.R;
 import peter.util.searcher.activity.BaseActivity;
-import peter.util.searcher.bean.Bean;
+import peter.util.searcher.bean.TabBean;
 import peter.util.searcher.db.DaoManager;
 
 /**
@@ -77,7 +77,7 @@ public class FavoriteFragment extends BookmarkFragment implements View.OnClickLi
                 if (TextUtils.isEmpty(s)) {
                     refreshAllListData();
                 } else {
-                    Observable<List<Bean>> listObservable = DaoManager.getInstance().queryFavoriteLike(s);
+                    Observable<List<TabBean>> listObservable = DaoManager.getInstance().queryFavoriteLike(s);
                     cancelQuery();
                     queryFavorite = listObservable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).
                             subscribe(list -> refreshListData(list));
@@ -103,10 +103,10 @@ public class FavoriteFragment extends BookmarkFragment implements View.OnClickLi
         return rootView;
     }
 
-    private List<Bean> getDefaultFav() {
-        List<Bean> list = new ArrayList<>(urls.length);
+    private List<TabBean> getDefaultFav() {
+        List<TabBean> list = new ArrayList<>(urls.length);
         for (int i = 0; i < urls.length; i++) {
-            Bean bean = new Bean();
+            TabBean bean = new TabBean();
             bean.name = names[i];
             bean.url = urls[i];
             bean.time = -1;
@@ -124,7 +124,7 @@ public class FavoriteFragment extends BookmarkFragment implements View.OnClickLi
         });
     }
 
-    private void refreshListData(List<Bean> beans) {
+    private void refreshListData(List<TabBean> beans) {
         if (beans != null) {
             if (beans.size() == 0) {
                 noRecord.setVisibility(View.VISIBLE);
@@ -144,7 +144,7 @@ public class FavoriteFragment extends BookmarkFragment implements View.OnClickLi
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.item:
-                Bean bean = (Bean) v.getTag();
+                TabBean bean = (TabBean) v.getTag();
                 if (bean != null) {
                     ((BaseActivity) getActivity()).startBrowser(bean);
                 }
@@ -185,7 +185,7 @@ public class FavoriteFragment extends BookmarkFragment implements View.OnClickLi
         popup.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {
                 case R.id.action_delete:
-                    Bean bean = (Bean) view.getTag();
+                    TabBean bean = (TabBean) view.getTag();
                     DaoManager.getInstance().deleteFav(bean);
                     refreshAllListData();
                     break;
@@ -204,14 +204,14 @@ public class FavoriteFragment extends BookmarkFragment implements View.OnClickLi
     private class FavoriteAdapter extends BaseAdapter {
 
         private final LayoutInflater factory;
-        private List<Bean> list;
+        private List<TabBean> list;
 
-        FavoriteAdapter(List<Bean> objects) {
+        FavoriteAdapter(List<TabBean> objects) {
             factory = LayoutInflater.from(getActivity());
             list = objects;
         }
 
-        void updateData(List<Bean> list) {
+        void updateData(List<TabBean> list) {
             this.list = list;
             notifyDataSetChanged();
         }
@@ -222,7 +222,7 @@ public class FavoriteFragment extends BookmarkFragment implements View.OnClickLi
         }
 
         @Override
-        public Bean getItem(int position) {
+        public TabBean getItem(int position) {
             return list.get(position);
         }
 
@@ -241,7 +241,7 @@ public class FavoriteFragment extends BookmarkFragment implements View.OnClickLi
                 view = (TextView) convertView;
             }
 
-            Bean bean = getItem(position);
+            TabBean bean = getItem(position);
             view.setText(bean.name);
             view.setOnClickListener(FavoriteFragment.this);
             if (containInnerName(bean) && containInnerUrl(bean)) {
@@ -254,7 +254,7 @@ public class FavoriteFragment extends BookmarkFragment implements View.OnClickLi
         }
     }
 
-    private boolean containInnerName(Bean bean) {
+    private boolean containInnerName(TabBean bean) {
         for (String name : names) {
             if (name.equals(bean.name)) {
                 return true;
@@ -263,7 +263,7 @@ public class FavoriteFragment extends BookmarkFragment implements View.OnClickLi
         return false;
     }
 
-    private boolean containInnerUrl(Bean bean) {
+    private boolean containInnerUrl(TabBean bean) {
         for (String url : urls) {
             if (url.equals(bean.url)) {
                 return true;

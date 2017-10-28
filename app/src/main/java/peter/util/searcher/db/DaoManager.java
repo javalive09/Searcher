@@ -7,7 +7,7 @@ import java.util.List;
 
 import io.reactivex.Observable;
 import peter.util.searcher.Searcher;
-import peter.util.searcher.bean.Bean;
+import peter.util.searcher.bean.TabBean;
 import peter.util.searcher.db.dao.DaoMaster;
 import peter.util.searcher.db.dao.DaoSession;
 import peter.util.searcher.db.dao.FavoriteSearch;
@@ -34,32 +34,32 @@ public class DaoManager {
         return SingletonInstance.INSTANCE;
     }
 
-    public long insertHistory(Bean bean) {
+    public long insertHistory(TabBean bean) {
         HistorySearch historySearch = new HistorySearch(bean.name, bean.time, bean.url, bean.pageNo);
         return mDaoSession.getHistorySearchDao().insertOrReplace(historySearch);
     }
 
-    public long insertFavorite(Bean bean) {
+    public long insertFavorite(TabBean bean) {
         FavoriteSearch favoriteSearch = new FavoriteSearch(bean.name, bean.time, bean.url, bean.pageNo);
         return mDaoSession.getFavoriteSearchDao().insertOrReplace(favoriteSearch);
     }
 
-    public void deleteHistory(Bean bean) {
+    public void deleteHistory(TabBean bean) {
         HistorySearch historySearch = new HistorySearch(bean.name, bean.time, bean.url, bean.pageNo);
         mDaoSession.getHistorySearchDao().delete(historySearch);
     }
 
-    public void deleteFav(Bean bean) {
+    public void deleteFav(TabBean bean) {
         FavoriteSearch favoriteSearch = new FavoriteSearch(bean.name, bean.time, bean.url, bean.pageNo);
         mDaoSession.getFavoriteSearchDao().delete(favoriteSearch);
     }
 
-    public Observable<List<Bean>> queryAllHistory() {
+    public Observable<List<TabBean>> queryAllHistory() {
         return Observable.create(subscriber -> {
-            List<Bean> list = new ArrayList<>();
+            List<TabBean> list = new ArrayList<>();
             List<HistorySearch> historySearchList = mDaoSession.getHistorySearchDao().queryBuilder().orderDesc(HistorySearchDao.Properties.Time).list();
             for (HistorySearch historySearch : historySearchList) {
-                Bean bean = new Bean();
+                TabBean bean = new TabBean();
                 bean.name = historySearch.getSearchWord();
                 bean.time = historySearch.getTime();
                 bean.url = historySearch.getUrl();
@@ -71,9 +71,9 @@ public class DaoManager {
         });
     }
 
-    public Bean queryBean(String word, String url) {
+    public TabBean queryBean(String word, String url) {
         List<HistorySearch> list = mDaoSession.getHistorySearchDao().queryBuilder().where(HistorySearchDao.Properties.SearchWord.eq(word)).list();
-        Bean bean = new Bean();
+        TabBean bean = new TabBean();
         if (list.size() > 0) {
             HistorySearch historySearch = list.get(0);
             bean.pageNo = historySearch.getPageNo();
@@ -87,14 +87,14 @@ public class DaoManager {
         return bean;
     }
 
-    public Observable<List<Bean>> queryHistoryLike(String word) {
+    public Observable<List<TabBean>> queryHistoryLike(String word) {
         return Observable.create(subscriber -> {
-            List<Bean> list = new ArrayList<>();
+            List<TabBean> list = new ArrayList<>();
             List<HistorySearch> historySearchList = mDaoSession.getHistorySearchDao().queryBuilder().
                     orderDesc(HistorySearchDao.Properties.Time).
                     where(HistorySearchDao.Properties.SearchWord.like("%" + word + "%")).list();
             for (HistorySearch historySearch : historySearchList) {
-                Bean bean = new Bean();
+                TabBean bean = new TabBean();
                 bean.name = historySearch.getSearchWord();
                 bean.time = historySearch.getTime();
                 bean.url = historySearch.getUrl();
@@ -106,14 +106,14 @@ public class DaoManager {
         });
     }
 
-    public Observable<List<Bean>> queryFavoriteLike(String word) {
+    public Observable<List<TabBean>> queryFavoriteLike(String word) {
         return Observable.create(subscriber -> {
-            List<Bean> list = new ArrayList<>();
+            List<TabBean> list = new ArrayList<>();
             List<FavoriteSearch> favoriteSearchList = mDaoSession.getFavoriteSearchDao().queryBuilder().
                     orderDesc(FavoriteSearchDao.Properties.Time).
                     where(FavoriteSearchDao.Properties.SearchWord.like("%" + word + "%")).list();
             for (FavoriteSearch favoriteSearch : favoriteSearchList) {
-                Bean bean = new Bean();
+                TabBean bean = new TabBean();
                 bean.name = favoriteSearch.getSearchWord();
                 bean.time = favoriteSearch.getTime();
                 bean.url = favoriteSearch.getUrl();
@@ -126,12 +126,12 @@ public class DaoManager {
     }
 
 
-    public Observable<List<Bean>> queryAllFavorite() {
+    public Observable<List<TabBean>> queryAllFavorite() {
         return Observable.create(subscriber -> {
-            List<Bean> list = new ArrayList<>();
+            List<TabBean> list = new ArrayList<>();
             List<FavoriteSearch> favoriteSearchList = mDaoSession.getFavoriteSearchDao().queryBuilder().orderDesc(FavoriteSearchDao.Properties.Time).list();
             for (FavoriteSearch favoriteSearch : favoriteSearchList) {
-                Bean bean = new Bean();
+                TabBean bean = new TabBean();
                 bean.name = favoriteSearch.getSearchWord();
                 bean.time = favoriteSearch.getTime();
                 bean.url = favoriteSearch.getUrl();
@@ -143,12 +143,12 @@ public class DaoManager {
         });
     }
 
-    public Observable<List<Bean>> queryRecentData(int count) {
+    public Observable<List<TabBean>> queryRecentData(int count) {
         return Observable.create(subscriber -> {
-            List<Bean> list = new ArrayList<>();
+            List<TabBean> list = new ArrayList<>();
             List<HistorySearch> historySearchList = mDaoSession.getHistorySearchDao().queryBuilder().orderDesc(HistorySearchDao.Properties.Time).limit(count).list();
             for (HistorySearch historySearch : historySearchList) {
-                Bean bean = new Bean();
+                TabBean bean = new TabBean();
                 bean.name = historySearch.getSearchWord();
                 bean.time = historySearch.getTime();
                 bean.url = historySearch.getUrl();

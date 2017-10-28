@@ -22,13 +22,13 @@ public class HomeTab extends LocalViewTab {
     }
 
     @Override
-    public void onCreate() {
-        TextView version = (TextView) mainActivity.findViewById(R.id.version);
+    void onCreate() {
+        TextView version = (TextView) mView.findViewById(R.id.version);
         version.setText(mainActivity.getVersionName());
     }
 
     @Override
-    public void onDestroy() {
+    void onDestroy() {
 
     }
 

@@ -1,10 +1,11 @@
 package peter.util.searcher.tab;
 
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
 
 import peter.util.searcher.activity.MainActivity;
-import peter.util.searcher.bean.Bean;
+import peter.util.searcher.bean.TabBean;
 
 /**
  *
@@ -22,25 +23,29 @@ public abstract class LocalViewTab extends SearcherTab{
 
     public abstract int onCreateViewResId();
 
-    public abstract void onCreate();
+    abstract void onCreate();
 
-    public abstract void onDestroy();
+    abstract void onDestroy();
 
     public abstract String getTitle();
 
     public abstract String getUrl();
 
-    public void loadUrl(Bean bean) {
-        if (!TextUtils.isEmpty(bean.url)) {
+    @Override
+    public final LocalViewTab create(TabBean bean) {
+        if(!TextUtils.isEmpty(bean.url)) {
             if(mView == null) {
                 int viewResId = onCreateViewResId();
-                mView = mainActivity.setCurrentView(viewResId);
+                LayoutInflater factory = LayoutInflater.from(mainActivity);
+                mView = factory.inflate(viewResId, mainActivity.getWebViewContainer(), false);
                 onCreate();
-            }else {
-                mainActivity.setCurrentView(mView);
             }
-
         }
+        return this;
+    }
+
+    public void loadUrl(TabBean bean) {
+        mainActivity.setCurrentView(mView);
     }
 
     @Override

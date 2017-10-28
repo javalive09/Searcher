@@ -1,7 +1,7 @@
 package peter.util.searcher.tab;
 
 
-import peter.util.searcher.bean.Bean;
+import peter.util.searcher.bean.TabBean;
 
 /**
  *
@@ -14,7 +14,7 @@ public interface Tab {
     String URL_HOME = LOCAL_SCHEMA + "home";
     String ACTION_NEW_WINDOW = "new_window";
 
-    void loadUrl(Bean bean);
+    void loadUrl(TabBean bean);
 
     String getUrl();
 

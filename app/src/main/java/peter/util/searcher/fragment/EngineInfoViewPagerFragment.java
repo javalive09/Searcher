@@ -27,7 +27,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import peter.util.searcher.R;
 import peter.util.searcher.activity.BaseActivity;
-import peter.util.searcher.bean.Bean;
+import peter.util.searcher.bean.TabBean;
 import peter.util.searcher.bean.EnginesInfo;
 import peter.util.searcher.bean.EnginesItem;
 import peter.util.searcher.bean.ItemItem;
@@ -49,7 +49,7 @@ public class EngineInfoViewPagerFragment extends Fragment implements View.OnClic
     View loading;
 
     private int getPageNo() {
-        Bean bean = getArguments().getParcelable(BaseActivity.NAME_BEAN);
+        TabBean bean = getArguments().getParcelable(BaseActivity.NAME_BEAN);
         if (bean != null) {
             return bean.pageNo;
         }
@@ -91,7 +91,7 @@ public class EngineInfoViewPagerFragment extends Fragment implements View.OnClic
                     String url = UrlUtils.smartUrlFilter(searchWord, true, engine.getUrl());
                     act.finish();
                     act.overridePendingTransition(0, 0);
-                    Bean bean = new Bean(searchWord, url);
+                    TabBean bean = new TabBean(searchWord, url);
                     bean.pageNo = mViewPager.getCurrentItem();
                     act.startBrowser(bean);
                 }

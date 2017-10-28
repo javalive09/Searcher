@@ -7,11 +7,17 @@ import android.os.Parcel;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+
+import io.reactivex.Observable;
+import io.reactivex.Scheduler;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * A utility class containing helpful methods
@@ -34,27 +40,24 @@ public class FileUtils {
      * @param name   the name of the file to store the bundle in.
      */
     public static void writeBundleToStorage(final @NonNull Application app, final Bundle bundle, final @NonNull String name) {
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... params) {
-                File outputFile = new File(app.getExternalFilesDir(null), name);
-                FileOutputStream outputStream = null;
-                try {
-                    //noinspection IOResourceOpenedButNotSafelyClosed
-                    outputStream = new FileOutputStream(outputFile);
-                    Parcel parcel = Parcel.obtain();
-                    parcel.writeBundle(bundle);
-                    outputStream.write(parcel.marshall());
-                    outputStream.flush();
-                    parcel.recycle();
-                } catch (IOException e) {
-                    Log.e(TAG, "Unable to write bundle to storage");
-                } finally {
-                    Utils.close(outputStream);
-                }
-                return null;
+        Observable.create(em -> {
+            File outputFile = new File(app.getExternalFilesDir(null), name);
+            FileOutputStream outputStream = null;
+            try {
+                outputStream = new FileOutputStream(outputFile);
+                Parcel parcel = Parcel.obtain();
+                parcel.writeBundle(bundle);
+                outputStream.write(parcel.marshall());
+                outputStream.flush();
+                parcel.recycle();
+            } catch (IOException e) {
+                Log.e(TAG, "Unable to write bundle to storage");
+            } finally {
+                Utils.close(outputStream);
             }
-        }.execute();
+            em.onNext("success save");
+            em.onComplete();
+        }).subscribeOn(AndroidSchedulers.mainThread()).observeOn(Schedulers.io()).subscribe(o -> {});
     }
 
     /**
@@ -69,7 +72,7 @@ public class FileUtils {
         File outputFile = new File(app.getExternalFilesDir(null), name);
         if (outputFile.exists()) {
             boolean suc = outputFile.delete();
-            if(!suc) {
+            if (!suc) {
                 Log.e(">>>>>", "deleteBundleInStorage fail");
             }
         }

@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import peter.util.searcher.R;
-import peter.util.searcher.bean.Bean;
+import peter.util.searcher.bean.TabBean;
 
 /**
  * 基础activity 提供一些公用方法
@@ -46,7 +46,9 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     public void exit() {
-        LIST.forEach(Activity::finish);
+        for(Activity activity : LIST) {
+            activity.finish();
+        }
     }
 
     public String getSearchWord() {
@@ -56,7 +58,7 @@ public class BaseActivity extends AppCompatActivity {
     public void setSearchWord(String word) {
     }
 
-    public void startBrowser(Bean bean) {
+    public void startBrowser(TabBean bean) {
         Intent intent = new Intent(BaseActivity.this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
         intent.setAction(ACTION_INNER_BROWSE);

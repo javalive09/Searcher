@@ -22,11 +22,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import peter.util.searcher.R;
-import peter.util.searcher.bean.Bean;
+import peter.util.searcher.bean.TabBean;
 import peter.util.searcher.fragment.EngineInfoViewPagerFragment;
 import peter.util.searcher.fragment.OperateUrlFragment;
 import peter.util.searcher.fragment.RecentSearchFragment;
-import peter.util.searcher.tab.Tab;
 import peter.util.searcher.utils.UrlUtils;
 
 /**
@@ -45,7 +44,7 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
     public static final String ENGINE_LIST = "engine_list";
     public static final String OPERATE_URL = "operate_url";
     private String currentFragmentTag = "";
-    private Bean bean;
+    private TabBean bean;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +61,7 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
 
     private void checkData(Intent intent) {
         this.bean = intent.getParcelableExtra(NAME_BEAN);
-        if (!TextUtils.isEmpty(bean.name) && !bean.name.contains(Tab.LOCAL_SCHEMA)) {
+        if (!TextUtils.isEmpty(bean.name) && !bean.name.contains(peter.util.searcher.tab.Tab.LOCAL_SCHEMA)) {
             setSearchWord(bean.name);
         }
     }

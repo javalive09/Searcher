@@ -6,7 +6,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 import peter.util.searcher.activity.MainActivity;
-import peter.util.searcher.bean.Bean;
+import peter.util.searcher.bean.TabBean;
 import peter.util.searcher.tab.SearcherTab;
 import peter.util.searcher.tab.TabGroup;
 
@@ -17,7 +17,7 @@ import peter.util.searcher.tab.TabGroup;
 
 public class TabManager {
 
-    public static final int MAX_TAB = 50;
+    public static final int MAX_TAB = 9;
     private final ArrayList<TabGroup> tabGroupArrayList = new ArrayList<>(MAX_TAB);
     private final MainActivity mainActivity;
     private int mCurrentTabIndex;
@@ -26,7 +26,12 @@ public class TabManager {
         mainActivity = activity;
     }
 
-    public void loadUrl(Bean bean, boolean newTab) {
+    public void loadTab(TabBean bean, boolean newTab) {
+        createTab(bean, newTab);
+        getCurrentTabGroup().loadUrl(bean);
+    }
+
+    public void createTab(TabBean bean, boolean newTab) {
         if (tabGroupArrayList.size() == MAX_TAB) {
             newTab = false;
             Toast.makeText(Searcher.context, R.string.tabs_max_txt, Toast.LENGTH_LONG).show();
@@ -37,7 +42,7 @@ public class TabManager {
             mCurrentTabIndex = tabGroupArrayList.size() - 1;
         }
         TabGroup tabGroup = getCurrentTabGroup();
-        tabGroup.loadUrl(bean);
+        tabGroup.create(bean);
     }
 
     public int getCurrentTabIndex() {
@@ -68,7 +73,6 @@ public class TabManager {
         TabGroup tabGroup = tabGroupArrayList.get(groupIndex);
         switchTabGroup(tabGroup, false);
         getCurrentTabGroup().setCurrentTab(tabIndex);
-        getCurrentTabGroup().checkReloadCurrentTab();
     }
 
     public TabGroup getTabGroup(SearcherTab topTab) {
@@ -85,14 +89,14 @@ public class TabManager {
             tabGroup.onDestroy();
             int removeIndex = tabGroupArrayList.indexOf(tabGroup);
             int nextIndex = 0;
-            if(removeIndex < mCurrentTabIndex) {
+            if (removeIndex < mCurrentTabIndex) {
                 nextIndex = mCurrentTabIndex - 1;
-            }else if(removeIndex > mCurrentTabIndex) {
+            } else if (removeIndex > mCurrentTabIndex) {
                 nextIndex = mCurrentTabIndex;
-            }else if(removeIndex == mCurrentTabIndex) {
-                if(removeIndex == tabGroupArrayList.size() - 1) {//end
+            } else if (removeIndex == mCurrentTabIndex) {
+                if (removeIndex == tabGroupArrayList.size() - 1) {//end
                     nextIndex = tabGroupArrayList.size() - 2;
-                }else {
+                } else {
                     nextIndex = mCurrentTabIndex;
                 }
             }
@@ -112,12 +116,20 @@ public class TabManager {
 
     public void resumeTabGroupExclude(TabGroup exTabGroup) {
         ArrayList<TabGroup> list = new ArrayList<>(tabGroupArrayList);
-        list.stream().filter(tabGroup -> tabGroup != exTabGroup).forEach(TabGroup::onResume);
+        for (TabGroup tabGroup : list) {
+            if (tabGroup != exTabGroup) {
+                tabGroup.onResume();
+            }
+        }
     }
 
     public void pauseTabGroupExclude(TabGroup exTabGroup) {
         ArrayList<TabGroup> list = new ArrayList<>(tabGroupArrayList);
-        list.stream().filter(tabGroup -> tabGroup != exTabGroup).forEach(TabGroup::onPause);
+        for (TabGroup tabGroup : list) {
+            if (tabGroup != exTabGroup) {
+                tabGroup.onPause();
+            }
+        }
     }
 
     public ArrayList<TabGroup> getList() {

@@ -7,7 +7,6 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -25,6 +24,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
@@ -39,17 +39,19 @@ import android.widget.Toast;
 
 import com.umeng.analytics.MobclickAgent;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import peter.util.searcher.SettingsManager;
 import peter.util.searcher.TabManager;
 import peter.util.searcher.adapter.TabsAdapter;
-import peter.util.searcher.bean.Bean;
+import peter.util.searcher.bean.TabBean;
 import peter.util.searcher.R;
 import peter.util.searcher.db.DaoManager;
 import peter.util.searcher.net.DownloadHandler;
@@ -58,7 +60,6 @@ import peter.util.searcher.net.UpdateController;
 import peter.util.searcher.tab.HomeTab;
 import peter.util.searcher.tab.LocalViewTab;
 import peter.util.searcher.tab.SearcherTab;
-import peter.util.searcher.tab.Tab;
 import peter.util.searcher.tab.TabGroup;
 import peter.util.searcher.tab.WebViewTab;
 import peter.util.searcher.utils.Constants;
@@ -132,11 +133,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private void initTopBar() {
         topText.setOnTouchListener((v, event) -> {
-            if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                touchSearch();
-                return true;
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    touchSearch();
+                    break;
             }
-            return false;
+            return true;
         });
         setSupportActionBar(toolbar);
         tabsDrawable = new TextDrawable(MainActivity.this);
@@ -153,7 +155,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     v.getLocationOnScreen(loc);
                     toast.setGravity(Gravity.TOP | Gravity.START, loc[0] + v.getWidth() / 2, loc[1] + v.getHeight() / 2);
                     toast.show();
-                    loadHome(true);
+                    loadHome();
                     return true;
                 });
                 break;
@@ -262,19 +264,20 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             }
             switch (item.getItemId()) {
                 case R.id.open_pic_new_tab:
-                    Bean bean = new Bean();
+                    TabBean bean = new TabBean();
                     bean.url = url;
                     bean.time = System.currentTimeMillis();
                     TabGroup parentTabGroup = getTabManager().getCurrentTabGroup();
-                    tabManager.loadUrl(bean, true);
+                    tabManager.loadTab(bean, true);
                     getTabManager().getCurrentTabGroup().setParent(parentTabGroup);
                     break;
                 case R.id.copy_pic_link:
-                    String title = url;
                     ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-                    ClipData clip = ClipData.newPlainText(title, url);
-                    clipboard.setPrimaryClip(clip);
-                    Toast.makeText(MainActivity.this, R.string.copy_link_txt, Toast.LENGTH_SHORT).show();
+                    ClipData clip = ClipData.newPlainText(url, url);
+                    if (clipboard != null) {
+                        clipboard.setPrimaryClip(clip);
+                        Toast.makeText(MainActivity.this, R.string.copy_link_txt, Toast.LENGTH_SHORT).show();
+                    }
                     break;
                 case R.id.save_pic:
                     String mineTye = DownloadHandler.getMimeType(url);
@@ -293,11 +296,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     break;
 
                 case R.id.open_url_new_tab:
-                    bean = new Bean();
+                    bean = new TabBean();
                     bean.url = url;
                     bean.time = System.currentTimeMillis();
                     parentTabGroup = getTabManager().getCurrentTabGroup();
-                    tabManager.loadUrl(bean, true);
+                    tabManager.loadTab(bean, true);
                     getTabManager().getCurrentTabGroup().setParent(parentTabGroup);
                     break;
 
@@ -353,27 +356,24 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 break;
             case R.id.action_favorite:
                 url = tabManager.getCurrentTabGroup().getCurrentTab().getUrl();
-                if (!TextUtils.isEmpty(url) && !url.startsWith(Tab.LOCAL_SCHEMA)) {
-                    final Bean bean = new Bean();
+                if (!TextUtils.isEmpty(url) && !url.startsWith(peter.util.searcher.tab.Tab.LOCAL_SCHEMA)) {
+                    final TabBean bean = new TabBean();
                     bean.name = tabManager.getCurrentTabGroup().getCurrentTab().getTitle();
                     if (TextUtils.isEmpty(bean.name)) {
                         bean.name = tabManager.getCurrentTabGroup().getCurrentTab().getUrl();
                     }
                     bean.url = url;
                     bean.time = System.currentTimeMillis();
-                    new AsyncTask<Void, Void, Boolean>() {
-                        @Override
-                        protected Boolean doInBackground(Void... params) {
-                            return DaoManager.getInstance().insertFavorite(bean) != 0L;
+                    Observable<Boolean> result = Observable.create(e -> {
+                        boolean suc = DaoManager.getInstance().insertFavorite(bean) != 0L;
+                        e.onNext(suc);
+                        e.onComplete();
+                    });
+                    result.observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).subscribe(o -> {
+                        if (o) {
+                            Toast.makeText(MainActivity.this, R.string.favorite_txt, Toast.LENGTH_SHORT).show();
                         }
-
-                        @Override
-                        protected void onPostExecute(Boolean suc) {
-                            if (suc) {
-                                Toast.makeText(MainActivity.this, R.string.favorite_txt, Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    }.execute();
+                    });
                 }
                 break;
             case R.id.action_copy_link:
@@ -474,7 +474,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         public void onFindResultReceived(int activeMatchOrdinal, int numberOfMatches, boolean isDoneCounting) {
             if (isDoneCounting) {
                 if (numberOfMatches > 0) {
-                    findControlCount.setText(activeMatchOrdinal + 1 + "/" + numberOfMatches);
+                    String title = String.format(getString(R.string.page_search_title), activeMatchOrdinal + 1, numberOfMatches);
+                    findControlCount.setText(title);
                 } else {
                     findControlCount.setText("");
                 }
@@ -490,7 +491,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         String content = tabManager.getCurrentTabGroup().getCurrentTab().getSearchWord();
         int pageNo = tabManager.getCurrentTabGroup().getCurrentTab().getPageNo();
         Intent intent = new Intent(MainActivity.this, SearchActivity.class);
-        Bean bean = new Bean(content);
+        TabBean bean = new TabBean(content);
         bean.pageNo = pageNo;
         intent.putExtra(NAME_BEAN, bean);
         startActivity(intent);
@@ -504,7 +505,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     private void installLocalTabRouter() {
-        router.put(Tab.URL_HOME, HomeTab.class);
+        router.put(peter.util.searcher.tab.Tab.URL_HOME, HomeTab.class);
     }
 
     public Class getRouterClass(String url) {
@@ -515,6 +516,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         webViewContainer.setCurrentView(view);
         progressBar.setVisibility(View.INVISIBLE);
         showTopbar();
+    }
+
+    public ViewGroup getWebViewContainer() {
+        return webViewContainer;
     }
 
     public View setCurrentView(int viewId) {
@@ -562,32 +567,32 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         if (intent != null) {
             String action = intent.getAction();
             if (ACTION_INNER_BROWSE.equals(action)) { // inner invoke
-                Bean bean = intent.getParcelableExtra(NAME_BEAN);
+                TabBean bean = intent.getParcelableExtra(NAME_BEAN);
                 if (!TextUtils.isEmpty(bean.url)) {
-                    tabManager.loadUrl(bean, false);
+                    tabManager.loadTab(bean, false);
                 }
             } else if (Intent.ACTION_VIEW.equals(action)) { // outside invoke
                 String url = intent.getDataString();
                 if (!TextUtils.isEmpty(url)) {
-                    tabManager.loadUrl(new Bean("", url), true);
+                    tabManager.loadTab(new TabBean("", url), true);
                 }
             } else if (Intent.ACTION_WEB_SEARCH.equals(action)) {
                 String searchWord = intent.getStringExtra(SearchManager.QUERY);
                 String engineUrl = getString(R.string.default_engine_url);
                 String url = UrlUtils.smartUrlFilter(searchWord, true, engineUrl);
-                tabManager.loadUrl(new Bean(searchWord, url), true);
+                tabManager.loadTab(new TabBean(searchWord, url), true);
             } else if (Intent.ACTION_MAIN.equals(action)) {
                 if (tabManager.getTabGroupCount() == 0) {
-                    loadHome(true);
+                    loadHome();
                 }
             } else if (Intent.ACTION_ASSIST.equals(action)) {
                 if (tabManager.getTabGroupCount() == 0) {
-                    loadHome(true);
+                    loadHome();
                 } else {
                     SearcherTab searcherTab = tabManager.getCurrentTabGroup().getCurrentTab();
                     if (searcherTab instanceof WebViewTab) {//webView
                         if (tabManager.getTabGroupCount() < TabManager.MAX_TAB) {
-                            loadHome(true);
+                            loadHome();
                         }
                     }
                 }
@@ -596,8 +601,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
     }
 
-    public void loadHome(boolean newTab) {
-        tabManager.loadUrl(new Bean("", Tab.URL_HOME), newTab);
+    public void loadHome() {
+        tabManager.loadTab(new TabBean("", peter.util.searcher.tab.Tab.URL_HOME), true);
     }
 
     @Override
@@ -707,11 +712,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         String url = state.getString(URL_KEY);
                         if (t == 0) {//first tab
                             Log.i("url ", url);
-                            tabManager.loadUrl(new Bean("", url), true);
+                            tabManager.loadTab(new TabBean("", url), true);
                         } else {// webView
                             String searchWord = state.getString(BUNDLE_KEY_SEARCH_WORD);
-                            Bean bean = DaoManager.getInstance().queryBean(searchWord, url);
-                            tabManager.loadUrl(bean, false);
+                            TabBean bean = DaoManager.getInstance().queryBean(searchWord, url);
+                            tabManager.createTab(bean, false);
                             Log.i("state ", state.toString());
 
                             SearcherTab searcherTab = tabManager.getCurrentTabGroup().getCurrentTab();
@@ -748,7 +753,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.add_tab:
-                loadHome(true);
+                loadHome();
                 drawerLayout.closeDrawers();
                 break;
             case R.id.close_tab:

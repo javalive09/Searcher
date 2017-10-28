@@ -21,7 +21,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import peter.util.searcher.R;
 import peter.util.searcher.activity.SearchActivity;
-import peter.util.searcher.bean.Bean;
+import peter.util.searcher.bean.TabBean;
 import peter.util.searcher.db.DaoManager;
 import peter.util.searcher.utils.UrlUtils;
 
@@ -75,7 +75,7 @@ public class RecentSearchFragment extends Fragment implements View.OnClickListen
 
     @Override
     public void onClick(View v) {
-        Bean bean = (Bean) v.getTag();
+        TabBean bean = (TabBean) v.getTag();
         SearchActivity searchActivity = (SearchActivity) getActivity();
         switch (v.getId()) {
             case R.id.item:
@@ -90,7 +90,7 @@ public class RecentSearchFragment extends Fragment implements View.OnClickListen
                 searchActivity.closeIME();
                 searchActivity.finish();
                 searchActivity.overridePendingTransition(0, 0);
-                searchActivity.startBrowser(new Bean("", word.toString()));
+                searchActivity.startBrowser(new TabBean("", word.toString()));
                 break;
         }
     }
@@ -131,9 +131,9 @@ public class RecentSearchFragment extends Fragment implements View.OnClickListen
     private class RecentSearchAdapter extends BaseAdapter {
 
         private final LayoutInflater factory;
-        private final List<Bean> list;
+        private final List<TabBean> list;
 
-        RecentSearchAdapter(List<Bean> list) {
+        RecentSearchAdapter(List<TabBean> list) {
             factory = LayoutInflater.from(getActivity());
             this.list = list;
         }
@@ -144,7 +144,7 @@ public class RecentSearchFragment extends Fragment implements View.OnClickListen
         }
 
         @Override
-        public Bean getItem(int position) {
+        public TabBean getItem(int position) {
             return list.get(position);
         }
 
@@ -159,7 +159,7 @@ public class RecentSearchFragment extends Fragment implements View.OnClickListen
                 convertView = factory.inflate(R.layout.item_list_recentsearch, parent, false);
             }
             TextView content = (TextView) convertView;
-            Bean search = getItem(position);
+            TabBean search = getItem(position);
             content.setText(search.name);
             content.setOnClickListener(RecentSearchFragment.this);
             content.setOnLongClickListener(RecentSearchFragment.this);
@@ -175,7 +175,7 @@ public class RecentSearchFragment extends Fragment implements View.OnClickListen
         popup.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {
                 case R.id.action_delete:
-                    Bean bean = (Bean) view.getTag();
+                    TabBean bean = (TabBean) view.getTag();
                     DaoManager.getInstance().deleteHistory(bean);
                     refreshData();
                     break;
