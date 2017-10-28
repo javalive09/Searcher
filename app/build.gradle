@@ -8,7 +8,7 @@ android {
         release {
             keyAlias 'peter'
             keyPassword '53374080'
-            storeFile file('/Users/peter/signature/peter')
+            storeFile file('/Users/peter/signature/peter.keystore')
             storePassword '53374080'
         }
     }
@@ -16,8 +16,8 @@ android {
         applicationId "peter.util.searcher"
         minSdkVersion 21
         targetSdkVersion 27
-        versionCode 83
-        versionName "1.7.8"
+        versionCode 84
+        versionName "1.7.9"
     }
 
     buildTypes {
