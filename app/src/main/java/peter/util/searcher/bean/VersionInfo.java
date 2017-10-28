@@ -26,11 +26,11 @@ public class VersionInfo {
 	}
 
 	public String getMessage() {
-		String showMessage = "";
+		StringBuffer showMessage = new StringBuffer();
 		for(String s : msg) {
-			showMessage += s + "\n";
+			showMessage.append(s).append("\n");
 		}
-		return showMessage;
+		return showMessage.toString();
 	}
 
 	public void setCode(int code){

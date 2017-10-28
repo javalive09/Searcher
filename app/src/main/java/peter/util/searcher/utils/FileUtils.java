@@ -1,7 +1,6 @@
 package peter.util.searcher.utils;
 
 import android.app.Application;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.support.annotation.NonNull;
@@ -15,7 +14,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import io.reactivex.Observable;
-import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 

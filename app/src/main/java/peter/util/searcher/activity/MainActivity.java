@@ -307,8 +307,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 case R.id.copy_link:
                     clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
                     clip = ClipData.newPlainText(url, url);
-                    clipboard.setPrimaryClip(clip);
-                    Toast.makeText(MainActivity.this, R.string.copy_link_txt, Toast.LENGTH_SHORT).show();
+                    if (clipboard != null) {
+                        clipboard.setPrimaryClip(clip);
+                        Toast.makeText(MainActivity.this, R.string.copy_link_txt, Toast.LENGTH_SHORT).show();
+                    }
                     break;
             }
 
@@ -381,8 +383,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 title = tabManager.getCurrentTabGroup().getCurrentTab().getTitle();
                 ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
                 ClipData clip = ClipData.newPlainText(title, url);
-                clipboard.setPrimaryClip(clip);
-                Toast.makeText(MainActivity.this, R.string.copy_link_txt, Toast.LENGTH_SHORT).show();
+                if (clipboard != null) {
+                    clipboard.setPrimaryClip(clip);
+                    Toast.makeText(MainActivity.this, R.string.copy_link_txt, Toast.LENGTH_SHORT).show();
+                }
                 break;
             case R.id.action_download:
                 Intent intent = new Intent(DownloadManager.ACTION_VIEW_DOWNLOADS);
@@ -460,11 +464,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             findControlContent.requestFocus();
             findControlView.setVisibility(View.VISIBLE);
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
+            if (imm != null) {
+                imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
+            }
         } else {
             findControlView.setVisibility(View.GONE);
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(findControlContent.getWindowToken(), 0);
+            if (imm != null) {
+                imm.hideSoftInputFromWindow(findControlContent.getWindowToken(), 0);
+            }
         }
 
     }

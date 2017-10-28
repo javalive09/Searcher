@@ -46,9 +46,9 @@ public class RecentSearchFragment extends Fragment implements View.OnClickListen
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_recent_search, container, false);
-        ButterKnife.bind(RecentSearchFragment.this, rootView);
-        return rootView;
+        View view = inflater.inflate(R.layout.fragment_recent_search, container, false);
+        ButterKnife.bind(RecentSearchFragment.this, view);
+        return view;
     }
 
     @Override

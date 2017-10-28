@@ -56,10 +56,10 @@ public class HistorySearchFragment extends BookmarkFragment implements View.OnCl
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_history_search, container, false);
-        ButterKnife.bind(HistorySearchFragment.this, rootView);
+        View view = inflater.inflate(R.layout.fragment_history_search, container, false);
+        ButterKnife.bind(HistorySearchFragment.this, view);
         refreshAllListData();
-        return rootView;
+        return view;
     }
 
     @Override

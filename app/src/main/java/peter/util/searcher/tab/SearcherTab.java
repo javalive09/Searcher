@@ -7,6 +7,7 @@ import peter.util.searcher.activity.MainActivity;
 import peter.util.searcher.bean.TabBean;
 
 /**
+ * search tab
  * Created by peter on 2016/11/17.
  */
 

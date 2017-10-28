@@ -59,10 +59,10 @@ public class EngineInfoViewPagerFragment extends Fragment implements View.OnClic
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_engine_viewpager, container, false);
-        ButterKnife.bind(EngineInfoViewPagerFragment.this, rootView);
+        View view = inflater.inflate(R.layout.fragment_engine_viewpager, container, false);
+        ButterKnife.bind(EngineInfoViewPagerFragment.this, view);
         init();
-        return rootView;
+        return view;
     }
 
     private void init() {
