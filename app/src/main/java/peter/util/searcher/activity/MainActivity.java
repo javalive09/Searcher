@@ -150,12 +150,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             if (toolbar.getChildAt(i) instanceof ImageButton) {
                 View mNavButtonView = toolbar.getChildAt(i);
                 mNavButtonView.setOnLongClickListener(v -> {
-                    final Toast toast = Toast.makeText(MainActivity.this, R.string.add_new_tab, Toast.LENGTH_SHORT);
-                    int[] loc = new int[2];
-                    v.getLocationOnScreen(loc);
-                    toast.setGravity(Gravity.TOP | Gravity.START, loc[0] + v.getWidth() / 2, loc[1] + v.getHeight() / 2);
-                    toast.show();
-                    loadHome();
+                    boolean suc = loadHome();
+                    if (suc) {
+                        final Toast toast = Toast.makeText(MainActivity.this, R.string.add_new_tab, Toast.LENGTH_SHORT);
+                        int[] loc = new int[2];
+                        v.getLocationOnScreen(loc);
+                        toast.setGravity(Gravity.TOP | Gravity.START, loc[0] + v.getWidth() / 2, loc[1] + v.getHeight() / 2);
+                        toast.show();
+                    }
                     return true;
                 });
                 break;
@@ -609,8 +611,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
     }
 
-    public void loadHome() {
-        tabManager.loadTab(new TabBean("", peter.util.searcher.tab.Tab.URL_HOME), true);
+    public boolean loadHome() {
+        return tabManager.loadTab(new TabBean("", peter.util.searcher.tab.Tab.URL_HOME), true);
     }
 
     @Override

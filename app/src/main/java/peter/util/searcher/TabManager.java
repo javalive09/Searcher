@@ -26,15 +26,18 @@ public class TabManager {
         mainActivity = activity;
     }
 
-    public void loadTab(TabBean bean, boolean newTab) {
-        createTab(bean, newTab);
-        getCurrentTabGroup().loadUrl(bean);
+    public boolean loadTab(TabBean bean, boolean newTab) {
+        boolean suc = createTab(bean, newTab);
+        if(suc) {
+            getCurrentTabGroup().loadUrl(bean);
+        }
+        return suc;
     }
 
-    public void createTab(TabBean bean, boolean newTab) {
-        if (tabGroupArrayList.size() == MAX_TAB) {
-            newTab = false;
+    public boolean createTab(TabBean bean, boolean newTab) {
+        if (tabGroupArrayList.size() == MAX_TAB && newTab) {
             Toast.makeText(Searcher.context, R.string.tabs_max_txt, Toast.LENGTH_LONG).show();
+            return false;
         }
         if (newTab) {
             TabGroup tab = new TabGroup(mainActivity);
@@ -43,6 +46,7 @@ public class TabManager {
         }
         TabGroup tabGroup = getCurrentTabGroup();
         tabGroup.create(bean);
+        return true;
     }
 
     public int getCurrentTabIndex() {
