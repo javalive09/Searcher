@@ -63,6 +63,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/host"
             android:layout_marginTop="@dimen/text_margin_very_small"
+            android:singleLine="true"
             android:layout_toEndOf="@id/rela_round" />
 
     </RelativeLayout>

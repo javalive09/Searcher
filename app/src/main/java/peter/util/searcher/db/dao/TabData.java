@@ -3,6 +3,7 @@ package peter.util.searcher.db.dao;
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
+import org.greenrobot.greendao.annotation.Index;
 
 import java.io.Serializable;
 
@@ -17,8 +18,9 @@ public class TabData implements Serializable {
 
     private static final long serialVersionUID = 42L;
 
-    @Id
-    private long id;
+    @Index(unique = true)
+    @Id(autoincrement = true)
+    private Long id;
 
     private int tabCount;
 
@@ -44,8 +46,8 @@ public class TabData implements Serializable {
 
     private byte[] bundle;
 
-    @Generated(hash = 1273637949)
-    public TabData(long id, int tabCount, int tabGroupCount, long time, int pageNo,
+    @Generated(hash = 1291563145)
+    public TabData(Long id, int tabCount, int tabGroupCount, long time, int pageNo,
             int tabIndex, boolean isCurrentTab, boolean isCurrentTabGroup,
             int groupTabIndex, String searchWord, String url, String title,
             byte[] bundle) {
@@ -68,11 +70,11 @@ public class TabData implements Serializable {
     public TabData() {
     }
 
-    public long getId() {
+    public Long getId() {
         return this.id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -172,6 +174,5 @@ public class TabData implements Serializable {
         this.bundle = bundle;
     }
 
-   
 
 }

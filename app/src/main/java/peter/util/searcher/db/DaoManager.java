@@ -1,12 +1,18 @@
 package peter.util.searcher.db;
 
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Bundle;
+import android.os.Parcel;
+import android.text.TextUtils;
+import android.util.SparseArray;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Observable;
+import io.reactivex.schedulers.Schedulers;
 import peter.util.searcher.Searcher;
+import peter.util.searcher.TabGroupManager;
 import peter.util.searcher.db.dao.DaoMaster;
 import peter.util.searcher.db.dao.DaoSession;
 import peter.util.searcher.db.dao.FavoriteSearch;
@@ -14,6 +20,10 @@ import peter.util.searcher.db.dao.FavoriteSearchDao;
 import peter.util.searcher.db.dao.HistorySearch;
 import peter.util.searcher.db.dao.HistorySearchDao;
 import peter.util.searcher.db.dao.TabData;
+import peter.util.searcher.tab.SearcherTab;
+import peter.util.searcher.tab.Tab;
+import peter.util.searcher.tab.TabGroup;
+import peter.util.searcher.tab.WebViewTab;
 
 public class DaoManager {
 
@@ -160,27 +170,99 @@ public class DaoManager {
         });
     }
 
-    public Observable<List<TabData>> queryAllTabData() {
-        return Observable.create(subscriber -> {
-            final List<TabData> list = mDaoSession.getTabDataDao().queryBuilder().orderDesc(HistorySearchDao.Properties.Time).list();
-            subscriber.onNext(list);
-            subscriber.onComplete();
+    public void deleteTabData(TabData tabData) {
+        Observable.just(tabData).subscribeOn(Schedulers.io()).subscribe(tabData1 -> mDaoSession.getTabDataDao().delete(tabData));
+    }
+
+    public void saveTabs() {
+        mDaoSession.getTabDataDao().getSession().runInTx(() -> {
+            mDaoSession.getTabDataDao().deleteAll();
+            realSaveTabs();
         });
     }
 
-    public Observable<Integer> queryTabDataGroupCount() {
-        return Observable.create(subscriber -> {
-            final List<TabData> list = mDaoSession.getTabDataDao().queryBuilder().limit(1).list();
-            int count = 0;
-            if(list != null) {
-                TabData tabData = list.get(0);
-                if(tabData != null) {
-                    count = tabData.getTabGroupCount();
+    public void realSaveTabs() {
+        List<TabGroup> tabGroupList = TabGroupManager.getInstance().getList();
+        final TabGroup currentTabGroup = TabGroupManager.getInstance().getCurrentTabGroup();
+        for (int groupIndex = 0, groupSize = tabGroupList.size(); groupIndex < groupSize; groupIndex++) {
+            TabGroup tabGroup = tabGroupList.get(groupIndex);
+            ArrayList<SearcherTab> tabs = tabGroup.getTabs();
+            for (int tabIndex = 0, tabSize = tabs.size(); tabIndex < tabSize; tabIndex++) {
+                SearcherTab tab = tabs.get(tabIndex);
+                if (!TextUtils.isEmpty(tab.getUrl())) {
+                    TabData tabData;
+                    Bundle state = new Bundle(ClassLoader.getSystemClassLoader());
+                    if (tab instanceof WebViewTab) {
+                        WebViewTab webViewTab = (WebViewTab) tab;
+                        webViewTab.getView().saveState(state);
+                        tabData = webViewTab.getTabData();
+                        tabData.setUrl(webViewTab.getUrl());
+                        tabData.setTitle(webViewTab.getTitle());
+                        Parcel parcel = Parcel.obtain();
+                        parcel.writeBundle(state);
+                        tabData.setBundle(parcel.marshall());
+                        parcel.recycle();
+                    } else {
+                        tabData = new TabData();
+                        tabData.setUrl(Tab.URL_HOME);
+                    }
+                    tabData.setTabCount(tabSize);
+                    tabData.setTabGroupCount(groupSize);
+                    tabData.setIsCurrentTab(tabGroup.getCurrentTab() == tab);
+                    tabData.setIsCurrentTabGroup(tabGroup == currentTabGroup);
+                    tabData.setGroupTabIndex(groupIndex);
+                    tabData.setTabIndex(tabIndex);
+                    mDaoSession.getTabDataDao().insert(tabData);
                 }
             }
-            subscriber.onNext(count);
-            subscriber.onComplete();
-        });
+        }
     }
+
+    public void restoreTabs() {
+        List<TabData> tabDataList = mDaoSession.getTabDataDao().queryBuilder().list();
+
+        if (tabDataList.size() > 0) {
+            final TabData firstTabData = tabDataList.get(0);
+            final int groupCount = firstTabData.getTabGroupCount();
+            int currentGroupIndex = -1;
+            int currentTabIndex = -1;
+
+            SparseArray<TabData[]> groupsArray = new SparseArray<>(groupCount);
+
+            for (TabData tabData : tabDataList) {
+                int groupTabIndex = tabData.getGroupTabIndex();
+
+                if (tabData.getIsCurrentTabGroup()) {
+                    currentGroupIndex = tabData.getGroupTabIndex();
+                    if (currentTabIndex == -1 && tabData.getIsCurrentTab()) {
+                        currentTabIndex = tabData.getTabIndex();
+                    }
+                }
+
+                if (groupsArray.indexOfKey(groupTabIndex) > 0) {
+                    TabData[] tabDataArray = groupsArray.get(groupTabIndex);
+                    tabDataArray[tabData.getTabIndex()] = tabData;
+                } else {
+                    TabData[] tabDataArray = new TabData[tabData.getTabCount()];
+                    tabDataArray[tabData.getTabIndex()] = tabData;
+                    groupsArray.put(tabData.getGroupTabIndex(), tabDataArray);
+                }
+            }
+
+            for (int groupIndex = 0; groupIndex < groupCount; groupIndex++) {
+                TabData[] tabData = groupsArray.get(groupIndex);
+                for (int index = 0; index < tabData.length; index++) {
+                    if (index == 0) {
+                        TabGroupManager.getInstance().load(tabData[index], true);
+                    } else {
+                        TabGroupManager.getInstance().createTabGroup(tabData[index], false);
+                    }
+                }
+            }
+
+            TabGroupManager.getInstance().restoreTabPos(currentGroupIndex, currentTabIndex);
+        }
+    }
+
 
 }

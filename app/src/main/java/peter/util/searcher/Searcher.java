@@ -3,7 +3,7 @@ package peter.util.searcher;
 import android.app.Application;
 import android.content.Context;
 
-//import com.facebook.stetho.Stetho;
+import com.facebook.stetho.Stetho;
 
 /**
  * application 入口
@@ -17,7 +17,7 @@ public class Searcher extends Application {
     public void onCreate() {
         context = this;
         super.onCreate();
-//        Stetho.initializeWithDefaults(this);
+        Stetho.initializeWithDefaults(this);
     }
 
 }

@@ -76,6 +76,7 @@ public class TabsActivity extends BaseActivity {
         ArrayList<TabGroup> tabGroups = TabGroupManager.getInstance().getList();
         Log.i("tabGroups", tabGroups.toString());
         adapter.setItems(tabGroups);
+        list.scrollToPosition(TabGroupManager.getInstance().getCurrentTabIndex());
     }
 
     @Override

@@ -66,10 +66,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             TabGroup tabGroup = mItems.get(position);
 
-            if(TabGroupManager.getInstance().getCurrentTabGroup() == tabGroup ) {
-                recyclerViewHolder.rela_round.setBackgroundTintList(ColorStateList.valueOf(context.getResources().getColor(R.color.accent_tint)));
-            }else {
-                recyclerViewHolder.rela_round.setBackgroundTintList(ColorStateList.valueOf(context.getResources().getColor(R.color.gray_light)));
+            if (TabGroupManager.getInstance().getCurrentTabGroup() == tabGroup) {
+                recyclerViewHolder.rela_round.setBackgroundTintList(ColorStateList.valueOf(context.getResources().getColor(R.color.active)));
+            } else {
+                recyclerViewHolder.rela_round.setBackgroundTintList(ColorStateList.valueOf(context.getResources().getColor(R.color.no_active)));
             }
             recyclerViewHolder.title.setText(tabGroup.getTitle());
             recyclerViewHolder.host.setText(tabGroup.getHost());
@@ -103,18 +103,18 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public void onItemDismiss(final int position) {
         final TabGroup tabGroup = mItems.get(position);
         boolean dismissActiveItem = false;
-        if(tabGroup == TabGroupManager.getInstance().getCurrentTabGroup()) {
+        if (tabGroup == TabGroupManager.getInstance().getCurrentTabGroup()) {
             dismissActiveItem = true;
         }
         TabGroupManager.getInstance().removeTabGroup(tabGroup);
-        if(TabGroupManager.getInstance().getTabGroupCount() > 0) {
+        if (TabGroupManager.getInstance().getTabGroupCount() > 0) {
             mItems.remove(position);
             notifyItemRemoved(position);
-            if(dismissActiveItem) {
+            if (dismissActiveItem) {
                 int currentIndex = TabGroupManager.getInstance().getCurrentTabIndex();
                 notifyItemChanged(currentIndex);
             }
-        }else {
+        } else {
             context.exit();
         }
     }

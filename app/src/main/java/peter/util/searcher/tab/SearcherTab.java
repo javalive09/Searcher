@@ -41,6 +41,8 @@ public abstract class SearcherTab implements Tab {
 
     }
 
+    public abstract String getSearchWord();
+
     public abstract View getView();
 
     public Drawable getIconDrawable() {

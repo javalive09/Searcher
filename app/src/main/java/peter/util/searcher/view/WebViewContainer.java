@@ -4,6 +4,8 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.FrameLayout;
 
 import peter.util.searcher.utils.Constants;
@@ -29,6 +31,10 @@ public class WebViewContainer extends FrameLayout {
 
     public void setCurrentView(View view) {
         removeViewAt(0);
+        ViewParent parent = view.getParent();
+        if(parent != null) {
+            ((ViewGroup)parent).removeAllViews();
+        }
         addView(view, 0);
     }
 

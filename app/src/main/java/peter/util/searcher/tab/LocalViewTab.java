@@ -75,5 +75,4 @@ public abstract class LocalViewTab extends SearcherTab{
         return LOCAL_HOST;
     }
 
-
 }

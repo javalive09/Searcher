@@ -15,7 +15,6 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -34,9 +33,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.umeng.analytics.MobclickAgent;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.Observable;
@@ -57,7 +54,6 @@ import peter.util.searcher.tab.Tab;
 import peter.util.searcher.tab.TabGroup;
 import peter.util.searcher.tab.WebViewTab;
 import peter.util.searcher.utils.Constants;
-import peter.util.searcher.utils.FileUtils;
 import peter.util.searcher.utils.UrlUtils;
 import peter.util.searcher.view.SearchWebView;
 import peter.util.searcher.view.TextDrawable;
@@ -93,14 +89,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private final HashMap<String, Class> router = new HashMap<>();
     private boolean realBack = false;
     private final Handler mHandler = new Handler(Looper.getMainLooper());
-    private static final String BUNDLE_KEY_SIGN = "&";
-    private static final String BUNDLE_KEY_TAB_SIZE = "KEY_TAB_SIZE";
-    private static final String BUNDLE_KEY_SEARCH_WORD = "KEY_SEARCH_WORD";
-    private static final String BUNDLE_KEY_GROUP_SIZE = "KEY_GROUP_SIZE";
-    private static final String BUNDLE_KEY_CURRENT_GROUP = "KEY_CURRENT_GROUP";
-    private static final String BUNDLE_KEY_CURRENT_TAB = "KEY_CURRENT_TAB";
-    private static final String URL_KEY = "URL_KEY";
-    private static final String BUNDLE_STORAGE = "SAVED_TABS.parcel";
+//    private static final String BUNDLE_KEY_SIGN = "&";
+//    private static final String BUNDLE_KEY_TAB_SIZE = "KEY_TAB_SIZE";
+//    private static final String BUNDLE_KEY_SEARCH_WORD = "KEY_SEARCH_WORD";
+//    private static final String BUNDLE_KEY_GROUP_SIZE = "KEY_GROUP_SIZE";
+//    private static final String BUNDLE_KEY_CURRENT_GROUP = "KEY_CURRENT_GROUP";
+//    private static final String BUNDLE_KEY_CURRENT_TAB = "KEY_CURRENT_TAB";
+//    private static final String URL_KEY = "URL_KEY";
+//    private static final String BUNDLE_STORAGE = "SAVED_TABS.parcel";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -114,7 +110,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         TabGroupManager.getInstance().init(this);
         installLocalTabRouter();
         initTopBar();
-        initTabs();
+        DaoManager.getInstance().restoreTabs();
         checkIntentData(getIntent());
         UpdateController.instance().autoCheckVersion(MainActivity.this);
     }
@@ -143,10 +139,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 break;
             }
         }
-    }
-
-    private void initTabs() {
-        restoreLostTabs();
     }
 
     @Override
@@ -611,8 +603,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     protected void onPause() {
         super.onPause();
         TabGroupManager.getInstance().pauseTabGroupExclude(null);
+        DaoManager.getInstance().saveTabs();
         MobclickAgent.onPause(this);
-        saveTabs();
     }
 
     public void refreshTitle() {
@@ -621,93 +613,88 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         tabsDrawable.setText(TabGroupManager.getInstance().getTabGroupCount());
     }
 
-    public void saveTabs() {
-        Bundle outState = new Bundle(ClassLoader.getSystemClassLoader());
-        List<TabGroup> tabGroupList = TabGroupManager.getInstance().getList();
-        int groupSize = tabGroupList.size();
-        outState.putString(BUNDLE_KEY_GROUP_SIZE, groupSize + "");
-        int currentGroupIndex = TabGroupManager.getInstance().getList().indexOf(TabGroupManager.getInstance().getCurrentTabGroup());
-        int currentTabIndex = TabGroupManager.getInstance().getCurrentTabGroup().getTabs().indexOf(TabGroupManager.getInstance().getCurrentTabGroup().getCurrentTab());
+//    public void saveTabs() {
+//        Bundle outState = new Bundle(ClassLoader.getSystemClassLoader());
+//        List<TabGroup> tabGroupList = TabGroupManager.getInstance().getList();
+//        int groupSize = tabGroupList.size();
+//        outState.putString(BUNDLE_KEY_GROUP_SIZE, groupSize + "");
+//        int currentGroupIndex = TabGroupManager.getInstance().getList().indexOf(TabGroupManager.getInstance().getCurrentTabGroup());
+//        int currentTabIndex = TabGroupManager.getInstance().getCurrentTabGroup().getTabs().indexOf(TabGroupManager.getInstance().getCurrentTabGroup().getCurrentTab());
+//
+//        outState.putInt(BUNDLE_KEY_CURRENT_GROUP, currentGroupIndex);
+//        outState.putInt(BUNDLE_KEY_CURRENT_TAB, currentTabIndex);
+//
+//        for (int g = 0; g < groupSize; g++) {
+//            TabGroup tabGroup = tabGroupList.get(g);
+//            ArrayList<SearcherTab> tabs = tabGroup.getTabs();
+//            outState.putInt(BUNDLE_KEY_TAB_SIZE + g, tabs.size());
+//            for (int t = 0; t < tabs.size(); t++) {
+//                SearcherTab tab = tabs.get(t);
+//                if (!TextUtils.isEmpty(tab.getUrl())) {
+//                    Bundle state = new Bundle(ClassLoader.getSystemClassLoader());
+//                    final String key = g + BUNDLE_KEY_SIGN + t;
+//                    state.putString(URL_KEY, tab.getUrl());
+//                    if (tab instanceof WebViewTab) {
+//                        WebViewTab webViewTab = (WebViewTab) tab;
+//                        webViewTab.getView().saveState(state);
+//                        outState.putBundle(key, state);
+//                        state.putString(BUNDLE_KEY_SEARCH_WORD, webViewTab.getSearchWord());
+//                    } else {
+//                        outState.putBundle(key, state);
+//                    }
+//                }
+//            }
+//        }
+//        FileUtils.writeBundleToStorage(getApplication(), outState, BUNDLE_STORAGE);
+//    }
 
-        outState.putInt(BUNDLE_KEY_CURRENT_GROUP, currentGroupIndex);
-        outState.putInt(BUNDLE_KEY_CURRENT_TAB, currentTabIndex);
-
-        for (int g = 0; g < groupSize; g++) {
-            TabGroup tabGroup = tabGroupList.get(g);
-            ArrayList<SearcherTab> tabs = tabGroup.getTabs();
-            outState.putInt(BUNDLE_KEY_TAB_SIZE + g, tabs.size());
-            for (int t = 0; t < tabs.size(); t++) {
-                SearcherTab tab = tabs.get(t);
-                if (!TextUtils.isEmpty(tab.getUrl())) {
-                    Bundle state = new Bundle(ClassLoader.getSystemClassLoader());
-                    final String key = g + BUNDLE_KEY_SIGN + t;
-                    state.putString(URL_KEY, tab.getUrl());
-                    if (tab instanceof WebViewTab) {
-                        WebViewTab webViewTab = (WebViewTab) tab;
-                        webViewTab.getView().saveState(state);
-                        outState.putBundle(key, state);
-                        state.putString(BUNDLE_KEY_SEARCH_WORD, webViewTab.getSearchWord());
-                    } else {
-                        outState.putBundle(key, state);
-                    }
-                }
-            }
-        }
-        FileUtils.writeBundleToStorage(getApplication(), outState, BUNDLE_STORAGE);
-    }
-
-    public void restoreLostTabs() {
-        Bundle savedState = FileUtils.readBundleFromStorage(getApplication(), BUNDLE_STORAGE);
-        if (savedState != null) {
-            int groupSize = Integer.valueOf(savedState.getString(BUNDLE_KEY_GROUP_SIZE));
-            int currentGroupIndex = savedState.getInt(BUNDLE_KEY_CURRENT_GROUP);
-            int currentTabIndex = savedState.getInt(BUNDLE_KEY_CURRENT_TAB);
-            for (int g = 0; g < groupSize; g++) {
-                int tabSize = savedState.getInt(BUNDLE_KEY_TAB_SIZE + g);
-                for (int t = 0; t < tabSize; t++) {
-                    final String key = g + BUNDLE_KEY_SIGN + t;
-                    Bundle state = savedState.getBundle(key);
-                    if (state != null) {
-                        String url = state.getString(URL_KEY);
-                        if (t == 0) {//first tab
-                            Log.i("url ", url);
-                            TabData bean = new TabData();
-                            bean.setUrl(url);
-                            TabGroupManager.getInstance().load(bean, true);
-                        } else {// webView
-                            String searchWord = state.getString(BUNDLE_KEY_SEARCH_WORD);
-                            TabData bean = DaoManager.getInstance().queryBean(searchWord, url);
-                            TabGroupManager.getInstance().createTabGroup(bean, false);
-                            Log.i("state ", state.toString());
-
-                            SearcherTab searcherTab = TabGroupManager.getInstance().getCurrentTabGroup().getCurrentTab();
-                            if (searcherTab instanceof WebViewTab) {
-                                WebViewTab webViewTab = (WebViewTab) searcherTab;
-                                Log.i("webView ", webViewTab.getView().toString());
-                                webViewTab.getView().restoreState(state);
-                                webViewTab.getView().stopLoading();
-                            }
-                        }
-                    }
-                }
-            }
-            TabGroupManager.getInstance().restoreTabPos(currentGroupIndex, currentTabIndex);
-        }
-        FileUtils.deleteBundleInStorage(getApplication(), BUNDLE_STORAGE);
-    }
+//    public void restoreLostTabs() {
+//        Bundle savedState = FileUtils.readBundleFromStorage(getApplication(), BUNDLE_STORAGE);
+//        if (savedState != null) {
+//            int groupSize = Integer.valueOf(savedState.getString(BUNDLE_KEY_GROUP_SIZE));
+//            int currentGroupIndex = savedState.getInt(BUNDLE_KEY_CURRENT_GROUP);
+//            int currentTabIndex = savedState.getInt(BUNDLE_KEY_CURRENT_TAB);
+//            for (int g = 0; g < groupSize; g++) {
+//                int tabSize = savedState.getInt(BUNDLE_KEY_TAB_SIZE + g);
+//                for (int t = 0; t < tabSize; t++) {
+//                    final String key = g + BUNDLE_KEY_SIGN + t;
+//                    Bundle state = savedState.getBundle(key);
+//                    if (state != null) {
+//                        String url = state.getString(URL_KEY);
+//                        if (t == 0) {//first tab
+//                            Log.i("url ", url);
+//                            TabData bean = new TabData();
+//                            bean.setUrl(url);
+//                            TabGroupManager.getInstance().load(bean, true);
+//                        } else {// webView
+//                            String searchWord = state.getString(BUNDLE_KEY_SEARCH_WORD);
+//                            TabData bean = DaoManager.getInstance().queryBean(searchWord, url);
+//                            TabGroupManager.getInstance().createTabGroup(bean, false);
+//                            Log.i("state ", state.toString());
+//
+//                            SearcherTab searcherTab = TabGroupManager.getInstance().getCurrentTabGroup().getCurrentTab();
+//                            if (searcherTab instanceof WebViewTab) {
+//                                WebViewTab webViewTab = (WebViewTab) searcherTab;
+//                                Log.i("webView ", webViewTab.getView().toString());
+//                                webViewTab.getView().restoreState(state);
+//                                webViewTab.getView().stopLoading();
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//            TabGroupManager.getInstance().restoreTabPos(currentGroupIndex, currentTabIndex);
+//        }
+//        FileUtils.deleteBundleInStorage(getApplication(), BUNDLE_STORAGE);
+//    }
 
     public void refreshTopText(String text) {
-        if (TextUtils.isEmpty(text)) {
+        if (TextUtils.equals(text, Tab.LOCAL_HOST)) {
             topText.setText("");
             topText.setHint(R.string.search_hint);
         } else {
             topText.setText(text);
         }
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
     }
 
     @Override

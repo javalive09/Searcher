@@ -3,6 +3,8 @@ package peter.util.searcher.tab;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Bundle;
+import android.os.Parcel;
 import android.support.v4.util.ArrayMap;
 import android.text.TextUtils;
 import android.util.Log;
@@ -96,6 +98,10 @@ public class WebViewTab extends SearcherTab {
         }
     }
 
+    public TabData getTabData() {
+        return tabData;
+    }
+
     public Map<String, String> getRequestHeaders() {
         return mRequestHeaders;
     }
@@ -119,7 +125,11 @@ public class WebViewTab extends SearcherTab {
     }
 
     public String getUrl() {
-        return mWebView.getUrl();
+        String url = mWebView.getUrl();
+        if(TextUtils.isEmpty(url)) {
+            url = tabData.getUrl();
+        }
+        return url;
     }
 
     @Override
@@ -147,6 +157,19 @@ public class WebViewTab extends SearcherTab {
     }
 
     public void reload() {
+        byte[] data = tabData.getBundle();
+        if(data != null) {
+            Parcel parcel = Parcel.obtain();
+            parcel.unmarshall(data, 0, data.length);
+            parcel.setDataPosition(0);
+            Bundle bundle = parcel.readBundle(ClassLoader.getSystemClassLoader());
+            mWebView.restoreState(bundle);
+
+            parcel.recycle();
+            tabData.setBundle(null);
+            DaoManager.getInstance().deleteTabData(tabData);
+        }
+
         mWebView.reload();
     }
 
@@ -171,7 +194,11 @@ public class WebViewTab extends SearcherTab {
     }
 
     public String getTitle() {
-        return mWebView.getTitle();
+        String title = mWebView.getTitle();
+        if(TextUtils.isEmpty(title)) {
+            title = tabData.getTitle();
+        }
+        return title;
     }
 
     private void saveData(final TabData bean) {
