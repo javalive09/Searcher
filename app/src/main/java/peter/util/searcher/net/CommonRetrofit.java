@@ -40,11 +40,11 @@ public class CommonRetrofit {
                     .cache(new Cache(new File(Searcher.context.getCacheDir(), CACHE_NAME), MAX_CACHE))
 //                    .addNetworkInterceptor(new StethoInterceptor())
                     .build();
-//            Gson gson = new GsonBuilder().setLenient().create();
+//            Gson gson = new GsonBuilder().setLenient().createTabGroup();
             retrofit = new Retrofit.Builder()
                     .baseUrl(URL)
                     .client(okHttpClient)
-//                    .addConverterFactory(GsonConverterFactory.create(gson))
+//                    .addConverterFactory(GsonConverterFactory.createTabGroup(gson))
                     .addConverterFactory(GsonConverterFactory.create())
                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                     .build();

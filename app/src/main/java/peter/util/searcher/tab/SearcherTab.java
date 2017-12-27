@@ -4,7 +4,7 @@ import android.graphics.drawable.Drawable;
 import android.view.View;
 
 import peter.util.searcher.activity.MainActivity;
-import peter.util.searcher.bean.TabBean;
+import peter.util.searcher.db.dao.TabData;
 
 /**
  * search tab
@@ -56,9 +56,9 @@ public abstract class SearcherTab implements Tab {
 
     public abstract String getUrl();
 
-    public abstract SearcherTab create(TabBean bean);
+    public abstract SearcherTab create(TabData bean);
 
-    public abstract void loadUrl(TabBean bean);
+    public abstract void loadUrl(TabData bean);
 
     public abstract void reload();
 

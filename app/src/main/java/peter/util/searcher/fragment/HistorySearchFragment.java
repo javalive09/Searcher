@@ -28,8 +28,8 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import peter.util.searcher.R;
 import peter.util.searcher.activity.BaseActivity;
-import peter.util.searcher.bean.TabBean;
 import peter.util.searcher.db.DaoManager;
+import peter.util.searcher.db.dao.TabData;
 
 /**
  * 搜索记录fragment
@@ -80,7 +80,7 @@ public class HistorySearchFragment extends BookmarkFragment implements View.OnCl
                 if (TextUtils.isEmpty(s)) {
                     refreshAllListData();
                 } else {
-                    Observable<List<TabBean>> listObservable = DaoManager.getInstance().queryHistoryLike(s);
+                    Observable<List<TabData>> listObservable = DaoManager.getInstance().queryHistoryLike(s);
                     cancelQuery();
                     queryFavorite = listObservable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).
                             subscribe(list -> refreshListData(list));
@@ -103,7 +103,7 @@ public class HistorySearchFragment extends BookmarkFragment implements View.OnCl
                 observeOn(AndroidSchedulers.mainThread()).subscribe(this::refreshListData);
     }
 
-    private void refreshListData(List<TabBean> beans) {
+    private void refreshListData(List<TabData> beans) {
         if (beans != null) {
             if (beans.size() == 0) {
                 noRecord.setVisibility(View.VISIBLE);
@@ -123,7 +123,7 @@ public class HistorySearchFragment extends BookmarkFragment implements View.OnCl
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.item:
-                TabBean bean = (TabBean) v.getTag();
+                TabData bean = (TabData) v.getTag();
                 if (bean != null) {
                     ((BaseActivity) getActivity()).startBrowser(bean);
                 }
@@ -163,7 +163,7 @@ public class HistorySearchFragment extends BookmarkFragment implements View.OnCl
         popup.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {
                 case R.id.action_delete:
-                    TabBean bean = (TabBean) view.getTag();
+                    TabData bean = (TabData) view.getTag();
                     DaoManager.getInstance().deleteHistory(bean);
                     refreshAllListData();
                     break;
@@ -182,14 +182,14 @@ public class HistorySearchFragment extends BookmarkFragment implements View.OnCl
     private class HistoryAdapter extends BaseAdapter {
 
         private final LayoutInflater factory;
-        private List<TabBean> list;
+        private List<TabData> list;
 
-        HistoryAdapter(List<TabBean> objects) {
+        HistoryAdapter(List<TabData> objects) {
             factory = LayoutInflater.from(getActivity());
             list = objects;
         }
 
-        void updateData(List<TabBean> list) {
+        void updateData(List<TabData> list) {
             this.list = list;
             notifyDataSetChanged();
         }
@@ -200,7 +200,7 @@ public class HistorySearchFragment extends BookmarkFragment implements View.OnCl
         }
 
         @Override
-        public TabBean getItem(int position) {
+        public TabData getItem(int position) {
             return list.get(position);
         }
 
@@ -219,8 +219,8 @@ public class HistorySearchFragment extends BookmarkFragment implements View.OnCl
                 view = (TextView) convertView;
             }
 
-            TabBean search = getItem(position);
-            view.setText(search.name);
+            TabData search = getItem(position);
+            view.setText(search.getTitle());
             view.setOnClickListener(HistorySearchFragment.this);
             view.setOnLongClickListener(HistorySearchFragment.this);
             view.setTag(search);

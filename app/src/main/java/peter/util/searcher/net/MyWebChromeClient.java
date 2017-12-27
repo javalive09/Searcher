@@ -22,8 +22,10 @@ import com.anthonycr.grant.PermissionsManager;
 import com.anthonycr.grant.PermissionsResultAction;
 
 import peter.util.searcher.R;
-import peter.util.searcher.bean.TabBean;
+import peter.util.searcher.TabGroupManager;
+import peter.util.searcher.db.dao.TabData;
 import peter.util.searcher.tab.SearcherTab;
+import peter.util.searcher.tab.Tab;
 import peter.util.searcher.tab.TabGroup;
 import peter.util.searcher.tab.WebViewTab;
 
@@ -85,10 +87,12 @@ public class MyWebChromeClient extends WebChromeClient {
     @Override
     public boolean onCreateWindow(WebView view, boolean isDialog, boolean isUserGesture, Message resultMsg) {
         if (resultMsg != null) {
-            TabGroup parentTabGroup = webViewTab.getActivity().getTabManager().getCurrentTabGroup();
-            webViewTab.getActivity().getTabManager().loadTab(new TabBean("", peter.util.searcher.tab.Tab.ACTION_NEW_WINDOW), true);
-            webViewTab.getActivity().getTabManager().getCurrentTabGroup().setParent(parentTabGroup);
-            SearcherTab tab = webViewTab.getActivity().getTabManager().getCurrentTabGroup().getCurrentTab();
+            TabGroup parentTabGroup = TabGroupManager.getInstance().getCurrentTabGroup();
+            TabData tabData = new TabData();
+            tabData.setUrl(Tab.ACTION_NEW_WINDOW);
+            TabGroupManager.getInstance().load(tabData, true);
+            TabGroupManager.getInstance().getCurrentTabGroup().setParent(parentTabGroup);
+            SearcherTab tab = TabGroupManager.getInstance().getCurrentTabGroup().getCurrentTab();
             View tabView = tab.getView();
             if (tabView != null && tabView instanceof WebView) {
                 WebView webView = (WebView) tabView;
@@ -103,9 +107,9 @@ public class MyWebChromeClient extends WebChromeClient {
     @Override
     public void onCloseWindow(WebView window) {
         Log.i("onCloseWindow", window.toString());
-        TabGroup tabGroup = webViewTab.getActivity().getTabManager().getTabGroup(webViewTab);
+        TabGroup tabGroup = TabGroupManager.getInstance().getTabGroup(webViewTab);
         if (tabGroup != null) {
-            webViewTab.getActivity().getTabManager().removeTabGroup(tabGroup);
+            TabGroupManager.getInstance().removeTabGroup(tabGroup);
         }
     }
 

@@ -27,10 +27,10 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import peter.util.searcher.R;
 import peter.util.searcher.activity.BaseActivity;
-import peter.util.searcher.bean.TabBean;
 import peter.util.searcher.bean.EnginesInfo;
 import peter.util.searcher.bean.EnginesItem;
 import peter.util.searcher.bean.ItemItem;
+import peter.util.searcher.db.dao.TabData;
 import peter.util.searcher.net.CommonRetrofit;
 import peter.util.searcher.net.IEngineService;
 import peter.util.searcher.utils.UrlUtils;
@@ -49,9 +49,9 @@ public class EngineInfoViewPagerFragment extends Fragment implements View.OnClic
     View loading;
 
     private int getPageNo() {
-        TabBean bean = getArguments().getParcelable(BaseActivity.NAME_BEAN);
+        TabData bean = (TabData) getArguments().getSerializable(BaseActivity.NAME_BEAN);
         if (bean != null) {
-            return bean.pageNo;
+            return bean.getPageNo();
         }
         return 0;
     }
@@ -91,8 +91,10 @@ public class EngineInfoViewPagerFragment extends Fragment implements View.OnClic
                     String url = UrlUtils.smartUrlFilter(searchWord, true, engine.getUrl());
                     act.finish();
                     act.overridePendingTransition(0, 0);
-                    TabBean bean = new TabBean(searchWord, url);
-                    bean.pageNo = mViewPager.getCurrentItem();
+                    TabData bean = new TabData();
+                    bean.setTitle(searchWord);
+                    bean.setUrl(url);
+                    bean.setPageNo(mViewPager.getCurrentItem());
                     act.startBrowser(bean);
                 }
                 break;

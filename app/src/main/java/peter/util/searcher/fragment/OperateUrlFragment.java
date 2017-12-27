@@ -10,7 +10,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import peter.util.searcher.R;
 import peter.util.searcher.activity.SearchActivity;
-import peter.util.searcher.bean.TabBean;
+import peter.util.searcher.db.dao.TabData;
 import peter.util.searcher.utils.UrlUtils;
 
 
@@ -43,7 +43,9 @@ public class OperateUrlFragment extends Fragment implements View.OnClickListener
                 searchActivity.closeIME();
                 searchActivity.finish();
                 searchActivity.overridePendingTransition(0, 0);
-                searchActivity.startBrowser(new TabBean("", url));
+                TabData tabData = new TabData();
+                tabData.setUrl(url);
+                searchActivity.startBrowser(tabData);
                 break;
         }
     }

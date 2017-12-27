@@ -36,30 +36,28 @@ import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.umeng.analytics.MobclickAgent;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import peter.util.searcher.SettingsManager;
-import peter.util.searcher.TabManager;
+import peter.util.searcher.TabGroupManager;
 import peter.util.searcher.adapter.TabsAdapter;
-import peter.util.searcher.bean.TabBean;
 import peter.util.searcher.R;
 import peter.util.searcher.db.DaoManager;
+import peter.util.searcher.db.dao.TabData;
 import peter.util.searcher.net.DownloadHandler;
 import peter.util.searcher.net.MyDownloadListener;
 import peter.util.searcher.net.UpdateController;
 import peter.util.searcher.tab.HomeTab;
 import peter.util.searcher.tab.LocalViewTab;
 import peter.util.searcher.tab.SearcherTab;
+import peter.util.searcher.tab.Tab;
 import peter.util.searcher.tab.TabGroup;
 import peter.util.searcher.tab.WebViewTab;
 import peter.util.searcher.utils.Constants;
@@ -100,7 +98,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private PopupMenu popup;
     private TextDrawable tabsDrawable;
-    private TabManager tabManager;
     private final HashMap<String, Class> router = new HashMap<>();
     private TabsAdapter tabsAdapter;
     private boolean realBack = false;
@@ -123,7 +120,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     private void init() {
-        tabManager = new TabManager(MainActivity.this);
+        TabGroupManager.getInstance().init(this);
         installLocalTabRouter();
         initTopBar();
         initTabs();
@@ -216,7 +213,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         popup = new PopupMenu(MainActivity.this, menuAnchor);
         popup.getMenuInflater().inflate(R.menu.context, popup.getMenu());
 
-        WebViewTab webViewTab = (WebViewTab) getTabManager().getCurrentTabGroup().getCurrentTab();
+        WebViewTab webViewTab = (WebViewTab) TabGroupManager.getInstance().getCurrentTabGroup().getCurrentTab();
         Message msg = webViewHandler.obtainMessage();
         msg.setTarget(webViewHandler);
         msg.obj = info;
@@ -266,12 +263,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             }
             switch (item.getItemId()) {
                 case R.id.open_pic_new_tab:
-                    TabBean bean = new TabBean();
-                    bean.url = url;
-                    bean.time = System.currentTimeMillis();
-                    TabGroup parentTabGroup = getTabManager().getCurrentTabGroup();
-                    tabManager.loadTab(bean, true);
-                    getTabManager().getCurrentTabGroup().setParent(parentTabGroup);
+                    TabData tabData = new TabData();
+                    tabData.setUrl(url);
+                    tabData.setTime(System.currentTimeMillis());
+                    TabGroup parentTabGroup = TabGroupManager.getInstance().getCurrentTabGroup();
+                    TabGroupManager.getInstance().load(tabData, true);
+                    TabGroupManager.getInstance().getCurrentTabGroup().setParent(parentTabGroup);
                     break;
                 case R.id.copy_pic_link:
                     ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
@@ -298,12 +295,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     break;
 
                 case R.id.open_url_new_tab:
-                    bean = new TabBean();
-                    bean.url = url;
-                    bean.time = System.currentTimeMillis();
-                    parentTabGroup = getTabManager().getCurrentTabGroup();
-                    tabManager.loadTab(bean, true);
-                    getTabManager().getCurrentTabGroup().setParent(parentTabGroup);
+                    tabData = new TabData();
+                    tabData.setUrl(url);
+                    tabData.setTime(System.currentTimeMillis());
+                    parentTabGroup = TabGroupManager.getInstance().getCurrentTabGroup();
+                    TabGroupManager.getInstance().load(tabData, true);
+                    TabGroupManager.getInstance().getCurrentTabGroup().setParent(parentTabGroup);
                     break;
 
                 case R.id.copy_link:
@@ -322,7 +319,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        TabGroup currentGroup = tabManager.getCurrentTabGroup();
+        TabGroup currentGroup = TabGroupManager.getInstance().getCurrentTabGroup();
         SearcherTab currentTab = currentGroup.getCurrentTab();
         if (currentTab instanceof LocalViewTab) {
             menu.setGroupVisible(R.id.web_sites, false);
@@ -346,8 +343,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_share:
-                String url = tabManager.getCurrentTabGroup().getCurrentTab().getUrl();
-                String title = tabManager.getCurrentTabGroup().getCurrentTab().getTitle();
+                String url = TabGroupManager.getInstance().getCurrentTabGroup().getCurrentTab().getUrl();
+                String title = TabGroupManager.getInstance().getCurrentTabGroup().getCurrentTab().getTitle();
                 Intent sendIntent = new Intent();
                 if (!TextUtils.isEmpty(title)) {
                     sendIntent.putExtra(Intent.EXTRA_SUBJECT, title);
@@ -359,17 +356,18 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 startActivity(Intent.createChooser(sendIntent, getString(R.string.share_link_title)));
                 break;
             case R.id.action_favorite:
-                url = tabManager.getCurrentTabGroup().getCurrentTab().getUrl();
+                url = TabGroupManager.getInstance().getCurrentTabGroup().getCurrentTab().getUrl();
                 if (!TextUtils.isEmpty(url) && !url.startsWith(peter.util.searcher.tab.Tab.LOCAL_SCHEMA)) {
-                    final TabBean bean = new TabBean();
-                    bean.name = tabManager.getCurrentTabGroup().getCurrentTab().getTitle();
-                    if (TextUtils.isEmpty(bean.name)) {
-                        bean.name = tabManager.getCurrentTabGroup().getCurrentTab().getUrl();
+                    final TabData tabData = new TabData();
+                    tabData.setTitle(TabGroupManager.getInstance().getCurrentTabGroup().getCurrentTab().getTitle());
+                    if (TextUtils.isEmpty(tabData.getTitle())) {
+                        tabData.setTitle(TabGroupManager.getInstance().getCurrentTabGroup().getCurrentTab().getUrl());
                     }
-                    bean.url = url;
-                    bean.time = System.currentTimeMillis();
+
+                    tabData.setUrl(url);
+                    tabData.setTime(System.currentTimeMillis());
                     Observable<Boolean> result = Observable.create(e -> {
-                        boolean suc = DaoManager.getInstance().insertFavorite(bean) != 0L;
+                        boolean suc = DaoManager.getInstance().insertFavorite(tabData) != 0L;
                         e.onNext(suc);
                         e.onComplete();
                     });
@@ -381,8 +379,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 }
                 break;
             case R.id.action_copy_link:
-                url = tabManager.getCurrentTabGroup().getCurrentTab().getUrl();
-                title = tabManager.getCurrentTabGroup().getCurrentTab().getTitle();
+                url = TabGroupManager.getInstance().getCurrentTabGroup().getCurrentTab().getUrl();
+                title = TabGroupManager.getInstance().getCurrentTabGroup().getCurrentTab().getTitle();
                 ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
                 ClipData clip = ClipData.newPlainText(title, url);
                 if (clipboard != null) {
@@ -405,10 +403,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 startActivity(new Intent(MainActivity.this, BookMarkActivity.class));
                 break;
             case R.id.action_goforward:
-                tabManager.getCurrentTabGroup().goForward();
+                TabGroupManager.getInstance().getCurrentTabGroup().goForward();
                 break;
             case R.id.action_refresh:
-                tabManager.getCurrentTabGroup().getCurrentTab().reload();
+                TabGroupManager.getInstance().getCurrentTabGroup().getCurrentTab().reload();
                 break;
             case R.id.action_auto_fullscreen:
                 if (item.isChecked()) {//auto
@@ -416,10 +414,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 } else {
                     SettingsManager.getInstance().saveAutoFullScreenSp(true);
                 }
-                tabManager.getCurrentTabGroup().getCurrentTab().getView().requestLayout();
+                TabGroupManager.getInstance().getCurrentTabGroup().getCurrentTab().getView().requestLayout();
                 break;
             case R.id.action_desktop:
-                WebViewTab tab = (WebViewTab) tabManager.getCurrentTabGroup().getCurrentTab();
+                WebViewTab tab = (WebViewTab) TabGroupManager.getInstance().getCurrentTabGroup().getCurrentTab();
                 if (tab.isDeskTopUA()) {
                     tab.setUA(Constants.MOBILE_USER_AGENT);
                 } else {
@@ -436,7 +434,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private void showFindControlView(boolean show) {
         if (show) {
-            SearcherTab searcherTab = tabManager.getCurrentTabGroup().getCurrentTab();
+            SearcherTab searcherTab = TabGroupManager.getInstance().getCurrentTabGroup().getCurrentTab();
             if (searcherTab instanceof WebViewTab) {
                 final WebViewTab webViewTab = (WebViewTab) searcherTab;
                 webViewTab.getView().setFindListener(findListener);
@@ -498,11 +496,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     };
 
     private void touchSearch() {
-        String content = tabManager.getCurrentTabGroup().getCurrentTab().getSearchWord();
-        int pageNo = tabManager.getCurrentTabGroup().getCurrentTab().getPageNo();
+        String content = TabGroupManager.getInstance().getCurrentTabGroup().getCurrentTab().getSearchWord();
+        int pageNo = TabGroupManager.getInstance().getCurrentTabGroup().getCurrentTab().getPageNo();
         Intent intent = new Intent(MainActivity.this, SearchActivity.class);
-        TabBean bean = new TabBean(content);
-        bean.pageNo = pageNo;
+        TabData bean = new TabData();
+        bean.setTitle(content);
+        bean.setPageNo(pageNo);
         intent.putExtra(NAME_BEAN, bean);
         startActivity(intent);
     }
@@ -510,7 +509,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     public void updateTabs() {
         if (tabsAdapter != null) {
             tabsAdapter.update(MainActivity.this);
-            tabsListView.setSelection(getTabManager().getCurrentTabIndex());
+            tabsListView.setSelection(TabGroupManager.getInstance().getCurrentTabIndex());
         }
     }
 
@@ -562,11 +561,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         return mTopBar.getTranslationY() == 0;
     }
 
-
-    public TabManager getTabManager() {
-        return tabManager;
-    }
-
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
@@ -577,31 +571,36 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         if (intent != null) {
             String action = intent.getAction();
             if (ACTION_INNER_BROWSE.equals(action)) { // inner invoke
-                TabBean bean = intent.getParcelableExtra(NAME_BEAN);
-                if (!TextUtils.isEmpty(bean.url)) {
-                    tabManager.loadTab(bean, false);
+                TabData bean = (TabData) intent.getSerializableExtra(NAME_BEAN);
+                if (bean != null && !TextUtils.isEmpty(bean.getUrl())) {
+                    TabGroupManager.getInstance().load(bean, false);
                 }
             } else if (Intent.ACTION_VIEW.equals(action)) { // outside invoke
                 String url = intent.getDataString();
                 if (!TextUtils.isEmpty(url)) {
-                    tabManager.loadTab(new TabBean("", url), true);
+                    TabData tabData = new TabData();
+                    tabData.setUrl(url);
+                    TabGroupManager.getInstance().load(tabData, true);
                 }
             } else if (Intent.ACTION_WEB_SEARCH.equals(action)) {
                 String searchWord = intent.getStringExtra(SearchManager.QUERY);
                 String engineUrl = getString(R.string.default_engine_url);
                 String url = UrlUtils.smartUrlFilter(searchWord, true, engineUrl);
-                tabManager.loadTab(new TabBean(searchWord, url), true);
+                TabData tabData = new TabData();
+                tabData.setTitle(searchWord);
+                tabData.setUrl(url);
+                TabGroupManager.getInstance().load(tabData, true);
             } else if (Intent.ACTION_MAIN.equals(action)) {
-                if (tabManager.getTabGroupCount() == 0) {
+                if (TabGroupManager.getInstance().getTabGroupCount() == 0) {
                     loadHome();
                 }
             } else if (Intent.ACTION_ASSIST.equals(action)) {
-                if (tabManager.getTabGroupCount() == 0) {
+                if (TabGroupManager.getInstance().getTabGroupCount() == 0) {
                     loadHome();
                 } else {
-                    SearcherTab searcherTab = tabManager.getCurrentTabGroup().getCurrentTab();
+                    SearcherTab searcherTab = TabGroupManager.getInstance().getCurrentTabGroup().getCurrentTab();
                     if (searcherTab instanceof WebViewTab) {//webView
-                        if (tabManager.getTabGroupCount() < TabManager.MAX_TAB) {
+                        if (TabGroupManager.getInstance().getTabGroupCount() < TabGroupManager.MAX_TAB) {
                             loadHome();
                         }
                     }
@@ -612,7 +611,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     public boolean loadHome() {
-        return tabManager.loadTab(new TabBean("", peter.util.searcher.tab.Tab.URL_HOME), true);
+        TabData tabData = new TabData();
+        tabData.setUrl(Tab.URL_HOME);
+        return TabGroupManager.getInstance().load(tabData, true);
     }
 
     @Override
@@ -628,15 +629,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 return true;
             }
 
-            TabGroup tabGroup = tabManager.getCurrentTabGroup();
+            TabGroup tabGroup = TabGroupManager.getInstance().getCurrentTabGroup();
             if (tabGroup.canGoBack()) {
                 tabGroup.goBack();
                 return true;
             } else {
                 TabGroup parentTabGroup = tabGroup.getParent();
                 if (parentTabGroup != null) {
-                    tabManager.removeIndex(tabGroup);
-                    tabManager.switchTabGroup(parentTabGroup);
+                    TabGroupManager.getInstance().removeIndex(tabGroup);
+                    TabGroupManager.getInstance().switchTabGroup(parentTabGroup);
                     return true;
                 }
             }
@@ -653,7 +654,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     protected void onResume() {
         super.onResume();
-        tabManager.resumeTabGroupExclude(null);
+        TabGroupManager.getInstance().resumeTabGroupExclude(null);
         updateTabs();
         MobclickAgent.onResume(this);
     }
@@ -661,24 +662,24 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     protected void onPause() {
         super.onPause();
-        tabManager.pauseTabGroupExclude(null);
+        TabGroupManager.getInstance().pauseTabGroupExclude(null);
         MobclickAgent.onPause(this);
         saveTabs();
     }
 
     public void refreshTitle() {
-        String host = tabManager.getCurrentTabGroup().getCurrentTab().getHost();
+        String host = TabGroupManager.getInstance().getCurrentTabGroup().getCurrentTab().getHost();
         refreshTopText(host);
-        tabsDrawable.setText(tabManager.getTabGroupCount());
+        tabsDrawable.setText(TabGroupManager.getInstance().getTabGroupCount());
     }
 
     public void saveTabs() {
         Bundle outState = new Bundle(ClassLoader.getSystemClassLoader());
-        List<TabGroup> tabGroupList = tabManager.getList();
+        List<TabGroup> tabGroupList = TabGroupManager.getInstance().getList();
         int groupSize = tabGroupList.size();
         outState.putString(BUNDLE_KEY_GROUP_SIZE, groupSize + "");
-        int currentGroupIndex = tabManager.getList().indexOf(tabManager.getCurrentTabGroup());
-        int currentTabIndex = tabManager.getCurrentTabGroup().getTabs().indexOf(tabManager.getCurrentTabGroup().getCurrentTab());
+        int currentGroupIndex = TabGroupManager.getInstance().getList().indexOf(TabGroupManager.getInstance().getCurrentTabGroup());
+        int currentTabIndex = TabGroupManager.getInstance().getCurrentTabGroup().getTabs().indexOf(TabGroupManager.getInstance().getCurrentTabGroup().getCurrentTab());
 
         outState.putInt(BUNDLE_KEY_CURRENT_GROUP, currentGroupIndex);
         outState.putInt(BUNDLE_KEY_CURRENT_TAB, currentTabIndex);
@@ -722,14 +723,16 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         String url = state.getString(URL_KEY);
                         if (t == 0) {//first tab
                             Log.i("url ", url);
-                            tabManager.loadTab(new TabBean("", url), true);
+                            TabData bean = new TabData();
+                            bean.setUrl(url);
+                            TabGroupManager.getInstance().load(bean, true);
                         } else {// webView
                             String searchWord = state.getString(BUNDLE_KEY_SEARCH_WORD);
-                            TabBean bean = DaoManager.getInstance().queryBean(searchWord, url);
-                            tabManager.createTab(bean, false);
+                            TabData bean = DaoManager.getInstance().queryBean(searchWord, url);
+                            TabGroupManager.getInstance().createTabGroup(bean, false);
                             Log.i("state ", state.toString());
 
-                            SearcherTab searcherTab = tabManager.getCurrentTabGroup().getCurrentTab();
+                            SearcherTab searcherTab = TabGroupManager.getInstance().getCurrentTabGroup().getCurrentTab();
                             if (searcherTab instanceof WebViewTab) {
                                 WebViewTab webViewTab = (WebViewTab) searcherTab;
                                 Log.i("webView ", webViewTab.getView().toString());
@@ -740,7 +743,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     }
                 }
             }
-            tabManager.restoreTabPos(currentGroupIndex, currentTabIndex);
+            TabGroupManager.getInstance().restoreTabPos(currentGroupIndex, currentTabIndex);
         }
         FileUtils.deleteBundleInStorage(getApplication(), BUNDLE_STORAGE);
     }
@@ -767,28 +770,28 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 drawerLayout.closeDrawers();
                 break;
             case R.id.close_tab:
-                if (tabManager.getTabGroupCount() == 1) {
+                if (TabGroupManager.getInstance().getTabGroupCount() == 1) {
                     exit();
                 } else {
                     TabGroup tabGroup = (TabGroup) v.getTag();
-                    tabManager.removeTabGroup(tabGroup);
+                    TabGroupManager.getInstance().removeTabGroup(tabGroup);
                     updateTabs();
                 }
                 break;
             case R.id.multi_window_item:
                 TabGroup tabGroup = (TabGroup) v.getTag(R.id.multi_window_item_tag);
-                tabManager.switchTabGroup(tabGroup);
+                TabGroupManager.getInstance().switchTabGroup(tabGroup);
                 drawerLayout.closeDrawers();
                 break;
             case R.id.up_find:
-                SearcherTab searcherTab = tabManager.getCurrentTabGroup().getCurrentTab();
+                SearcherTab searcherTab = TabGroupManager.getInstance().getCurrentTabGroup().getCurrentTab();
                 if (searcherTab instanceof WebViewTab) {
                     WebViewTab webViewTab = (WebViewTab) searcherTab;
                     webViewTab.getView().findNext(false);
                 }
                 break;
             case R.id.down_find:
-                searcherTab = tabManager.getCurrentTabGroup().getCurrentTab();
+                searcherTab = TabGroupManager.getInstance().getCurrentTabGroup().getCurrentTab();
                 if (searcherTab instanceof WebViewTab) {
                     WebViewTab webViewTab = (WebViewTab) searcherTab;
                     webViewTab.getView().findNext(true);
@@ -796,7 +799,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 break;
             case R.id.close_find:
                 showFindControlView(false);
-                searcherTab = tabManager.getCurrentTabGroup().getCurrentTab();
+                searcherTab = TabGroupManager.getInstance().getCurrentTabGroup().getCurrentTab();
                 if (searcherTab instanceof WebViewTab) {
                     WebViewTab webViewTab = (WebViewTab) searcherTab;
                     webViewTab.getView().clearMatches();
@@ -834,7 +837,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     public void refreshProgress(WebViewTab webViewTab, int progress) {
-        if (tabManager.getCurrentTabGroup().getCurrentTab() == webViewTab) {
+        if (TabGroupManager.getInstance().getCurrentTabGroup().getCurrentTab() == webViewTab) {
             progressBar.setProgress(progress);
             if (progress == 100) {
                 progressBar.post(() -> progressBar.setVisibility(View.INVISIBLE));

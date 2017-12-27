@@ -5,7 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 
 import peter.util.searcher.activity.MainActivity;
-import peter.util.searcher.bean.TabBean;
+import peter.util.searcher.db.dao.TabData;
 
 /**
  *
@@ -32,8 +32,8 @@ public abstract class LocalViewTab extends SearcherTab{
     public abstract String getUrl();
 
     @Override
-    public final LocalViewTab create(TabBean bean) {
-        if(!TextUtils.isEmpty(bean.url)) {
+    public final LocalViewTab create(TabData tabData) {
+        if(!TextUtils.isEmpty(tabData.getUrl())) {
             if(mView == null) {
                 int viewResId = onCreateViewResId();
                 LayoutInflater factory = LayoutInflater.from(mainActivity);
@@ -44,7 +44,7 @@ public abstract class LocalViewTab extends SearcherTab{
         return this;
     }
 
-    public void loadUrl(TabBean bean) {
+    public void loadUrl(TabData bean) {
         mainActivity.setCurrentView(mView);
     }
 
@@ -72,7 +72,7 @@ public abstract class LocalViewTab extends SearcherTab{
 
     @Override
     public String getHost() {
-        return getTitle();
+        return "";
     }
 
 

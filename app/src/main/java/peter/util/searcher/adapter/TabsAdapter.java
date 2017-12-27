@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import peter.util.searcher.R;
+import peter.util.searcher.TabGroupManager;
 import peter.util.searcher.activity.MainActivity;
 import peter.util.searcher.tab.TabGroup;
 
@@ -22,7 +23,7 @@ public class TabsAdapter extends BaseAdapter {
 
     public boolean update(MainActivity activity) {
         mainActivity = activity;
-        mList = new ArrayList<>(mainActivity.getTabManager().getList());;
+        mList = new ArrayList<>(TabGroupManager.getInstance().getList());
         notifyDataSetChanged();
         return true;
     }
@@ -64,7 +65,7 @@ public class TabsAdapter extends BaseAdapter {
 
         TabGroup tabGroup = getItem(position);
         if (tabGroup != null) {
-            if (mainActivity.getTabManager().getCurrentTabGroup() == tabGroup) {
+            if (TabGroupManager.getInstance().getCurrentTabGroup() == tabGroup) {
                 convertView.setActivated(true);
             } else {
                 convertView.setActivated(false);

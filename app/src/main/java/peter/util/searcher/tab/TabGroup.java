@@ -6,7 +6,7 @@ import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 
 import peter.util.searcher.activity.MainActivity;
-import peter.util.searcher.bean.TabBean;
+import peter.util.searcher.db.dao.TabData;
 
 /**
  * 标签组
@@ -29,36 +29,36 @@ public class TabGroup extends SearcherTab {
 
     @Override
     public View getView() {
-        return null;
+        return getCurrentTab().getView();
     }
 
     public String getTitle() {
-        return null;
+        return getCurrentTab().getTitle();
     }
 
     @Override
     public String getHost() {
-        return null;
+        return getCurrentTab().getHost();
     }
 
     public String getUrl() {
-        return null;
+        return getCurrentTab().getUrl();
     }
 
     @Override
-    public TabGroup create(TabBean bean) {
+    public TabGroup create(TabData tabData) {
         SearcherTab currentTab = getCurrentTab();
         if (currentTab == null) {//head tab
-            currentTab = newTab(bean);
+            currentTab = newTab(tabData);
             tabArrayList.add(currentTab);
             mCurrentTabIndex = tabArrayList.size() - 1;
         } else {//body tab
-            if (bean.url.startsWith(LOCAL_SCHEMA) || //local url
+            if (tabData.getUrl().startsWith(LOCAL_SCHEMA) || //local url
                     currentTab instanceof LocalViewTab) {//current local tab
-                if (currentTab.getUrl().equals(bean.url)) {//same local url
+                if (currentTab.getUrl().equals(tabData.getUrl())) {//same local url
                     return this;
                 }
-                currentTab = newTab(bean);
+                currentTab = newTab(tabData);
                 int index = mCurrentTabIndex + 1;
                 tabArrayList.add(index, currentTab);
                 removeTabFromIndexToEnd(index + 1);
@@ -78,16 +78,16 @@ public class TabGroup extends SearcherTab {
 
     @Override
     public String getSearchWord() {
-        return null;
+        return getCurrentTab().getSearchWord();
     }
 
     @Override
     public int getPageNo() {
-        return 0;
+        return getCurrentTab().getPageNo();
     }
 
-    public void loadUrl(TabBean bean) {
-        getCurrentTab().loadUrl(bean);
+    public void loadUrl(TabData tabData) {
+        getCurrentTab().loadUrl(tabData);
         mainActivity.refreshTitle();
     }
 
@@ -114,29 +114,24 @@ public class TabGroup extends SearcherTab {
         return tabArrayList.contains(tab);
     }
 
-    private SearcherTab newTab(TabBean bean) {
-        if (bean.url.startsWith(LOCAL_SCHEMA)) {
-            return newLocalTab(bean).create(bean);
+    private SearcherTab newTab(TabData tabData) {
+        if (tabData.getUrl().startsWith(LOCAL_SCHEMA)) {
+            return newLocalTab(tabData).create(tabData);
         } else {
-            return new WebViewTab(mainActivity).create(bean);
+            return new WebViewTab(mainActivity).create(tabData);
         }
     }
 
     public void onResume() {
-        for (SearcherTab searcherTab : tabArrayList) {
-            searcherTab.onResume();
-        }
+        getCurrentTab().onResume();
     }
 
     public void onPause() {
-        for (SearcherTab searcherTab : tabArrayList) {
-            searcherTab.onPause();
-        }
+        getCurrentTab().onPause();
     }
 
-
-    private LocalViewTab newLocalTab(TabBean bean) {
-        Class clazz = mainActivity.getRouterClass(bean.url);
+    private LocalViewTab newLocalTab(TabData bean) {
+        Class clazz = mainActivity.getRouterClass(bean.getUrl());
         LocalViewTab tab = null;
         try {
             @SuppressWarnings("unchecked")
@@ -151,18 +146,11 @@ public class TabGroup extends SearcherTab {
     public void setCurrentTab(int index) {
         mCurrentTabIndex = index;
         SearcherTab tab = tabArrayList.get(index);
-        tab.loadUrl(new TabBean(tab.getSearchWord(), tab.getUrl()));
-        checkReloadCurrentTab();
-    }
-
-    public void checkReloadCurrentTab() {
-        SearcherTab tab = getCurrentTab();
-        if (tab instanceof WebViewTab) {
-            WebViewTab webViewTab = (WebViewTab) tab;
-            if (webViewTab.getView().getProgress() != 100 || webViewTab.getView().getContentHeight() == 0) {
-                webViewTab.reload();
-            }
-        }
+        TabData tabData = new TabData();
+        tabData.setTitle(tab.getSearchWord());
+        tabData.setUrl(tab.getUrl());
+        tab.loadUrl(tabData);
+        reload();
     }
 
     public SearcherTab getCurrentTab() {
@@ -174,11 +162,17 @@ public class TabGroup extends SearcherTab {
     }
 
     public void reload() {
-        setCurrentTab(mCurrentTabIndex);
+        final SearcherTab tab = getCurrentTab();
+        if (tab instanceof WebViewTab) {
+            WebViewTab webViewTab = (WebViewTab) tab;
+            if (webViewTab.getView().getProgress() != 100 || webViewTab.getView().getContentHeight() == 0) {
+                webViewTab.reload();
+            }
+        }
     }
 
     public boolean canGoBack() {
-        peter.util.searcher.tab.Tab currentTab = getCurrentTab();
+        final SearcherTab currentTab = getCurrentTab();
         if (currentTab instanceof LocalViewTab) {
             return mCurrentTabIndex > 0;
         } else {
@@ -187,7 +181,7 @@ public class TabGroup extends SearcherTab {
     }
 
     public void goBack() {
-        peter.util.searcher.tab.Tab currentTab = getCurrentTab();
+        final SearcherTab currentTab = getCurrentTab();
         if (currentTab instanceof LocalViewTab) {
             setCurrentTab(mCurrentTabIndex - 1);
         } else {
@@ -202,7 +196,7 @@ public class TabGroup extends SearcherTab {
     }
 
     public boolean canGoForward() {
-        peter.util.searcher.tab.Tab currentTab = getCurrentTab();
+        final SearcherTab currentTab = getCurrentTab();
         if (currentTab instanceof WebViewTab) {
             boolean webTabCanGoForward = currentTab.canGoForward();
             if (webTabCanGoForward) {
@@ -213,7 +207,7 @@ public class TabGroup extends SearcherTab {
     }
 
     public void goForward() {
-        peter.util.searcher.tab.Tab currentTab = getCurrentTab();
+        final SearcherTab currentTab = getCurrentTab();
         if (currentTab instanceof WebViewTab) {
             boolean webTabCanGoForward = currentTab.canGoForward();
             if (webTabCanGoForward) {

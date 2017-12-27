@@ -22,10 +22,11 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import peter.util.searcher.R;
-import peter.util.searcher.bean.TabBean;
+import peter.util.searcher.db.dao.TabData;
 import peter.util.searcher.fragment.EngineInfoViewPagerFragment;
 import peter.util.searcher.fragment.OperateUrlFragment;
 import peter.util.searcher.fragment.RecentSearchFragment;
+import peter.util.searcher.tab.Tab;
 import peter.util.searcher.utils.UrlUtils;
 
 /**
@@ -44,7 +45,7 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
     public static final String ENGINE_LIST = "engine_list";
     public static final String OPERATE_URL = "operate_url";
     private String currentFragmentTag = "";
-    private TabBean bean;
+    private TabData bean;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,9 +61,9 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
     }
 
     private void checkData(Intent intent) {
-        this.bean = intent.getParcelableExtra(NAME_BEAN);
-        if (!TextUtils.isEmpty(bean.name) && !bean.name.contains(peter.util.searcher.tab.Tab.LOCAL_SCHEMA)) {
-            setSearchWord(bean.name);
+        this.bean = (TabData) intent.getSerializableExtra(NAME_BEAN);
+        if (!TextUtils.isEmpty(bean.getTitle()) && !bean.getTitle().contains(Tab.LOCAL_SCHEMA)) {
+            setSearchWord(bean.getTitle());
         }
     }
 
@@ -158,13 +159,17 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
         View view = this.getCurrentFocus();
         if (view != null) {
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            if(imm != null) {
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
         }
     }
 
     public void openIME() {
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.showSoftInput(search, InputMethodManager.SHOW_IMPLICIT);
+        if(imm != null) {
+            imm.showSoftInput(search, InputMethodManager.SHOW_IMPLICIT);
+        }
     }
 
     public void setEngineFragment(String tag) {
@@ -185,7 +190,7 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
 
             if (fragment != null) {
                 Bundle bundle = new Bundle();
-                bundle.putParcelable(NAME_BEAN, bean);
+                bundle.putSerializable(NAME_BEAN, bean);
                 fragment.setArguments(bundle);
                 FragmentManager fragmentManager = getFragmentManager();
                 FragmentTransaction ft = fragmentManager.beginTransaction();

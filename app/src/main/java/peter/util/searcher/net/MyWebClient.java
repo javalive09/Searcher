@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 import peter.util.searcher.R;
+import peter.util.searcher.TabGroupManager;
 import peter.util.searcher.tab.SearcherTab;
 import peter.util.searcher.tab.WebViewTab;
 import peter.util.searcher.utils.Constants;
@@ -165,7 +166,7 @@ public class MyWebClient extends WebViewClient {
     }
 
     private boolean shouldOverrideLoading(@NonNull WebView view, @NonNull String url) {
-        SearcherTab tab = webViewTab.getActivity().getTabManager().getCurrentTabGroup().getCurrentTab();
+        SearcherTab tab = TabGroupManager.getInstance().getCurrentTabGroup().getCurrentTab();
         if (tab instanceof WebViewTab) {
             WebViewTab webViewTab = (WebViewTab) tab;
             Map<String, String> headers = webViewTab.getRequestHeaders();
