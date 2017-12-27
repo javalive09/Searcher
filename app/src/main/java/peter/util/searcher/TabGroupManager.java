@@ -120,6 +120,18 @@ public class TabGroupManager {
         }
     }
 
+//    public void revertGroup(TabGroup tabGroup, int position) {
+//        tabGroupArrayList.add(position, tabGroup);
+//        if(position > mCurrentTabGroupIndex) {
+//
+//        }else if(position < mCurrentTabGroupIndex) {
+//            mCurrentTabGroupIndex = mCurrentTabGroupIndex + 1;
+//        } else if(mCurrentTabGroupIndex == position) {
+//            mCurrentTabGroupIndex = position;
+//        }
+//    }
+
+
     public void removeIndex(TabGroup tabGroup) {
         if (tabGroupArrayList.size() > 0) {
             tabGroupArrayList.remove(tabGroup);

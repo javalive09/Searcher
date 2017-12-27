@@ -132,5 +132,8 @@
         <item>http://3g.163.com/touch/news/</item>
     </string-array>
 
+    <string name="item_swipe_dismissed">已删除</string>
+    <string name="item_swipe_undo">撤销</string>
+
 
 </resources>

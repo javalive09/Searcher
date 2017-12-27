@@ -72,7 +72,7 @@ public abstract class LocalViewTab extends SearcherTab{
 
     @Override
     public String getHost() {
-        return "";
+        return LOCAL_HOST;
     }
 
 

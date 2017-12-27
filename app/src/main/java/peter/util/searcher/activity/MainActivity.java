@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -22,7 +21,6 @@ import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -31,7 +29,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebView;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -47,7 +44,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import peter.util.searcher.SettingsManager;
 import peter.util.searcher.TabGroupManager;
-import peter.util.searcher.adapter.TabsAdapter;
 import peter.util.searcher.R;
 import peter.util.searcher.db.DaoManager;
 import peter.util.searcher.db.dao.TabData;
@@ -75,13 +71,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     @BindView(R.id.webView_container)
     WebViewContainer webViewContainer;
-    @BindView(R.id.drawer_layout)
-    DrawerLayout drawerLayout;
-    @BindView(R.id.tabs)
-    ListView tabsListView;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-    @BindView(R.id.top_txt)
+    @BindView(R.id.top_search)
     EditText topText;
     @BindView(R.id.progress)
     ProgressBar progressBar;
@@ -99,7 +91,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private PopupMenu popup;
     private TextDrawable tabsDrawable;
     private final HashMap<String, Class> router = new HashMap<>();
-    private TabsAdapter tabsAdapter;
     private boolean realBack = false;
     private final Handler mHandler = new Handler(Looper.getMainLooper());
     private static final String BUNDLE_KEY_SIGN = "&";
@@ -129,19 +120,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     private void initTopBar() {
-        topText.setOnTouchListener((v, event) -> {
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-                    touchSearch();
-                    break;
-            }
-            return true;
-        });
         setSupportActionBar(toolbar);
         tabsDrawable = new TextDrawable(MainActivity.this);
         toolbar.setNavigationIcon(tabsDrawable);
         toolbar.setNavigationContentDescription(R.string.app_name);
-        toolbar.setNavigationOnClickListener(v -> drawerLayout.openDrawer(Gravity.START));
+        toolbar.setNavigationOnClickListener(v -> startActivity(new Intent(MainActivity.this, TabsActivity.class)));
         //long click mNavButtonView
         for (int i = 0; i < toolbar.getChildCount(); i++) {
             if (toolbar.getChildAt(i) instanceof ImageButton) {
@@ -163,28 +146,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     private void initTabs() {
-        tabsAdapter = new TabsAdapter();
-        tabsListView.setAdapter(tabsAdapter);
-        drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
-            @Override
-            public void onDrawerSlide(View drawerView, float slideOffset) {
-            }
-
-            @Override
-            public void onDrawerOpened(View drawerView) {
-                updateTabs();
-            }
-
-            @Override
-            public void onDrawerClosed(View drawerView) {
-                updateTabs();
-            }
-
-            @Override
-            public void onDrawerStateChanged(int newState) {
-            }
-        });
-        updateTabs();
         restoreLostTabs();
     }
 
@@ -220,7 +181,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         webViewTab.getView().requestFocusNodeHref(msg);
     }
 
-    private Handler webViewHandler = new Handler(Looper.getMainLooper()) {
+    private final Handler webViewHandler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
@@ -506,13 +467,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         startActivity(intent);
     }
 
-    public void updateTabs() {
-        if (tabsAdapter != null) {
-            tabsAdapter.update(MainActivity.this);
-            tabsListView.setSelection(TabGroupManager.getInstance().getCurrentTabIndex());
-        }
-    }
-
     private void installLocalTabRouter() {
         router.put(peter.util.searcher.tab.Tab.URL_HOME, HomeTab.class);
     }
@@ -619,11 +573,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if ((keyCode == KeyEvent.KEYCODE_BACK)) {
-            if (drawerLayout.isDrawerOpen(Gravity.START)) {
-                drawerLayout.closeDrawers();
-                return true;
-            }
-
             if (findControlView.getVisibility() == View.VISIBLE) {
                 showFindControlView(false);
                 return true;
@@ -655,7 +604,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     protected void onResume() {
         super.onResume();
         TabGroupManager.getInstance().resumeTabGroupExclude(null);
-        updateTabs();
         MobclickAgent.onResume(this);
     }
 
@@ -765,23 +713,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.add_tab:
-                loadHome();
-                drawerLayout.closeDrawers();
-                break;
-            case R.id.close_tab:
-                if (TabGroupManager.getInstance().getTabGroupCount() == 1) {
-                    exit();
-                } else {
-                    TabGroup tabGroup = (TabGroup) v.getTag();
-                    TabGroupManager.getInstance().removeTabGroup(tabGroup);
-                    updateTabs();
-                }
-                break;
-            case R.id.multi_window_item:
-                TabGroup tabGroup = (TabGroup) v.getTag(R.id.multi_window_item_tag);
-                TabGroupManager.getInstance().switchTabGroup(tabGroup);
-                drawerLayout.closeDrawers();
+            case R.id.top_search:
+                touchSearch();
                 break;
             case R.id.up_find:
                 SearcherTab searcherTab = TabGroupManager.getInstance().getCurrentTabGroup().getCurrentTab();

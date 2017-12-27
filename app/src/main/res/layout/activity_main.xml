@@ -1,90 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/drawer_layout"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true">
+    tools:context=".activity.MainActivity">
 
-    <RelativeLayout
+    <FrameLayout
+        android:id="@+id/top_bar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
-        <FrameLayout
-            android:id="@+id/top_bar"
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:minHeight="?actionBarSize"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.ActionBar">
 
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar"
+            <EditText
+                android:id="@+id/top_search"
+                style="@style/main_toolbar_edit_text_style"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/colorPrimary"
-                android:focusable="true"
-                android:focusableInTouchMode="true"
-                android:minHeight="?actionBarSize"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.ActionBar">
+                android:layout_height="match_parent"
+                android:cursorVisible="false"
+                android:drawableStart="@drawable/ic_search"
+                android:hint="@string/search_hint"
+                android:imeOptions="actionDone"
+                android:onClick="onClick"
+                android:labelFor="@+id/top_txt" />
 
-                <EditText
-                    android:id="@+id/top_txt"
-                    style="@style/toolbar_edit_text_style"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:cursorVisible="false"
-                    android:drawableStart="@drawable/ic_search"
-                    android:hint="@string/search_hint"
-                    android:imeOptions="actionDone"
-                    android:labelFor="@+id/top_txt" />
+        </android.support.v7.widget.Toolbar>
 
-            </android.support.v7.widget.Toolbar>
-
-            <include
-                layout="@layout/view_find_control"
-                android:visibility="gone"
-                android:layout_width="match_parent"
-                android:layout_height="?android:attr/actionBarSize" />
-
-        </FrameLayout>
-
-        <peter.util.searcher.view.WebViewContainer
-            android:id="@+id/webView_container"
+        <include
+            layout="@layout/view_find_control"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@id/top_bar">
+            android:layout_height="?android:attr/actionBarSize"
+            android:visibility="gone" />
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+    </FrameLayout>
 
-            <View
-                android:id="@+id/line"
-                android:layout_width="match_parent"
-                android:layout_height="1px"
-                android:background="@color/tint_color" />
-
-            <ProgressBar
-                android:id="@+id/progress"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="match_parent"
-                android:layout_height="3dp"
-                android:layout_below="@id/toolbar"
-                android:max="100"
-                android:progressTint="@color/progress_color"
-                android:visibility="invisible" />
-
-            <View
-                android:id="@+id/menu_anchor"
-                android:layout_width="1px"
-                android:layout_height="1px"
-                android:background="@android:color/transparent" />
-        </peter.util.searcher.view.WebViewContainer>
-
-    </RelativeLayout>
-
-    <include
-        layout="@layout/layout_tabs"
-        android:layout_width="300dp"
+    <peter.util.searcher.view.WebViewContainer
+        android:id="@+id/webView_container"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="start" />
-</android.support.v4.widget.DrawerLayout>
+        android:layout_below="@id/top_bar">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <View
+            android:id="@+id/line"
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/tint_color" />
+
+        <ProgressBar
+            android:id="@+id/progress"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:layout_below="@id/toolbar"
+            android:max="100"
+            android:progressTint="@color/progress_color"
+            android:visibility="invisible" />
+
+        <View
+            android:id="@+id/menu_anchor"
+            android:layout_width="1px"
+            android:layout_height="1px"
+            android:background="@android:color/transparent" />
+    </peter.util.searcher.view.WebViewContainer>
+
+</RelativeLayout>
+

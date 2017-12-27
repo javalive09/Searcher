@@ -49,7 +49,6 @@ public abstract class SearcherTab implements Tab {
 
     public void setIconDrawable(Drawable iconDrawable) {
         this.iconDrawable = iconDrawable;
-        mainActivity.updateTabs();
     }
 
     public abstract String getTitle();

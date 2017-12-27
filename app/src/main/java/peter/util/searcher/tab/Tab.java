@@ -10,7 +10,8 @@ import peter.util.searcher.db.dao.TabData;
 
 public interface Tab {
 
-    String LOCAL_SCHEMA = "local://";
+    String LOCAL_HOST = "local";
+    String LOCAL_SCHEMA = LOCAL_HOST + "://";
     String URL_HOME = LOCAL_SCHEMA + "home";
     String ACTION_NEW_WINDOW = "new_window";
 

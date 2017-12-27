@@ -47,8 +47,4 @@ public class HomeTab extends LocalViewTab {
         return URL_HOME;
     }
 
-    public String getHost() {
-        return "";
-    }
-
 }

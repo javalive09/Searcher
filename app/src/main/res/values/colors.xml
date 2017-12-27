@@ -16,5 +16,18 @@
     <color name="disable_color">#a7a7a7</color>
     <color name="tab_color">#ffffff</color>
     <color name="tab_line">#5a5a5a</color>
+    <color name="tabs_background">#EEEEEE</color>
+    <color name="gray_light">#CCCCCC</color>
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
+
+    <!-- Google Logo Color -->
+    <color name="google_blue">#4285F4</color>
+    <color name="google_green">#34A853</color>
+    <color name="google_yellow">#FBBC05</color>
+    <color name="google_red">#EA4335</color>
+    <color name="gray">#999999</color>
+
+    <color name="accent_tint">#66159588</color>
 
 </resources>

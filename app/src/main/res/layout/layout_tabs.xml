@@ -64,5 +64,4 @@
         android:scrollbarStyle="outsideInset"
         android:padding="10dp" />
 
-
 </LinearLayout>
