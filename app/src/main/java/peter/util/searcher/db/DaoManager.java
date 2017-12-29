@@ -8,6 +8,7 @@ import android.util.Log;
 import android.util.SparseArray;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import io.reactivex.Observable;
@@ -23,6 +24,7 @@ import peter.util.searcher.db.dao.HistorySearchDao;
 import peter.util.searcher.db.dao.TabData;
 import peter.util.searcher.tab.HomeTab;
 import peter.util.searcher.tab.SearcherTab;
+import peter.util.searcher.tab.Tab;
 import peter.util.searcher.tab.TabGroup;
 import peter.util.searcher.tab.WebViewTab;
 import peter.util.searcher.utils.UrlUtils;
@@ -181,18 +183,21 @@ public class DaoManager {
     }
 
     public void saveTabs() {
-        if (cacheGroupCount > 0) {//party load
-            List<TabGroup> tabGroupList = TabGroupManager.getInstance().getList();
-            for (int groupIndex = 0, groupSize = tabGroupList.size(); groupIndex < groupSize; groupIndex++) {
-                TabGroup tabGroup = tabGroupList.get(groupIndex);
-                ArrayList<SearcherTab> tabs = tabGroup.getTabs();
-                for (int tabIndex = 0, tabSize = tabs.size(); tabIndex < tabSize; tabIndex++) {
-                    SearcherTab tab = tabs.get(tabIndex);
-                    if (!TextUtils.isEmpty(tab.getUrl())) {
-                        TabData tabData = tab.getTabData();
-                        Bundle state = new Bundle(ClassLoader.getSystemClassLoader());
-                        if (tab instanceof WebViewTab) {
-                            WebViewTab webViewTab = (WebViewTab) tab;
+        mDaoSession.getTabDataDao().deleteAll();
+        List<TabData> saveList = new LinkedList<>();
+        List<TabGroup> tabGroupList = TabGroupManager.getInstance().getList();
+        final TabGroup currentTabGroup = TabGroupManager.getInstance().getCurrentTabGroup();
+        for (int groupIndex = 0, groupSize = tabGroupList.size(); groupIndex < groupSize; groupIndex++) {
+            TabGroup tabGroup = tabGroupList.get(groupIndex);
+            ArrayList<SearcherTab> tabs = tabGroup.getTabs();
+            for (int tabIndex = 0, tabSize = tabs.size(); tabIndex < tabSize; tabIndex++) {
+                SearcherTab tab = tabs.get(tabIndex);
+                if (!TextUtils.isEmpty(tab.getUrl())) {
+                    TabData tabData = tab.getTabData();
+                    if (tab instanceof WebViewTab) {
+                        WebViewTab webViewTab = (WebViewTab) tab;
+                        if (webViewTab.isInit()) {
+                            Bundle state = new Bundle(ClassLoader.getSystemClassLoader());
                             webViewTab.getView().saveState(state);
                             if (state.size() > 0) {
                                 Parcel parcel = Parcel.obtain();
@@ -200,125 +205,34 @@ public class DaoManager {
                                 tabData.setBundle(parcel.marshall());
                                 parcel.recycle();
                             }
-                        }
-                        tabData.setUrl(tab.getUrl());
-                        tabData.setTitle(tab.getTitle());
-                        tabData.setTabCount(tabSize);
-                        tabData.setTabGroupCount(cacheGroupCount);//size
-                        tabData.setIsCurrentTab(tabGroup.getCurrentTab() == tab);
-                        tabData.setIsCurrentTabGroup(true);
-                        tabData.setGroupTabIndex(currentGroupIndex);
-                        tabData.setTabIndex(tabIndex);
-                        mDaoSession.getTabDataDao().insertOrReplace(tabData);
-                    }
-                }
-            }
-        } else {//all load
-            mDaoSession.getTabDataDao().getSession().runInTx(() -> {
-//                mDaoSession.getTabDataDao().deleteAll();
-                List<TabGroup> tabGroupList = TabGroupManager.getInstance().getList();
-                final TabGroup currentTabGroup = TabGroupManager.getInstance().getCurrentTabGroup();
-                for (int groupIndex = 0, groupSize = tabGroupList.size(); groupIndex < groupSize; groupIndex++) {
-                    TabGroup tabGroup = tabGroupList.get(groupIndex);
-                    ArrayList<SearcherTab> tabs = tabGroup.getTabs();
-                    for (int tabIndex = 0, tabSize = tabs.size(); tabIndex < tabSize; tabIndex++) {
-                        SearcherTab tab = tabs.get(tabIndex);
-                        if (!TextUtils.isEmpty(tab.getUrl())) {
-                            TabData tabData = tab.getTabData();
-                            Bundle state = new Bundle(ClassLoader.getSystemClassLoader());
-                            if (tab instanceof WebViewTab) {
-                                WebViewTab webViewTab = (WebViewTab) tab;
-                                webViewTab.getView().saveState(state);
-                                if (state.size() > 0) {
-                                    Parcel parcel = Parcel.obtain();
-                                    parcel.writeBundle(state);
-                                    tabData.setBundle(parcel.marshall());
-                                    parcel.recycle();
-                                }
-                            }else if(tab instanceof HomeTab) {
-                                tabData.setId(null);
-                            }
                             tabData.setUrl(tab.getUrl());
                             tabData.setTitle(tab.getTitle());
-                            tabData.setTabCount(tabSize);
-                            tabData.setTabGroupCount(groupSize);
-                            tabData.setIsCurrentTab(tabGroup.getCurrentTab() == tab);
-                            tabData.setIsCurrentTabGroup(tabGroup == currentTabGroup);
-                            tabData.setGroupTabIndex(groupIndex);
-                            tabData.setTabIndex(tabIndex);
-                            Log.e("peter", "id =" + tabData.getId());
-                            mDaoSession.getTabDataDao().insertOrReplace(tabData);
                         }
+                    }else if(tab instanceof HomeTab) {
+                        tabData = new TabData();
+                        tabData.setUrl(TabGroupManager.getInstance().getHomeTab().getUrl());
+                        tabData.setTitle(TabGroupManager.getInstance().getHomeTab().getTitle());
                     }
-                }
-            });
-        }
-    }
-
-    private SparseArray<TabData[]> groupsArray = null;
-    private int cacheGroupCount = -1;
-    private int currentGroupIndex = -1;
-    private int currentTabIndex = -1;
-
-    public void restoreCurrentTabs() {
-        List<TabData> tabDataList = mDaoSession.getTabDataDao().queryBuilder().list();
-        if (tabDataList.size() > 0) {
-            final TabData firstTabData = tabDataList.get(0);
-            cacheGroupCount = firstTabData.getTabGroupCount();
-            groupsArray = new SparseArray<>(cacheGroupCount);
-            for (TabData tabData : tabDataList) {
-                int groupTabIndex = tabData.getGroupTabIndex();
-
-                if (tabData.getIsCurrentTabGroup()) {
-                    currentGroupIndex = tabData.getGroupTabIndex();
-                    if (currentTabIndex == -1 && tabData.getIsCurrentTab()) {
-                        currentTabIndex = tabData.getTabIndex();
-                    }
-                }
-
-                if (groupsArray.indexOfKey(groupTabIndex) < 0) {//no key
-                    TabData[] tabDataArray = new TabData[tabData.getTabCount()];
-                    tabDataArray[tabData.getTabIndex()] = tabData;
-                    groupsArray.put(tabData.getGroupTabIndex(), tabDataArray);
-                } else {
-                    TabData[] tabDataArray = groupsArray.get(groupTabIndex);
-                    tabDataArray[tabData.getTabIndex()] = tabData;
+                    tabData.setId(null);
+                    tabData.setTabCount(tabSize);
+                    tabData.setTabGroupCount(groupSize);
+                    tabData.setIsCurrentTab(tabGroup.getCurrentTab() == tab);
+                    tabData.setIsCurrentTabGroup(tabGroup == currentTabGroup);
+                    tabData.setGroupTabIndex(groupIndex);
+                    tabData.setTabIndex(tabIndex);
+                    saveList.add(tabData);
                 }
             }
-
-            //load current group
-            TabData[] tabData = groupsArray.get(currentGroupIndex);
-            for (int index = 0; index < tabData.length; index++) {
-                TabGroupManager.getInstance().createTabGroup(tabData[index], index == 0);
-            }
-
-            TabGroupManager.getInstance().restoreTabPos(0, currentTabIndex);
         }
+        mDaoSession.getTabDataDao().insertInTx(saveList);
     }
 
     public void restoreAllTabs() {
-        if(cacheGroupCount > 0) {
-            TabGroupManager.getInstance().reset();
-            for (int groupIndex = 0; groupIndex < cacheGroupCount; groupIndex++) {
-                TabData[] tabData = groupsArray.get(groupIndex);
-                for (int index = 0; index < tabData.length; index++) {
-                    TabGroupManager.getInstance().createTabGroup(tabData[index], index == 0);
-                }
-            }
-            TabGroupManager.getInstance().restoreTabPos(currentGroupIndex, currentTabIndex);
-            groupsArray = null;
-            currentGroupIndex = -1;
-            currentTabIndex = -1;
-            cacheGroupCount = -1;
-        }
-    }
-
-    public void realRestoreAllTabs() {
         List<TabData> tabDataList = mDaoSession.getTabDataDao().queryBuilder().list();
         if (tabDataList.size() > 0) {
             final TabData firstTabData = tabDataList.get(0);
             int cacheGroupCount = firstTabData.getTabGroupCount();
-            groupsArray = new SparseArray<>(cacheGroupCount);
+            SparseArray<TabData[]> groupsArray = new SparseArray<>(cacheGroupCount);
             int currentGroupIndex = -1;
             int currentTabIndex = -1;
             for (TabData tabData : tabDataList) {
@@ -341,7 +255,6 @@ public class DaoManager {
                 }
             }
 
-            TabGroupManager.getInstance().reset();
             for (int groupIndex = 0; groupIndex < cacheGroupCount; groupIndex++) {
                 TabData[] tabData = groupsArray.get(groupIndex);
                 for (int index = 0; index < tabData.length; index++) {
@@ -352,12 +265,9 @@ public class DaoManager {
         }
     }
 
-    public int getCacheGroupCount() {
-        return cacheGroupCount;
-    }
-
     public void clear() {
         singleton = null;
+        mDaoSession.clear();
     }
 
 

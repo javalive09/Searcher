@@ -119,7 +119,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         TabGroupManager.getInstance().init(this);
         installLocalTabRouter();
         initTopBar();
-        DaoManager.getInstance().realRestoreAllTabs();
+        DaoManager.getInstance().restoreAllTabs();
         checkIntentData(getIntent());
         UpdateController.instance().autoCheckVersion(MainActivity.this);
     }
@@ -298,11 +298,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 sendIntent.putExtra(Intent.EXTRA_TEXT, url);
                 sendIntent.setType("text/plain");
                 startActivity(Intent.createChooser(sendIntent, getString(R.string.share_link_title)));
-
-                String searchWord = "a";
-                for(int i = 0; i< 99; i++) {
-                    flushUrl(searchWord + i);
-                }
                 break;
             case R.id.action_favorite:
                 url = TabGroupManager.getInstance().getCurrentTabGroup().getCurrentTab().getUrl();
@@ -343,7 +338,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 startActivity(intent);
                 break;
             case R.id.action_setting:
-                startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+//                startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+
+                String searchWord = "a";
+                for (int i = 0; i < 90; i++) {
+                    flushUrl(searchWord + i);
+                }
+
                 break;
             case R.id.action_exit:
                 exit();
@@ -599,16 +600,18 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     protected void onPause() {
         super.onPause();
+//        Debug.startMethodTracing("savetabs");
         TabGroupManager.getInstance().getCurrentTabGroup().onPause();
         DaoManager.getInstance().saveTabs();
+//        Debug.stopMethodTracing();
+
 //        MobclickAgent.onPause(this);
     }
 
     public void refreshTitle() {
         String host = TabGroupManager.getInstance().getCurrentTabGroup().getCurrentTab().getHost();
         refreshTopText(host);
-        int daoTabGroupCount = DaoManager.getInstance().getCacheGroupCount();
-        int count = daoTabGroupCount > 0 ? daoTabGroupCount : TabGroupManager.getInstance().getTabGroupCount();
+        int count = TabGroupManager.getInstance().getTabGroupCount();
         Log.e("refreshTitle", "count = " + count);
         tabsDrawable.setText(count);
     }
@@ -698,4 +701,5 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         TabGroupManager.getInstance().clear();
         DaoManager.getInstance().clear();
     }
+
 }

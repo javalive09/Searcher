@@ -48,37 +48,29 @@ public class TabsActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_tabs_loading);
+        //        Debug.startMethodTracing("loading");
+        setContentView(R.layout.activity_tabs);
+        ButterKnife.bind(TabsActivity.this);
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true); // this sets the button to the back icon
+        }
+        toolbar.setNavigationOnClickListener(v -> finish());
 
-//        Debug.startMethodTracing("loading");
+        final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(TabsActivity.this);
+        list.setLayoutManager(linearLayoutManager);
 
-        MessageQueue.IdleHandler handler = () -> {
-            setContentView(R.layout.activity_tabs);
-            ButterKnife.bind(TabsActivity.this);
-            setSupportActionBar(toolbar);
-            ActionBar actionBar = getSupportActionBar();
-            if (actionBar != null) {
-                actionBar.setDisplayHomeAsUpEnabled(true); // this sets the button to the back icon
-            }
-            toolbar.setNavigationOnClickListener(v -> finish());
+        adapter = new RecyclerViewAdapter(TabsActivity.this);
+        list.setAdapter(adapter);
 
-            final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(TabsActivity.this);
-            list.setLayoutManager(linearLayoutManager);
+        refreshAdapter();
 
-            adapter = new RecyclerViewAdapter(TabsActivity.this);
-            list.setAdapter(adapter);
-
-            refreshAdapter();
-
-            ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(adapter);
-            ItemTouchHelper mItemTouchHelper = new ItemTouchHelper(callback);
-            mItemTouchHelper.attachToRecyclerView(list);
+        ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(adapter);
+        ItemTouchHelper mItemTouchHelper = new ItemTouchHelper(callback);
+        mItemTouchHelper.attachToRecyclerView(list);
 
 //            Debug.stopMethodTracing();
-            return false;
-        };
-        Looper.myQueue().addIdleHandler(handler);
-
     }
 
     @Override

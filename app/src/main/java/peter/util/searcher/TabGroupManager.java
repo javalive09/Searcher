@@ -22,7 +22,7 @@ public class TabGroupManager {
     public static final int MAX_TAB = 99;
     private ArrayList<TabGroup> tabGroupArrayList = new ArrayList<>();
     private MainActivity mainActivity;
-    private int mCurrentTabGroupIndex;
+    private int mCurrentTabGroupIndex = -1;
     private SearcherTab homeTab;
     private static volatile TabGroupManager singleton;
 
@@ -43,11 +43,6 @@ public class TabGroupManager {
 
     public void clear() {
         singleton = null;
-    }
-
-    public void reset() {
-        tabGroupArrayList = new ArrayList<>();
-        mCurrentTabGroupIndex = -1;
     }
 
     private TabGroupManager() {

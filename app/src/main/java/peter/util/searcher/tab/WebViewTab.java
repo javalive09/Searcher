@@ -55,6 +55,10 @@ public class WebViewTab extends SearcherTab {
         return mWebView;
     }
 
+    public boolean isInit() {
+        return mWebView != null;
+    }
+
     @Override
     public void onDestroy() {
         getView().clearHistory();
@@ -92,7 +96,10 @@ public class WebViewTab extends SearcherTab {
     }
 
     public String getUrl() {
-        String url = getView().getUrl();
+        String url = "";
+        if (isInit()) {
+            url = getView().getUrl();
+        }
         if (TextUtils.isEmpty(url)) {
             url = getTabData().getUrl();
         }
@@ -161,9 +168,12 @@ public class WebViewTab extends SearcherTab {
     }
 
     public String getTitle() {
-        String title = getView().getTitle();
+        String title = "";
+        if (isInit()) {
+            title = getView().getTitle();
+        }
         if (TextUtils.isEmpty(title)) {
-            title = getTabData().getTitle();
+            title = getTabData().getTitle();;
         }
         return title;
     }
