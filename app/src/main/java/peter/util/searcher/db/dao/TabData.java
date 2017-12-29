@@ -47,11 +47,13 @@ public class TabData implements Serializable {
 
     private byte[] bundle;
 
-    @Generated(hash = 1291563145)
+    private byte[] icon;
+
+    @Generated(hash = 2036300434)
     public TabData(Long id, int tabCount, int tabGroupCount, long time, int pageNo,
-            int tabIndex, boolean isCurrentTab, boolean isCurrentTabGroup,
-            int groupTabIndex, String searchWord, String url, String title,
-            byte[] bundle) {
+                   int tabIndex, boolean isCurrentTab, boolean isCurrentTabGroup,
+                   int groupTabIndex, String searchWord, String url, String title,
+                   byte[] bundle, byte[] icon) {
         this.id = id;
         this.tabCount = tabCount;
         this.tabGroupCount = tabGroupCount;
@@ -65,6 +67,7 @@ public class TabData implements Serializable {
         this.url = url;
         this.title = title;
         this.bundle = bundle;
+        this.icon = icon;
     }
 
     @Generated(hash = 912424272)
@@ -192,5 +195,13 @@ public class TabData implements Serializable {
                 ", title='" + title + '\'' +
                 ", bundle=" + Arrays.toString(bundle) +
                 '}';
+    }
+
+    public byte[] getIcon() {
+        return this.icon;
+    }
+
+    public void setIcon(byte[] icon) {
+        this.icon = icon;
     }
 }

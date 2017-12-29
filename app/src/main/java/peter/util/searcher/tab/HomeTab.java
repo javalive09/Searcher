@@ -1,5 +1,6 @@
 package peter.util.searcher.tab;
 
+import android.graphics.drawable.Drawable;
 import android.widget.TextView;
 import peter.util.searcher.R;
 import peter.util.searcher.activity.MainActivity;
@@ -35,6 +36,11 @@ public class HomeTab extends LocalViewTab {
     @Override
     public String getSearchWord() {
         return "";
+    }
+
+    @Override
+    public Drawable getIconDrawable() {
+        return mainActivity.getResources().getDrawable(R.drawable.ic_website);
     }
 
     @Override

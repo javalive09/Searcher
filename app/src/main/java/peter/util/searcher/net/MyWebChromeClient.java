@@ -3,7 +3,6 @@ package peter.util.searcher.net;
 import android.Manifest;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaPlayer;
 import android.os.Message;
 import android.support.v4.content.ContextCompat;
@@ -21,13 +20,17 @@ import android.widget.VideoView;
 import com.anthonycr.grant.PermissionsManager;
 import com.anthonycr.grant.PermissionsResultAction;
 
+import io.reactivex.Observable;
+import io.reactivex.schedulers.Schedulers;
 import peter.util.searcher.R;
 import peter.util.searcher.TabGroupManager;
+import peter.util.searcher.db.DaoManager;
 import peter.util.searcher.db.dao.TabData;
 import peter.util.searcher.tab.SearcherTab;
 import peter.util.searcher.tab.Tab;
 import peter.util.searcher.tab.TabGroup;
 import peter.util.searcher.tab.WebViewTab;
+import peter.util.searcher.utils.Utils;
 
 /**
  * webView的配置chromeClient
@@ -65,7 +68,11 @@ public class MyWebChromeClient extends WebChromeClient {
     @Override
     public void onReceivedIcon(WebView view, Bitmap icon) {
         super.onReceivedIcon(view, icon);
-        webViewTab.setIconDrawable(new BitmapDrawable(webViewTab.getActivity().getResources(), icon));
+        Observable.just("onReceivedIcon").observeOn(Schedulers.io()).subscribe(s -> {
+            TabData tabData = webViewTab.getTabData();
+            tabData.setIcon(Utils.Bitemap2Bytes(icon));
+            DaoManager.getInstance().insertTabDataDao(tabData);
+        });
     }
 
     @Override
@@ -229,6 +236,7 @@ public class MyWebChromeClient extends WebChromeClient {
             public void onGranted() {
                 boolean remember = true;
                 String org = origin.length() > 50 ? origin.substring(0, 50) : origin;
+
                 new AlertDialog.Builder(webViewTab.getActivity()).setTitle(R.string.location)
                         .setMessage(org + webViewTab.getActivity().getString(R.string.message_location))
                         .setCancelable(true)

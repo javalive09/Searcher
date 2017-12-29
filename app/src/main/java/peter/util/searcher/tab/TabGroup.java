@@ -1,5 +1,6 @@
 package peter.util.searcher.tab;
 
+import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -33,6 +34,11 @@ public class TabGroup extends SearcherTab {
     @Override
     public View getView() {
         return getCurrentTab().getView();
+    }
+
+    @Override
+    public Drawable getIconDrawable() {
+        return getCurrentTab().getIconDrawable();
     }
 
     public String getTitle() {

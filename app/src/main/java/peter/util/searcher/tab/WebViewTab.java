@@ -1,6 +1,9 @@
 package peter.util.searcher.tab;
 
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcel;
@@ -16,6 +19,7 @@ import java.util.Map;
 
 import io.reactivex.Observable;
 import io.reactivex.schedulers.Schedulers;
+import peter.util.searcher.R;
 import peter.util.searcher.SettingsManager;
 import peter.util.searcher.activity.MainActivity;
 import peter.util.searcher.db.DaoManager;
@@ -24,6 +28,7 @@ import peter.util.searcher.net.MyDownloadListener;
 import peter.util.searcher.net.MyWebChromeClient;
 import peter.util.searcher.net.MyWebClient;
 import peter.util.searcher.utils.Constants;
+import peter.util.searcher.utils.Utils;
 import peter.util.searcher.view.SearchWebView;
 
 /**
@@ -55,12 +60,36 @@ public class WebViewTab extends SearcherTab {
         return mWebView;
     }
 
+    @Override
+    public Drawable getIconDrawable() {
+        Drawable iconDrawable;
+        Bitmap icon = null;
+        if(isInit()) {
+            icon = mWebView.getFavicon();
+        }
+
+        if(icon == null) {
+            TabData tabData = getTabData();
+            byte[] bytes = tabData.getIcon();
+            if(bytes != null) {
+                icon = Utils.Bytes2Bitmap(bytes);
+            }
+        }
+        if(icon == null) {
+            iconDrawable = mainActivity.getResources().getDrawable(R.drawable.ic_website);
+        }else {
+            iconDrawable = new BitmapDrawable(mainActivity.getResources(), icon);
+        }
+        return iconDrawable;
+    }
+
     public boolean isInit() {
         return mWebView != null;
     }
 
     @Override
     public void onDestroy() {
+        getView().stopLoading();
         getView().clearHistory();
         getView().clearCache(true);
         getView().loadUrl("about:blank");

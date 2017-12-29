@@ -21,6 +21,7 @@ import butterknife.ButterKnife;
 import peter.util.searcher.R;
 import peter.util.searcher.TabGroupManager;
 import peter.util.searcher.activity.TabsActivity;
+import peter.util.searcher.db.DaoManager;
 import peter.util.searcher.tab.TabGroup;
 
 /**
@@ -74,13 +75,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             recyclerViewHolder.title.setText(tabGroup.getTitle());
             recyclerViewHolder.host.setText(tabGroup.getHost());
             recyclerViewHolder.url.setText(tabGroup.getUrl());
-
-            Drawable icon = tabGroup.getCurrentTab().getIconDrawable();
-            if (icon != null) {
-                recyclerViewHolder.icon.setBackground(icon);
-            } else {
-                recyclerViewHolder.icon.setBackgroundResource(R.drawable.ic_website);
-            }
+            recyclerViewHolder.icon.setBackground(tabGroup.getCurrentTab().getIconDrawable());
 
             recyclerViewHolder.mView.setOnClickListener(view -> {
                 TabGroupManager.getInstance().switchTabGroup(tabGroup);
@@ -115,6 +110,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 notifyItemChanged(currentIndex);
             }
         } else {
+            DaoManager.getInstance().saveTabs();
             context.exit();
         }
     }

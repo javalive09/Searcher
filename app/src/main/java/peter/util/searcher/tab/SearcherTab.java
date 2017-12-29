@@ -15,8 +15,6 @@ public abstract class SearcherTab implements Tab {
 
     final MainActivity mainActivity;
 
-    private Drawable iconDrawable;
-
     private TabData tabData;
 
     public SearcherTab(MainActivity activity) {
@@ -51,13 +49,7 @@ public abstract class SearcherTab implements Tab {
 
     public abstract View getView();
 
-    public Drawable getIconDrawable() {
-        return iconDrawable;
-    }
-
-    public void setIconDrawable(Drawable iconDrawable) {
-        this.iconDrawable = iconDrawable;
-    }
+    public abstract Drawable getIconDrawable();
 
     public abstract String getTitle();
 

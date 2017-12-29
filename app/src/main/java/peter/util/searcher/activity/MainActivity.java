@@ -609,11 +609,17 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     public void refreshTitle() {
-        String host = TabGroupManager.getInstance().getCurrentTabGroup().getCurrentTab().getHost();
-        refreshTopText(host);
-        int count = TabGroupManager.getInstance().getTabGroupCount();
-        Log.e("refreshTitle", "count = " + count);
-        tabsDrawable.setText(count);
+        final TabGroup tabGroup = TabGroupManager.getInstance().getCurrentTabGroup();
+        if(tabGroup != null) {
+            final SearcherTab searcherTab = tabGroup.getCurrentTab();
+            if(searcherTab != null) {
+                String host = searcherTab.getHost();
+                refreshTopText(host);
+                int count = TabGroupManager.getInstance().getTabGroupCount();
+                Log.e("refreshTitle", "count = " + count);
+                tabsDrawable.setText(count);
+            }
+        }
     }
 
     public void refreshTopText(String text) {
@@ -685,12 +691,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     public void refreshProgress(WebViewTab webViewTab, int progress) {
-        if (TabGroupManager.getInstance().getCurrentTabGroup().getCurrentTab() == webViewTab) {
-            progressBar.setProgress(progress);
-            if (progress == 100) {
-                progressBar.post(() -> progressBar.setVisibility(View.INVISIBLE));
-            } else {
-                progressBar.setVisibility(View.VISIBLE);
+        final TabGroup tabGroup = TabGroupManager.getInstance().getCurrentTabGroup();
+        if(tabGroup != null) {
+            if(tabGroup.getCurrentTab() ==  webViewTab) {
+                progressBar.setProgress(progress);
+                if (progress == 100) {
+                    progressBar.post(() -> progressBar.setVisibility(View.INVISIBLE));
+                } else {
+                    progressBar.setVisibility(View.VISIBLE);
+                }
             }
         }
     }

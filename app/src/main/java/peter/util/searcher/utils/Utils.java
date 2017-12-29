@@ -2,9 +2,12 @@
 package peter.util.searcher.utils;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.IOException;
 
@@ -49,5 +52,18 @@ public class Utils {
         }
     }
 
+    public static byte[] Bitemap2Bytes(Bitmap bm) {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        bm.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+        return byteArrayOutputStream.toByteArray();
+    }
+
+    public static Bitmap Bytes2Bitmap(byte[] bytes) {
+        if (bytes.length > 0) {
+            return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+        } else {
+            return null;
+        }
+    }
 
 }

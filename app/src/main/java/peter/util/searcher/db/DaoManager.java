@@ -182,6 +182,10 @@ public class DaoManager {
         Observable.just(tabData).subscribeOn(Schedulers.io()).subscribe(tabData1 -> mDaoSession.getTabDataDao().delete(tabData));
     }
 
+    public void insertTabDataDao(TabData tabData) {
+        mDaoSession.getTabDataDao().insertOrReplace(tabData);
+    }
+
     public void saveTabs() {
         mDaoSession.getTabDataDao().deleteAll();
         List<TabData> saveList = new LinkedList<>();
