@@ -28,7 +28,7 @@
     <color name="google_red">#EA4335</color>
     <color name="gray">#999999</color>
 
-    <color name="no_active">@color/tabs_background</color>
-    <color name="active">#44159588</color>
+    <color name="no_active">@color/white</color>
+    <color name="active">@color/cursor_color</color>
 
 </resources>

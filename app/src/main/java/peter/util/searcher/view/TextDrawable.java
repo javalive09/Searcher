@@ -11,6 +11,7 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 
 import peter.util.searcher.R;
 
@@ -63,6 +64,9 @@ public class TextDrawable extends Drawable {
         canvas.drawBitmap(bitmap, centreX, centreY, paint);
         int xPos = (canvas.getWidth() / 2);
         int yPos = (int) ((canvas.getHeight() / 2) - ((paint.descent() + paint.ascent()) / 2));
+        if(TextUtils.isEmpty(text)) {
+            text = "-";
+        }
         canvas.drawText(text, xPos, yPos, paint);
     }
 

@@ -1,13 +1,11 @@
 package peter.util.searcher.tab;
 
 import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.support.v4.util.ArrayMap;
 import android.text.TextUtils;
-import android.util.Log;
 import android.webkit.CookieManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -16,7 +14,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
 
-import peter.util.searcher.R;
+import io.reactivex.Observable;
+import io.reactivex.schedulers.Schedulers;
 import peter.util.searcher.SettingsManager;
 import peter.util.searcher.activity.MainActivity;
 import peter.util.searcher.db.DaoManager;
@@ -25,6 +24,7 @@ import peter.util.searcher.net.MyDownloadListener;
 import peter.util.searcher.net.MyWebChromeClient;
 import peter.util.searcher.net.MyWebClient;
 import peter.util.searcher.utils.Constants;
+import peter.util.searcher.view.SearchWebView;
 
 /**
  * webView类型的标签
@@ -34,72 +34,44 @@ import peter.util.searcher.utils.Constants;
 public class WebViewTab extends SearcherTab {
 
     private WebView mWebView;
-    private TabData tabData;
+
     private String currentUA;
     private MyWebChromeClient myWebChromeClient;
     private static final String HEADER_DNT = "DNT";
     private final Map<String, String> mRequestHeaders = new ArrayMap<>();
 
-    public WebViewTab(MainActivity activity) {
+    WebViewTab(MainActivity activity) {
         super(activity);
-    }
-
-    void onCreate() {
-        initWebView();
-        initializeSettings();
-        mainActivity.registerForContextMenu(mWebView);
-    }
-
-    @Override
-    public WebViewTab create(TabData tabData) {
-        if (!TextUtils.isEmpty(tabData.getUrl())) {
-            this.tabData = tabData;
-            Log.i("peter", "url=" + tabData.getUrl());
-            if (mWebView == null) {
-                int resId = onCreateViewResId();
-                mWebView = (WebView) mainActivity.setCurrentView(resId);
-                onCreate();
-            }
-        }
-        return this;
     }
 
     @Override
     public WebView getView() {
+        if (mWebView == null) {
+            mWebView = new SearchWebView(mainActivity);
+            initWebView();
+            initializeSettings();
+            mainActivity.registerForContextMenu(mWebView);
+        }
         return mWebView;
     }
 
     @Override
     public void onDestroy() {
-        if (mWebView != null) {
-            mWebView.clearHistory();
-            mWebView.clearCache(true);
-            mWebView.loadUrl("about:blank");
-            mWebView.pauseTimers();
-            mWebView = null;
-        }
-    }
-
-    public MainActivity getActivity() {
-        return mainActivity;
+        getView().clearHistory();
+        getView().clearCache(true);
+        getView().loadUrl("about:blank");
+        getView().pauseTimers();
+        mWebView = null;
     }
 
     public void onResume() {
-        if (mWebView != null) {
-            mWebView.resumeTimers();
-            mWebView.onResume();
-        }
+        getView().resumeTimers();
+        getView().onResume();
     }
 
     public void onPause() {
-        if (mWebView != null) {
-            mWebView.pauseTimers();
-            mWebView.onPause();
-        }
-    }
-
-    public TabData getTabData() {
-        return tabData;
+        getView().pauseTimers();
+        getView().onPause();
     }
 
     public Map<String, String> getRequestHeaders() {
@@ -108,26 +80,21 @@ public class WebViewTab extends SearcherTab {
 
     public void setUA(String ua) {
         currentUA = ua;
-        mWebView.getSettings().setUserAgentString(ua);
+        getView().getSettings().setUserAgentString(ua);
     }
 
     private String getDefaultUA() {
-        return WebSettings.getDefaultUserAgent(mWebView.getContext());
+        return WebSettings.getDefaultUserAgent(getView().getContext());
     }
 
     public boolean isDeskTopUA() {
         return Constants.DESKTOP_USER_AGENT.equals(currentUA);
     }
 
-    @Override
-    public int onCreateViewResId() {
-        return R.layout.tab_webview;
-    }
-
     public String getUrl() {
-        String url = mWebView.getUrl();
-        if(TextUtils.isEmpty(url)) {
-            url = tabData.getUrl();
+        String url = getView().getUrl();
+        if (TextUtils.isEmpty(url)) {
+            url = getTabData().getUrl();
         }
         return url;
     }
@@ -137,8 +104,8 @@ public class WebViewTab extends SearcherTab {
         if (!TextUtils.isEmpty(bean.getUrl())) {
             if (!peter.util.searcher.tab.Tab.ACTION_NEW_WINDOW.equals(bean.getUrl())
                     || !getUrl().equals(bean.getUrl())) {
-                mWebView.loadUrl(bean.getUrl());
-                mainActivity.setCurrentView(mWebView);
+                getView().loadUrl(bean.getUrl());
+                mainActivity.setCurrentView(getView());
                 if (!TextUtils.isEmpty(bean.getTitle())) {
                     saveData(bean);
                 }
@@ -148,89 +115,85 @@ public class WebViewTab extends SearcherTab {
 
     @Override
     public String getSearchWord() {
-        return tabData.getSearchWord();
+        return getTabData().getSearchWord();
     }
 
     @Override
     public int getPageNo() {
-        return tabData.getPageNo();
+        return getTabData().getPageNo();
     }
 
     public void reload() {
-        byte[] data = tabData.getBundle();
-        if(data != null) {
+        byte[] data = getTabData().getBundle();
+        if (data != null) {
             Parcel parcel = Parcel.obtain();
             parcel.unmarshall(data, 0, data.length);
             parcel.setDataPosition(0);
             Bundle bundle = parcel.readBundle(ClassLoader.getSystemClassLoader());
-            mWebView.restoreState(bundle);
+            getView().restoreState(bundle);
 
             parcel.recycle();
-            tabData.setBundle(null);
-            DaoManager.getInstance().deleteTabData(tabData);
+            getTabData().setBundle(null);
+            DaoManager.getInstance().deleteTabData(getTabData());
         }
 
-        mWebView.reload();
+        getView().reload();
     }
 
     public boolean canGoBack() {
-        return mWebView.canGoBack() || myWebChromeClient.isCustomViewShow();
+        return getView().canGoBack() || myWebChromeClient.isCustomViewShow();
     }
 
     public void goBack() {
         if (myWebChromeClient.isCustomViewShow()) {
             myWebChromeClient.hideCustomView();
         } else {
-            mWebView.goBack();
+            getView().goBack();
         }
     }
 
     public boolean canGoForward() {
-        return mWebView.canGoForward();
+        return getView().canGoForward();
     }
 
     public void goForward() {
-        mWebView.goForward();
+        getView().goForward();
     }
 
     public String getTitle() {
-        String title = mWebView.getTitle();
-        if(TextUtils.isEmpty(title)) {
-            title = tabData.getTitle();
+        String title = getView().getTitle();
+        if (TextUtils.isEmpty(title)) {
+            title = getTabData().getTitle();
         }
         return title;
     }
 
     private void saveData(final TabData bean) {
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... params) {
-                bean.setTime(System.currentTimeMillis());
-                DaoManager.getInstance().insertHistory(bean);
-                return null;
-            }
-        }.execute();
+        Observable.just("saveData").observeOn(Schedulers.io()).subscribe(s -> {
+            bean.setTime(System.currentTimeMillis());
+            DaoManager.getInstance().insertHistory(bean);
+        });
     }
 
     private void initWebView() {
-        mWebView.setDrawingCacheBackgroundColor(Color.WHITE);
-        mWebView.setFocusableInTouchMode(true);
-        mWebView.setFocusable(true);
-        mWebView.setDrawingCacheEnabled(false);
-        mWebView.setWillNotCacheDrawing(true);
+        getView().setDrawingCacheBackgroundColor(Color.WHITE);
+        getView().setFocusableInTouchMode(true);
+        getView().setFocusable(true);
+        getView().setDrawingCacheEnabled(false);
+        getView().setWillNotCacheDrawing(true);
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP_MR1) {
             //noinspection deprecation
-            mWebView.setAnimationCacheEnabled(false);
+            getView().setAnimationCacheEnabled(false);
             //noinspection deprecation
-            mWebView.setAlwaysDrawnWithCacheEnabled(false);
+            getView().setAlwaysDrawnWithCacheEnabled(false);
         }
-        mWebView.setBackgroundColor(Color.WHITE);
-        mWebView.setScrollbarFadingEnabled(true);
-        mWebView.setSaveEnabled(true);
-        mWebView.setNetworkAvailable(true);
-        mWebView.setWebChromeClient(myWebChromeClient = new MyWebChromeClient(WebViewTab.this));
-        mWebView.setWebViewClient(new MyWebClient(WebViewTab.this));
-        mWebView.setDownloadListener(new MyDownloadListener(mainActivity));
+        getView().setBackgroundColor(Color.WHITE);
+        getView().setScrollbarFadingEnabled(true);
+        getView().setSaveEnabled(true);
+        getView().setNetworkAvailable(true);
+        getView().setWebChromeClient(myWebChromeClient = new MyWebChromeClient(WebViewTab.this));
+        getView().setWebViewClient(new MyWebClient(WebViewTab.this));
+        getView().setDownloadListener(new MyDownloadListener(mainActivity));
         setUA(getDefaultUA());
         CookieManager.getInstance().setAcceptThirdPartyCookies(mWebView, true);
         if (SettingsManager.getInstance().isNoTrack()) {
@@ -242,7 +205,7 @@ public class WebViewTab extends SearcherTab {
     }
 
     private void initializeSettings() {
-        final WebSettings settings = mWebView.getSettings();
+        final WebSettings settings = getView().getSettings();
         settings.setMediaPlaybackRequiresUserGesture(true);
         settings.setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
 
@@ -275,7 +238,7 @@ public class WebViewTab extends SearcherTab {
         settings.setLoadWithOverviewMode(true);
 
         //需要加上否则播放不了一些视频如今日头条的视频
-        CookieManager.getInstance().setAcceptThirdPartyCookies(mWebView, true);
+        CookieManager.getInstance().setAcceptThirdPartyCookies(getView(), true);
 
     }
 

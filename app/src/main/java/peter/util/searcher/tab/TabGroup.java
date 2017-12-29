@@ -1,10 +1,13 @@
 package peter.util.searcher.tab;
 
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 
+import peter.util.searcher.TabGroupManager;
 import peter.util.searcher.activity.MainActivity;
 import peter.util.searcher.db.dao.TabData;
 
@@ -116,6 +119,12 @@ public class TabGroup extends SearcherTab {
 
     private SearcherTab newTab(TabData tabData) {
         if (tabData.getUrl().startsWith(LOCAL_SCHEMA)) {
+            if(TextUtils.equals(tabData.getUrl(), URL_HOME)) {
+                if(TabGroupManager.getInstance().getHomeTab() == null) {
+                    TabGroupManager.getInstance().setHomeTab(newLocalTab(tabData).create(tabData));
+                }
+                return TabGroupManager.getInstance().getHomeTab();
+            }
             return newLocalTab(tabData).create(tabData);
         } else {
             return new WebViewTab(mainActivity).create(tabData);
@@ -144,13 +153,20 @@ public class TabGroup extends SearcherTab {
     }
 
     public void setCurrentTab(int index) {
+        Log.e("peter", "setCurrentTab index=" + index);
+        Log.e("peter", "setCurrentTab mCurrentTabIndex=" + mCurrentTabIndex);
+
+        setCurrentTab(index, false);
+    }
+
+    public void setCurrentTab(int index, boolean reload) {
         mCurrentTabIndex = index;
         SearcherTab tab = tabArrayList.get(index);
-        TabData tabData = new TabData();
-        tabData.setTitle(tab.getSearchWord());
-        tabData.setUrl(tab.getUrl());
-        tab.loadUrl(tabData);
-        reload();
+        tab.loadUrl(tab.getTabData());
+        if(reload) {
+            reload();
+        }
+        mainActivity.refreshTitle();
     }
 
     public SearcherTab getCurrentTab() {

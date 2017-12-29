@@ -4,6 +4,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.SparseArray;
 
 import java.util.ArrayList;
@@ -20,14 +21,16 @@ import peter.util.searcher.db.dao.FavoriteSearchDao;
 import peter.util.searcher.db.dao.HistorySearch;
 import peter.util.searcher.db.dao.HistorySearchDao;
 import peter.util.searcher.db.dao.TabData;
+import peter.util.searcher.tab.HomeTab;
 import peter.util.searcher.tab.SearcherTab;
-import peter.util.searcher.tab.Tab;
 import peter.util.searcher.tab.TabGroup;
 import peter.util.searcher.tab.WebViewTab;
+import peter.util.searcher.utils.UrlUtils;
 
 public class DaoManager {
 
     private final DaoSession mDaoSession;
+    private static volatile DaoManager singleton;
 
     private DaoManager() {
         DaoMaster.DevOpenHelper mHelper = new DaoMaster.DevOpenHelper(Searcher.context, "searcher_db", null);
@@ -36,12 +39,15 @@ public class DaoManager {
         mDaoSession = mDaoMaster.newSession();
     }
 
-    private static class SingletonInstance {
-        private static final DaoManager INSTANCE = new DaoManager();
-    }
-
     public static DaoManager getInstance() {
-        return SingletonInstance.INSTANCE;
+        if (singleton == null) {
+            synchronized (DaoManager.class) {
+                if (singleton == null) {
+                    singleton = new DaoManager();
+                }
+            }
+        }
+        return singleton;
     }
 
     public long insertHistory(TabData bean) {
@@ -175,60 +181,91 @@ public class DaoManager {
     }
 
     public void saveTabs() {
-        mDaoSession.getTabDataDao().getSession().runInTx(() -> {
-            mDaoSession.getTabDataDao().deleteAll();
-            realSaveTabs();
-        });
-    }
-
-    public void realSaveTabs() {
-        List<TabGroup> tabGroupList = TabGroupManager.getInstance().getList();
-        final TabGroup currentTabGroup = TabGroupManager.getInstance().getCurrentTabGroup();
-        for (int groupIndex = 0, groupSize = tabGroupList.size(); groupIndex < groupSize; groupIndex++) {
-            TabGroup tabGroup = tabGroupList.get(groupIndex);
-            ArrayList<SearcherTab> tabs = tabGroup.getTabs();
-            for (int tabIndex = 0, tabSize = tabs.size(); tabIndex < tabSize; tabIndex++) {
-                SearcherTab tab = tabs.get(tabIndex);
-                if (!TextUtils.isEmpty(tab.getUrl())) {
-                    TabData tabData;
-                    Bundle state = new Bundle(ClassLoader.getSystemClassLoader());
-                    if (tab instanceof WebViewTab) {
-                        WebViewTab webViewTab = (WebViewTab) tab;
-                        webViewTab.getView().saveState(state);
-                        tabData = webViewTab.getTabData();
-                        tabData.setUrl(webViewTab.getUrl());
-                        tabData.setTitle(webViewTab.getTitle());
-                        Parcel parcel = Parcel.obtain();
-                        parcel.writeBundle(state);
-                        tabData.setBundle(parcel.marshall());
-                        parcel.recycle();
-                    } else {
-                        tabData = new TabData();
-                        tabData.setUrl(Tab.URL_HOME);
+        if (cacheGroupCount > 0) {//party load
+            List<TabGroup> tabGroupList = TabGroupManager.getInstance().getList();
+            for (int groupIndex = 0, groupSize = tabGroupList.size(); groupIndex < groupSize; groupIndex++) {
+                TabGroup tabGroup = tabGroupList.get(groupIndex);
+                ArrayList<SearcherTab> tabs = tabGroup.getTabs();
+                for (int tabIndex = 0, tabSize = tabs.size(); tabIndex < tabSize; tabIndex++) {
+                    SearcherTab tab = tabs.get(tabIndex);
+                    if (!TextUtils.isEmpty(tab.getUrl())) {
+                        TabData tabData = tab.getTabData();
+                        Bundle state = new Bundle(ClassLoader.getSystemClassLoader());
+                        if (tab instanceof WebViewTab) {
+                            WebViewTab webViewTab = (WebViewTab) tab;
+                            webViewTab.getView().saveState(state);
+                            if (state.size() > 0) {
+                                Parcel parcel = Parcel.obtain();
+                                parcel.writeBundle(state);
+                                tabData.setBundle(parcel.marshall());
+                                parcel.recycle();
+                            }
+                        }
+                        tabData.setUrl(tab.getUrl());
+                        tabData.setTitle(tab.getTitle());
+                        tabData.setTabCount(tabSize);
+                        tabData.setTabGroupCount(cacheGroupCount);//size
+                        tabData.setIsCurrentTab(tabGroup.getCurrentTab() == tab);
+                        tabData.setIsCurrentTabGroup(true);
+                        tabData.setGroupTabIndex(currentGroupIndex);
+                        tabData.setTabIndex(tabIndex);
+                        mDaoSession.getTabDataDao().insertOrReplace(tabData);
                     }
-                    tabData.setTabCount(tabSize);
-                    tabData.setTabGroupCount(groupSize);
-                    tabData.setIsCurrentTab(tabGroup.getCurrentTab() == tab);
-                    tabData.setIsCurrentTabGroup(tabGroup == currentTabGroup);
-                    tabData.setGroupTabIndex(groupIndex);
-                    tabData.setTabIndex(tabIndex);
-                    mDaoSession.getTabDataDao().insert(tabData);
                 }
             }
+        } else {//all load
+            mDaoSession.getTabDataDao().getSession().runInTx(() -> {
+//                mDaoSession.getTabDataDao().deleteAll();
+                List<TabGroup> tabGroupList = TabGroupManager.getInstance().getList();
+                final TabGroup currentTabGroup = TabGroupManager.getInstance().getCurrentTabGroup();
+                for (int groupIndex = 0, groupSize = tabGroupList.size(); groupIndex < groupSize; groupIndex++) {
+                    TabGroup tabGroup = tabGroupList.get(groupIndex);
+                    ArrayList<SearcherTab> tabs = tabGroup.getTabs();
+                    for (int tabIndex = 0, tabSize = tabs.size(); tabIndex < tabSize; tabIndex++) {
+                        SearcherTab tab = tabs.get(tabIndex);
+                        if (!TextUtils.isEmpty(tab.getUrl())) {
+                            TabData tabData = tab.getTabData();
+                            Bundle state = new Bundle(ClassLoader.getSystemClassLoader());
+                            if (tab instanceof WebViewTab) {
+                                WebViewTab webViewTab = (WebViewTab) tab;
+                                webViewTab.getView().saveState(state);
+                                if (state.size() > 0) {
+                                    Parcel parcel = Parcel.obtain();
+                                    parcel.writeBundle(state);
+                                    tabData.setBundle(parcel.marshall());
+                                    parcel.recycle();
+                                }
+                            }else if(tab instanceof HomeTab) {
+                                tabData.setId(null);
+                            }
+                            tabData.setUrl(tab.getUrl());
+                            tabData.setTitle(tab.getTitle());
+                            tabData.setTabCount(tabSize);
+                            tabData.setTabGroupCount(groupSize);
+                            tabData.setIsCurrentTab(tabGroup.getCurrentTab() == tab);
+                            tabData.setIsCurrentTabGroup(tabGroup == currentTabGroup);
+                            tabData.setGroupTabIndex(groupIndex);
+                            tabData.setTabIndex(tabIndex);
+                            Log.e("peter", "id =" + tabData.getId());
+                            mDaoSession.getTabDataDao().insertOrReplace(tabData);
+                        }
+                    }
+                }
+            });
         }
     }
 
-    public void restoreTabs() {
-        List<TabData> tabDataList = mDaoSession.getTabDataDao().queryBuilder().list();
+    private SparseArray<TabData[]> groupsArray = null;
+    private int cacheGroupCount = -1;
+    private int currentGroupIndex = -1;
+    private int currentTabIndex = -1;
 
+    public void restoreCurrentTabs() {
+        List<TabData> tabDataList = mDaoSession.getTabDataDao().queryBuilder().list();
         if (tabDataList.size() > 0) {
             final TabData firstTabData = tabDataList.get(0);
-            final int groupCount = firstTabData.getTabGroupCount();
-            int currentGroupIndex = -1;
-            int currentTabIndex = -1;
-
-            SparseArray<TabData[]> groupsArray = new SparseArray<>(groupCount);
-
+            cacheGroupCount = firstTabData.getTabGroupCount();
+            groupsArray = new SparseArray<>(cacheGroupCount);
             for (TabData tabData : tabDataList) {
                 int groupTabIndex = tabData.getGroupTabIndex();
 
@@ -239,29 +276,88 @@ public class DaoManager {
                     }
                 }
 
-                if (groupsArray.indexOfKey(groupTabIndex) > 0) {
-                    TabData[] tabDataArray = groupsArray.get(groupTabIndex);
-                    tabDataArray[tabData.getTabIndex()] = tabData;
-                } else {
+                if (groupsArray.indexOfKey(groupTabIndex) < 0) {//no key
                     TabData[] tabDataArray = new TabData[tabData.getTabCount()];
                     tabDataArray[tabData.getTabIndex()] = tabData;
                     groupsArray.put(tabData.getGroupTabIndex(), tabDataArray);
+                } else {
+                    TabData[] tabDataArray = groupsArray.get(groupTabIndex);
+                    tabDataArray[tabData.getTabIndex()] = tabData;
                 }
             }
 
-            for (int groupIndex = 0; groupIndex < groupCount; groupIndex++) {
+            //load current group
+            TabData[] tabData = groupsArray.get(currentGroupIndex);
+            for (int index = 0; index < tabData.length; index++) {
+                TabGroupManager.getInstance().createTabGroup(tabData[index], index == 0);
+            }
+
+            TabGroupManager.getInstance().restoreTabPos(0, currentTabIndex);
+        }
+    }
+
+    public void restoreAllTabs() {
+        if(cacheGroupCount > 0) {
+            TabGroupManager.getInstance().reset();
+            for (int groupIndex = 0; groupIndex < cacheGroupCount; groupIndex++) {
                 TabData[] tabData = groupsArray.get(groupIndex);
                 for (int index = 0; index < tabData.length; index++) {
-                    if (index == 0) {
-                        TabGroupManager.getInstance().load(tabData[index], true);
-                    } else {
-                        TabGroupManager.getInstance().createTabGroup(tabData[index], false);
+                    TabGroupManager.getInstance().createTabGroup(tabData[index], index == 0);
+                }
+            }
+            TabGroupManager.getInstance().restoreTabPos(currentGroupIndex, currentTabIndex);
+            groupsArray = null;
+            currentGroupIndex = -1;
+            currentTabIndex = -1;
+            cacheGroupCount = -1;
+        }
+    }
+
+    public void realRestoreAllTabs() {
+        List<TabData> tabDataList = mDaoSession.getTabDataDao().queryBuilder().list();
+        if (tabDataList.size() > 0) {
+            final TabData firstTabData = tabDataList.get(0);
+            int cacheGroupCount = firstTabData.getTabGroupCount();
+            groupsArray = new SparseArray<>(cacheGroupCount);
+            int currentGroupIndex = -1;
+            int currentTabIndex = -1;
+            for (TabData tabData : tabDataList) {
+                int groupTabIndex = tabData.getGroupTabIndex();
+
+                if (tabData.getIsCurrentTabGroup()) {
+                    currentGroupIndex = tabData.getGroupTabIndex();
+                    if (currentTabIndex == -1 && tabData.getIsCurrentTab()) {
+                        currentTabIndex = tabData.getTabIndex();
                     }
+                }
+
+                if (groupsArray.indexOfKey(groupTabIndex) < 0) {//no key
+                    TabData[] tabDataArray = new TabData[tabData.getTabCount()];
+                    tabDataArray[tabData.getTabIndex()] = tabData;
+                    groupsArray.put(tabData.getGroupTabIndex(), tabDataArray);
+                } else {
+                    TabData[] tabDataArray = groupsArray.get(groupTabIndex);
+                    tabDataArray[tabData.getTabIndex()] = tabData;
                 }
             }
 
+            TabGroupManager.getInstance().reset();
+            for (int groupIndex = 0; groupIndex < cacheGroupCount; groupIndex++) {
+                TabData[] tabData = groupsArray.get(groupIndex);
+                for (int index = 0; index < tabData.length; index++) {
+                    TabGroupManager.getInstance().createTabGroup(tabData[index], index == 0);
+                }
+            }
             TabGroupManager.getInstance().restoreTabPos(currentGroupIndex, currentTabIndex);
         }
+    }
+
+    public int getCacheGroupCount() {
+        return cacheGroupCount;
+    }
+
+    public void clear() {
+        singleton = null;
     }
 
 

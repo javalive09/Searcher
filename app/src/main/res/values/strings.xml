@@ -58,6 +58,7 @@
     <string name="action_auto_fullscreen">自动全屏</string>
     <string name="action_desktop">桌面模式</string>
     <string name="action_about">关于速搜</string>
+    <string name="action_loading">加载中…</string>
     <string name="action_delete">删除</string>
     <string name="action_bookmark_search">搜索</string>
     <string name="action_bookmark_search_favorite_hint">搜索收藏记录</string>

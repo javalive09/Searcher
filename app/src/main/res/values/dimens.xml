@@ -3,11 +3,11 @@
     <dimen name="search_padding_right">47dp</dimen>
     <dimen name="search_padding_start">1dp</dimen>
 
-    <dimen name="item_list_drawable_padding">5dp</dimen>
-    <dimen name="item_list_padding">7dp</dimen>
+    <dimen name="item_list_drawable_padding">10dp</dimen>
+    <dimen name="item_list_padding">15dp</dimen>
 
 
-    <dimen name="multi_window_item_icon_cell">25dp</dimen>
+    <dimen name="multi_window_item_icon_cell">30dp</dimen>
     <dimen name="multi_window_icon_margin">10dp</dimen>
     <dimen name="multi_window_close_padding">10dp</dimen>
     <dimen name="multi_window_h">50dp</dimen>

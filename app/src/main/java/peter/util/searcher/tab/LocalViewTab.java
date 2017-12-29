@@ -33,6 +33,7 @@ public abstract class LocalViewTab extends SearcherTab{
 
     @Override
     public final LocalViewTab create(TabData tabData) {
+        super.create(tabData);
         if(!TextUtils.isEmpty(tabData.getUrl())) {
             if(mView == null) {
                 int viewResId = onCreateViewResId();

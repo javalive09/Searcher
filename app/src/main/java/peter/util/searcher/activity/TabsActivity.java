@@ -2,6 +2,9 @@ package peter.util.searcher.activity;
 
 
 import android.os.Bundle;
+import android.os.Debug;
+import android.os.Looper;
+import android.os.MessageQueue;
 import android.support.design.widget.AppBarLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
@@ -20,6 +23,7 @@ import peter.util.searcher.R;
 import peter.util.searcher.TabGroupManager;
 import peter.util.searcher.adapter.ItemTouchHelperCallback;
 import peter.util.searcher.adapter.RecyclerViewAdapter;
+import peter.util.searcher.db.DaoManager;
 import peter.util.searcher.db.dao.TabData;
 import peter.util.searcher.tab.Tab;
 import peter.util.searcher.tab.TabGroup;
@@ -43,26 +47,38 @@ public class TabsActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_tabs);
-        ButterKnife.bind(TabsActivity.this);
-        setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true); // this sets the button to the back icon
-        }
-        toolbar.setNavigationOnClickListener(v -> finish());
 
-        final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        list.setLayoutManager(linearLayoutManager);
+        setContentView(R.layout.activity_tabs_loading);
 
-        adapter = new RecyclerViewAdapter(this);
-        list.setAdapter(adapter);
+//        Debug.startMethodTracing("loading");
 
-        refreshAdapter();
+        MessageQueue.IdleHandler handler = () -> {
+            setContentView(R.layout.activity_tabs);
+            ButterKnife.bind(TabsActivity.this);
+            setSupportActionBar(toolbar);
+            ActionBar actionBar = getSupportActionBar();
+            if (actionBar != null) {
+                actionBar.setDisplayHomeAsUpEnabled(true); // this sets the button to the back icon
+            }
+            toolbar.setNavigationOnClickListener(v -> finish());
 
-        ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(adapter);
-        ItemTouchHelper mItemTouchHelper = new ItemTouchHelper(callback);
-        mItemTouchHelper.attachToRecyclerView(list);
+            final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(TabsActivity.this);
+            list.setLayoutManager(linearLayoutManager);
+
+            adapter = new RecyclerViewAdapter(TabsActivity.this);
+            list.setAdapter(adapter);
+
+            refreshAdapter();
+
+            ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(adapter);
+            ItemTouchHelper mItemTouchHelper = new ItemTouchHelper(callback);
+            mItemTouchHelper.attachToRecyclerView(list);
+
+//            Debug.stopMethodTracing();
+            return false;
+        };
+        Looper.myQueue().addIdleHandler(handler);
+
     }
 
     @Override
@@ -71,8 +87,8 @@ public class TabsActivity extends BaseActivity {
         return true;
     }
 
-
     private void refreshAdapter() {
+//        DaoManager.getInstance().restoreAllTabs();
         ArrayList<TabGroup> tabGroups = TabGroupManager.getInstance().getList();
         Log.i("tabGroups", tabGroups.toString());
         adapter.setItems(tabGroups);

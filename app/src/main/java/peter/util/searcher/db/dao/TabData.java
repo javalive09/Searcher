@@ -6,6 +6,7 @@ import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Index;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 /**
  * tab
@@ -174,5 +175,22 @@ public class TabData implements Serializable {
         this.bundle = bundle;
     }
 
-
+    @Override
+    public String toString() {
+        return "TabData{" +
+                "id=" + id +
+                ", tabCount=" + tabCount +
+                ", tabGroupCount=" + tabGroupCount +
+                ", time=" + time +
+                ", pageNo=" + pageNo +
+                ", tabIndex=" + tabIndex +
+                ", isCurrentTab=" + isCurrentTab +
+                ", isCurrentTabGroup=" + isCurrentTabGroup +
+                ", groupTabIndex=" + groupTabIndex +
+                ", searchWord='" + searchWord + '\'' +
+                ", url='" + url + '\'' +
+                ", title='" + title + '\'' +
+                ", bundle=" + Arrays.toString(bundle) +
+                '}';
+    }
 }

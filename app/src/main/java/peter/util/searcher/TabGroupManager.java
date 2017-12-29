@@ -1,9 +1,13 @@
 package peter.util.searcher;
 
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
+
 import java.util.ArrayList;
+
 import peter.util.searcher.activity.MainActivity;
+import peter.util.searcher.db.DaoManager;
 import peter.util.searcher.db.dao.TabData;
 import peter.util.searcher.tab.SearcherTab;
 import peter.util.searcher.tab.TabGroup;
@@ -16,23 +20,47 @@ import peter.util.searcher.tab.TabGroup;
 public class TabGroupManager {
 
     public static final int MAX_TAB = 99;
-    private final ArrayList<TabGroup> tabGroupArrayList = new ArrayList<>();
+    private ArrayList<TabGroup> tabGroupArrayList = new ArrayList<>();
     private MainActivity mainActivity;
     private int mCurrentTabGroupIndex;
-
-    private static class SingletonInstance {
-        private static final TabGroupManager INSTANCE = new TabGroupManager();
-    }
+    private SearcherTab homeTab;
+    private static volatile TabGroupManager singleton;
 
     public static TabGroupManager getInstance() {
-        return SingletonInstance.INSTANCE;
+        if (singleton == null) {
+            synchronized (DaoManager.class) {
+                if (singleton == null) {
+                    singleton = new TabGroupManager();
+                }
+            }
+        }
+        return singleton;
     }
 
     public void init(MainActivity mainActivity) {
         this.mainActivity = mainActivity;
     }
 
-    private TabGroupManager() {}
+    public void clear() {
+        singleton = null;
+    }
+
+    public void reset() {
+        tabGroupArrayList = new ArrayList<>();
+        mCurrentTabGroupIndex = -1;
+    }
+
+    private TabGroupManager() {
+    }
+
+    public SearcherTab getHomeTab() {
+        return homeTab;
+    }
+
+    public TabGroupManager setHomeTab(SearcherTab homeTab) {
+        this.homeTab = homeTab;
+        return this;
+    }
 
     public boolean load(TabData tabData, boolean newGroup) {
         boolean suc = createTabGroup(tabData, newGroup);
@@ -62,7 +90,12 @@ public class TabGroupManager {
     }
 
     public TabGroup getCurrentTabGroup() {
-        return tabGroupArrayList.size() > 0 ? tabGroupArrayList.get(mCurrentTabGroupIndex) : null;
+        if (tabGroupArrayList.size() > 0) {
+            if (mCurrentTabGroupIndex > -1 && mCurrentTabGroupIndex < tabGroupArrayList.size()) {
+                return tabGroupArrayList.get(mCurrentTabGroupIndex);
+            }
+        }
+        return null;
     }
 
     public void switchTabGroup(TabGroup tabGroup) {
@@ -70,21 +103,31 @@ public class TabGroupManager {
     }
 
     private void switchTabGroup(TabGroup tabGroup, boolean reload) {
-        mCurrentTabGroupIndex = tabGroupArrayList.indexOf(tabGroup);
-        View currentTabGroupView = tabGroup.getCurrentTab().getView();
-        pauseTabGroupExclude(tabGroup);
-        mainActivity.setCurrentView(currentTabGroupView);
-        getCurrentTabGroup().onResume();
-        mainActivity.refreshTitle();
-        if (reload) {
-            getCurrentTabGroup().reload();
+        int index = tabGroupArrayList.indexOf(tabGroup);
+        Log.e("peter", "index=" + index);
+        Log.e("peter", "mCurrentTabGroupIndex=" + mCurrentTabGroupIndex);
+        if (mCurrentTabGroupIndex != index) {
+            TabGroup oldTabGroup = getCurrentTabGroup();
+            if (oldTabGroup != null) {
+                oldTabGroup.onPause();
+            }
+            mCurrentTabGroupIndex = index;
+            getCurrentTabGroup().onResume();
+            mainActivity.refreshTitle();
+            if (reload) {
+                getCurrentTabGroup().reload();
+            }
+            //switch view
+            final View currentTabGroupView = tabGroup.getCurrentTab().getView();
+            mainActivity.setCurrentView(currentTabGroupView);
         }
     }
 
     public void restoreTabPos(int groupIndex, int tabIndex) {
+        Log.e("peter", "restoreTabPos");
         TabGroup tabGroup = tabGroupArrayList.get(groupIndex);
         switchTabGroup(tabGroup, false);
-        getCurrentTabGroup().setCurrentTab(tabIndex);
+        getCurrentTabGroup().setCurrentTab(tabIndex, false);
     }
 
     public TabGroup getTabGroup(SearcherTab topTab) {
@@ -120,39 +163,9 @@ public class TabGroupManager {
         }
     }
 
-//    public void revertGroup(TabGroup tabGroup, int position) {
-//        tabGroupArrayList.add(position, tabGroup);
-//        if(position > mCurrentTabGroupIndex) {
-//
-//        }else if(position < mCurrentTabGroupIndex) {
-//            mCurrentTabGroupIndex = mCurrentTabGroupIndex + 1;
-//        } else if(mCurrentTabGroupIndex == position) {
-//            mCurrentTabGroupIndex = position;
-//        }
-//    }
-
-
     public void removeIndex(TabGroup tabGroup) {
         if (tabGroupArrayList.size() > 0) {
             tabGroupArrayList.remove(tabGroup);
-        }
-    }
-
-    public void resumeTabGroupExclude(TabGroup exTabGroup) {
-        ArrayList<TabGroup> list = new ArrayList<>(tabGroupArrayList);
-        for (TabGroup tabGroup : list) {
-            if (tabGroup != exTabGroup) {
-                tabGroup.onResume();
-            }
-        }
-    }
-
-    public void pauseTabGroupExclude(TabGroup exTabGroup) {
-        ArrayList<TabGroup> list = new ArrayList<>(tabGroupArrayList);
-        for (TabGroup tabGroup : list) {
-            if (tabGroup != exTabGroup) {
-                tabGroup.onPause();
-            }
         }
     }
 

@@ -17,6 +17,8 @@ public abstract class SearcherTab implements Tab {
 
     private Drawable iconDrawable;
 
+    private TabData tabData;
+
     public SearcherTab(MainActivity activity) {
         mainActivity = activity;
     }
@@ -41,6 +43,10 @@ public abstract class SearcherTab implements Tab {
 
     }
 
+    public MainActivity getActivity() {
+        return mainActivity;
+    }
+
     public abstract String getSearchWord();
 
     public abstract View getView();
@@ -57,7 +63,10 @@ public abstract class SearcherTab implements Tab {
 
     public abstract String getUrl();
 
-    public abstract SearcherTab create(TabData bean);
+    public SearcherTab create(TabData tabData) {
+        this.tabData = tabData;
+        return this;
+    }
 
     public abstract void loadUrl(TabData bean);
 
@@ -71,4 +80,7 @@ public abstract class SearcherTab implements Tab {
 
     public abstract void goForward();
 
+    public TabData getTabData() {
+        return tabData;
+    }
 }

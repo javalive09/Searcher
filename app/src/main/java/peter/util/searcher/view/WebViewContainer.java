@@ -30,12 +30,14 @@ public class WebViewContainer extends FrameLayout {
     }
 
     public void setCurrentView(View view) {
-        removeViewAt(0);
-        ViewParent parent = view.getParent();
-        if(parent != null) {
-            ((ViewGroup)parent).removeAllViews();
+        if (getChildAt(0) != view) {
+            removeViewAt(0);
+            ViewParent parent = view.getParent();
+            if (parent != null) {
+                ((ViewGroup) parent).removeAllViews();
+            }
+            addView(view, 0);
         }
-        addView(view, 0);
     }
 
     public View setCurrentView(int viewId) {
