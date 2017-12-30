@@ -42,6 +42,7 @@ public class TabGroupManager {
     }
 
     public void clear() {
+        tabGroupArrayList.clear();
         singleton = null;
     }
 

@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#ffffff</color>
+    <color name="colorPrimary">@color/white</color>
+    <color name="colorPrimaryDark">@color/default_tint_color</color>
     <color name="colorAccent">#d23f41</color>
     <color name="colorPrimary_">#2b2c30</color>
-    <color name="tint_color">#5a5a5a</color>
+    <!--<color name="colorAccent">#FFC400</color>-->
+
+    <color name="default_tint_color">#5a5a5a</color>
+    <color name="new_tint_color">#757575</color>
+    <color name="tint_color">@color/new_tint_color</color>
 
     <color name="item_press">#88777777</color>
 
@@ -29,6 +34,6 @@
     <color name="gray">#999999</color>
 
     <color name="no_active">@color/white</color>
-    <color name="active">@color/cursor_color</color>
+    <color name="active">@color/colorAccent</color>
 
 </resources>

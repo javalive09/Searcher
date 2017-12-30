@@ -21,5 +21,8 @@
     <dimen name="text_margin_very_small">4dp</dimen>
     <dimen name="text_margin_small">8dp</dimen>
 
+    <dimen name="fab_margin">16dp</dimen>
+
+
 
 </resources>

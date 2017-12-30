@@ -1,8 +1,12 @@
 package peter.util.searcher.fragment;
 
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.util.TypedValue;
@@ -12,8 +16,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.ListView;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -32,6 +37,7 @@ import peter.util.searcher.R;
 import peter.util.searcher.activity.BaseActivity;
 import peter.util.searcher.db.DaoManager;
 import peter.util.searcher.db.dao.TabData;
+import peter.util.searcher.utils.Utils;
 
 /**
  * 收藏夹fragment
@@ -41,7 +47,7 @@ public class FavoriteFragment extends BookmarkFragment implements View.OnClickLi
 
     PopupMenu popup;
     @BindView(R.id.favorite)
-    ListView favorite;
+    RecyclerView favorite;
     @BindView(R.id.no_record)
     View noRecord;
     @BindView(R.id.loading)
@@ -132,6 +138,8 @@ public class FavoriteFragment extends BookmarkFragment implements View.OnClickLi
                 noRecord.setVisibility(View.GONE);
             }
             if (favorite.getAdapter() == null) {
+                final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+                favorite.setLayoutManager(linearLayoutManager);
                 favorite.setAdapter(new FavoriteAdapter(beans));
             } else {
                 ((FavoriteAdapter) favorite.getAdapter()).updateData(beans);
@@ -201,7 +209,7 @@ public class FavoriteFragment extends BookmarkFragment implements View.OnClickLi
         }
     }
 
-    private class FavoriteAdapter extends BaseAdapter {
+    private class FavoriteAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         private final LayoutInflater factory;
         private List<TabData> list;
@@ -217,13 +225,45 @@ public class FavoriteFragment extends BookmarkFragment implements View.OnClickLi
         }
 
         @Override
-        public int getCount() {
-            return list.size();
+        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View view = factory.inflate(R.layout.favorite_item_recycler_view, parent, false);
+            return new RecyclerViewHolder(view);
+        }
+
+
+        @Override
+        public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
+
+            if (holder instanceof RecyclerViewHolder) {
+                final RecyclerViewHolder recyclerViewHolder = (RecyclerViewHolder) holder;
+
+                Animation animation = AnimationUtils.loadAnimation(getActivity(), R.anim.anim_recycler_item_show);
+                recyclerViewHolder.mView.startAnimation(animation);
+
+                TabData tabData = list.get(position);
+
+                recyclerViewHolder.title.setText(tabData.getTitle());
+
+                Drawable drawable;
+                if (tabData.getIcon() != null) {
+                    drawable = new BitmapDrawable(getResources(), Utils.Bytes2Bitmap(tabData.getIcon()));
+                } else {
+                    drawable = getResources().getDrawable(R.drawable.ic_website);
+                }
+                recyclerViewHolder.icon.setBackground(drawable);
+                recyclerViewHolder.mView.setTag(tabData);
+                if (containInnerName(tabData) && containInnerUrl(tabData)) {
+                    recyclerViewHolder.mView.setOnLongClickListener(null);
+                } else {
+                    recyclerViewHolder.mView.setOnLongClickListener(FavoriteFragment.this);
+                }
+                recyclerViewHolder.mView.setOnClickListener(FavoriteFragment.this);
+            }
         }
 
         @Override
-        public TabData getItem(int position) {
-            return list.get(position);
+        public int getItemCount() {
+            return list.size();
         }
 
         @Override
@@ -231,26 +271,19 @@ public class FavoriteFragment extends BookmarkFragment implements View.OnClickLi
             return position;
         }
 
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            TextView view;
+    }
 
-            if (convertView == null) {
-                view = (TextView) factory.inflate(R.layout.item_list_website, parent, false);
-            } else {
-                view = (TextView) convertView;
-            }
+    class RecyclerViewHolder extends RecyclerView.ViewHolder {
+        private View mView;
+        @BindView(R.id.title)
+        TextView title;
+        @BindView(R.id.icon)
+        ImageView icon;
 
-            TabData bean = getItem(position);
-            view.setText(bean.getTitle());
-            view.setOnClickListener(FavoriteFragment.this);
-            if (containInnerName(bean) && containInnerUrl(bean)) {
-                view.setOnLongClickListener(null);
-            } else {
-                view.setOnLongClickListener(FavoriteFragment.this);
-            }
-            view.setTag(bean);
-            return view;
+        private RecyclerViewHolder(View itemView) {
+            super(itemView);
+            mView = itemView;
+            ButterKnife.bind(this, itemView);
         }
     }
 

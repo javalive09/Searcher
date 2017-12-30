@@ -27,18 +27,23 @@ import peter.util.searcher.tab.TabGroup;
 /**
  * tabs adapter
  */
-public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements onMoveAndSwipedListener {
+public class TabsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements onMoveAndSwipedListener {
 
     private TabsActivity context;
     private List<TabGroup> mItems = new ArrayList<>();
 
-    public RecyclerViewAdapter(TabsActivity context) {
+    public TabsAdapter(TabsActivity context) {
         this.context = context;
     }
 
     public void setItems(List<TabGroup> data) {
         this.mItems.addAll(data);
         notifyDataSetChanged();
+    }
+
+    public void updateItems(List<TabGroup> data) {
+        mItems.clear();
+        setItems(data);
     }
 
     @Override
@@ -56,24 +61,14 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             Animation animation = AnimationUtils.loadAnimation(context, R.anim.anim_recycler_item_show);
             recyclerViewHolder.mView.startAnimation(animation);
 
-            AlphaAnimation aa1 = new AlphaAnimation(1.0f, 0.1f);
-            aa1.setDuration(400);
-            recyclerViewHolder.rela_round.startAnimation(aa1);
-
-            AlphaAnimation aa = new AlphaAnimation(0.1f, 1.0f);
-            aa.setDuration(400);
-
-            recyclerViewHolder.rela_round.startAnimation(aa);
-
             TabGroup tabGroup = mItems.get(position);
 
             if (TabGroupManager.getInstance().getCurrentTabGroup() == tabGroup) {
-                recyclerViewHolder.rela_round.setBackgroundTintList(ColorStateList.valueOf(context.getResources().getColor(R.color.active)));
+                recyclerViewHolder.selectTip.setBackgroundTintList(ColorStateList.valueOf(context.getResources().getColor(R.color.active)));
             } else {
-                recyclerViewHolder.rela_round.setBackgroundTintList(ColorStateList.valueOf(context.getResources().getColor(R.color.no_active)));
+                recyclerViewHolder.selectTip.setBackgroundTintList(ColorStateList.valueOf(context.getResources().getColor(R.color.no_active)));
             }
             recyclerViewHolder.title.setText(tabGroup.getTitle());
-            recyclerViewHolder.host.setText(tabGroup.getHost());
             recyclerViewHolder.url.setText(tabGroup.getUrl());
             recyclerViewHolder.icon.setBackground(tabGroup.getCurrentTab().getIconDrawable());
 
@@ -110,23 +105,20 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 notifyItemChanged(currentIndex);
             }
         } else {
-            DaoManager.getInstance().saveTabs();
-            context.exit();
+            context.saveAndExit();
         }
     }
 
     class RecyclerViewHolder extends RecyclerView.ViewHolder {
         private View mView;
-        @BindView(R.id.rela_round)
-        RelativeLayout rela_round;
+        @BindView(R.id.selectTip)
+        RelativeLayout selectTip;
         @BindView(R.id.title)
         TextView title;
         @BindView(R.id.icon)
         ImageView icon;
         @BindView(R.id.url)
         TextView url;
-        @BindView(R.id.host)
-        TextView host;
 
         private RecyclerViewHolder(View itemView) {
             super(itemView);

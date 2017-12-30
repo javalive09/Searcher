@@ -1,8 +1,13 @@
 package peter.util.searcher.fragment;
 
+import android.annotation.SuppressLint;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.util.TypedValue;
@@ -12,12 +17,15 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.ListView;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -30,6 +38,7 @@ import peter.util.searcher.R;
 import peter.util.searcher.activity.BaseActivity;
 import peter.util.searcher.db.DaoManager;
 import peter.util.searcher.db.dao.TabData;
+import peter.util.searcher.utils.Utils;
 
 /**
  * 搜索记录fragment
@@ -43,9 +52,12 @@ public class HistorySearchFragment extends BookmarkFragment implements View.OnCl
     @BindView(R.id.no_record)
     TextView noRecord;
     @BindView(R.id.history_search)
-    ListView history;
+    RecyclerView history;
     Disposable queryHistory;
-    Disposable queryFavorite;
+
+    @SuppressLint("SimpleDateFormat")
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -68,7 +80,7 @@ public class HistorySearchFragment extends BookmarkFragment implements View.OnCl
         inflater.inflate(R.menu.bookmark_history, menu);
         MenuItem searchItem = menu.findItem(R.id.action_search);
         mSearchView = (SearchView) MenuItemCompat.getActionView(searchItem);
-        mSearchView.setQueryHint(getString(R.string.action_bookmark_search_favorite_hint));
+        mSearchView.setQueryHint(getString(R.string.action_bookmark_search_history_hint));
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -82,7 +94,7 @@ public class HistorySearchFragment extends BookmarkFragment implements View.OnCl
                 } else {
                     Observable<List<TabData>> listObservable = DaoManager.getInstance().queryHistoryLike(s);
                     cancelQuery();
-                    queryFavorite = listObservable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).
+                    queryHistory = listObservable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).
                             subscribe(list -> refreshListData(list));
                 }
                 return true;
@@ -111,6 +123,8 @@ public class HistorySearchFragment extends BookmarkFragment implements View.OnCl
                 noRecord.setVisibility(View.GONE);
             }
             if (history.getAdapter() == null) {
+                final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+                history.setLayoutManager(linearLayoutManager);
                 history.setAdapter(new HistoryAdapter(beans));
             } else {
                 ((HistoryAdapter) history.getAdapter()).updateData(beans);
@@ -179,11 +193,12 @@ public class HistorySearchFragment extends BookmarkFragment implements View.OnCl
         }
     }
 
-    private class HistoryAdapter extends BaseAdapter {
+    private class HistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         private final LayoutInflater factory;
         private List<TabData> list;
 
+        @SuppressLint("SimpleDateFormat")
         HistoryAdapter(List<TabData> objects) {
             factory = LayoutInflater.from(getActivity());
             list = objects;
@@ -195,13 +210,41 @@ public class HistorySearchFragment extends BookmarkFragment implements View.OnCl
         }
 
         @Override
-        public int getCount() {
-            return list.size();
+        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View view = factory.inflate(R.layout.history_item_recycler_view, parent, false);
+            return new RecyclerViewHolder(view);
         }
 
         @Override
-        public TabData getItem(int position) {
-            return list.get(position);
+        public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
+
+            if (holder instanceof RecyclerViewHolder) {
+                final RecyclerViewHolder recyclerViewHolder = (RecyclerViewHolder) holder;
+
+                Animation animation = AnimationUtils.loadAnimation(getActivity(), R.anim.anim_recycler_item_show);
+                recyclerViewHolder.mView.startAnimation(animation);
+
+                TabData tabData = list.get(position);
+
+                recyclerViewHolder.title.setText(tabData.getTitle());
+
+                Drawable drawable;
+                if (tabData.getIcon() != null) {
+                    drawable = new BitmapDrawable(getResources(), Utils.Bytes2Bitmap(tabData.getIcon()));
+                } else {
+                    drawable = getResources().getDrawable(R.drawable.ic_website);
+                }
+                recyclerViewHolder.icon.setBackground(drawable);
+                recyclerViewHolder.mView.setTag(tabData);
+                recyclerViewHolder.mView.setOnClickListener(HistorySearchFragment.this);
+                recyclerViewHolder.mView.setOnLongClickListener(HistorySearchFragment.this);
+
+            }
+        }
+
+        @Override
+        public int getItemCount() {
+            return list.size();
         }
 
         @Override
@@ -209,24 +252,20 @@ public class HistorySearchFragment extends BookmarkFragment implements View.OnCl
             return position;
         }
 
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            TextView view;
+    }
 
-            if (convertView == null) {
-                view = (TextView) factory.inflate(R.layout.item_list_website, parent, false);
-            } else {
-                view = (TextView) convertView;
-            }
+    class RecyclerViewHolder extends RecyclerView.ViewHolder {
+        private View mView;
+        @BindView(R.id.title)
+        TextView title;
+        @BindView(R.id.icon)
+        ImageView icon;
 
-            TabData search = getItem(position);
-            view.setText(search.getTitle());
-            view.setOnClickListener(HistorySearchFragment.this);
-            view.setOnLongClickListener(HistorySearchFragment.this);
-            view.setTag(search);
-            return view;
+        private RecyclerViewHolder(View itemView) {
+            super(itemView);
+            mView = itemView;
+            ButterKnife.bind(this, itemView);
         }
-
     }
 
 

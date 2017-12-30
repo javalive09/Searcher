@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:toolbar="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true">
+    android:fitsSystemWindows="true"
+    tools:context=".activity.TabsActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/top"
@@ -17,13 +20,19 @@
             android:background="@color/colorPrimary"
             toolbar:title="@string/tabs_title"
             toolbar:titleTextColor="@color/tint_color" />
+
     </android.support.design.widget.AppBarLayout>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/top"
-        android:background="@color/tabs_background" />
+    <include layout="@layout/content_recycler_view" />
 
-</RelativeLayout>
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/add_tab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin"
+        android:onClick="addTab"
+        android:src="@drawable/ic_add"
+        app:layout_behavior="peter.util.searcher.utils.FabBehavior" />
+
+</android.support.design.widget.CoordinatorLayout>

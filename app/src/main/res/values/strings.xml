@@ -13,6 +13,7 @@
     <string name="setting_clear">缓存和cookies已经清理</string>
     <string name="clear_all">清理所有</string>
     <string name="close_tab">关闭标签</string>
+    <string name="close_all_tab">清理全部标签</string>
     <string name="wr_sdcard_permission">下载文件到存储卡需要此权限</string>
     <string name="wr_location_permission">网页定位功能需要此权限</string>
     <string name="dialog_download">您是否需要下载此文件？</string>
@@ -62,8 +63,10 @@
     <string name="action_loading">加载中…</string>
     <string name="action_delete">删除</string>
     <string name="action_bookmark_search">搜索</string>
+    <string name="action_tab_search">搜索标签</string>
     <string name="action_bookmark_search_favorite_hint">搜索收藏记录</string>
     <string name="action_bookmark_search_history_hint">搜索历史记录</string>
+    <string name="action_bookmark_search_tab_hint">搜索标签记录</string>
     <string name="tabs_title">标签</string>
     <string name="tabs_max_txt">最多可创建99个标签</string>
     <string name="page_search_title">%1$d/%2$d</string>

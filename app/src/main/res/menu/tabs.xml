@@ -1,14 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     tools:context=".activity.TabsActivity">
 
     <item
-        android:id="@+id/action_add"
-        android:icon="@drawable/ic_add"
-        android:orderInCategory="0"
-        app:showAsAction="always"
-        android:title="@string/add_new_tab"/>
+        android:id="@+id/action_search"
+        android:orderInCategory="1"
+        android:title="@string/action_tab_search"
+        app:actionViewClass="android.support.v7.widget.SearchView"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_close_all"
+        android:orderInCategory="1"
+        android:title="@string/close_all_tab" />
 
 </menu>

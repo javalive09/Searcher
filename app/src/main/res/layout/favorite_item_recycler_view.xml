@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/tools"
-    android:id="@+id/card_view_tab_item_recycler_view"
+    android:id="@+id/item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="@dimen/card_margin_vertical_big_activity"
@@ -12,17 +12,6 @@
     android:foreground="?attr/selectableItemBackground"
     card_view:cardCornerRadius="@dimen/card_recycler_corner_radius"
     card_view:cardElevation="@dimen/card_recycler_elevation">
-
-
-    <RelativeLayout
-        android:id="@+id/selectTip"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/card_margin_horizontal_big_activity"
-        android:background="@drawable/round"
-        android:backgroundTint="@color/active"
-        android:gravity="center"
-        android:transitionName="shareView" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -45,15 +34,6 @@
             android:layout_toEndOf="@id/icon"
             android:singleLine="true"
             android:textColor="@color/black" />
-        
-        <TextView
-            android:id="@+id/url"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/title"
-            android:layout_marginTop="@dimen/text_margin_very_small"
-            android:layout_toEndOf="@id/icon"
-            android:singleLine="true" />
 
     </RelativeLayout>
 </android.support.v7.widget.CardView>
