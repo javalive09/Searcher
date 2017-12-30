@@ -8,6 +8,8 @@ import java.util.concurrent.TimeUnit;
 
 import okhttp3.Cache;
 import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
+import peter.util.searcher.BuildConfig;
 import peter.util.searcher.Searcher;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
@@ -33,7 +35,18 @@ public class CommonRetrofit {
 
     public Retrofit getRetrofit() {
         if (retrofit == null) {
-            OkHttpClient okHttpClient = new OkHttpClient.Builder()
+            OkHttpClient.Builder builder = new OkHttpClient.Builder();
+
+            if (BuildConfig.DEBUG) {
+                // Log信息拦截器
+                HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
+                loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);//这里可以选择拦截级别
+
+                //设置 Debug Log 模式
+                builder.addInterceptor(loggingInterceptor);
+            }
+
+            OkHttpClient okHttpClient = builder
                     .connectTimeout(30, TimeUnit.SECONDS)
                     .readTimeout(30, TimeUnit.SECONDS)
                     .writeTimeout(30, TimeUnit.SECONDS)
@@ -41,6 +54,8 @@ public class CommonRetrofit {
 //                    .addNetworkInterceptor(new StethoInterceptor())
                     .build();
 //            Gson gson = new GsonBuilder().setLenient().createTabGroup();
+
+
             retrofit = new Retrofit.Builder()
                     .baseUrl(URL)
                     .client(okHttpClient)
