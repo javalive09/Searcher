@@ -42,6 +42,8 @@
         <item name="android:singleLine">true</item>
         <item name="android:focusable">false</item>
         <item name="android:textCursorDrawable">@drawable/toolbar_shape_cursor</item>
+        <item name="android:cursorVisible">false</item>
+        <item name="android:drawableStart">@drawable/ic_search</item>
     </style>
 
 

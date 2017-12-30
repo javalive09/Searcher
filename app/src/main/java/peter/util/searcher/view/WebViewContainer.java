@@ -40,14 +40,6 @@ public class WebViewContainer extends FrameLayout {
         }
     }
 
-    public View setCurrentView(int viewId) {
-        removeViewAt(0);
-        LayoutInflater factory = LayoutInflater.from(getContext());
-        View mView = factory.inflate(viewId, this, false);
-        addView(mView, 0);
-        return mView;
-    }
-
     @Override
     public void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);

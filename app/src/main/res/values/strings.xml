@@ -54,6 +54,7 @@
     <string name="copy_link_txt">已经复制链接</string>
     <string name="action_collect">收藏页面</string>
     <string name="title_bookmark">书签</string>
+    <string name="title_tabs">多标签</string>
     <string name="action_copy_link">复制链接</string>
     <string name="action_auto_fullscreen">自动全屏</string>
     <string name="action_desktop">桌面模式</string>

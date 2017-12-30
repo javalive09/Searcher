@@ -27,9 +27,7 @@
                 style="@style/main_toolbar_edit_text_style"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:cursorVisible="false"
-                android:drawableStart="@drawable/ic_search"
-                android:hint="@string/search_hint"
+                android:text="@string/search_hint"
                 android:imeOptions="actionDone"
                 android:onClick="onClick"
                 android:labelFor="@+id/top_txt" />

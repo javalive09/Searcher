@@ -7,11 +7,11 @@ import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.text.TextUtils;
 
 import peter.util.searcher.R;
 
@@ -27,17 +27,21 @@ public class TextDrawable extends Drawable {
     private String text;
     private final Paint paint;
     private final Context context;
-    private final Rect bounds = new Rect();
+    private Drawable vectorDrawable;
+    private RectF rectF;
+    private Rect textBounds;
 
     public TextDrawable(Context context) {
         this.context = context;
         this.paint = new Paint();
+        this.textBounds = new Rect();
+        vectorDrawable = context.getResources().getDrawable(R.drawable.ic_multi);
     }
 
-    public void setText(int text) {
+    public void setText(int text, int spValue) {
         this.text = text + "";
         paint.setColor(context.getResources().getColor(R.color.tint_color));
-        int size = sp2px(context, 10);
+        int size = sp2px(context, spValue);
 
         paint.setTextSize(size);
         paint.setAntiAlias(true);
@@ -46,7 +50,7 @@ public class TextDrawable extends Drawable {
         paint.setStyle(Paint.Style.FILL);
         paint.setTextAlign(Paint.Align.CENTER);
 
-        paint.getTextBounds(this.text, 0, this.text.length(), bounds);
+        paint.getTextBounds(this.text, 0, this.text.length(), new Rect());
         invalidateSelf();
     }
 
@@ -57,17 +61,11 @@ public class TextDrawable extends Drawable {
 
     @Override
     public void draw(@NonNull Canvas canvas) {
-        Drawable vectorDrawable = context.getResources().getDrawable(R.drawable.ic_multi);
         Bitmap bitmap = getBitmap(vectorDrawable);
-        int centreX = (canvas.getWidth() - bitmap.getWidth()) / 2;
-        int centreY = (canvas.getHeight() - bitmap.getHeight()) / 2;
-        canvas.drawBitmap(bitmap, centreX, centreY, paint);
-        int xPos = (canvas.getWidth() / 2);
-        int yPos = (int) ((canvas.getHeight() / 2) - ((paint.descent() + paint.ascent()) / 2));
-        if(TextUtils.isEmpty(text)) {
-            text = "-";
-        }
-        canvas.drawText(text, xPos, yPos, paint);
+        canvas.drawBitmap(bitmap, null, rectF, paint);
+
+        paint.getTextBounds(text, 0, text.length(), textBounds);
+        canvas.drawText(text, rectF.centerX(), rectF.centerY() + (textBounds.height() >> 1) , paint);
     }
 
     private static Bitmap getBitmap(Drawable vectorDrawable) {
@@ -94,5 +92,21 @@ public class TextDrawable extends Drawable {
         return PixelFormat.TRANSLUCENT;
     }
 
+    @Override
+    public void setBounds(int left, int top, int right, int bottom) {
+        super.setBounds(left, top, right, bottom);
+        rectF = new RectF(left, top, right, bottom);
+    }
+
+    @Override
+    public int getIntrinsicWidth() {
+        return vectorDrawable.getIntrinsicWidth();
+    }
+
+    @Override
+    public int getIntrinsicHeight() {
+        return vectorDrawable.getIntrinsicHeight();
+    }
 
 }
+

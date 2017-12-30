@@ -89,7 +89,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private TextDrawable tabsDrawable;
     private final HashMap<String, Class> router = new HashMap<>();
     private boolean realBack = false;
-    private final Handler mHandler = new Handler(Looper.getMainLooper());
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -97,13 +96,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         init();
-
     }
 
     /**
      * test insert url
      *
-     * @param searchWord
+     * @param searchWord 搜索词
      */
     public void flushUrl(String searchWord) {
         String engineUrl = getString(R.string.default_engine_url);
@@ -127,14 +125,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private void initTopBar() {
         setSupportActionBar(toolbar);
         tabsDrawable = new TextDrawable(MainActivity.this);
-        toolbar.setNavigationIcon(tabsDrawable);
-        toolbar.setNavigationContentDescription(R.string.app_name);
-        toolbar.setNavigationOnClickListener(v -> startActivity(new Intent(MainActivity.this, TabsActivity.class)));
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
+        menu.findItem(R.id.action_tabs).setIcon(tabsDrawable);
         return true;
     }
 
@@ -286,6 +282,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.action_tabs:
+                startActivity(new Intent(MainActivity.this, TabsActivity.class));
+                break;
             case R.id.action_share:
                 String url = TabGroupManager.getInstance().getCurrentTabGroup().getCurrentTab().getUrl();
                 String title = TabGroupManager.getInstance().getCurrentTabGroup().getCurrentTab().getTitle();
@@ -474,14 +473,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         return webViewContainer;
     }
 
-    public View setCurrentView(int viewId) {
-        View view = webViewContainer.setCurrentView(viewId);
-        progressBar.setVisibility(View.INVISIBLE);
-        showFindControlView(false);
-        showTopbar();
-        return view;
-    }
-
     public void showTopbar() {
         if (isTopBarHide() && SettingsManager.getInstance().isAutoFullScreen()) {
             ObjectAnimator.ofFloat(mTopBar, "translationY", -Constants.getActionBarH(this), 0).setDuration(300).start();
@@ -553,10 +544,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
     }
 
-    public boolean loadHome() {
+    private void loadHome() {
         TabData tabData = new TabData();
         tabData.setUrl(Tab.URL_HOME);
-        return TabGroupManager.getInstance().load(tabData, true);
+        TabGroupManager.getInstance().load(tabData, true);
     }
 
     @Override
@@ -583,7 +574,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             if (!realBack) {
                 realBack = true;
                 Toast.makeText(MainActivity.this, R.string.exit_hint, Toast.LENGTH_SHORT).show();
-                mHandler.postDelayed(() -> realBack = false, 1000);
+                webViewHandler.postDelayed(() -> realBack = false, 1000);
                 return true;
             }
         }
@@ -610,24 +601,26 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     public void refreshTitle() {
         final TabGroup tabGroup = TabGroupManager.getInstance().getCurrentTabGroup();
-        if(tabGroup != null) {
+        if (tabGroup != null) {
             final SearcherTab searcherTab = tabGroup.getCurrentTab();
-            if(searcherTab != null) {
+            if (searcherTab != null) {
                 String host = searcherTab.getHost();
                 refreshTopText(host);
                 int count = TabGroupManager.getInstance().getTabGroupCount();
                 Log.e("refreshTitle", "count = " + count);
-                tabsDrawable.setText(count);
+                tabsDrawable.setText(count, 10);
             }
         }
     }
 
-    public void refreshTopText(String text) {
-        if (TextUtils.equals(text, Tab.LOCAL_HOST)) {
-            topText.setText("");
-            topText.setHint(R.string.search_hint);
-        } else {
-            topText.setText(text);
+    public void refreshTopText(String host) {
+        switch (host) {
+            case Tab.LOCAL_HOST:
+                topText.setText(R.string.search_hint);
+                break;
+            default:
+                topText.setText(host);
+                break;
         }
     }
 
@@ -692,8 +685,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     public void refreshProgress(WebViewTab webViewTab, int progress) {
         final TabGroup tabGroup = TabGroupManager.getInstance().getCurrentTabGroup();
-        if(tabGroup != null) {
-            if(tabGroup.getCurrentTab() ==  webViewTab) {
+        if (tabGroup != null) {
+            if (tabGroup.getCurrentTab() == webViewTab) {
                 progressBar.setProgress(progress);
                 if (progress == 100) {
                     progressBar.post(() -> progressBar.setVisibility(View.INVISIBLE));
