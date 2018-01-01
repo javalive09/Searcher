@@ -8,7 +8,6 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Debug;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -260,7 +259,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         TabGroup currentGroup = TabGroupManager.getInstance().getCurrentTabGroup();
+
         SearcherTab currentTab = currentGroup.getCurrentTab();
+
+        if (currentTab.canGoForward()) {
+            menu.findItem(R.id.action_goforward).setVisible(true);
+        } else {
+            menu.findItem(R.id.action_goforward).setVisible(false);
+        }
+        
         if (currentTab instanceof LocalViewTab) {
             menu.setGroupVisible(R.id.web_sites, false);
         } else {
@@ -268,12 +275,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             menu.findItem(R.id.action_auto_fullscreen).setChecked(SettingsManager.getInstance().isAutoFullScreen());
             WebViewTab webViewTab = (WebViewTab) currentTab;
             menu.findItem(R.id.action_desktop).setChecked(webViewTab.isDeskTopUA());
-        }
-
-        if (currentGroup.canGoForward()) {
-            menu.findItem(R.id.action_goforward).setVisible(true);
-        } else {
-            menu.findItem(R.id.action_goforward).setVisible(false);
         }
 
         return super.onPrepareOptionsMenu(menu);
@@ -445,13 +446,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     };
 
     private void touchSearch() {
-        String content = TabGroupManager.getInstance().getCurrentTabGroup().getCurrentTab().getSearchWord();
-        int pageNo = TabGroupManager.getInstance().getCurrentTabGroup().getCurrentTab().getPageNo();
+        SearcherTab searcherTab = TabGroupManager.getInstance().getCurrentTabGroup().getCurrentTab();
+        TabData tabData = searcherTab.getTabData();
         Intent intent = new Intent(MainActivity.this, SearchActivity.class);
-        TabData bean = new TabData();
-        bean.setTitle(content);
-        bean.setPageNo(pageNo);
-        intent.putExtra(NAME_BEAN, bean);
+        intent.putExtra(NAME_TAB_DATA, tabData);
         startActivity(intent);
     }
 
@@ -505,9 +503,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         if (intent != null) {
             String action = intent.getAction();
             if (ACTION_INNER_BROWSE.equals(action)) { // inner invoke
-                TabData bean = (TabData) intent.getSerializableExtra(NAME_BEAN);
-                if (bean != null && !TextUtils.isEmpty(bean.getUrl())) {
-                    TabGroupManager.getInstance().load(bean, false);
+                TabData tabData = (TabData) intent.getSerializableExtra(NAME_TAB_DATA);
+                if (tabData != null && !TextUtils.isEmpty(tabData.getUrl())) {
+                    TabGroupManager.getInstance().load(tabData, false);
                 }
             } else if (Intent.ACTION_VIEW.equals(action)) { // outside invoke
                 String url = intent.getDataString();
@@ -614,13 +612,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     public void refreshTopText(String host) {
-        switch (host) {
-            case Tab.LOCAL_HOST:
-                topText.setText(R.string.search_hint);
-                break;
-            default:
-                topText.setText(host);
-                break;
+        if (TextUtils.equals(Tab.LOCAL_HOST, host)) {
+            topText.setText(R.string.search_hint);
+        } else {
+            topText.setText(host);
         }
     }
 

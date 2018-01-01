@@ -25,7 +25,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -54,6 +53,7 @@ public class HistorySearchFragment extends BookmarkFragment implements View.OnCl
     @BindView(R.id.history_search)
     RecyclerView history;
     Disposable queryHistory;
+    HistoryAdapter historyAdapter;
 
     @SuppressLint("SimpleDateFormat")
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
@@ -125,7 +125,7 @@ public class HistorySearchFragment extends BookmarkFragment implements View.OnCl
             if (history.getAdapter() == null) {
                 final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
                 history.setLayoutManager(linearLayoutManager);
-                history.setAdapter(new HistoryAdapter(beans));
+                history.setAdapter(historyAdapter = new HistoryAdapter(beans));
             } else {
                 ((HistoryAdapter) history.getAdapter()).updateData(beans);
             }
@@ -179,7 +179,8 @@ public class HistorySearchFragment extends BookmarkFragment implements View.OnCl
                 case R.id.action_delete:
                     TabData bean = (TabData) view.getTag();
                     DaoManager.getInstance().deleteHistory(bean);
-                    refreshAllListData();
+                    int position = (int) view.getTag(R.id.history_item_position_tag);
+                    historyAdapter.remove(position);
                     break;
             }
             return true;
@@ -209,6 +210,11 @@ public class HistorySearchFragment extends BookmarkFragment implements View.OnCl
             notifyDataSetChanged();
         }
 
+        void remove(int position) {
+            list.remove(position);
+            notifyItemRemoved(position);
+        }
+
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View view = factory.inflate(R.layout.history_item_recycler_view, parent, false);
@@ -236,6 +242,7 @@ public class HistorySearchFragment extends BookmarkFragment implements View.OnCl
                 }
                 recyclerViewHolder.icon.setBackground(drawable);
                 recyclerViewHolder.mView.setTag(tabData);
+                recyclerViewHolder.mView.setTag(R.id.history_item_position_tag, position);
                 recyclerViewHolder.mView.setOnClickListener(HistorySearchFragment.this);
                 recyclerViewHolder.mView.setOnLongClickListener(HistorySearchFragment.this);
 

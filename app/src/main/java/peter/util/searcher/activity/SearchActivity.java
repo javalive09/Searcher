@@ -45,7 +45,7 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
     public static final String ENGINE_LIST = "engine_list";
     public static final String OPERATE_URL = "operate_url";
     private String currentFragmentTag = "";
-    private TabData bean;
+    private TabData tabData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,9 +61,9 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
     }
 
     private void checkData(Intent intent) {
-        this.bean = (TabData) intent.getSerializableExtra(NAME_BEAN);
-        if (!TextUtils.isEmpty(bean.getTitle()) && !bean.getTitle().contains(Tab.LOCAL_SCHEMA)) {
-            setSearchWord(bean.getTitle());
+        this.tabData = (TabData) intent.getSerializableExtra(NAME_TAB_DATA);
+        if (!TextUtils.isEmpty(tabData.getSearchWord()) && !tabData.getSearchWord().contains(Tab.LOCAL_SCHEMA)) {
+            setSearchWord(tabData.getSearchWord());
         }
     }
 
@@ -99,6 +99,10 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
     public void onPause() {
         super.onPause();
         MobclickAgent.onPause(this);
+    }
+
+    public TabData getTabData() {
+        return tabData;
     }
 
     @Override
@@ -190,7 +194,7 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
 
             if (fragment != null) {
                 Bundle bundle = new Bundle();
-                bundle.putSerializable(NAME_BEAN, bean);
+                bundle.putSerializable(NAME_TAB_DATA, tabData);
                 fragment.setArguments(bundle);
                 FragmentManager fragmentManager = getFragmentManager();
                 FragmentTransaction ft = fragmentManager.beginTransaction();

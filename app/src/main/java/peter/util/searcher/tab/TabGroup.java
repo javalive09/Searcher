@@ -125,8 +125,8 @@ public class TabGroup extends SearcherTab {
 
     private SearcherTab newTab(TabData tabData) {
         if (tabData.getUrl().startsWith(LOCAL_SCHEMA)) {
-            if(TextUtils.equals(tabData.getUrl(), URL_HOME)) {
-                if(TabGroupManager.getInstance().getHomeTab() == null) {
+            if (TextUtils.equals(tabData.getUrl(), URL_HOME)) {
+                if (TabGroupManager.getInstance().getHomeTab() == null) {
                     TabGroupManager.getInstance().setHomeTab(newLocalTab(tabData).create(tabData));
                 }
                 return TabGroupManager.getInstance().getHomeTab();
@@ -169,7 +169,7 @@ public class TabGroup extends SearcherTab {
         mCurrentTabIndex = index;
         SearcherTab tab = tabArrayList.get(index);
         tab.loadUrl(tab.getTabData());
-        if(reload) {
+        if (reload) {
             reload();
         }
         mainActivity.refreshTitle();
@@ -220,10 +220,7 @@ public class TabGroup extends SearcherTab {
     public boolean canGoForward() {
         final SearcherTab currentTab = getCurrentTab();
         if (currentTab instanceof WebViewTab) {
-            boolean webTabCanGoForward = currentTab.canGoForward();
-            if (webTabCanGoForward) {
-                return true;
-            }
+            return currentTab.canGoForward();
         }
         return mCurrentTabIndex < tabArrayList.size() - 1;
     }

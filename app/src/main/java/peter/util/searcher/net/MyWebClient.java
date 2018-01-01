@@ -173,7 +173,12 @@ public class MyWebClient extends WebViewClient {
             if (url.startsWith(Constants.ABOUT)) {
                 return continueLoadingUrl(view, url, headers);
             }
-            return isMailOrIntent(url, view) || new IntentUtils(webViewTab.getActivity()).startActivityForUrl(view, url) || continueLoadingUrl(view, url, headers);
+            boolean isMailOrIntent = isMailOrIntent(url, view);
+            boolean isActivityUrl = IntentUtils.startActivityForUrl(view, url);
+            boolean continueLoading = continueLoadingUrl(view, url, headers);
+
+
+            return isMailOrIntent || isActivityUrl || continueLoading;
         }
         return false;
     }

@@ -2,6 +2,7 @@ package peter.util.searcher.utils;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
@@ -19,8 +20,6 @@ import java.util.regex.Pattern;
 
 public class IntentUtils {
 
-    private final Activity mActivity;
-
     private static final Pattern ACCEPTED_URI_SCHEMA = Pattern.compile("(?i)"
             + // switch on case insensitive matching
             '('
@@ -28,49 +27,47 @@ public class IntentUtils {
             "(?:http|https|file)://" + "|(?:inline|data|about|javascript):" + "|(?:.*:.*@)"
             + ')' + "(.*)");
 
-    public IntentUtils(Activity activity) {
-        mActivity = activity;
-    }
-
-    public boolean startActivityForUrl(@Nullable WebView tab, @NonNull String url) {
-        Intent intent;
-        try {
-            intent = Intent.parseUri(url, Intent.URI_INTENT_SCHEME);
-        } catch (URISyntaxException ex) {
-            Log.w("Browser", "Bad URI " + url + ": " + ex.getMessage());
-            return false;
-        }
-
-        intent.addCategory(Intent.CATEGORY_BROWSABLE);
-        intent.setComponent(null);
-        intent.setSelector(null);
-
-        if (mActivity.getPackageManager().resolveActivity(intent, 0) == null) {
-            String packagename = intent.getPackage();
-            if (packagename != null) {
-                intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://toolbar_ic_search?q=pname:"
-                        + packagename));
-                intent.addCategory(Intent.CATEGORY_BROWSABLE);
-                mActivity.startActivity(intent);
-                return true;
-            } else {
+    public static boolean startActivityForUrl(@Nullable WebView tab, @NonNull String url) {
+        if (tab != null) {
+            Activity mActivity = (Activity) tab.getContext();
+            Intent intent;
+            try {
+                intent = Intent.parseUri(url, Intent.URI_INTENT_SCHEME);
+            } catch (URISyntaxException ex) {
+                Log.w("Browser", "Bad URI " + url + ": " + ex.getMessage());
                 return false;
             }
-        }
-        if (tab != null) {
-            intent.putExtra(Constants.INTENT_ORIGIN, 1);
-        }
 
-        Matcher m = ACCEPTED_URI_SCHEMA.matcher(url);
-        if (m.matches() && !isSpecializedHandlerAvailable(intent)) {
-            return false;
-        }
-        try {
-            if (mActivity.startActivityIfNeeded(intent, -1)) {
-                return true;
+            intent.addCategory(Intent.CATEGORY_BROWSABLE);
+            intent.setComponent(null);
+            intent.setSelector(null);
+
+            if (mActivity.getPackageManager().resolveActivity(intent, 0) == null) {
+                String packagename = intent.getPackage();
+                if (packagename != null) {
+                    intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://toolbar_ic_search?q=pname:"
+                            + packagename));
+                    intent.addCategory(Intent.CATEGORY_BROWSABLE);
+                    mActivity.startActivity(intent);
+                    return true;
+                } else {
+                    return false;
+                }
             }
-        } catch (ActivityNotFoundException ex) {
-            ex.printStackTrace();
+
+            intent.putExtra(Constants.INTENT_ORIGIN, 1);
+
+            Matcher m = ACCEPTED_URI_SCHEMA.matcher(url);
+            if (m.matches() && !isSpecializedHandlerAvailable(mActivity, intent)) {
+                return false;
+            }
+            try {
+                if (mActivity.startActivityIfNeeded(intent, -1)) {
+                    return true;
+                }
+            } catch (ActivityNotFoundException ex) {
+                ex.printStackTrace();
+            }
         }
         return false;
     }
@@ -79,7 +76,7 @@ public class IntentUtils {
      * HistorySearch for intent handlers that are specific to this URL aka, specialized
      * apps like google maps or youtube
      */
-    private boolean isSpecializedHandlerAvailable(Intent intent) {
+    private static boolean isSpecializedHandlerAvailable(Context mActivity, Intent intent) {
         PackageManager pm = mActivity.getPackageManager();
         List<ResolveInfo> handlers = pm.queryIntentActivities(intent,
                 PackageManager.GET_RESOLVED_FILTER);

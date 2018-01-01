@@ -29,7 +29,7 @@ import peter.util.searcher.db.dao.TabData;
 public class BaseActivity extends AppCompatActivity {
 
     public static final String ACTION_INNER_BROWSE = "peter.util.searcher.inner";
-    public static final String NAME_BEAN = "peter.util.searcher.bean";
+    public static final String NAME_TAB_DATA = "peter.util.searcher.bean";
     public static final String NAME_WORD = "peter.util.searcher.word";
     private static final ArrayList<Activity> LIST = new ArrayList<>();
 
@@ -58,11 +58,11 @@ public class BaseActivity extends AppCompatActivity {
     public void setSearchWord(String word) {
     }
 
-    public void startBrowser(TabData bean) {
+    public void startBrowser(TabData tabData) {
         Intent intent = new Intent(BaseActivity.this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
         intent.setAction(ACTION_INNER_BROWSE);
-        intent.putExtra(NAME_BEAN, bean);
+        intent.putExtra(NAME_TAB_DATA, tabData);
         startActivity(intent);
     }
 

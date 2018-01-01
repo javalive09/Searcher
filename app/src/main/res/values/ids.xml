@@ -3,6 +3,7 @@
     <item name="recent_search" type="id"/>
 
     <item name="grid_view_item" type="id"/>
-    <item name="multi_window_item_tag" type="id"/>
+    <item name="favorite_item_position_tag" type="id"/>
+    <item name="history_item_position_tag" type="id"/>
     <item name="menu_window_item_tag" type="id"/>
 </resources>

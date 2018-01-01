@@ -64,20 +64,20 @@ public class WebViewTab extends SearcherTab {
     public Drawable getIconDrawable() {
         Drawable iconDrawable;
         Bitmap icon = null;
-        if(isInit()) {
+        if (isInit()) {
             icon = mWebView.getFavicon();
         }
 
-        if(icon == null) {
+        if (icon == null) {
             TabData tabData = getTabData();
             byte[] bytes = tabData.getIcon();
-            if(bytes != null) {
+            if (bytes != null) {
                 icon = Utils.Bytes2Bitmap(bytes);
             }
         }
-        if(icon == null) {
+        if (icon == null) {
             iconDrawable = mainActivity.getResources().getDrawable(R.drawable.ic_website);
-        }else {
+        } else {
             iconDrawable = new BitmapDrawable(mainActivity.getResources(), icon);
         }
         return iconDrawable;
@@ -137,15 +137,16 @@ public class WebViewTab extends SearcherTab {
 
     @Override
     public void loadUrl(TabData bean) {
+        setTabData(bean);
         if (!TextUtils.isEmpty(bean.getUrl())) {
-            if (!peter.util.searcher.tab.Tab.ACTION_NEW_WINDOW.equals(bean.getUrl())
+            if (!Tab.ACTION_NEW_WINDOW.equals(bean.getUrl())
                     || !getUrl().equals(bean.getUrl())) {
                 getView().loadUrl(bean.getUrl());
-                mainActivity.setCurrentView(getView());
-                if (!TextUtils.isEmpty(bean.getTitle())) {
-                    saveData(bean);
-                }
             }
+        }
+        mainActivity.setCurrentView(getView());
+        if (!TextUtils.isEmpty(bean.getTitle())) {
+            saveData(bean);
         }
     }
 
@@ -202,7 +203,7 @@ public class WebViewTab extends SearcherTab {
             title = getView().getTitle();
         }
         if (TextUtils.isEmpty(title)) {
-            title = getTabData().getTitle();;
+            title = getTabData().getTitle();
         }
         return title;
     }

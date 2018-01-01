@@ -75,4 +75,9 @@ public abstract class SearcherTab implements Tab {
     public TabData getTabData() {
         return tabData;
     }
+
+    public SearcherTab setTabData(TabData tabData) {
+        this.tabData = tabData;
+        return this;
+    }
 }

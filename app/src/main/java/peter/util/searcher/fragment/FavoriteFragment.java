@@ -58,6 +58,7 @@ public class FavoriteFragment extends BookmarkFragment implements View.OnClickLi
     String[] names;
     Disposable queryFavorite;
     View rootView;
+    FavoriteAdapter favoriteAdapter;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -140,7 +141,7 @@ public class FavoriteFragment extends BookmarkFragment implements View.OnClickLi
             if (favorite.getAdapter() == null) {
                 final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
                 favorite.setLayoutManager(linearLayoutManager);
-                favorite.setAdapter(new FavoriteAdapter(beans));
+                favorite.setAdapter(favoriteAdapter = new FavoriteAdapter(beans));
             } else {
                 ((FavoriteAdapter) favorite.getAdapter()).updateData(beans);
             }
@@ -193,9 +194,10 @@ public class FavoriteFragment extends BookmarkFragment implements View.OnClickLi
         popup.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {
                 case R.id.action_delete:
-                    TabData bean = (TabData) view.getTag();
-                    DaoManager.getInstance().deleteFav(bean);
-                    refreshAllListData();
+                    TabData tabData = (TabData) view.getTag();
+                    DaoManager.getInstance().deleteFav(tabData);
+                    int position = (int) view.getTag(R.id.favorite_item_position_tag);
+                    favoriteAdapter.remove(position);
                     break;
             }
             return true;
@@ -222,6 +224,11 @@ public class FavoriteFragment extends BookmarkFragment implements View.OnClickLi
         void updateData(List<TabData> list) {
             this.list = list;
             notifyDataSetChanged();
+        }
+
+        void remove(int position) {
+            list.remove(position);
+            notifyItemRemoved(position);
         }
 
         @Override
@@ -252,6 +259,8 @@ public class FavoriteFragment extends BookmarkFragment implements View.OnClickLi
                 }
                 recyclerViewHolder.icon.setBackground(drawable);
                 recyclerViewHolder.mView.setTag(tabData);
+                recyclerViewHolder.mView.setTag(R.id.favorite_item_position_tag, position);
+
                 if (containInnerName(tabData) && containInnerUrl(tabData)) {
                     recyclerViewHolder.mView.setOnLongClickListener(null);
                 } else {

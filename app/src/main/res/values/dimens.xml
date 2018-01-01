@@ -5,6 +5,7 @@
 
     <dimen name="item_list_drawable_padding">10dp</dimen>
     <dimen name="item_list_padding">15dp</dimen>
+    <dimen name="bookmark_tab_h">50dp</dimen>
 
 
     <dimen name="multi_window_item_icon_cell">30dp</dimen>

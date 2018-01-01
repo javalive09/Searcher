@@ -4,58 +4,58 @@
 
     <item
         android:id="@+id/action_tabs"
-        android:orderInCategory="3"
+        android:orderInCategory="1"
         android:title="@string/title_tabs"
         app:showAsAction="always" />
 
     <item
         android:id="@+id/action_bookmark"
         android:icon="@drawable/ic_bookmark"
-        android:orderInCategory="6"
+        android:orderInCategory="2"
         android:title="@string/title_bookmark"
         app:showAsAction="always" />
 
     <item
         android:id="@+id/action_goforward"
-        android:orderInCategory="9"
+        android:orderInCategory="3"
         android:title="@string/action_goforward" />
 
     <group android:id="@+id/web_sites">
         <item
-        android:id="@+id/action_refresh"
-        android:orderInCategory="2"
-        android:title="@string/action_refresh" />
+            android:id="@+id/action_refresh"
+            android:orderInCategory="3"
+            android:title="@string/action_refresh" />
 
         <item
             android:id="@+id/action_share"
-            android:orderInCategory="3"
+            android:orderInCategory="4"
             android:title="@string/action_share" />
 
         <item
             android:id="@+id/action_favorite"
-            android:orderInCategory="4"
+            android:orderInCategory="5"
             android:title="@string/action_collect" />
 
         <item
             android:id="@+id/action_copy_link"
-            android:orderInCategory="5"
+            android:orderInCategory="6"
             android:title="@string/action_copy_link" />
 
         <item
             android:id="@+id/action_auto_fullscreen"
             android:checkable="true"
-            android:orderInCategory="6"
+            android:orderInCategory="7"
             android:title="@string/action_auto_fullscreen" />
 
         <item
             android:id="@+id/action_desktop"
             android:checkable="true"
-            android:orderInCategory="7"
+            android:orderInCategory="8"
             android:title="@string/action_desktop" />
 
         <item
             android:id="@+id/action_find"
-            android:orderInCategory="8"
+            android:orderInCategory="9"
             android:title="@string/search_page" />
 
 
@@ -63,17 +63,17 @@
 
     <item
         android:id="@+id/action_download"
-        android:orderInCategory="9"
+        android:orderInCategory="10"
         android:title="@string/fast_enter_download" />
 
     <item
         android:id="@+id/action_setting"
-        android:orderInCategory="10"
+        android:orderInCategory="11"
         android:title="@string/fast_enter_setting" />
 
     <item
         android:id="@+id/action_exit"
-        android:orderInCategory="11"
+        android:orderInCategory="12"
         android:title="@string/action_exit" />
 
 </menu>
