@@ -17,7 +17,9 @@ public class Searcher extends Application {
     public void onCreate() {
         context = this;
         super.onCreate();
+        if(BuildConfig.DEBUG) {
         Stetho.initializeWithDefaults(this);
+        }
     }
 
 }
