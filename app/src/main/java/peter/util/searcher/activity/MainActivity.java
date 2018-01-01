@@ -31,7 +31,7 @@ import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-//import com.umeng.analytics.MobclickAgent;
+import com.umeng.analytics.MobclickAgent;
 import java.util.HashMap;
 
 import butterknife.BindView;
@@ -262,12 +262,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         SearcherTab currentTab = currentGroup.getCurrentTab();
 
-        if (currentTab.canGoForward()) {
+        if (currentGroup.canGoForward()) {
             menu.findItem(R.id.action_goforward).setVisible(true);
         } else {
             menu.findItem(R.id.action_goforward).setVisible(false);
         }
-        
+
         if (currentTab instanceof LocalViewTab) {
             menu.setGroupVisible(R.id.web_sites, false);
         } else {
@@ -582,7 +582,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     protected void onResume() {
         super.onResume();
         TabGroupManager.getInstance().getCurrentTabGroup().onResume();
-//        MobclickAgent.onResume(this);
+        MobclickAgent.onResume(this);
 //        Debug.stopMethodTracing();
     }
 
@@ -594,7 +594,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         DaoManager.getInstance().saveTabs();
 //        Debug.stopMethodTracing();
 
-//        MobclickAgent.onPause(this);
+        MobclickAgent.onPause(this);
     }
 
     public void refreshTitle() {
