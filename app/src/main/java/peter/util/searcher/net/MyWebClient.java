@@ -179,8 +179,9 @@ public class MyWebClient extends WebViewClient {
 
 
             return isMailOrIntent || isActivityUrl || continueLoading;
+//            return isMailOrIntent || continueLoading;
         }
-        return false;
+        return true;
     }
 
     private boolean continueLoadingUrl(@NonNull WebView webView,

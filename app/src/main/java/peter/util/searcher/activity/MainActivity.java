@@ -31,7 +31,9 @@ import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.umeng.analytics.MobclickAgent;
+
 import java.util.HashMap;
 
 import butterknife.BindView;
@@ -97,19 +99,19 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         init();
     }
 
-    /**
-     * test insert url
-     *
-     * @param searchWord 搜索词
-     */
-    public void flushUrl(String searchWord) {
-        String engineUrl = getString(R.string.default_engine_url);
-        String url = UrlUtils.smartUrlFilter(searchWord, true, engineUrl);
-        TabData tabData = new TabData();
-        tabData.setTitle(searchWord);
-        tabData.setUrl(url);
-        TabGroupManager.getInstance().load(tabData, true);
-    }
+//    /**
+//     * test insert url
+//     *
+//     * @param searchWord 搜索词
+//     */
+//    public void flushUrl(String searchWord) {
+//        String engineUrl = getString(R.string.default_engine_url);
+//        String url = UrlUtils.smartUrlFilter(searchWord, true, engineUrl);
+//        TabData tabData = new TabData();
+//        tabData.setTitle(searchWord);
+//        tabData.setUrl(url);
+//        TabGroupManager.getInstance().load(tabData, true);
+//    }
 
     private void init() {
 //        Debug.startMethodTracing("searcher");
@@ -338,12 +340,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 startActivity(intent);
                 break;
             case R.id.action_setting:
-//                startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+                startActivity(new Intent(MainActivity.this, SettingsActivity.class));
 
-                String searchWord = "a";
-                for (int i = 0; i < 90; i++) {
-                    flushUrl(searchWord + i);
-                }
+//                String searchWord = "a";
+//                for (int i = 0; i < 90; i++) {
+//                    flushUrl(searchWord + i);
+//                }
 
                 break;
             case R.id.action_exit:
