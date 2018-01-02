@@ -11,7 +11,7 @@ import retrofit2.http.GET;
 
 public interface IEngineService {
 
-    @GET("engines170527.json")
+    @GET("engines.json")
     Observable<EnginesInfo> getInfo();
 
 }
