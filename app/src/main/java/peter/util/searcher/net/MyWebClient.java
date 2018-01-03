@@ -27,10 +27,12 @@ import java.util.Map;
 
 import peter.util.searcher.R;
 import peter.util.searcher.TabGroupManager;
+import peter.util.searcher.activity.MainActivity;
 import peter.util.searcher.tab.SearcherTab;
 import peter.util.searcher.tab.WebViewTab;
 import peter.util.searcher.utils.Constants;
 import peter.util.searcher.utils.IntentUtils;
+import peter.util.searcher.utils.UrlUtils;
 import peter.util.searcher.utils.Utils;
 
 /**
@@ -156,12 +158,20 @@ public class MyWebClient extends WebViewClient {
 
     @Override
     public boolean shouldOverrideUrlLoading(@NonNull WebView view, @NonNull WebResourceRequest request) {
+        if (UrlUtils.isInBlackList(request.getUrl().toString())) {
+            return true;
+        }
+
         return shouldOverrideLoading(view, request.getUrl().toString()) || super.shouldOverrideUrlLoading(view, request);
     }
 
     @SuppressWarnings("deprecation")
     @Override
     public boolean shouldOverrideUrlLoading(@NonNull WebView view, @NonNull String url) {
+        if (UrlUtils.isInBlackList(url)) {
+            return true;
+        }
+
         return shouldOverrideLoading(view, url) || super.shouldOverrideUrlLoading(view, url);
     }
 
@@ -173,12 +183,12 @@ public class MyWebClient extends WebViewClient {
             if (url.startsWith(Constants.ABOUT)) {
                 return continueLoadingUrl(view, url, headers);
             }
-            boolean isMailOrIntent = isMailOrIntent(url, view);
-            boolean isActivityUrl = IntentUtils.startActivityForUrl(view, url);
-            boolean continueLoading = continueLoadingUrl(view, url, headers);
+            boolean suc = isMailOrIntent(url, view)
+                    || IntentUtils.startActivityForUrl(view, url)
+                    || continueLoadingUrl(view, url, headers);
 
+            return suc;
 
-            return isMailOrIntent || isActivityUrl || continueLoading;
         }
         return false;
     }

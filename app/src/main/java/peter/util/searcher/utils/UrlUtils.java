@@ -26,6 +26,9 @@ import java.util.regex.Pattern;
  * Utility methods for Url manipulation
  */
 public class UrlUtils {
+
+    private static final String[] balckListSchema = new String[]{"baiduboxlite://"};
+
     private static final Pattern ACCEPTED_URI_SCHEMA = Pattern.compile(
             "(?i)" + // switch on case insensitive matching
                     '(' +    // begin group for schema
@@ -99,6 +102,15 @@ public class UrlUtils {
         String inUrl = url.trim();
         Matcher matcher = ACCEPTED_URI_SCHEMA.matcher(inUrl);
         return matcher.matches();
+    }
+
+    public static boolean isInBlackList(String url) {
+        for(String blackSchemaStr :balckListSchema) {
+            if(url.startsWith(blackSchemaStr)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

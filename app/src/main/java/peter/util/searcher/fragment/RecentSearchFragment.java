@@ -91,7 +91,7 @@ public class RecentSearchFragment extends Fragment implements View.OnClickListen
                 searchActivity.finish();
                 searchActivity.overridePendingTransition(0, 0);
                 TabData tabData = new TabData();
-                tabData.setTitle(word.toString());
+                tabData.setUrl(word.toString());
                 searchActivity.startBrowser(tabData);
                 break;
         }

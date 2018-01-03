@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Parcel;
 import android.support.v4.util.ArrayMap;
 import android.text.TextUtils;
+import android.view.View;
 import android.webkit.CookieManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -34,6 +35,8 @@ import peter.util.searcher.view.SearchWebView;
 /**
  * webView类型的标签
  * Created by peter on 2016/11/17.
+ *
+ *  setting performance : https://www.youtube.com/watch?v=6FXO4jXiM3M
  */
 
 public class WebViewTab extends SearcherTab {
@@ -229,6 +232,7 @@ public class WebViewTab extends SearcherTab {
         }
         getView().setBackgroundColor(Color.WHITE);
         getView().setScrollbarFadingEnabled(true);
+        getView().setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
         getView().setSaveEnabled(true);
         getView().setNetworkAvailable(true);
         getView().setWebChromeClient(myWebChromeClient = new MyWebChromeClient(WebViewTab.this));
@@ -241,7 +245,6 @@ public class WebViewTab extends SearcherTab {
         } else {
             mRequestHeaders.remove(HEADER_DNT);
         }
-
     }
 
     private void initializeSettings() {
@@ -251,7 +254,7 @@ public class WebViewTab extends SearcherTab {
 
         settings.setDomStorageEnabled(true);
         settings.setAppCacheEnabled(true);
-        settings.setCacheMode(WebSettings.LOAD_DEFAULT);
+        settings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
         settings.setDatabaseEnabled(true);
 
         settings.setJavaScriptEnabled(true);
@@ -270,12 +273,14 @@ public class WebViewTab extends SearcherTab {
 
         settings.setSavePassword(true);
         settings.setSaveFormData(true);
-        settings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.TEXT_AUTOSIZING);
+        settings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NARROW_COLUMNS);
         settings.setBlockNetworkImage(false);
         settings.setSupportMultipleWindows(true);
 
         settings.setUseWideViewPort(true);
         settings.setLoadWithOverviewMode(true);
+        settings.setRenderPriority(WebSettings.RenderPriority.HIGH);
+        settings.setEnableSmoothTransition(true);
 
         //需要加上否则播放不了一些视频如今日头条的视频
         CookieManager.getInstance().setAcceptThirdPartyCookies(getView(), true);
