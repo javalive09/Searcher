@@ -50,3 +50,4 @@ obj/
 .settings/
 *.properties
 
+/searcher_update_info
