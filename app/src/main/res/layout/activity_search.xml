@@ -27,7 +27,8 @@
                     android:hint="@string/search_hint"
                     android:labelFor="@+id/top_txt"
                     android:paddingEnd="@dimen/search_padding_right"
-                    android:paddingStart="@dimen/search_padding_start" />
+                    android:paddingStart="@dimen/search_padding_start"
+                    android:singleLine="true" />
 
                 <ImageView
                     android:id="@+id/clearAll"

@@ -80,16 +80,6 @@ task release200CodeApk doLast {
         into(outputFileApkDir)
         rename(outputFileApkName, finalApkName)
     }
-
-
-    //cmd upload apk file
-//    def uploadApkFileName = outputFileApkDir + '/' + finalApkName
-//    println "Found uploadApkFileName dir: " + uploadApkFileName
-//    def uploadAPKCMD = '/usr/local/bin/coscmd upload ' + uploadApkFileName + ' ./'
-//    def uploadAPKResult = uploadAPKCMD.execute().text.trim()
-//    print uploadAPKResult
-
-
     //cmd upload config
     def code = android.defaultConfig.versionCode
     def url = "http://searcher-1254131086.file.myqcloud.com/" + finalApkName
@@ -98,8 +88,6 @@ task release200CodeApk doLast {
         executable 'python'
         args 'config.py', code, url, num
     }
-
-//    print resultUploadApk
     print resultConfig
 }
 
