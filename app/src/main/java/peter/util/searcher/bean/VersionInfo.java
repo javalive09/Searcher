@@ -26,7 +26,7 @@ public class VersionInfo {
 	}
 
 	public String getMessage() {
-		StringBuffer showMessage = new StringBuffer();
+		StringBuilder showMessage = new StringBuilder();
 		for(String s : msg) {
 			showMessage.append(s).append("\n");
 		}

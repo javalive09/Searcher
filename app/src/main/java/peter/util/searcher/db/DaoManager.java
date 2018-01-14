@@ -4,7 +4,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.SparseArray;
 
 import java.util.ArrayList;
@@ -24,10 +23,8 @@ import peter.util.searcher.db.dao.HistorySearchDao;
 import peter.util.searcher.db.dao.TabData;
 import peter.util.searcher.tab.HomeTab;
 import peter.util.searcher.tab.SearcherTab;
-import peter.util.searcher.tab.Tab;
 import peter.util.searcher.tab.TabGroup;
 import peter.util.searcher.tab.WebViewTab;
-import peter.util.searcher.utils.UrlUtils;
 
 public class DaoManager {
 

@@ -1,7 +1,7 @@
 package peter.util.searcher.net;
 
 
-//import com.facebook.stetho.okhttp3.StethoInterceptor;
+import com.facebook.stetho.okhttp3.StethoInterceptor;
 
 import java.io.File;
 import java.util.concurrent.TimeUnit;
@@ -18,7 +18,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class CommonRetrofit {
 
     private Retrofit retrofit;
-//    private static final String URL = "http://7xoxmg.com1.z0.glb.clouddn.com/";
     private static final String URL = "http://searcher-1254131086.file.myqcloud.com/";
     private static final String CACHE_NAME = "engines";
     private static final long MAX_CACHE = 1024 * 1024 * 10; //10M
@@ -42,7 +41,6 @@ public class CommonRetrofit {
                 // Log信息拦截器
                 HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
                 loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);//这里可以选择拦截级别
-
                 //设置 Debug Log 模式
                 builder.addInterceptor(loggingInterceptor);
             }
@@ -52,15 +50,15 @@ public class CommonRetrofit {
                     .readTimeout(30, TimeUnit.SECONDS)
                     .writeTimeout(30, TimeUnit.SECONDS)
                     .cache(new Cache(new File(Searcher.context.getCacheDir(), CACHE_NAME), MAX_CACHE))
-//                    .addNetworkInterceptor(new StethoInterceptor())
                     .build();
-//            Gson gson = new GsonBuilder().setLenient().createTabGroup();
 
+            if (BuildConfig.DEBUG) {
+                builder.addNetworkInterceptor(new StethoInterceptor());
+            }
 
             retrofit = new Retrofit.Builder()
                     .baseUrl(URL)
                     .client(okHttpClient)
-//                    .addConverterFactory(GsonConverterFactory.createTabGroup(gson))
                     .addConverterFactory(GsonConverterFactory.create())
                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                     .build();

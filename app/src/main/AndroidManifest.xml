@@ -20,8 +20,8 @@
         android:fullBackupContent="true"
         android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
-        android:supportsRtl="false"
         android:label="@string/app_name"
+        android:supportsRtl="false"
         android:theme="@style/AppTheme">
         <meta-data
             android:name="UMENG_APPKEY"
@@ -130,14 +130,14 @@
             </intent-filter>
 
         </activity>
-        <activity
-            android:name=".activity.SettingsActivity"/>
-        <activity
-            android:name=".activity.BookMarkActivity" />
+        <activity android:name=".activity.SettingsActivity" />
+        <activity android:name=".activity.BookMarkActivity" />
         <activity
             android:name=".activity.SearchActivity"
             android:windowSoftInputMode="stateAlwaysVisible" />
         <activity android:name=".activity.TabsActivity" />
+
+        <activity android:name="com.javalive09.codebag.PlayerActivity" />
 
     </application>
 
