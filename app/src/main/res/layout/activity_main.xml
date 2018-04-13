@@ -27,10 +27,10 @@
                 style="@style/main_toolbar_edit_text_style"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="@string/search_hint"
                 android:imeOptions="actionDone"
+                android:labelFor="@+id/top_txt"
                 android:onClick="onClick"
-                android:labelFor="@+id/top_txt" />
+                android:text="@string/search_hint" />
 
         </android.support.v7.widget.Toolbar>
 

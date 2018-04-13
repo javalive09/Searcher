@@ -15,7 +15,6 @@ import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
 import java.util.ArrayList;
 
@@ -141,6 +140,9 @@ public class TabsActivity extends BaseActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.action_add:
+                addTab();
+                break;
             case R.id.action_close_all:
                 TabGroupManager.getInstance().clear();
                 saveAndExit();
@@ -156,7 +158,7 @@ public class TabsActivity extends BaseActivity {
         exit();
     }
 
-    public void addTab(View view) {
+    public void addTab() {
         TabData tabData = new TabData();
         tabData.setUrl(Tab.URL_HOME);
         TabGroupManager.getInstance().load(tabData, true);

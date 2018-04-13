@@ -6,22 +6,6 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="PopupMenu" parent="@android:style/Widget.PopupMenu">
-        <item name="android:popupBackground">@drawable/list_selector_item</item>
-    </style>
-
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
-
-    <style name="txt_title_style" parent="@style/Widget.AppCompat.ActionButton.Overflow">
-        <item name="android:textColor">@color/chrome_txt_color</item>
-        <item name="android:textStyle">normal</item>
-        <item name="android:singleLine">true</item>
-        <item name="android:textSize">18sp</item>
-        <item name="android:gravity">center</item>
-    </style>
-
     <style name="btn_normal_style" parent="@style/TextAppearance.AppCompat">
         <item name="android:textColor">@color/chrome_txt_color</item>
         <item name="android:textStyle">normal</item>

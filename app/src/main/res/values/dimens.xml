@@ -5,13 +5,9 @@
 
     <dimen name="item_list_drawable_padding">10dp</dimen>
     <dimen name="item_list_padding">15dp</dimen>
-    <dimen name="bookmark_tab_h">50dp</dimen>
 
 
     <dimen name="multi_window_item_icon_cell">30dp</dimen>
-    <dimen name="multi_window_icon_margin">10dp</dimen>
-    <dimen name="multi_window_close_padding">10dp</dimen>
-    <dimen name="multi_window_h">50dp</dimen>
     <dimen name="search_text_size">17sp</dimen>
     <dimen name="page_find_control_margin">7dp</dimen>
 
@@ -20,9 +16,6 @@
     <dimen name="card_margin_vertical_big_activity">4dp</dimen>
     <dimen name="text_margin">16dp</dimen>
     <dimen name="text_margin_very_small">4dp</dimen>
-    <dimen name="text_margin_small">8dp</dimen>
-
-    <dimen name="fab_margin">16dp</dimen>
 
 
 

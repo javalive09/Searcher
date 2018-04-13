@@ -5,8 +5,15 @@
     tools:context=".activity.TabsActivity">
 
     <item
-        android:id="@+id/action_search"
+        android:id="@+id/action_add"
+        android:icon="@drawable/ic_add"
         android:orderInCategory="1"
+        android:title="@string/add_new_tab"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_search"
+        android:orderInCategory="2"
         android:title="@string/action_tab_search"
         app:actionViewClass="android.support.v7.widget.SearchView"
         app:showAsAction="always" />

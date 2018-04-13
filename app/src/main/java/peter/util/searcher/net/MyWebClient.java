@@ -27,7 +27,6 @@ import java.util.Map;
 
 import peter.util.searcher.R;
 import peter.util.searcher.TabGroupManager;
-import peter.util.searcher.activity.MainActivity;
 import peter.util.searcher.tab.SearcherTab;
 import peter.util.searcher.tab.WebViewTab;
 import peter.util.searcher.utils.Constants;
@@ -183,12 +182,9 @@ public class MyWebClient extends WebViewClient {
             if (url.startsWith(Constants.ABOUT)) {
                 return continueLoadingUrl(view, url, headers);
             }
-            boolean suc = isMailOrIntent(url, view)
+            return isMailOrIntent(url, view)
                     || IntentUtils.startActivityForUrl(view, url)
                     || continueLoadingUrl(view, url, headers);
-
-            return suc;
-
         }
         return false;
     }

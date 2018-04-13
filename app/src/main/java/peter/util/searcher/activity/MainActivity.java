@@ -8,6 +8,7 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Debug;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -32,6 +33,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.javalive09.codebag.PlayerActivity;
 import com.umeng.analytics.MobclickAgent;
 
 import java.util.HashMap;
@@ -41,6 +43,7 @@ import butterknife.ButterKnife;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
+import peter.util.searcher.BuildConfig;
 import peter.util.searcher.SettingsManager;
 import peter.util.searcher.TabGroupManager;
 import peter.util.searcher.R;
@@ -99,22 +102,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         init();
     }
 
-//    /**
-//     * test insert url
-//     *
-//     * @param searchWord 搜索词
-//     */
-//    public void flushUrl(String searchWord) {
-//        String engineUrl = getString(R.string.default_engine_url);
-//        String url = UrlUtils.smartUrlFilter(searchWord, true, engineUrl);
-//        TabData tabData = new TabData();
-//        tabData.setTitle(searchWord);
-//        tabData.setUrl(url);
-//        TabGroupManager.getInstance().load(tabData, true);
-//    }
-
     private void init() {
-//        Debug.startMethodTracing("searcher");
+        if (BuildConfig.DEBUG) {
+            Debug.startMethodTracing("searcher");
+        }
         TabGroupManager.getInstance().init(this);
         installLocalTabRouter();
         initTopBar();
@@ -341,15 +332,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 break;
             case R.id.action_setting:
                 startActivity(new Intent(MainActivity.this, SettingsActivity.class));
-
-//                String searchWord = "a";
-//                for (int i = 0; i < 90; i++) {
-//                    flushUrl(searchWord + i);
-//                }
-
                 break;
             case R.id.action_exit:
-                exit();
+                if (BuildConfig.DEBUG) {
+                    startActivity(new Intent(MainActivity.this, PlayerActivity.class));
+                } else {
+                    exit();
+                }
                 break;
             case R.id.action_bookmark:
                 startActivity(new Intent(MainActivity.this, BookMarkActivity.class));
@@ -585,16 +574,22 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         super.onResume();
         TabGroupManager.getInstance().getCurrentTabGroup().onResume();
         MobclickAgent.onResume(this);
-//        Debug.stopMethodTracing();
+        if (BuildConfig.DEBUG) {
+            Debug.stopMethodTracing();
+        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-//        Debug.startMethodTracing("savetabs");
+        if (BuildConfig.DEBUG) {
+            Debug.startMethodTracing("savetabs");
+        }
         TabGroupManager.getInstance().getCurrentTabGroup().onPause();
         DaoManager.getInstance().saveTabs();
-//        Debug.stopMethodTracing();
+        if (BuildConfig.DEBUG) {
+            Debug.stopMethodTracing();
+        }
 
         MobclickAgent.onPause(this);
     }
