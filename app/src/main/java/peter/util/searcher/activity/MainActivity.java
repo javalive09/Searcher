@@ -33,7 +33,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.javalive09.codebag.PlayerActivity;
 import com.umeng.analytics.MobclickAgent;
 
 import java.util.HashMap;
@@ -334,11 +333,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 startActivity(new Intent(MainActivity.this, SettingsActivity.class));
                 break;
             case R.id.action_exit:
-                if (BuildConfig.DEBUG) {
-                    startActivity(new Intent(MainActivity.this, PlayerActivity.class));
-                } else {
-                    exit();
-                }
+                exit();
                 break;
             case R.id.action_bookmark:
                 startActivity(new Intent(MainActivity.this, BookMarkActivity.class));

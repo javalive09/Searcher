@@ -16,7 +16,6 @@ import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.appcompat.BuildConfig;
 import android.text.TextUtils;
 import android.util.Log;
 import android.webkit.CookieManager;
@@ -27,6 +26,7 @@ import android.widget.Toast;
 import java.io.File;
 import java.io.IOException;
 
+import peter.util.searcher.BuildConfig;
 import peter.util.searcher.activity.MainActivity;
 import peter.util.searcher.R;
 
