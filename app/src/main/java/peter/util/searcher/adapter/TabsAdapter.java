@@ -1,24 +1,18 @@
 package peter.util.searcher.adapter;
 
 import android.content.res.ColorStateList;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-
+import androidx.databinding.DataBindingUtil;
+import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import peter.util.searcher.R;
 import peter.util.searcher.TabGroupManager;
 import peter.util.searcher.activity.TabsActivity;
+import peter.util.searcher.databinding.TabItemRecyclerViewBinding;
 import peter.util.searcher.tab.TabGroup;
 
 /**
@@ -45,8 +39,9 @@ public class TabsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.tab_item_recycler_view, parent, false);
-        return new RecyclerViewHolder(view);
+        TabItemRecyclerViewBinding binding = DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()),
+                R.layout.tab_item_recycler_view, parent, false);
+        return new RecyclerViewHolder(binding);
     }
 
     @Override
@@ -56,20 +51,20 @@ public class TabsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
             final RecyclerViewHolder recyclerViewHolder = (RecyclerViewHolder) holder;
 
             Animation animation = AnimationUtils.loadAnimation(context, R.anim.anim_recycler_item_show);
-            recyclerViewHolder.mView.startAnimation(animation);
+            recyclerViewHolder.itemView.startAnimation(animation);
 
             TabGroup tabGroup = mItems.get(position);
 
             if (TabGroupManager.getInstance().getCurrentTabGroup() == tabGroup) {
-                recyclerViewHolder.selectTip.setBackgroundTintList(ColorStateList.valueOf(context.getResources().getColor(R.color.active)));
+                recyclerViewHolder.binding.selectTip.setBackgroundTintList(ColorStateList.valueOf(context.getResources().getColor(R.color.active)));
             } else {
-                recyclerViewHolder.selectTip.setBackgroundTintList(ColorStateList.valueOf(context.getResources().getColor(R.color.no_active)));
+                recyclerViewHolder.binding.selectTip.setBackgroundTintList(ColorStateList.valueOf(context.getResources().getColor(R.color.no_active)));
             }
-            recyclerViewHolder.title.setText(tabGroup.getTitle());
-            recyclerViewHolder.url.setText(tabGroup.getUrl());
-            recyclerViewHolder.icon.setBackground(tabGroup.getCurrentTab().getIconDrawable());
+            recyclerViewHolder.binding.title.setText(tabGroup.getTitle());
+            recyclerViewHolder.binding.url.setText(tabGroup.getUrl());
+            recyclerViewHolder.binding.icon.setBackground(tabGroup.getCurrentTab().getIconDrawable());
 
-            recyclerViewHolder.mView.setOnClickListener(view -> {
+            recyclerViewHolder.itemView.setOnClickListener(view -> {
                 TabGroupManager.getInstance().switchTabGroup(tabGroup);
                 context.finish();
             });
@@ -107,20 +102,11 @@ public class TabsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
     }
 
     class RecyclerViewHolder extends RecyclerView.ViewHolder {
-        private View mView;
-        @BindView(R.id.selectTip)
-        RelativeLayout selectTip;
-        @BindView(R.id.title)
-        TextView title;
-        @BindView(R.id.icon)
-        ImageView icon;
-        @BindView(R.id.url)
-        TextView url;
+        private TabItemRecyclerViewBinding binding;
 
-        private RecyclerViewHolder(View itemView) {
-            super(itemView);
-            mView = itemView;
-            ButterKnife.bind(this, itemView);
+        private RecyclerViewHolder(TabItemRecyclerViewBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
     }
 

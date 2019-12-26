@@ -30,10 +30,6 @@
             android:name="UMENG_CHANNEL"
             android:value="${UMENG_CHANNEL_VALUE}" />
 
-        <meta-data
-            android:name="peter.util.searcher.net.CustomGlideModule"
-            android:value="GlideModule" />
-
         <activity
             android:name=".activity.MainActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
@@ -136,8 +132,6 @@
             android:name=".activity.SearchActivity"
             android:windowSoftInputMode="stateAlwaysVisible" />
         <activity android:name=".activity.TabsActivity" />
-
-        <activity android:name="com.javalive09.codebag.PlayerActivity" />
 
     </application>
 

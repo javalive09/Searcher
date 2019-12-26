@@ -2,28 +2,24 @@ package peter.util.searcher.activity;
 
 
 import android.os.Bundle;
-import android.support.design.widget.AppBarLayout;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
-import android.support.v7.widget.Toolbar;
-import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import java.util.ArrayList;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.SearchView;
+import androidx.core.view.MenuItemCompat;
+import androidx.databinding.DataBindingUtil;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
+import java.util.ArrayList;
 import peter.util.searcher.R;
 import peter.util.searcher.TabGroupManager;
 import peter.util.searcher.adapter.ItemTouchHelperCallback;
 import peter.util.searcher.adapter.TabsAdapter;
+import peter.util.searcher.databinding.ActivityTabsBinding;
 import peter.util.searcher.db.DaoManager;
 import peter.util.searcher.db.dao.TabData;
 import peter.util.searcher.tab.Tab;
@@ -37,44 +33,35 @@ import peter.util.searcher.tab.TabGroup;
 
 public class TabsActivity extends BaseActivity {
 
-    @BindView(R.id.toolbar)
-    Toolbar toolbar;
-    @BindView(R.id.top)
-    AppBarLayout top;
-    @BindView(R.id.list)
-    RecyclerView list;
-    @BindView(R.id.swipe_refresh_layout_recycler_view)
-    SwipeRefreshLayout swipeRefreshLayout;
     TabsAdapter adapter;
+    private ActivityTabsBinding binding;
     SearchView mSearchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //        Debug.startMethodTracing("loading");
-        setContentView(R.layout.activity_tabs);
-        ButterKnife.bind(TabsActivity.this);
-        setSupportActionBar(toolbar);
+        binding = DataBindingUtil.setContentView(this,R.layout.activity_tabs);
+        setSupportActionBar(binding.toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true); // this sets the button to the back icon
         }
-        toolbar.setNavigationOnClickListener(v -> onBackPressed());
+        binding.toolbar.setNavigationOnClickListener(v -> onBackPressed());
 
         final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(TabsActivity.this);
-        list.setLayoutManager(linearLayoutManager);
+        binding.list.setLayoutManager(linearLayoutManager);
 
         adapter = new TabsAdapter(TabsActivity.this);
-        list.setAdapter(adapter);
+        binding.list.setAdapter(adapter);
 
         refreshAdapter();
 
         ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(adapter);
         ItemTouchHelper mItemTouchHelper = new ItemTouchHelper(callback);
-        mItemTouchHelper.attachToRecyclerView(list);
-        swipeRefreshLayout.setEnabled(false);
-        swipeRefreshLayout.setRefreshing(false);
+        mItemTouchHelper.attachToRecyclerView(binding.list);
+        binding.swipeRefreshLayoutRecyclerView.setEnabled(false);
+        binding.swipeRefreshLayoutRecyclerView.setRefreshing(false);
 //            Debug.stopMethodTracing();
     }
 
@@ -122,7 +109,7 @@ public class TabsActivity extends BaseActivity {
     private void refreshAdapter() {
         ArrayList<TabGroup> tabGroups = TabGroupManager.getInstance().getList();
         adapter.setItems(tabGroups);
-        list.scrollToPosition(TabGroupManager.getInstance().getCurrentTabIndex());
+        binding.list.scrollToPosition(TabGroupManager.getInstance().getCurrentTabIndex());
     }
 
     private ArrayList<TabGroup> queryLike(String title) {

@@ -15,9 +15,10 @@
  */
 package peter.util.searcher.utils;
 
-import android.support.annotation.NonNull;
 import android.util.Patterns;
 import android.webkit.URLUtil;
+
+import androidx.annotation.NonNull;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

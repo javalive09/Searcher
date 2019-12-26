@@ -165,3 +165,6 @@ public static java.lang.String TABLENAME;
 # If you do not use Rx:
 -dontwarn rx.**
 #For Eventbug END**************
+
+-keep public class  extends com.bumptech.glide.module.AppGlideModule
+-keep class com.bumptech.glide.GeneratedAppGlideModuleImpl

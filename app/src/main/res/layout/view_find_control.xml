@@ -1,62 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/find_control"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@android:color/white"
-    android:orientation="horizontal"
-    tools:context=".activity.MainActivity">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <ImageView
-        android:id="@+id/close_find"
-        style="@style/Widget.AppCompat.Toolbar.Button.Navigation"
-        android:layout_width="?android:attr/actionBarSize"
+    <data>
+
+    </data>
+
+    <LinearLayout
+        android:id="@+id/find_control"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginEnd="@dimen/page_find_control_margin"
-        android:layout_marginStart="@dimen/page_find_control_margin"
-        android:onClick="onClick"
-        android:contentDescription="@string/action_cancel"
-        android:src="@drawable/ic_arrow_back" />
+        android:background="@android:color/white"
+        android:orientation="horizontal"
+        tools:context=".activity.MainActivity">
 
-    <EditText
-        android:id="@+id/find_content_txt"
-        style="@style/toolbar_edit_text_style"
-        android:layout_width="0px"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:focusable="true"
-        android:hint="@string/search_page_hint"
-        android:labelFor="@+id/top_txt"
-        android:paddingEnd="@dimen/search_padding_start"
-        android:paddingStart="@dimen/search_padding_start" />
+        <ImageView
+            android:id="@+id/close_find"
+            style="@style/Widget.AppCompat.Toolbar.Button.Navigation"
+            android:layout_width="?android:attr/actionBarSize"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="@dimen/page_find_control_margin"
+            android:layout_marginStart="@dimen/page_find_control_margin"
+            android:onClick="onClick"
+            android:contentDescription="@string/action_cancel"
+            android:src="@drawable/ic_arrow_back" />
 
-    <TextView
-        android:id="@+id/count_find"
-        style="@style/Widget.AppCompat.Light.ActionBar.TabText"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_marginEnd="@dimen/page_find_control_margin"
-        android:layout_marginStart="@dimen/page_find_control_margin"
-        android:gravity="center" />
+        <EditText
+            android:id="@+id/find_content_txt"
+            style="@style/toolbar_edit_text_style"
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:focusable="true"
+            android:hint="@string/search_page_hint"
+            android:labelFor="@+id/top_txt"
+            android:paddingEnd="@dimen/search_padding_start"
+            android:paddingStart="@dimen/search_padding_start" />
 
-    <ImageView
-        android:id="@+id/up_find"
-        style="@style/Widget.AppCompat.Light.ActionButton.Overflow"
-        android:layout_width="?android:attr/actionBarSize"
-        android:layout_height="match_parent"
-        android:onClick="onClick"
-        android:contentDescription="@string/find_page_current_up"
-        android:src="@drawable/ic_arrow_up" />
+        <TextView
+            android:id="@+id/count_find"
+            style="@style/Widget.AppCompat.Light.ActionBar.TabText"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="@dimen/page_find_control_margin"
+            android:layout_marginStart="@dimen/page_find_control_margin"
+            android:gravity="center" />
 
-    <ImageView
-        android:id="@+id/down_find"
-        style="@style/Widget.AppCompat.Light.ActionButton.Overflow"
-        android:layout_width="?android:attr/actionBarSize"
-        android:layout_height="match_parent"
-        android:contentDescription="@string/find_page_current_down"
-        android:onClick="onClick"
-        android:src="@drawable/ic_arrow_down" />
+        <ImageView
+            android:id="@+id/up_find"
+            style="@style/Widget.AppCompat.Light.ActionButton.Overflow"
+            android:layout_width="?android:attr/actionBarSize"
+            android:layout_height="match_parent"
+            android:onClick="onClick"
+            android:contentDescription="@string/find_page_current_up"
+            android:src="@drawable/ic_arrow_up" />
+
+        <ImageView
+            android:id="@+id/down_find"
+            style="@style/Widget.AppCompat.Light.ActionButton.Overflow"
+            android:layout_width="?android:attr/actionBarSize"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/find_page_current_down"
+            android:onClick="onClick"
+            android:src="@drawable/ic_arrow_down" />
 
 
-</LinearLayout>
+    </LinearLayout>
+</layout>

@@ -1,7 +1,8 @@
 package peter.util.searcher.fragment;
 
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.SearchView;
+
+import androidx.appcompat.widget.SearchView;
+import androidx.fragment.app.Fragment;
 
 /**
  * 书签fragment父类

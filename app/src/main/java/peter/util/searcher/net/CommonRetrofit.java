@@ -18,7 +18,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class CommonRetrofit {
 
     private Retrofit retrofit;
-    private static final String URL = "http://searcher-1254131086.file.myqcloud.com/";
+    private static final String URL = "https://searcher-1254131086.cos.ap-beijing.myqcloud.com/engine/";
     private static final String CACHE_NAME = "engines";
     private static final long MAX_CACHE = 1024 * 1024 * 10; //10M
 

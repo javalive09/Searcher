@@ -1,29 +1,26 @@
 package peter.util.searcher.fragment;
 
-import android.app.Fragment;
 import android.os.Bundle;
-import android.support.design.widget.TabLayout;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.databinding.DataBindingUtil;
+import androidx.fragment.app.Fragment;
+import androidx.viewpager.widget.PagerAdapter;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 
 import java.util.List;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import peter.util.searcher.R;
 import peter.util.searcher.activity.BaseActivity;
@@ -31,6 +28,8 @@ import peter.util.searcher.activity.SearchActivity;
 import peter.util.searcher.bean.EnginesInfo;
 import peter.util.searcher.bean.EnginesItem;
 import peter.util.searcher.bean.ItemItem;
+import peter.util.searcher.databinding.FragmentEngineGridItemBinding;
+import peter.util.searcher.databinding.FragmentEngineViewpagerBinding;
 import peter.util.searcher.db.dao.TabData;
 import peter.util.searcher.net.CommonRetrofit;
 import peter.util.searcher.net.IEngineService;
@@ -42,12 +41,7 @@ import peter.util.searcher.utils.UrlUtils;
  */
 public class EngineInfoViewPagerFragment extends Fragment implements View.OnClickListener {
 
-    @BindView(R.id.sliding_tabs)
-    TabLayout mSlidingTabLayout;
-    @BindView(R.id.viewpager)
-    ViewPager mViewPager;
-    @BindView(R.id.loading)
-    View loading;
+    FragmentEngineViewpagerBinding binding;
 
     private int getPageNo() {
         TabData bean = (TabData) getArguments().getSerializable(BaseActivity.NAME_TAB_DATA);
@@ -60,10 +54,9 @@ public class EngineInfoViewPagerFragment extends Fragment implements View.OnClic
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_engine_viewpager, container, false);
-        ButterKnife.bind(EngineInfoViewPagerFragment.this, view);
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_engine_viewpager, container, false);
         init();
-        return view;
+        return binding.getRoot();
     }
 
     private void init() {
@@ -73,12 +66,17 @@ public class EngineInfoViewPagerFragment extends Fragment implements View.OnClic
                 .retry(5)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(engineInfo -> {
-                    loading.setVisibility(View.GONE);
+                    binding.loading.setVisibility(View.GONE);
                     EnginesAdapter adapter = new EnginesAdapter(EngineInfoViewPagerFragment.this, engineInfo.getEngines());
-                    mViewPager.setAdapter(adapter);
-                    mSlidingTabLayout.setupWithViewPager(mViewPager);
-                    mViewPager.setCurrentItem(getPageNo());
-                }, throwable -> Toast.makeText(getActivity(), throwable.getMessage(), Toast.LENGTH_LONG).show());
+                    binding.viewpager.setAdapter(adapter);
+                    binding.slidingTabs.setupWithViewPager(binding.viewpager);
+                    binding.viewpager.setCurrentItem(getPageNo());
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        Toast.makeText(getActivity(), throwable.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                });
     }
 
     @Override
@@ -95,7 +93,7 @@ public class EngineInfoViewPagerFragment extends Fragment implements View.OnClic
                     TabData tabData = ((SearchActivity) getActivity()).getTabData();
                     tabData.setSearchWord(searchWord);
                     tabData.setUrl(url);
-                    tabData.setPageNo(mViewPager.getCurrentItem());
+                    tabData.setPageNo(binding.viewpager.getCurrentItem());
                     act.startBrowser(tabData);
                 }
                 break;
@@ -125,7 +123,7 @@ public class EngineInfoViewPagerFragment extends Fragment implements View.OnClic
         }
 
         @Override
-        public Object instantiateItem(ViewGroup container, int position) {
+        public Object instantiateItem(@NonNull ViewGroup container, int position) {
             View view = f.getActivity().getLayoutInflater().inflate(R.layout.fragment_engine_grid,
                     container, false);
             GridView gv = (GridView) view;
@@ -136,7 +134,7 @@ public class EngineInfoViewPagerFragment extends Fragment implements View.OnClic
         }
 
         @Override
-        public boolean isViewFromObject(View view, Object o) {
+        public boolean isViewFromObject(@NonNull View view, Object o) {
             return o == view;
         }
 
@@ -178,9 +176,11 @@ public class EngineInfoViewPagerFragment extends Fragment implements View.OnClic
         public View getView(int position, View convertView, ViewGroup parent) {
             EngineHolder holder;
             if (convertView == null) {
-                convertView = f.getActivity().getLayoutInflater().inflate(R.layout.fragment_engine_grid_item,
+                FragmentEngineGridItemBinding binding = DataBindingUtil.inflate(f.getActivity().getLayoutInflater(),
+                        R.layout.fragment_engine_grid_item,
                         parent, false);
-                holder = new EngineHolder(convertView);
+                holder = new EngineHolder(binding);
+                convertView = binding.getRoot();
                 convertView.setTag(holder);
             } else {
                 holder = (EngineHolder) convertView.getTag();
@@ -188,11 +188,13 @@ public class EngineInfoViewPagerFragment extends Fragment implements View.OnClic
 
             ItemItem engine = getItem(position);
             engine.setPageNo(pageNo);
+
+            RequestOptions options = new RequestOptions().diskCacheStrategy(DiskCacheStrategy.RESOURCE);
             Glide.with(f)
                     .load(engine.getIcon())
-                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                    .into(holder.icon);
-            holder.title.setText(engine.getName());
+                    .apply(options)
+                    .into(holder.binding.icon);
+            holder.binding.title.setText(engine.getName());
             convertView.setOnClickListener(f);
             convertView.setTag(R.id.grid_view_item, engine);
             return convertView;
@@ -200,13 +202,9 @@ public class EngineInfoViewPagerFragment extends Fragment implements View.OnClic
     }
 
     static class EngineHolder {
-        @BindView(R.id.title)
-        TextView title;
-        @BindView(R.id.icon)
-        ImageView icon;
-
-        EngineHolder(View view) {
-            ButterKnife.bind(this, view);
+        FragmentEngineGridItemBinding binding;
+        EngineHolder(FragmentEngineGridItemBinding binding) {
+            this.binding = binding;
         }
     }
 

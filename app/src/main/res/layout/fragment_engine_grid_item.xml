@@ -1,25 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/engine_item"
-    android:layout_width="match_parent"
-    android:layout_height="100dp"
-    android:layout_gravity="center"
-    android:background="@drawable/list_selector_item"
-    android:paddingTop="10dp">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <ImageView
-        android:id="@+id/icon"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:layout_centerHorizontal="true"
-        android:contentDescription="@string/engine_icon" />
+    <data>
 
-    <TextView
-        android:id="@+id/title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/icon"
-        android:layout_centerHorizontal="true"
-        android:textSize="12sp" />
+    </data>
 
-</RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/engine_item"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_gravity="center"
+        android:background="@drawable/list_selector_item"
+        android:paddingTop="10dp">
+
+        <ImageView
+            android:id="@+id/icon"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_centerHorizontal="true"
+            android:contentDescription="@string/engine_icon" />
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/icon"
+            android:layout_centerHorizontal="true"
+            android:textSize="12sp" />
+
+    </RelativeLayout>
+</layout>

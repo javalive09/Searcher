@@ -4,10 +4,11 @@
 package peter.util.searcher.net;
 
 import android.Manifest;
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.webkit.URLUtil;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
 
 import com.anthonycr.grant.PermissionsManager;
 import com.anthonycr.grant.PermissionsResultAction;

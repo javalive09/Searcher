@@ -12,7 +12,6 @@ import android.os.Debug;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -27,18 +26,11 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebView;
-import android.widget.EditText;
 import android.widget.PopupMenu;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
-
+import androidx.databinding.DataBindingUtil;
 import com.umeng.analytics.MobclickAgent;
-
 import java.util.HashMap;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -46,6 +38,7 @@ import peter.util.searcher.BuildConfig;
 import peter.util.searcher.SettingsManager;
 import peter.util.searcher.TabGroupManager;
 import peter.util.searcher.R;
+import peter.util.searcher.databinding.ActivityMainBinding;
 import peter.util.searcher.db.DaoManager;
 import peter.util.searcher.db.dao.TabData;
 import peter.util.searcher.net.DownloadHandler;
@@ -61,7 +54,6 @@ import peter.util.searcher.utils.Constants;
 import peter.util.searcher.utils.UrlUtils;
 import peter.util.searcher.view.SearchWebView;
 import peter.util.searcher.view.TextDrawable;
-import peter.util.searcher.view.WebViewContainer;
 
 /**
  * 主页activity
@@ -69,25 +61,7 @@ import peter.util.searcher.view.WebViewContainer;
  */
 public class MainActivity extends BaseActivity implements View.OnClickListener {
 
-    @BindView(R.id.webView_container)
-    WebViewContainer webViewContainer;
-    @BindView(R.id.toolbar)
-    Toolbar toolbar;
-    @BindView(R.id.top_search)
-    EditText topText;
-    @BindView(R.id.progress)
-    ProgressBar progressBar;
-    @BindView(R.id.menu_anchor)
-    View menuAnchor;
-    @BindView(R.id.top_bar)
-    View mTopBar;
-    @BindView(R.id.find_control)
-    View findControlView;
-    @BindView(R.id.find_content_txt)
-    EditText findControlContent;
-    @BindView(R.id.count_find)
-    TextView findControlCount;
-
+    private ActivityMainBinding binding;
     private PopupMenu popup;
     private TextDrawable tabsDrawable;
     private final HashMap<String, Class> router = new HashMap<>();
@@ -96,8 +70,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        ButterKnife.bind(this);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         init();
     }
 
@@ -114,7 +87,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     private void initTopBar() {
-        setSupportActionBar(toolbar);
+        setSupportActionBar(binding.toolbar);
         tabsDrawable = new TextDrawable(MainActivity.this);
     }
 
@@ -138,10 +111,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     private void popupContextMenu(SearchWebView.ContextMenuInfo info) {
-        menuAnchor.setX(info.getX());
-        menuAnchor.setY(info.getY());
+        binding.menuAnchor.setX(info.getX());
+        binding.menuAnchor.setY(info.getY());
         dismissContextMenu();
-        popup = new PopupMenu(MainActivity.this, menuAnchor);
+        popup = new PopupMenu(MainActivity.this, binding.menuAnchor);
         popup.getMenuInflater().inflate(R.menu.context, popup.getMenu());
 
         WebViewTab webViewTab = (WebViewTab) TabGroupManager.getInstance().getCurrentTabGroup().getCurrentTab();
@@ -374,8 +347,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             if (searcherTab instanceof WebViewTab) {
                 final WebViewTab webViewTab = (WebViewTab) searcherTab;
                 webViewTab.getView().setFindListener(findListener);
-
-                findControlContent.addTextChangedListener(new TextWatcher() {
+                binding.findContentTxt.addTextChangedListener(new TextWatcher() {
 
                     @Override
                     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -390,24 +362,24 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         if (!TextUtils.isEmpty(s)) {
                             webViewTab.getView().findAllAsync(s.toString());
                         } else {
-                            findControlCount.setText("");
+                            binding.countFind.setText("");
                         }
                     }
                 });
             }
-            findControlContent.setText("");
-            findControlCount.setText("");
-            findControlContent.requestFocus();
-            findControlView.setVisibility(View.VISIBLE);
+            binding.findContentTxt.setText("");
+            binding.countFind.setText("");
+            binding.findContentTxt.requestFocus();
+            binding.findControl.setVisibility(View.VISIBLE);
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             if (imm != null) {
                 imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
             }
         } else {
-            findControlView.setVisibility(View.GONE);
+            binding.findControl.setVisibility(View.GONE);
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             if (imm != null) {
-                imm.hideSoftInputFromWindow(findControlContent.getWindowToken(), 0);
+                imm.hideSoftInputFromWindow(binding.findContentTxt.getWindowToken(), 0);
             }
         }
 
@@ -419,13 +391,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             if (isDoneCounting) {
                 if (numberOfMatches > 0) {
                     String title = String.format(getString(R.string.page_search_title), activeMatchOrdinal + 1, numberOfMatches);
-                    findControlCount.setText(title);
+                    binding.countFind.setText(title);
                 } else {
-                    findControlCount.setText("");
+                    binding.countFind.setText("");
                 }
             } else {
-                if (findControlCount != null) {
-                    findControlCount.setText("...");
+                if (binding.countFind != null) {
+                    binding.countFind.setText("...");
                 }
             }
         }
@@ -448,35 +420,35 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     public void setCurrentView(View view) {
-        webViewContainer.setCurrentView(view);
-        progressBar.setVisibility(View.INVISIBLE);
+        binding.webViewContainer.setCurrentView(view);
+        binding.progress.setVisibility(View.INVISIBLE);
         showTopbar();
     }
 
     public ViewGroup getWebViewContainer() {
-        return webViewContainer;
+        return binding.webViewContainer;
     }
 
     public void showTopbar() {
         if (isTopBarHide() && SettingsManager.getInstance().isAutoFullScreen()) {
-            ObjectAnimator.ofFloat(mTopBar, "translationY", -Constants.getActionBarH(this), 0).setDuration(300).start();
-            ObjectAnimator.ofFloat(webViewContainer, "translationY", -Constants.getActionBarH(this), 0).setDuration(300).start();
+            ObjectAnimator.ofFloat(binding.topBar, "translationY", -Constants.getActionBarH(this), 0).setDuration(300).start();
+            ObjectAnimator.ofFloat(binding.webViewContainer, "translationY", -Constants.getActionBarH(this), 0).setDuration(300).start();
         }
     }
 
     public void hideTopbar() {
         if (isTopBarShow() && SettingsManager.getInstance().isAutoFullScreen()) {
-            ObjectAnimator.ofFloat(mTopBar, "translationY", 0, -Constants.getActionBarH(this)).setDuration(300).start();
-            ObjectAnimator.ofFloat(webViewContainer, "translationY", 0, -Constants.getActionBarH(this)).setDuration(300).start();
+            ObjectAnimator.ofFloat(binding.topBar, "translationY", 0, -Constants.getActionBarH(this)).setDuration(300).start();
+            ObjectAnimator.ofFloat(binding.webViewContainer, "translationY", 0, -Constants.getActionBarH(this)).setDuration(300).start();
         }
     }
 
     private boolean isTopBarHide() {
-        return mTopBar.getTranslationY() == -Constants.getActionBarH(this);
+        return binding.topBar.getTranslationY() == -Constants.getActionBarH(this);
     }
 
     private boolean isTopBarShow() {
-        return mTopBar.getTranslationY() == 0;
+        return binding.topBar.getTranslationY() == 0;
     }
 
     @Override
@@ -537,7 +509,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if ((keyCode == KeyEvent.KEYCODE_BACK)) {
-            if (findControlView.getVisibility() == View.VISIBLE) {
+            if (binding.findControl.getVisibility() == View.VISIBLE) {
                 showFindControlView(false);
                 return true;
             }
@@ -605,9 +577,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     public void refreshTopText(String host) {
         if (TextUtils.equals(Tab.LOCAL_HOST, host)) {
-            topText.setText(R.string.search_hint);
+            binding.topSearch.setText(R.string.search_hint);
         } else {
-            topText.setText(host);
+            binding.topSearch.setText(host);
         }
     }
 
@@ -674,11 +646,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         final TabGroup tabGroup = TabGroupManager.getInstance().getCurrentTabGroup();
         if (tabGroup != null) {
             if (tabGroup.getCurrentTab() == webViewTab) {
-                progressBar.setProgress(progress);
+                binding.progress.setProgress(progress);
                 if (progress == 100) {
-                    progressBar.post(() -> progressBar.setVisibility(View.INVISIBLE));
+                    binding.progress.post(() -> binding.progress.setVisibility(View.INVISIBLE));
                 } else {
-                    progressBar.setVisibility(View.VISIBLE);
+                    binding.progress.setVisibility(View.VISIBLE);
                 }
             }
         }

@@ -1,6 +1,5 @@
 package peter.util.searcher.fragment;
 
-import android.app.Fragment;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.os.Bundle;
@@ -9,18 +8,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+import androidx.databinding.DataBindingUtil;
+import androidx.fragment.app.Fragment;
+
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import peter.util.searcher.R;
 import peter.util.searcher.activity.SearchActivity;
+import peter.util.searcher.databinding.FragmentRecentSearchBinding;
 import peter.util.searcher.db.DaoManager;
 import peter.util.searcher.db.dao.TabData;
 import peter.util.searcher.utils.UrlUtils;
@@ -33,22 +33,14 @@ public class RecentSearchFragment extends Fragment implements View.OnClickListen
 
     PopupMenu popup;
     CharSequence word;
-    @BindView(R.id.paste_enter)
-    View pasteEnter;
-    @BindView(R.id.paste)
-    View paste;
-    @BindView(R.id.loading)
-    View loading;
-    @BindView(R.id.recent_search)
-    ListView recentSearch;
     Disposable queryRecent;
+    FragmentRecentSearchBinding binding;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_recent_search, container, false);
-        ButterKnife.bind(RecentSearchFragment.this, view);
-        return view;
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_recent_search, container, false);
+        return binding.getRoot();
     }
 
     @Override
@@ -62,11 +54,11 @@ public class RecentSearchFragment extends Fragment implements View.OnClickListen
                 word = cmb.getPrimaryClip().getItemAt(0).getText();
                 if (!TextUtils.isEmpty(word)) {
                     if (UrlUtils.guessUrl(word.toString())) {
-                        pasteEnter.setVisibility(View.VISIBLE);
-                        pasteEnter.setOnClickListener(RecentSearchFragment.this);
+                        binding.pasteEnter.setVisibility(View.VISIBLE);
+                        binding.pasteEnter.setOnClickListener(RecentSearchFragment.this);
                     } else {
-                        paste.setVisibility(View.VISIBLE);
-                        paste.setOnClickListener(RecentSearchFragment.this);
+                        binding.paste.setVisibility(View.VISIBLE);
+                        binding.paste.setOnClickListener(RecentSearchFragment.this);
                     }
                 }
             }
@@ -100,10 +92,10 @@ public class RecentSearchFragment extends Fragment implements View.OnClickListen
     private void refreshData() {
         queryRecent = DaoManager.getInstance().queryRecentData(9).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).
                 subscribe(beans -> {
-                    loading.setVisibility(View.GONE);
+                    binding.loading.setVisibility(View.GONE);
                     if (beans != null) {
                         if (beans.size() > 0) {
-                            recentSearch.setAdapter(new RecentSearchAdapter(beans));
+                            binding.recentSearch.setAdapter(new RecentSearchAdapter(beans));
                         }
                     }
                 });

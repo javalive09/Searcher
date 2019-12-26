@@ -3,9 +3,10 @@ package peter.util.searcher.utils;
 import android.app.Application;
 import android.os.Bundle;
 import android.os.Parcel;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.io.File;
 import java.io.FileInputStream;

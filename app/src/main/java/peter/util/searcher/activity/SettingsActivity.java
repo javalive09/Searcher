@@ -2,12 +2,10 @@ package peter.util.searcher.activity;
 
 
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
-import android.support.v7.widget.Toolbar;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
+import androidx.appcompat.app.ActionBar;
+import androidx.databinding.DataBindingUtil;
 import peter.util.searcher.R;
+import peter.util.searcher.databinding.ActivitySettingsBinding;
 import peter.util.searcher.fragment.SettingsFragment;
 
 /**
@@ -17,23 +15,20 @@ import peter.util.searcher.fragment.SettingsFragment;
 
 public class SettingsActivity extends BaseActivity {
 
-    @BindView(R.id.toolbar)
-    Toolbar toolbar;
+    private ActivitySettingsBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_settings);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_settings);
         getFragmentManager().beginTransaction().
                 replace(R.id.setting_content, new SettingsFragment()).commit();
-
-        ButterKnife.bind(SettingsActivity.this);
-        setSupportActionBar(toolbar);
+        setSupportActionBar(binding.toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true); // this sets the button to the back icon
         }
-        toolbar.setNavigationOnClickListener(v -> finish());
+        binding.toolbar.setNavigationOnClickListener(v -> finish());
     }
 
 

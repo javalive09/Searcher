@@ -8,10 +8,11 @@ import android.content.Context;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.NonNull;
 import android.webkit.MimeTypeMap;
 import android.webkit.URLUtil;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;

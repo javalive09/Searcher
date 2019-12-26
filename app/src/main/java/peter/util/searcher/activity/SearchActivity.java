@@ -1,27 +1,23 @@
 package peter.util.searcher.activity;
 
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
-import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
-import android.widget.ImageView;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.databinding.DataBindingUtil;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.umeng.analytics.MobclickAgent;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 import peter.util.searcher.R;
+import peter.util.searcher.databinding.ActivitySearchBinding;
 import peter.util.searcher.db.dao.TabData;
 import peter.util.searcher.fragment.EngineInfoViewPagerFragment;
 import peter.util.searcher.fragment.OperateUrlFragment;
@@ -33,14 +29,9 @@ import peter.util.searcher.utils.UrlUtils;
  * 搜索页activity
  * Created by peter on 16/5/19.
  */
-public class SearchActivity extends BaseActivity implements View.OnClickListener {
+public class SearchActivity extends BaseActivity {
 
-    @BindView(R.id.toolbar)
-    Toolbar toolbar;
-    @BindView(R.id.top_txt)
-    EditText search;
-    @BindView(R.id.clearAll)
-    ImageView clearAll;
+    private ActivitySearchBinding binding;
     private static final String RECENT_SEARCH = "recent_search";
     public static final String ENGINE_LIST = "engine_list";
     public static final String OPERATE_URL = "operate_url";
@@ -50,8 +41,7 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_search);
-        ButterKnife.bind(SearchActivity.this);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_search);
         init();
     }
 
@@ -68,7 +58,7 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         String searchWord = getSearchWord();
         if (!TextUtils.isEmpty(searchWord)) {
@@ -78,7 +68,7 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
 
     @Override
     public String getSearchWord() {
-        return search.getText().toString().trim();
+        return binding.topTxt.getText().toString().trim();
     }
 
     @Override
@@ -107,27 +97,27 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
 
     @Override
     public void setSearchWord(String word) {
-        search.setText(word);
+        binding.topTxt.setText(word);
         if (!TextUtils.isEmpty(word)) {
             int position = word.length();
-            search.setSelection(position);
+            binding.topTxt.setSelection(position);
         }
     }
 
     private void init() {
-        setSupportActionBar(toolbar);
+        setSupportActionBar(binding.toolbar);
         ActionBar actionBar = getSupportActionBar();
         if(actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
             // this sets the button to the back icon
             actionBar.setHomeButtonEnabled(true);
         }
-        toolbar.setNavigationOnClickListener(v -> {
+        binding.toolbar.setNavigationOnClickListener(v -> {
             closeIME();
             finish();
         });
 
-        search.addTextChangedListener(new TextWatcher() {
+        binding.topTxt.addTextChangedListener(new TextWatcher() {
 
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -142,9 +132,9 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
                 String content = s.toString();
                 if (TextUtils.isEmpty(content)) {
                     setEngineFragment(RECENT_SEARCH);
-                    clearAll.setVisibility(View.GONE);
+                    binding.clearAll.setVisibility(View.GONE);
                 } else {
-                    clearAll.setVisibility(View.VISIBLE);
+                    binding.clearAll.setVisibility(View.VISIBLE);
                     if (UrlUtils.guessUrl(content)) {
                         setEngineFragment(OPERATE_URL);
                     } else {
@@ -157,6 +147,17 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
 
         Intent intent = getIntent();
         checkData(intent);
+
+        binding.clearAll.setOnClickListener(v -> {
+            openIME();
+            binding.topTxt.requestFocus();
+            binding.topTxt.setText("");
+        });
+
+        binding.topTxt.postDelayed(() -> {
+            binding.topTxt.requestFocus();
+            openIME();
+        }, 500);
     }
 
     public void closeIME() {
@@ -172,7 +173,7 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
     public void openIME() {
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         if(imm != null) {
-            imm.showSoftInput(search, InputMethodManager.SHOW_IMPLICIT);
+            imm.showSoftInput(binding.topTxt, InputMethodManager.SHOW_IMPLICIT);
         }
     }
 
@@ -196,20 +197,12 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
                 Bundle bundle = new Bundle();
                 bundle.putSerializable(NAME_TAB_DATA, tabData);
                 fragment.setArguments(bundle);
-                FragmentManager fragmentManager = getFragmentManager();
+                FragmentManager fragmentManager = getSupportFragmentManager();
                 FragmentTransaction ft = fragmentManager.beginTransaction();
                 ft.replace(R.id.content_frame, fragment, tag);
                 ft.commitAllowingStateLoss();
             }
         }
     }
-
-    @OnClick(R.id.clearAll)
-    public void onClick(View v) {
-        openIME();
-        search.requestFocus();
-        search.setText("");
-    }
-
 
 }

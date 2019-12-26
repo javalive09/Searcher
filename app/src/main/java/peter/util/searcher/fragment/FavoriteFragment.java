@@ -3,11 +3,6 @@ package peter.util.searcher.fragment;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -18,23 +13,26 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.ImageView;
 import android.widget.PopupMenu;
-import android.widget.ProgressBar;
-import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SearchView;
+import androidx.core.view.MenuItemCompat;
+import androidx.databinding.DataBindingUtil;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import butterknife.BindArray;
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import peter.util.searcher.R;
 import peter.util.searcher.activity.BaseActivity;
+import peter.util.searcher.databinding.FavoriteItemRecyclerViewBinding;
+import peter.util.searcher.databinding.FragmentFavoriteBinding;
 import peter.util.searcher.db.DaoManager;
 import peter.util.searcher.db.dao.TabData;
 import peter.util.searcher.utils.Utils;
@@ -45,30 +43,23 @@ import peter.util.searcher.utils.Utils;
  */
 public class FavoriteFragment extends BookmarkFragment implements View.OnClickListener, View.OnLongClickListener {
 
+    FragmentFavoriteBinding binding;
     PopupMenu popup;
-    @BindView(R.id.favorite)
-    RecyclerView favorite;
-    @BindView(R.id.no_record)
-    View noRecord;
-    @BindView(R.id.loading)
-    ProgressBar loading;
-    @BindArray(R.array.favorite_urls)
     String[] urls;
-    @BindArray(R.array.favorite_urls_names)
     String[] names;
     Disposable queryFavorite;
-    View rootView;
     FavoriteAdapter favoriteAdapter;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        urls = getResources().getStringArray(R.array.favorite_urls);
+        names = getResources().getStringArray(R.array.favorite_urls_names);
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.bookmark_favorite, menu);
         MenuItem searchItem = menu.findItem(R.id.action_search);
         mSearchView = (SearchView) MenuItemCompat.getActionView(searchItem);
@@ -104,10 +95,9 @@ public class FavoriteFragment extends BookmarkFragment implements View.OnClickLi
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.fragment_favorite, container, false);
-        ButterKnife.bind(FavoriteFragment.this, rootView);
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_favorite, container, false);
         refreshAllListData();
-        return rootView;
+        return binding.getRoot();
     }
 
     private List<TabData> getDefaultFav() {
@@ -134,19 +124,19 @@ public class FavoriteFragment extends BookmarkFragment implements View.OnClickLi
     private void refreshListData(List<TabData> beans) {
         if (beans != null) {
             if (beans.size() == 0) {
-                noRecord.setVisibility(View.VISIBLE);
+                binding.noRecord.setVisibility(View.VISIBLE);
             } else {
-                noRecord.setVisibility(View.GONE);
+                binding.noRecord.setVisibility(View.GONE);
             }
-            if (favorite.getAdapter() == null) {
+            if (binding.favorite.getAdapter() == null) {
                 final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
-                favorite.setLayoutManager(linearLayoutManager);
-                favorite.setAdapter(favoriteAdapter = new FavoriteAdapter(beans));
+                binding.favorite.setLayoutManager(linearLayoutManager);
+                binding.favorite.setAdapter(favoriteAdapter = new FavoriteAdapter(beans));
             } else {
-                ((FavoriteAdapter) favorite.getAdapter()).updateData(beans);
+                ((FavoriteAdapter) binding.favorite.getAdapter()).updateData(beans);
             }
         }
-        loading.setVisibility(View.GONE);
+        binding.loading.setVisibility(View.GONE);
     }
 
     @Override
@@ -232,9 +222,9 @@ public class FavoriteFragment extends BookmarkFragment implements View.OnClickLi
         }
 
         @Override
-        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = factory.inflate(R.layout.favorite_item_recycler_view, parent, false);
-            return new RecyclerViewHolder(view);
+        public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            FavoriteItemRecyclerViewBinding binding = DataBindingUtil.inflate(factory, R.layout.favorite_item_recycler_view, parent, false);
+            return new RecyclerViewHolder(binding);
         }
 
 
@@ -245,11 +235,11 @@ public class FavoriteFragment extends BookmarkFragment implements View.OnClickLi
                 final RecyclerViewHolder recyclerViewHolder = (RecyclerViewHolder) holder;
 
                 Animation animation = AnimationUtils.loadAnimation(getActivity(), R.anim.anim_recycler_item_show);
-                recyclerViewHolder.mView.startAnimation(animation);
+                recyclerViewHolder.binding.item.startAnimation(animation);
 
                 TabData tabData = list.get(position);
 
-                recyclerViewHolder.title.setText(tabData.getTitle());
+                recyclerViewHolder.binding.title.setText(tabData.getTitle());
 
                 Drawable drawable;
                 if (tabData.getIcon() != null) {
@@ -257,16 +247,16 @@ public class FavoriteFragment extends BookmarkFragment implements View.OnClickLi
                 } else {
                     drawable = getResources().getDrawable(R.drawable.ic_website);
                 }
-                recyclerViewHolder.icon.setBackground(drawable);
-                recyclerViewHolder.mView.setTag(tabData);
-                recyclerViewHolder.mView.setTag(R.id.favorite_item_position_tag, position);
+                recyclerViewHolder.binding.icon.setBackground(drawable);
+                recyclerViewHolder.binding.item.setTag(tabData);
+                recyclerViewHolder.binding.item.setTag(R.id.favorite_item_position_tag, position);
 
                 if (containInnerName(tabData) && containInnerUrl(tabData)) {
-                    recyclerViewHolder.mView.setOnLongClickListener(null);
+                    recyclerViewHolder.binding.item.setOnLongClickListener(null);
                 } else {
-                    recyclerViewHolder.mView.setOnLongClickListener(FavoriteFragment.this);
+                    recyclerViewHolder.binding.item.setOnLongClickListener(FavoriteFragment.this);
                 }
-                recyclerViewHolder.mView.setOnClickListener(FavoriteFragment.this);
+                recyclerViewHolder.binding.item.setOnClickListener(FavoriteFragment.this);
             }
         }
 
@@ -282,17 +272,12 @@ public class FavoriteFragment extends BookmarkFragment implements View.OnClickLi
 
     }
 
-    class RecyclerViewHolder extends RecyclerView.ViewHolder {
-        private View mView;
-        @BindView(R.id.title)
-        TextView title;
-        @BindView(R.id.icon)
-        ImageView icon;
+    private class RecyclerViewHolder extends RecyclerView.ViewHolder {
+        private FavoriteItemRecyclerViewBinding binding;
 
-        private RecyclerViewHolder(View itemView) {
-            super(itemView);
-            mView = itemView;
-            ButterKnife.bind(this, itemView);
+        private RecyclerViewHolder(FavoriteItemRecyclerViewBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
     }
 
